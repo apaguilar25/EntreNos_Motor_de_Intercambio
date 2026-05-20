@@ -1,0 +1,13 @@
+Colores de la pagina en hexadecimal
+5D3A1A
+F0FDF4
+DCFCE7
+047857
+
+FFFBEB
+FEF3C7
+D97706
+E09F3E
+
+Fuente: Inter
+
