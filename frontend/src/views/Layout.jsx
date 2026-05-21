@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
-import { Home, Gavel, User, Wallet, LogOut, Sun, Moon } from 'lucide-react';
+import { Home, Gavel, User, Wallet, LogOut, Sun, Moon, Bell } from 'lucide-react';
 
 const Layout = () => {
   const { theme, toggleTheme, setUser, balance } = useContext(AppContext);
@@ -16,7 +16,8 @@ const Layout = () => {
     { to: "/", icon: <Home size={20} />, label: "Muro" },
     { to: "/auctions", icon: <Gavel size={20} />, label: "Subastas" },
     { to: "/profile", icon: <User size={20} />, label: "Perfil" },
-    { to: "/wallet", icon: <Wallet size={20} />, label: `Billetera (${balance})` }
+    { to: "/wallet", icon: <Wallet size={20} />, label: `Billetera (${balance})` },
+    { to: "/notifications", icon: <Bell size={20} />, label: "Notificaciones" }
   ];
 
   return (

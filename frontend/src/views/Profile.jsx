@@ -56,16 +56,27 @@ const Profile = () => {
         {/* Catálogo de Ofertas */}
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h3 style={{ fontSize: '1.25rem' }}>Mis Ofertas (Talento)</h3>
-            <button className="btn-primary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }} onClick={() => navigate('/publish?type=oferta')}>Añadir Oferta</button>
+            <h3 style={{ fontSize: '1.25rem' }}>Mis Ofertas</h3>
+            <button className="btn-primary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }} onClick={() => navigate('/publish?type=oferta')}>Añadir</button>
           </div>
-          <div className="card" style={{ padding: '1rem' }}>
-            <div style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.75rem' }}>
-              <div style={{ fontWeight: '600' }}>Asesoría Legal Básica</div>
+          <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div 
+              className="interactive-card" 
+              style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}
+              onClick={() => navigate('/post/1')}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div style={{ fontWeight: '600' }}>Asesoría Legal Básica</div>
+                <div style={{ background: 'var(--accent-warning)', color: '#fff', padding: '0.15rem 0.5rem', borderRadius: '1rem', fontSize: '0.7rem', fontWeight: 'bold' }}>1 Solicitud</div>
+              </div>
               <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Revisión de contratos y documentos.</div>
               <div style={{ color: 'var(--accent-primary)', fontWeight: 'bold', fontSize: '0.875rem', marginTop: '0.25rem' }}>40 cr</div>
             </div>
-            <div>
+            <div 
+              className="interactive-card" 
+              style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}
+              onClick={() => navigate('/post/2')}
+            >
               <div style={{ fontWeight: '600' }}>Traducción de Textos</div>
               <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Inglés a Español (por página).</div>
               <div style={{ color: 'var(--accent-primary)', fontWeight: 'bold', fontSize: '0.875rem', marginTop: '0.25rem' }}>10 cr</div>
@@ -77,16 +88,42 @@ const Profile = () => {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <h3 style={{ fontSize: '1.25rem' }}>Mis Necesidades</h3>
-            <button className="btn-primary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem', backgroundColor: 'var(--color-yellow-100)', color: 'var(--color-orange-600)' }} onClick={() => navigate('/publish?type=demanda')}>Añadir Necesidad</button>
+            <button className="btn-primary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem', backgroundColor: 'var(--color-yellow-100)', color: 'var(--color-orange-600)' }} onClick={() => navigate('/publish?type=demanda')}>Añadir</button>
           </div>
-          <div className="card" style={{ padding: '1rem' }}>
-            <div style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.75rem' }}>
+          <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div 
+              className="interactive-card" 
+              style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}
+              onClick={() => navigate('/post/3')}
+            >
               <div style={{ fontWeight: '600' }}>Mantenimiento de Aire Acondicionado</div>
               <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Limpieza de filtros y revisión de gas.</div>
-              <div style={{ color: 'var(--accent-warning)', fontWeight: 'bold', fontSize: '0.875rem', marginTop: '0.25rem' }}>Presupuesto: Hasta 60 cr</div>
+              <div style={{ color: 'var(--color-orange-600)', fontWeight: 'bold', fontSize: '0.875rem', marginTop: '0.25rem' }}>Hasta 60 cr</div>
             </div>
             <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
               No hay más necesidades registradas.
+            </div>
+          </div>
+        </div>
+
+        {/* Catálogo de Subastas */}
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h3 style={{ fontSize: '1.25rem' }}>Mis Subastas</h3>
+            <button className="btn-primary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem', backgroundColor: 'var(--accent-warning)', color: '#fff' }} onClick={() => navigate('/create-auction')}>Añadir</button>
+          </div>
+          <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div 
+              className="interactive-card" 
+              style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}
+              onClick={() => navigate('/post/4')}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div style={{ fontWeight: '600' }}>Bicicleta Montañera</div>
+                <div style={{ background: 'var(--accent-warning)', color: '#fff', padding: '0.15rem 0.5rem', borderRadius: '1rem', fontSize: '0.7rem', fontWeight: 'bold' }}>3 Pujas</div>
+              </div>
+              <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Cambio por alimentos no perecederos.</div>
+              <div style={{ color: 'var(--accent-primary)', fontWeight: 'bold', fontSize: '0.875rem', marginTop: '0.25rem' }}>Mejor: 2 Harinas + 1 Arroz</div>
             </div>
           </div>
         </div>

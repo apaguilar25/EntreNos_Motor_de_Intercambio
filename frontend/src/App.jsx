@@ -9,6 +9,8 @@ import Login from './views/Login';
 import Publish from './views/Publish';
 import CreateAuction from './views/CreateAuction';
 import ChangePassword from './views/ChangePassword';
+import Notifications from './views/Notifications';
+import PostDetails from './views/PostDetails';
 
 // Global Context Mock for Sprint 1
 export const AppContext = createContext();
@@ -39,6 +41,8 @@ function App() {
             <Route path="publish" element={<Publish />} />
             <Route path="create-auction" element={<CreateAuction />} />
             <Route path="settings/password" element={<ChangePassword />} />
+            <Route path="notifications" element={<Notifications />} />
+            <Route path="post/:id" element={<PostDetails />} />
           </Route>
         </Routes>
       </Router>
