@@ -1,4 +1,4 @@
-package com.backend.pruebaEntrenos;
+package com.testEntreNos;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
