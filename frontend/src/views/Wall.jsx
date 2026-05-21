@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Search, Filter, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, Filter, Star, ChevronDown } from 'lucide-react';
 
 const Wall = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
 
   // Mocks de publicaciones
   const mockPosts = [
@@ -39,10 +42,10 @@ const Wall = () => {
   ];
 
   return (
-    <div>
+    <div className="animate-in">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h2>Muro de Publicaciones</h2>
-        <button className="btn-primary">Publicar</button>
+        <button className="btn-primary" onClick={() => navigate('/publish')}>Publicar</button>
       </div>
 
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
@@ -64,15 +67,40 @@ const Wall = () => {
             style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', color: 'var(--text-primary)' }}
           />
         </div>
-        <button className="card" style={{ padding: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Filter size={20} />
-          <span>Filtros</span>
-        </button>
+        <div style={{ position: 'relative' }}>
+          <button 
+            className="card interactive-card" 
+            style={{ padding: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <Filter size={20} />
+            <span>Filtros</span>
+            <ChevronDown size={16} />
+          </button>
+
+          {showFilters && (
+            <div className="card animate-in" style={{ 
+              position: 'absolute', 
+              top: '110%', 
+              right: 0, 
+              width: '200px', 
+              padding: '1rem', 
+              zIndex: 10,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem'
+            }}>
+              <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center' }}>
+                Faltan por agregar categorías (Definición Backend)
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {mockPosts.map(post => (
-          <div key={post.id} className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        {mockPosts.map((post, index) => (
+          <div key={post.id} className="card interactive-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', animationDelay: `${index * 0.1}s` }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>

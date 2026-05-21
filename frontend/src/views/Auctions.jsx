@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Clock, Hammer } from 'lucide-react';
 
 const Auctions = () => {
+  const navigate = useNavigate();
   const mockAuctions = [
     {
       id: 1,
@@ -24,15 +26,15 @@ const Auctions = () => {
   ];
 
   return (
-    <div>
+    <div className="animate-in">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h2>Motor de Subastas de Activos</h2>
-        <button className="btn-primary" style={{ backgroundColor: 'var(--accent-warning)', color: '#fff' }}>Crear Subasta</button>
+        <button className="btn-primary" style={{ backgroundColor: 'var(--accent-warning)', color: '#fff' }} onClick={() => navigate('/create-auction')}>Crear Subasta</button>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        {mockAuctions.map(auction => (
-          <div key={auction.id} className="card" style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+        {mockAuctions.map((auction, index) => (
+          <div key={auction.id} className="card interactive-card" style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', animationDelay: `${index * 0.1}s` }}>
             <div style={{ 
               width: '150px', 
               height: '150px', 

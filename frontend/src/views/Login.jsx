@@ -39,7 +39,7 @@ const Login = () => {
       backgroundColor: 'var(--bg-primary)',
       padding: '1rem'
     }}>
-      <div className="card" style={{ width: '100%', maxWidth: '400px' }}>
+      <div className="card animate-in" style={{ width: '100%', maxWidth: '400px' }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <h1 style={{ color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>entreNos</h1>
           <p style={{ color: 'var(--text-tertiary)' }}>Bienvenido a Plaza Alameda</p>

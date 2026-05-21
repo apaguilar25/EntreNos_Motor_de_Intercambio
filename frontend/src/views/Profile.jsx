@@ -1,15 +1,21 @@
 import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
 import { Star, Settings, ShieldCheck } from 'lucide-react';
 
 const Profile = () => {
   const { user } = useContext(AppContext);
+  const navigate = useNavigate();
 
   return (
-    <div>
+    <div className="animate-in">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h2>Mi Perfil y Catálogo</h2>
-        <button className="btn-primary" style={{ backgroundColor: 'transparent', color: 'var(--text-secondary)', border: '1px solid var(--border-color)' }}>
+        <button 
+          className="btn-primary" 
+          style={{ backgroundColor: 'transparent', color: 'var(--text-secondary)', border: '1px solid var(--border-color)' }}
+          onClick={() => navigate('/settings/password')}
+        >
           <Settings size={18} />
         </button>
       </div>
@@ -46,12 +52,12 @@ const Profile = () => {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+      <div className="responsive-grid">
         {/* Catálogo de Ofertas */}
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <h3 style={{ fontSize: '1.25rem' }}>Mis Ofertas (Talento)</h3>
-            <button className="btn-primary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }}>Añadir</button>
+            <button className="btn-primary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }} onClick={() => navigate('/publish?type=oferta')}>Añadir Oferta</button>
           </div>
           <div className="card" style={{ padding: '1rem' }}>
             <div style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.75rem' }}>
@@ -71,7 +77,7 @@ const Profile = () => {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <h3 style={{ fontSize: '1.25rem' }}>Mis Necesidades</h3>
-            <button className="btn-primary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem', backgroundColor: 'var(--color-yellow-100)', color: 'var(--color-orange-600)' }}>Añadir</button>
+            <button className="btn-primary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem', backgroundColor: 'var(--color-yellow-100)', color: 'var(--color-orange-600)' }} onClick={() => navigate('/publish?type=demanda')}>Añadir Necesidad</button>
           </div>
           <div className="card" style={{ padding: '1rem' }}>
             <div style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '0.75rem' }}>
