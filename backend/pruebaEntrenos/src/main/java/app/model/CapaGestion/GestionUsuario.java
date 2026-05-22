@@ -2,11 +2,13 @@ package app.model.CapaGestion;
 
 import app.model.CapaEntidades.Habilidad;
 import app.model.CapaEntidades.Necesidad;
+import app.model.CapaEntidades.Sancion;
 import app.model.CapaEntidades.Usuario;
 import app.model.CapaPersistencia.PersistenciaUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,16 +41,29 @@ public class GestionUsuario {
     public void registrarUsuario(Usuario usuario) {
         List<Usuario> usuarios = persistenciaUsuario.cargar();
 
-        Usuario nuevoUsuario = new Usuario();
-        // Generamos un ID único, ej: USR-A1B2C
-        nuevoUsuario.setIdUsuario("USR-" + UUID.randomUUID().toString().substring(0, 5).toUpperCase());
-        nuevoUsuario.setReputacionHistorica(0.0); // Nace con 0 de reputación
-        nuevoUsuario.getSancion().setSancionActiva(false); // Nace sin sanciones
+        // ¡USAMOS EL OBJETO "usuario" QUE LLEGA POR PARÁMETRO, NO CREAMOS UNO NUEVO!
 
+        usuario.setReputacionHistorica(0.0); // Nace con 0 de reputación
 
-        usuarios.add(nuevoUsuario);
+        // Evitamos el NullPointerException inicializando la sanción
+        if (usuario.getSancion() == null) {
+            usuario.setSancion(new Sancion());
+        }
+        usuario.getSancion().setSancionActiva(false); // Nace sin sanciones
+
+        // 💡 SÚPER IMPORTANTE PARA TU CATÁLOGO:
+        // Inicializamos las listas vacías para que cuando intentes agregar
+        // necesidades desde el Front, no te dé error de NullPointer.
+        if (usuario.getHabilidades() == null) {
+            usuario.setHabilidades(new ArrayList<>());
+        }
+        if (usuario.getNecesidades() == null) {
+            usuario.setNecesidades(new ArrayList<>());
+        }
+
+        usuarios.add(usuario);
         persistenciaUsuario.guardar(usuarios);
-        System.out.println("[SISTEMA] Usuario registrado con éxito: " + nuevoUsuario.getNombre());
+        System.out.println("[SISTEMA] Usuario registrado con éxito: " + usuario.getNombre());
     }
 
     // 2. Buscar Usuario

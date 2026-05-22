@@ -14,7 +14,7 @@ import java.util.List;
 public class PersistenciaTransacciones {
 
     // Misma ruta corregida de tu entorno
-    private final String RUTA_ARCHIVO = "C:/Users/Personal/.gemini/antigravity/scratch/entreNos/backend/pruebaEntrenos/src/main/java/app/model/data/transacciones.json";
+    private final String RUTA_ARCHIVO = "backend/pruebaEntrenos/src/main/java/app/model/data/transacciones.json";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public void guardar(List<Transaccion> transacciones) {

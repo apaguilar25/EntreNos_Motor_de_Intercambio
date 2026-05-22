@@ -1,0 +1,102 @@
+@startuml
+
+skinparam style strictuml
+skinparam DefaultFontName Arial
+skinparam SequenceLineCheck on
+skinparam SequenceLifeLineBackgroundColor #E8F4F8
+skinparam SequenceLifeLineBorderColor #2C3E50
+skinparam ParticipantBackgroundColor #E8F4F8
+skinparam ParticipantBorderColor #2C3E50
+skinparam noteBackgroundColor #FDEDEC
+skinparam noteBorderColor #E74C3C
+
+title <size:20> Diagrama de Secuencia HU4: Gestión de Subastas
+
+actor "<u>: Usuario</u>" as User
+participant "<u>: Sistema</u>" as UI
+control "<u>: GestionSubasta</u>" as GS
+control "<u>: GestionUsuario</u>" as GU
+database "<u>: PersistenciaSubasta</u>" as PS
+database "<u>: PersistenciaUsuario</u>" as PU
+
+== 1. Creación de Subasta ==
+User -> UI: Seleccionar creación de nueva subasta
+activate UI
+
+UI -> GU: buscarUsuario(idUsuario)
+activate GU
+GU --> UI: usuario
+deactivate GU
+
+alt ¿Usuario tiene sanción activa?
+    UI --> User: Mostrar error: Acceso deshabilitado (Bloqueo 72h)
+else [Sin sanción]
+    UI --> User: Desplegar formulario de creación
+    User -> UI: Ingresar datos y confirmar
+
+    UI -> GS: registrarSubasta(idSubastador, descripcion, nombreActivo, estadoFisico, rutasImagenes)
+    activate GS
+    GS -> "<u>: Subasta</u>" as Sub  : new Subasta(idSubastador, descripcion, activoFisico)
+    GS -> PS: guardar(List<Subasta>)
+    activate PS
+    PS --> GS: void
+    deactivate PS
+    GS --> UI: subastaActiva
+    deactivate GS
+    UI --> User: Mostrar mensaje "Subasta publicada exitosamente"
+end
+
+== 2. Periodo de Licitación ==
+... Espera hasta la fecha de finalización ...
+[-> GS: Evento: Fecha finalización alcanzada
+activate GS
+GS -> GS: actualizarEstado(EN_REVISION)
+GS -> GS: enviarNotificacion(subastador, "Plazo vencido: tiene 5 días para decidir", ALERTA_SISTEMA)
+GS -> GS: enviarNotificacion(postores, "Periodo de licitación finalizado", ACTUALIZACION_SUBASTA)
+deactivate GS
+
+== 3. Resolución de la Subasta (Interacción del Usuario) ==
+User -> UI: Acceder al panel de gestión de ofertas
+activate UI
+UI -> GS: buscarSubasta(idSubasta)
+activate GS
+GS --> UI: datosSubasta
+deactivate GS
+UI --> User: Mostrar panel de ofertas recibidas
+
+alt Adjudicar ganador
+    User -> UI: Seleccionar oferta ganadora
+    UI -> GS: adjudicarGanador(ofertaGanadora)
+    activate GS
+    GS -> GS: enviarNotificacion(participantes, "Resultados disponibles", ACTUALIZACION_SUBASTA)
+    GS -> GS: actualizarEstado(FINALIZADA)
+    GS -> PS: guardar(List<Subasta>)
+    deactivate GS
+    UI --> User: Mostrar confirmación de adjudicación
+
+else Cancelar subasta
+    User -> UI: Seleccionar cancelar
+    UI -> GS: actualizarEstado(CANCELADA)
+    activate GS
+    GS -> GS: enviarNotificacion(postores, "Subasta cancelada", ACTUALIZACION_SUBASTA)
+    GS -> PS: guardar(List<Subasta>)
+    deactivate GS
+    UI --> User: Mostrar confirmación de cancelación
+end
+
+== 4. Cierre Automático por Inactividad (Evento Asíncrono) ==
+[-> GS: Evento: Se cumplen 5 días sin respuesta del subastador
+activate GS
+GS -> GS: actualizarEstado(CANCELADA)
+
+GS -> GU: (Aplicar sanción al subastador)
+activate GU
+GU -> PU: guardar(List<Usuario>)
+deactivate GU
+
+GS -> GS: enviarNotificacion(subastador, "Sanción aplicada por inactividad", ALERTA_SISTEMA)
+GS -> GS: enviarNotificacion(postores, "Subasta cancelada por inactividad", ACTUALIZACION_SUBASTA)
+GS -> PS: guardar(List<Subasta>)
+deactivate GS
+
+@enduml

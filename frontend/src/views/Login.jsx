@@ -12,7 +12,7 @@ const Login = () => {
   // Register fields
   const [nombre, setnombre] = useState('');
   const [telefono, settelefono] = useState('');
-  const [descripcion, setdescripcion] = useState('');
+  const [descripcionPersonal, setdescripcionPersonal] = useState('');
   const [fotoPerfil, setfotoPerfil] = useState(null);
 
   const [error, setError] = useState('');
@@ -72,7 +72,7 @@ const Login = () => {
       }
     } else {
       // --- REGISTRO REAL CON JAVA ---
-      if (!nombre || !correoElectronico || !telefono || !descripcion) {
+      if (!nombre || !correoElectronico || !telefono || !descripcionPersonal) {
         setError('Por favor, completa todos los campos obligatorios.');
         return;
       }
@@ -83,7 +83,7 @@ const Login = () => {
       else if (prefix === 'luis') assignedId = 'USR-1003';
 
       // Registro simulado
-      setUser({ id: assignedId, name, email: correoElectronico, phone: telefono, description: descripcion });
+      setUser({ id: assignedId, nombre, correoElectronico: correoElectronico, telefono: telefono, descripcionPersonal: descripcionPersonal });
       
       try {
         const response = await fetch(`http://localhost:8080/api/usuarios/${assignedId}`);
@@ -157,8 +157,8 @@ const Login = () => {
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Descripción Personal</label>
                 <textarea 
-                  value={descripcion}
-                  onChange={(e) => setdescripcion(e.target.value)}
+                  value={descripcionPersonal}
+                  onChange={(e) => setdescripcionPersonal(e.target.value)}
                   placeholder="Cuenta un poco sobre ti..."
                   rows={2}
                   style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', resize: 'vertical' }}

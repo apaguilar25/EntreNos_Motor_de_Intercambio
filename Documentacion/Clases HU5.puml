@@ -136,6 +136,7 @@ package "Capa de Gestión" {
 
     class GestionSubasta {
         + adjudicarGanador(ofertaGanadora: Oferta): Void
+        + registrarOferta(idOfertante, idSubasta, listaBienes, imagen)
         + registrarSubasta(idSubastador: String, descripcion: String, nombreActivo: String, estadoFisico: EstadoActivoFisico, rutasImagenes: List<String>): Void
         + buscarSubasta(idSubasta: String): Subasta
         + actualizarEstado(idSubasta: String, estado: EstadoSubasta): Void

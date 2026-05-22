@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public class PersistenciaSolicitud {
 
-    private final String RUTA_ARCHIVO = "C:/Users/Personal/.gemini/antigravity/scratch/entreNos/backend/pruebaEntrenos/src/main/java/app/model/data/solicitudes.json";
+    private final String RUTA_ARCHIVO = "backend/pruebaEntrenos/src/main/java/app/model/data/solicitudes.json";
 
     // Configuración clave para ignorar campos intrusos
     private final ObjectMapper objectMapper = new ObjectMapper()
