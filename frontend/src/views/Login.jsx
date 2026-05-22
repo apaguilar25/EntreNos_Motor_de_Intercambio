@@ -13,15 +13,24 @@ const Login = () => {
   // Register fields
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [description, setDescription] = useState('');
   const [profilePic, setProfilePic] = useState(null);
 
   const [error, setError] = useState('');
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [isLocked, setIsLocked] = useState(false);
+
   const { setUser, setBalance } = useContext(AppContext);
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
+
+    if (isLocked) {
+      setError('Cuenta bloqueada temporalmente por intentos fallidos. Intente en 24 horas.');
+      return;
+    }
 
     if (isLogin) {
       if (!email || !password) {
@@ -31,27 +40,50 @@ const Login = () => {
       
       const domain = email.split('@')[1];
       if (domain !== 'unimet.edu.ve') {
-        setError('El correo debe pertenecer al dominio unimet.edu.ve');
+        setError('Correo o contraseña incorrectos.');
+        setFailedAttempts(prev => {
+          const newAttempts = prev + 1;
+          if (newAttempts >= 3) {
+            setIsLocked(true);
+            setError('Cuenta bloqueada temporalmente por intentos fallidos. Intente en 24 horas.');
+          }
+          return newAttempts;
+        });
         return;
       }
       
-      setUser({ name: 'Usuario Prueba', email });
+      // Simulating a failed password match randomly for mock purposes (optional, but let's just accept if correct domain)
+      if (password !== '123456' && password.length < 6) { // Mock strictness
+         setError('Correo o contraseña incorrectos.');
+         setFailedAttempts(prev => {
+          const newAttempts = prev + 1;
+          if (newAttempts >= 3) {
+            setIsLocked(true);
+            setError('Cuenta bloqueada temporalmente por intentos fallidos. Intente en 24 horas.');
+          }
+          return newAttempts;
+        });
+        return;
+      }
+
+      setFailedAttempts(0);
+      setUser({ name: email.split('@')[0], email });
       setBalance(100);
       navigate('/');
     } else {
-      if (!name || !email || !phone || !password) {
+      if (!name || !email || !phone || !password || !description) {
         setError('Por favor, completa todos los campos obligatorios.');
         return;
       }
       
       const domain = email.split('@')[1];
       if (domain !== 'unimet.edu.ve') {
-        setError('El correo debe pertenecer al dominio unimet.edu.ve');
+        setError('El correo debe pertenecer al dominio oficial de la comunidad (unimet.edu.ve).');
         return;
       }
 
       // Registro simulado
-      setUser({ name, email, phone });
+      setUser({ name, email, phone, description });
       setBalance(100);
       navigate('/');
     }
@@ -103,6 +135,16 @@ const Login = () => {
                   style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
                 />
               </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Descripción Personal</label>
+                <textarea 
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Cuenta un poco sobre ti..."
+                  rows={2}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', resize: 'vertical' }}
+                />
+              </div>
             </>
           )}
 
@@ -137,7 +179,7 @@ const Login = () => {
             </div>
           )}
 
-          <button type="submit" className="btn-primary" style={{ marginTop: '1rem', padding: '0.75rem' }}>
+          <button type="submit" className="btn-primary" style={{ marginTop: '1rem', padding: '0.75rem' }} disabled={isLocked}>
             {isLogin ? 'Ingresar' : 'Registrarse'}
           </button>
         </form>

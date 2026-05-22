@@ -8,10 +8,22 @@ const MakeRequest = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const type = searchParams.get('type') || 'oferta'; // oferta, demanda, subasta
-  const { user } = useContext(AppContext);
+  const { user, balance } = useContext(AppContext);
 
   const [message, setMessage] = useState('');
   const [items, setItems] = useState('');
+  const [showInterestPrompt, setShowInterestPrompt] = useState(true);
+
+  // Mock JSON items
+  const availableGoods = [
+    { id: 1, name: 'Harina de Maíz' },
+    { id: 2, name: 'Arroz' },
+    { id: 3, name: 'Pasta' },
+    { id: 4, name: 'Aceite' }
+  ];
+  const [selectedGoods, setSelectedGoods] = useState({});
+  const [offerImage, setOfferImage] = useState(false);
+
 
   // Mock data based on type
   const postData = {
@@ -42,16 +54,43 @@ const MakeRequest = () => {
   };
 
   const data = postData[type] || postData.oferta;
+  const cost = parseInt(data.price);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (type === 'subasta' && !items) {
-      alert('Debes indicar los bienes que ofreces para la subasta.');
-      return;
-    }
-    if (!message) {
-      alert('Debes escribir un mensaje.');
-      return;
+    if (type === 'subasta') {
+      const hasSelection = Object.keys(selectedGoods).length > 0;
+      let validQuantity = true;
+      Object.values(selectedGoods).forEach(q => {
+        if (!q || q <= 0) validQuantity = false;
+      });
+
+      if (!hasSelection) {
+        alert('Debes seleccionar al menos un bien para la puja.');
+        return;
+      }
+      if (!validQuantity) {
+        alert('Debes indicar una cantidad válida para los bienes seleccionados.');
+        return;
+      }
+    } else {
+      if (!message) {
+        alert('Debes escribir un mensaje.');
+        return;
+      }
+      
+      // Validación de insolvencia (HU2)
+      if (balance < cost) {
+        alert(`Error: Fondos insuficientes. Tienes ${balance} cr pero la solicitud cuesta ${cost} cr.`);
+        return;
+      }
+
+      if (showInterestPrompt) {
+        const addInterest = window.confirm("¿Deseas añadir esta categoría a tus intereses para recibir mejores sugerencias?");
+        if (addInterest) {
+          alert("Categoría añadida a tus intereses.");
+        }
+      }
     }
     
     alert('¡Solicitud enviada con éxito!');
@@ -87,33 +126,68 @@ const MakeRequest = () => {
           </div>
 
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {type === 'subasta' && (
+            {type === 'subasta' ? (
+              <>
+                <div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', fontWeight: '500' }}>
+                    <Package size={16} /> Bienes a Ofrecer (Selecciona y pon cantidad)
+                  </label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {availableGoods.map(good => (
+                      <div key={good.id} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <input 
+                          type="checkbox" 
+                          id={`good-${good.id}`} 
+                          checked={selectedGoods[good.id] !== undefined}
+                          onChange={(e) => {
+                            const newGoods = { ...selectedGoods };
+                            if (e.target.checked) {
+                              newGoods[good.id] = 1;
+                            } else {
+                              delete newGoods[good.id];
+                            }
+                            setSelectedGoods(newGoods);
+                          }}
+                        />
+                        <label htmlFor={`good-${good.id}`} style={{ flex: 1, cursor: 'pointer' }}>{good.name}</label>
+                        {selectedGoods[good.id] !== undefined && (
+                          <input 
+                            type="number" 
+                            min="1" 
+                            value={selectedGoods[good.id]}
+                            onChange={(e) => setSelectedGoods({...selectedGoods, [good.id]: parseInt(e.target.value) || 0})}
+                            style={{ width: '60px', padding: '0.25rem', borderRadius: '0.25rem', border: '1px solid var(--border-color)', outline: 'none' }}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Imagen de la Oferta (Opcional)</label>
+                  <div 
+                    onClick={() => setOfferImage(!offerImage)}
+                    style={{ border: offerImage ? '2px solid var(--accent-primary)' : '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '1rem', textAlign: 'center', color: offerImage ? 'var(--accent-primary)' : 'var(--text-tertiary)', cursor: 'pointer', backgroundColor: offerImage ? 'var(--bg-secondary)' : 'transparent' }}
+                  >
+                    <p>{offerImage ? 'Imagen adjuntada' : 'Click para simular carga de imagen'}</p>
+                  </div>
+                </div>
+              </>
+            ) : (
               <div>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: '500' }}>
-                  <Package size={16} /> Bienes a Ofrecer
+                  <MessageSquare size={16} /> Mensaje
                 </label>
-                <input 
-                  type="text" 
-                  value={items}
-                  onChange={(e) => setItems(e.target.value)}
-                  placeholder="Ej: 2 Harinas PAN + 1 Arroz"
-                  style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
+                <textarea 
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Escribe un mensaje detallando tu disponibilidad o condiciones..."
+                  rows={5}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', resize: 'vertical' }}
                 />
               </div>
             )}
-
-            <div>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: '500' }}>
-                <MessageSquare size={16} /> Mensaje
-              </label>
-              <textarea 
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Escribe un mensaje detallando tu disponibilidad o condiciones..."
-                rows={5}
-                style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', resize: 'vertical' }}
-              />
-            </div>
 
             <button type="submit" className="btn-primary" style={{ marginTop: '1rem', padding: '0.75rem' }}>
               {type === 'subasta' ? 'Enviar Puja' : 'Enviar Solicitud'}

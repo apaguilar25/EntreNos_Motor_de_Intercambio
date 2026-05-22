@@ -1,11 +1,22 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
-import { Star, Settings, ShieldCheck } from 'lucide-react';
+import { Star, Settings, ShieldCheck, Trophy, Medal, Award, XCircle } from 'lucide-react';
 
 const Profile = () => {
   const { user } = useContext(AppContext);
   const navigate = useNavigate();
+  
+  const [bids, setBids] = useState([
+    { id: 1, auctionTitle: 'Cámara Fotográfica', myOffer: '4 Paquetes de Harina Pan', status: 'Activa' }
+  ]);
+
+  const handleRetractBid = (id) => {
+    if(window.confirm('¿Estás seguro que deseas retirar tu oferta de esta subasta?')) {
+      setBids(bids.filter(b => b.id !== id));
+      alert('Oferta retirada con éxito.');
+    }
+  };
 
   return (
     <div className="animate-in">
@@ -48,6 +59,34 @@ const Profile = () => {
               <Star size={16} fill="currentColor" /> 5.0
             </span>
             <span style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>12 transacciones exitosas</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Sección de Logros y Medallas (HU9) */}
+      <div style={{ marginBottom: '2rem' }}>
+        <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Trophy size={20} color="var(--color-orange-600)" /> Logros y Medallas
+        </h3>
+        <div className="card" style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', width: '100px', opacity: 1 }}>
+            <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-700)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.5rem' }}>
+              <Medal size={24} />
+            </div>
+            <span style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Primer Trueque</span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', width: '100px', opacity: 1 }}>
+            <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: 'var(--color-orange-100)', color: 'var(--color-orange-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.5rem' }}>
+              <Award size={24} />
+            </div>
+            <span style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>5 Estrellas</span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', width: '100px', opacity: 0.4 }}>
+            <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.5rem' }}>
+              <ShieldCheck size={24} />
+            </div>
+            <span style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Proveedor Confiable</span>
+            <span style={{ fontSize: '0.65rem' }}>Bloqueada</span>
           </div>
         </div>
       </div>
@@ -125,6 +164,38 @@ const Profile = () => {
               <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Cambio por alimentos no perecederos.</div>
               <div style={{ color: 'var(--accent-primary)', fontWeight: 'bold', fontSize: '0.875rem', marginTop: '0.25rem' }}>Mejor: 2 Harinas + 1 Arroz</div>
             </div>
+          </div>
+        </div>
+
+        {/* Historial de Ofertas Enviadas (HU5) */}
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h3 style={{ fontSize: '1.25rem' }}>Mis Ofertas Enviadas</h3>
+          </div>
+          <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {bids.length === 0 ? (
+              <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
+                No tienes ofertas activas.
+              </div>
+            ) : (
+              bids.map(bid => (
+                <div key={bid.id} style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}>
+                  <div style={{ fontWeight: '600', marginBottom: '0.25rem' }}>Subasta: {bid.auctionTitle}</div>
+                  <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Mi oferta: {bid.myOffer}</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
+                    <span style={{ fontSize: '0.75rem', backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-700)', padding: '0.15rem 0.5rem', borderRadius: '1rem', fontWeight: 'bold' }}>
+                      {bid.status}
+                    </span>
+                    <button 
+                      style={{ background: 'transparent', border: 'none', color: 'var(--color-red-600)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', fontWeight: 'bold' }}
+                      onClick={() => handleRetractBid(bid.id)}
+                    >
+                      <XCircle size={14} /> Retirar
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
