@@ -70,7 +70,8 @@ package "Capa de Entidades" {
         - descripcionServicio: String
         - estado: EstadoSolicitud
         + verificarExpiracion(fechaActual: Date): Boolean
-        + SolicitudIntercambio()
+        + SolicitudIntercambio(idOfertante: String, idDemandante: String, nombreServicio: String,
+        precioCreditos: int, descripcionServicio: String)
     }
 
     class Imagen {
