@@ -1,5 +1,13 @@
 @startuml
 
+skinparam DefaultFontName Arial
+skinparam ClassBackgroundColor #E8F4F8
+skinparam ClassBorderColor #2C3E50
+skinparam noteBackgroundColor #FDEDEC
+skinparam noteBorderColor #E74C3C
+
+title <size:25> Diagrama de Clases HU1: Registro de Identidad y Catálogo de Talentos
+
 package "Capa de Entidades" {
 
     class Usuario {
@@ -12,7 +20,7 @@ package "Capa de Entidades" {
         - sancion
         <space:10> sancionActiva: Boolean
         <space:10> fechaSancion: Date
-        + Usuario(nombre: String, correo: String, telefono: String, imagen: Imagen)
+        + Usuario(nombre: String, correo: String, telefono: String, descripcionPersonal: String, imagen: Imagen)
     }
 
     class Monedero {
@@ -57,27 +65,22 @@ package "Capa de Entidades" {
 }
 
 
-package "Capa de GestiÃ³n" {
+package "Capa de Gestión" {
 
     class GestionUsuario {
-        + registrarUsuario(nombre: String, correo: String, telefono: String, foto: String): Void
+        + registrarUsuario(nombre: String, correo: String, telefono: String, descripcionPersonal: String, foto: String): Void
+        + registrarUsuario(usuario: Usuario): Void
         + calcularReputacionHistorica(idUsuario: String): Void
         + calcularReputacionServicio(idUsuario: String, nombreServicio: String, calificacion: int): Void
         + buscarUsuario(idUsuario: String): Usuario
-        + modificarDatosUsuario(idUsuario: String): Void
-        + GestionUsuario()
+        + modificarDatosUsuario(idUsuario: String, nuevoNombre: String, nuevoTelefono: String, nuevaDescripcion: String): Void
     }
 
-    GestorUsuario ..> Usuario
+    GestionUsuario --> Usuario
 
 }
 
 package "Capa de Persistencia" {
-
-    interface Persistencia {
-        + cargar(): List<Object>
-        + guardar(datos: List<Object>): Void
-    }
 
     class PersistenciaUsuario {
         - RUTA_ARCHIVO: String = "data/usuarios.json"
@@ -86,12 +89,9 @@ package "Capa de Persistencia" {
     }
 
     class PersistenciaCatalogo {
-        + cargar(): List<Object>
-        + guardar(datos: List<Object>): Void
+        + cargar(): List<Habilidad>
+        + guardar(datos: List<Habilidad>): Void
     }
-
-    PersistenciaUsuario .up.|> Persistencia
-    PersistenciaCatalogo .up.|> Persistencia
 }
 
 

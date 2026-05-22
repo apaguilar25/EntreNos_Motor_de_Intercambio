@@ -1,0 +1,140 @@
+@startuml
+
+skinparam style strictuml
+skinparam DefaultFontName Arial
+skinparam SequenceLifeLineBackgroundColor #E8F4F8
+skinparam SequenceLifeLineBorderColor #2C3E50
+skinparam ParticipantBackgroundColor #E8F4F8
+skinparam ParticipantBorderColor #2C3E50
+skinparam noteBackgroundColor #FDEDEC
+skinparam noteBorderColor #E74C3C
+
+title <size:25> Diagrama de Secuencia HU1: Registro de Identidad y Catálogo de Talentos
+
+actor "Usuario" as User
+participant "<u>: Sistema</u>" as UI
+control "<u>: GestionUsuario</u>" as GU
+participant "<u>: Imagen</u>" as Img
+participant "<u>: Monedero</u>" as M
+participant "<u>: Usuario</u>" as U
+database "<u>: PersistenciaUsuario</u>" as PU
+database "<u>: PersistenciaCatalogo</u>" as PC
+
+note right of PC
+  Se utiliza control y database para
+  indicar que por ser service para
+  gestion y persistencia, no se inicializan
+  de forma manual
+end note
+
+== 1. Creación de Perfil ==
+User -> UI: Seleccionar creación de perfil
+activate UI
+User -> UI: Cargar foto, nombre, correo, teléfono y descripción personal
+User -> UI: Seleccionar opción para finalizar el registro
+
+UI -> GU: registrarUsuario(nombre, correo, telefono, descripcionPersonal, rutaImagen)
+activate GU
+
+GU -> PU: cargar()
+activate PU
+PU --> GU: List<Usuario>
+deactivate PU
+
+GU -> Img : new Imagen(rutaImagen)
+GU -> M : new Monedero()
+GU -> U : new Usuario(nombre, correo, telefono, descripcionPersonal, rutaImagen)
+GU -> U: setMonedero(monedero)
+
+GU -> PU: guardar(List<Usuario>)
+activate PU
+PU --> GU: void
+deactivate PU
+
+GU --> UI: registroExitoso
+deactivate GU
+
+UI --> User: Mostrar mensaje "Creación de perfil exitosa"
+
+== 2. Despliegue del Catálogo ==
+UI -> PC: cargar()
+activate PC
+note left of PC
+  Carga los elementos predefinidos
+  para facilitar el motor de búsqueda
+end note
+note left of GU
+  Carga tipo habilidad pero
+  renderiza según corresponda
+  (Habilidades y Necesidades)
+end note
+PC --> UI: List<Habilidades>
+deactivate PC
+
+UI --> User: Desplegar formulario para completación de catálogo
+
+== 3. Toma de Decisión: Completar Catálogo ==
+alt ¿Desea completar el catálogo en este momento? = [Sí]
+
+    loop Mientras desee agregar habilidades
+        User -> UI: Navegar y seleccionar habilidad predefinida
+        User -> UI: Ingresar valor del servicio en créditos (entero > 0)
+        User -> UI: Ingresar descripción del servicio
+    end
+
+    loop Mientras desee agregar necesidades
+        User -> UI: Navegar y seleccionar necesidad predefinida
+        User -> UI: Ingresar descripción de la necesidad (condiciones/preferencias)
+    end
+
+    User -> UI: Seleccionar opción de guardar catálogo
+
+    UI -> GU: buscarUsuario(idUsuario)
+    activate GU
+
+    loop Por cada Habilidad registrada
+        GU -> "Habilidad" as Hab : new Habilidad(nombre, precioCreditos, descripcion)
+        GU -> U: (Añadir a lista interna de habilidades)
+    end
+
+    loop Por cada Necesidad registrada
+        GU -> "Necesidad" as Nec : new Necesidad(nombre, descripcion)
+        GU -> U: (Añadir a lista interna de necesidades)
+    end
+
+    == 4. Asignación de Capital Semilla y Persistencia ==
+    GU -> U: getMonedero()
+    activate U
+    U --> GU: monedero
+    deactivate U
+
+    GU -> M: (Sumar Capital Semilla a creditosDisponibles)
+    activate M
+    M --> GU: void
+    deactivate M
+
+    note right of GU
+      Toda la información del catálogo y saldo del monedero
+      se guarda directamente en la persistencia del usuario.
+    end note
+    GU -> PU: guardar(List<Usuario>)
+    activate PU
+    PU --> GU: void
+    deactivate PU
+
+    GU --> UI: catalogoActualizado
+    deactivate GU
+
+    UI --> User: Mostrar mensaje "Catálogo actualizado con éxito"
+    UI --> User: Mostrar mensaje "Recepción de capital semilla en monedero"
+
+else ¿Desea completar el catálogo en este momento? = [No]
+
+    User -> UI: Seleccionar la opción para completar luego
+    UI --> User: Mostrar mensaje "Podrá completar el catálogo en otro momento"
+    UI -> UI: Cerrar sección de completación de catálogo
+    deactivate UI
+
+end
+
+@enduml

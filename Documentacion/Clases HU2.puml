@@ -1,5 +1,13 @@
 @startuml
 
+skinparam DefaultFontName Arial
+skinparam ClassBackgroundColor #E8F4F8
+skinparam ClassBorderColor #2C3E50
+skinparam noteBackgroundColor #FDEDEC
+skinparam noteBorderColor #E74C3C
+
+title <size:25> Diagrama de Clases HU2: Muro de Intercambio y Motor de Publicaciones
+
 package "Capa de Entidades" {
 
     class Usuario {
@@ -54,6 +62,8 @@ package "Capa de Entidades" {
 
     class SolicitudIntercambio {
         - idSolicitudIntercambio: String
+        - idOfertante: String
+        - idDemandante: String
         - fechaEmision: Date
         - nombreServicio: String
         - precioCreditos: int
@@ -63,8 +73,14 @@ package "Capa de Entidades" {
         + SolicitudIntercambio()
     }
 
+    class Imagen {
+        - ruta: String
+        + Imagen(ruta: String)
+    }
+
     class Transaccion {
     }
+
 
 
     Usuario "1" *-- "1" Monedero
@@ -80,6 +96,7 @@ package "Capa de Entidades" {
 
     enum EstadoSolicitud {
         ACEPTADA
+        PENDIENTE
         RECHAZADA
     }
 
@@ -110,22 +127,17 @@ package "Capa de GestiÃ³n" {
     class GestionSolicitudIntercambio {
         + registrarSolicitud(idOfertante: String, idDemandante: String, nombreServicio: String, precioCreditos: int, descripcionServicio: String): Void
         + buscarSolicitud(idSolicitudIntercambio: String): SolicitudIntercambio
-        + actualizarEstado(estado: Enum): Void
+        + actualizarEstado(idSolicitudIntercambio: String, estado: EstadoSolicitud): Void
         + procesarExpiracionesAutomaticas():Void
         + enviarNotificacion(destinatario: idUsuario, mensaje: String, tipo: TipoNotificacion): Void
         + GestionSolicitudIntercambio()
     }
 
-    GestionSolicitudIntercambio ..> SolicitudIntercambio
-    GestionUsuario ..> Usuario
+    GestionSolicitudIntercambio o-- SolicitudIntercambio
+    GestionUsuario o-- Usuario
 }
 
 package "Capa de Persistencia" {
-
-    interface Persistencia {
-        + cargar(): List<Object>
-        + guardar(datos: List<Object>): void
-    }
 
     class PersistenciaUsuario {
         - RUTA_ARCHIVO: String = "data/usuarios.json"
@@ -133,7 +145,6 @@ package "Capa de Persistencia" {
         + guardar(datos: List<Usuario>): void
     }
 
-    PersistenciaUsuario .up.|> Persistencia
 }
 
 @enduml

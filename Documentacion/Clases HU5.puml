@@ -1,0 +1,167 @@
+@startuml
+
+skinparam DefaultFontName Arial
+skinparam ClassBackgroundColor #E8F4F8
+skinparam ClassBorderColor #2C3E50
+skinparam noteBackgroundColor #FDEDEC
+skinparam noteBorderColor #E74C3C
+
+title <size:25> Diagrama de Clases HU5: Participación en Subastas de Activos
+
+package "Capa de Entidades" {
+
+    class Usuario {
+        - idUsuario: String
+        - nombre: String
+        - correoElectronico: String
+        - telefono: String
+        - descripcionPersonal: String
+        - reputacionHistorica: Double
+        - sancion
+        <space:10> sancionActiva: Boolean
+        <space:10> fechaSancion: Date
+        + Usuario(nombre: String, correo: String, telefono: String, imagen: Imagen)
+    }
+
+    class Monedero {
+    }
+
+    class Habilidad {
+    }
+
+    class Necesidad {
+    }
+
+    class Imagen {
+    - ruta: String
+    + Imagen(ruta: String)
+    }
+
+    class Notificacion {
+        - idNotificacion: String
+        - idRemitente: String
+        - idDestinatario: String
+        - mensaje: String
+        - tipo: TipoNotificacion
+        + Notificacion(idRemitente: String, idDestinatario: String, mensaje: String, tipo: TipoNotificacion)
+    }
+
+    class Subasta {
+        - idSubasta: String
+        - idSubastador: String
+        - descripcion: String
+        - fechaCreacion: Date
+        - fechaFinalizacion: Date
+        - estado: EstadoSubasta
+        + verificarCierreSubasta(fecha: Date): Boolean
+        + verificarExpiracionResolucion(fecha: Date): Boolean
+        + Subasta(idSubastador: String, descripcion: String, activoFisico: ActivoFisico)
+    }
+
+    class ActivoFisico {
+        - nombreActivo: String
+        - estadoFisico: EstadoActivoFisico
+        + ActivoFisico()
+    }
+
+    class Oferta {
+        - idSubasta
+        - idOfertante
+        - fechaDePublicacion: Date
+        - esGanadora: Boolean
+        + agregarLinea(bien: BienConsumo, cantidad: int): Void
+        + Oferta(fechaDePublicacion)
+    }
+
+    class LineaBienConsumo {
+        - cantidad: int
+        + LineaBienConsumo(cantidad: int)
+    }
+
+    class BienConsumo {
+        - nombreBienConsumo: String
+        + BienConsumo(nombreBienConsumo: String)
+    }
+
+    Oferta "1  " o-- "1..*  " BienConsumo
+    (Oferta, BienConsumo) .. LineaBienConsumo
+    Usuario "1" o-- "*" Oferta : oferta bienes >
+    Subasta "1" o-- "*" Oferta
+    Subasta "1 " o-- "1" ActivoFisico
+    Oferta "1" *-- "1" Imagen
+    ActivoFisico "1" *-- "1..* " Imagen
+    Usuario -left- Monedero
+    Usuario -left- Habilidad
+    Usuario -left- Necesidad
+    Usuario "1" *-- "1" Imagen
+    Usuario "1" -- "*" Notificacion : posee >
+
+    enum EstadoActivoFisico {
+        NUEVO
+        USADO
+        REPARADO
+    }
+
+    enum EstadoSubasta {
+        ACTIVA
+        FINALIZADA
+        EN_REVISION
+        CANCELADA
+    }
+
+
+    enum TipoNotificacion {
+        ALERTA_SISTEMA
+        NUEVA_SOLICITUD_ENTRANTE
+        ESTADO_SOLICITUD_CAMBIADO
+        TRANSACCION_ACTUALIZADA
+        MOVIMIENTO_MONEDERO
+        ACTUALIZACION_SUBASTA
+    }
+
+}
+
+
+
+package "Capa de Gestión" {
+
+    class GestionUsuario {
+        + registrarUsuario(nombre: String, correo: String, telefono: String, foto: String): Void
+        + calcularReputacionHistorica(idUsuario: String): Void
+        + calcularReputacionServicio(idUsuario: String, nombreServicio: String, calificacion: int): Void
+        + buscarUsuario(idUsuario: String): Usuario
+        + modificarDatosUsuario(idUsuario: String): Void
+        + GestionUsuario()
+    }
+
+    class GestionSubasta {
+        + adjudicarGanador(ofertaGanadora: Oferta): Void
+        + registrarSubasta(idSubastador: String, descripcion: String, nombreActivo: String, estadoFisico: EstadoActivoFisico, rutasImagenes: List<String>): Void
+        + buscarSubasta(idSubasta: String): Subasta
+        + actualizarEstado(idSubasta: String, estado: EstadoSubasta): Void
+        + enviarNotificacion(destinatario: idUsuario, mensaje: String, tipo: TipoNotificacion): Void
+        + GestionSubasta()
+
+    }
+
+    GestionUsuario o-- Usuario
+    GestionSubasta o-- Subasta
+}
+
+package "Capa de Persistencia" {
+
+    class PersistenciaUsuario {
+        - RUTA_ARCHIVO: String = "data/usuarios.json"
+        + cargar(): List<Usuario>
+        + guardar(datos: List<Usuario>): void
+    }
+
+    class PersistenciaSubasta {
+        - rutaArchivo: String = "data/subasta.JSON"
+        + cargar(): List<Subasta>
+        + guardar(datos: List<Subasta>): void
+    }
+
+}
+
+@enduml

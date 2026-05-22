@@ -1,0 +1,134 @@
+@startuml
+
+skinparam DefaultFontName Arial
+skinparam ClassBackgroundColor #E8F4F8
+skinparam ClassBorderColor #2C3E50
+skinparam noteBackgroundColor #FDEDEC
+skinparam noteBorderColor #E74C3C
+
+title <size:25> Diagrama de Clases HU3: Gestión de Transacciones y Calificaciones
+
+package "Capa de Entidades" {
+
+    class Usuario {
+        - idUsuario: String
+        - nombre: String
+        - correoElectronico: String
+        - telefono: String
+        - descripcionPersonal: String
+        - reputacionHistorica: Double
+        - sancion
+        <space:10> sancionActiva: Boolean
+        <space:10> fechaSancion: Date
+        + Usuario(nombre: String, correo: String, telefono: String, imagen: Imagen)
+    }
+
+    class Monedero {
+        - creditosDisponibles: int
+        - creditosComprometidos: int
+        + tieneFondosSuficiente(monto: int): Boolean
+        + calcularCreditosComprometidos(monto: int): Void
+        + Monedero()
+    }
+
+    class Imagen {
+    }
+
+    class Notificacion {
+        - idNotificacion: String
+        - idRemitente: String
+        - idDestinatario: String
+        - mensaje: String
+        - tipo: TipoNotificacion
+        + Notificacion(idRemitente: String, idDestinatario: String, mensaje: String, tipo: TipoNotificacion)
+    }
+
+    Usuario "1" *-- "1" Monedero
+    Usuario "1" *-- "1" Imagen
+    Usuario "1" -right- "*" Notificacion : <space:15>posee<space:15> >
+
+    class Transaccion {
+        - idTransaccion: String
+        - idOfertante: String
+        - idDemandante: String
+        - estado: EstadoTransaccion
+        - creditosRetenidos: int
+        - confirmacionOfertante: Boolean
+        - confirmacionDemandante: Boolean
+        + Transaccion(idOfertante: String, idDemandante: String, nombreServicio: String, descripcion: String)
+    }
+
+    class Servicio {
+        - nombreServicio: String
+        - descripcion: String
+        - calificacion: int
+        + Servicio(nombre: String, descripcion: String)
+    }
+
+    class Imagen {
+        - ruta: String
+        + Imagen(ruta: String)
+    }
+
+    Transaccion "1" *-- "1" Servicio
+    Transaccion "*" -- "1" Usuario : Es demandante <
+    Transaccion "*" -- "1" Usuario : Es ofertante <
+
+    enum TipoNotificacion {
+        ALERTA_SISTEMA
+        NUEVA_SOLICITUD_ENTRANTE
+        ESTADO_SOLICITUD_CAMBIADO
+        TRANSACCION_ACTUALIZADA
+        MOVIMIENTO_MONEDERO
+        ACTUALIZACION_SUBASTA
+    }
+
+    enum EstadoTransaccion {
+        INICIADA
+        FINALIZADA
+    }
+
+}
+
+package "Capa de Gestión" {
+
+    class GestionUsuario {
+        + registrarUsuario(nombre: String, correo: String, telefono: String, foto: String): Void
+        + calcularReputacionHistorica(idUsuario: String): Void
+        + calcularReputacionServicio(idUsuario: String, nombreServicio: String, calificacion: int): Void
+        + buscarUsuario(idUsuario: String): Usuario
+        + modificarDatosUsuario(idUsuario: String): Void
+        + GestionUsuario()
+    }
+
+    class GestionTransaccion {
+        + registrarTransaccion(idOfertante: String, idDemandante: String, nombreServicio: String): Void
+        + buscarTransaccion(idTransaccion: String): Transaccion
+        + actualizarEstado(idTransaccion: String, estado: EstadoTransaccion): Void
+        + retenerCreditos(): Void
+        + liberarCreditos(): Void
+        + calificarServicio(idPrestador: String, puntuacion: int): void
+        + enviarNotificacion(destinatario: Usuario, mensaje: String, tipo: TipoNotificacion): Void
+        + GestionTransaccion()
+    }
+
+    GestionUsuario o-- Usuario
+    GestionTransaccion o-- Transaccion
+}
+
+package "Capa de Persistencia" {
+
+    class PersistenciaUsuario {
+        - RUTA_ARCHIVO: String = "data/usuarios.json"
+        + cargar(): List<Usuario>
+        + guardar(datos: List<Usuario>): void
+    }
+
+    class PersistenciaTransacciones {
+        - RUTA_ARCHIVO: String = "data/transacciones.json"
+        + cargar(): List<Transaccion>
+        + guardar(datos: List<Transaccion>): void
+    }
+}
+
+@enduml
