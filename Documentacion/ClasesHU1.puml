@@ -1,0 +1,98 @@
+@startuml
+
+package "Capa de Entidades" {
+
+    class Usuario {
+        - idUsuario: String
+        - nombre: String
+        - correoElectronico: String
+        - telefono: String
+        - descripcionPersonal: String
+        - reputacionHistorica: Double
+        - sancion
+        <space:10> sancionActiva: Boolean
+        <space:10> fechaSancion: Date
+        + Usuario(nombre: String, correo: String, telefono: String, imagen: Imagen)
+    }
+
+    class Monedero {
+        - creditosDisponibles: int
+        - creditosComprometidos: int
+        + tieneFondosSuficiente(monto: int): Boolean
+        + calcularCreditosComprometidos(monto: int): Void
+        + Monedero()
+    }
+
+    class Habilidad {
+        - nombre: String
+        - precioCreditos: int
+        - descripcionHabilidad: String
+        + Habilidad(nombre: String, precioCreditos: int, descripcion: String)
+    }
+
+    class Necesidad {
+        - nombre: String
+        - descripcionNecesidad: String
+        + Necesidad(nombre: String, descripcion: String)
+    }
+
+    class Imagen {
+        - ruta: String
+        + Imagen(ruta: String)
+    }
+
+    class Notificacion {
+        - idNotificacion: String
+        - mensaje: String
+        - tipo: String
+        - estadoLectura: boolean
+        + marcarNotificacionLeida(): void
+    }
+
+    Usuario "1" *-- "1" Monedero
+    Usuario "1" *-- "*" Habilidad
+    Usuario "1" *-- "*" Necesidad
+    Usuario "1" *-- "1" Imagen
+    Usuario "1" -- "*" Notificacion : posee >
+}
+
+
+package "Capa de GestiÃ³n" {
+
+    class GestionUsuario {
+        + registrarUsuario(nombre: String, correo: String, telefono: String, foto: String): Void
+        + calcularReputacionHistorica(idUsuario: String): Void
+        + calcularReputacionServicio(idUsuario: String, nombreServicio: String, calificacion: int): Void
+        + buscarUsuario(idUsuario: String): Usuario
+        + modificarDatosUsuario(idUsuario: String): Void
+        + GestionUsuario()
+    }
+
+    GestorUsuario ..> Usuario
+
+}
+
+package "Capa de Persistencia" {
+
+    interface Persistencia {
+        + cargar(): List<Object>
+        + guardar(datos: List<Object>): Void
+    }
+
+    class PersistenciaUsuario {
+        - RUTA_ARCHIVO: String = "data/usuarios.json"
+        + cargar(): List<Usuario>
+        + guardar(datos: List<Usuario>): Void
+    }
+
+    class PersistenciaCatalogo {
+        + cargar(): List<Object>
+        + guardar(datos: List<Object>): Void
+    }
+
+    PersistenciaUsuario .up.|> Persistencia
+    PersistenciaCatalogo .up.|> Persistencia
+}
+
+
+@enduml
