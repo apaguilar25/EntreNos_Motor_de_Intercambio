@@ -6,7 +6,9 @@ const CreateAuction = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [duration, setDuration] = useState('24');
+  const [duration, setDuration] = useState('1');
+  const [status, setStatus] = useState('Nuevo');
+  const [hasPhoto, setHasPhoto] = useState(false);
 
   return (
     <div className="animate-in" style={{ maxWidth: '600px', margin: '0 auto' }}>
@@ -48,25 +50,44 @@ const CreateAuction = () => {
         </div>
 
         <div>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Estado Físico del Activo</label>
+          <select 
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
+          >
+            <option value="Nuevo">Nuevo</option>
+            <option value="Usado">Usado</option>
+            <option value="Reparado">Reparado</option>
+          </select>
+        </div>
+
+        <div>
           <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Duración de la Subasta</label>
           <select 
             value={duration}
             onChange={(e) => setDuration(e.target.value)}
             style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
           >
-            <option value="12">12 horas</option>
-            <option value="24">24 horas</option>
-            <option value="48">48 horas</option>
-            <option value="72">72 horas</option>
+            <option value="1">1 Día</option>
+            <option value="5">5 Días</option>
+            <option value="10">10 Días</option>
+            <option value="20">20 Días</option>
           </select>
         </div>
-
         <div>
           <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Fotos del Activo</label>
-          <div style={{ border: '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '2rem', textAlign: 'center', color: 'var(--text-tertiary)', cursor: 'pointer' }}>
+          <div 
+            onClick={() => setHasPhoto(true)}
+            style={{ border: hasPhoto ? '2px solid var(--accent-primary)' : '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '2rem', textAlign: 'center', color: hasPhoto ? 'var(--accent-primary)' : 'var(--text-tertiary)', cursor: 'pointer', backgroundColor: hasPhoto ? 'var(--bg-secondary)' : 'transparent' }}
+          >
             <ImageIcon size={32} style={{ margin: '0 auto 0.5rem' }} />
-            <p>Sube al menos una foto clara del producto</p>
+            <p>{hasPhoto ? 'Foto subida correctamente' : 'Sube al menos una foto clara del producto (Click para simular)'}</p>
           </div>
+        </div>
+
+        <div style={{ fontSize: '0.75rem', color: 'var(--color-red-600)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <strong>Advertencia:</strong> Si la subasta se cierra automáticamente por tiempo y no asignas a un ganador teniendo pujas válidas, serás penalizado en tu reputación.
         </div>
 
         <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
@@ -80,6 +101,14 @@ const CreateAuction = () => {
             className="btn-primary" 
             style={{ flex: 1, padding: '0.75rem', borderRadius: '0.5rem', backgroundColor: 'var(--accent-warning)', color: '#fff' }}
             onClick={() => {
+              if(!title || !description) {
+                alert("Por favor llena el título y la descripción.");
+                return;
+              }
+              if(!hasPhoto) {
+                alert("Debes subir al menos una foto del activo.");
+                return;
+              }
               alert('Subasta creada (Mock)');
               navigate(-1);
             }}

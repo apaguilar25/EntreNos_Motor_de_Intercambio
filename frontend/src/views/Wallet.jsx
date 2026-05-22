@@ -1,16 +1,21 @@
 import React, { useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AppContext } from '../App';
-import { Wallet as WalletIcon, ArrowUpRight, ArrowDownRight, Clock, X } from 'lucide-react';
+import { Wallet as WalletIcon, ArrowUpRight, ArrowDownRight, Clock, X, Star, AlertTriangle, Image as ImageIcon, CheckCircle } from 'lucide-react';
 
 const Wallet = () => {
   const { balance } = useContext(AppContext);
   const [selectedTx, setSelectedTx] = useState(null);
+  
+  // States for Modals
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [showFraudModal, setShowFraudModal] = useState(false);
+  const [rating, setRating] = useState(0);
 
-  const transactions = [
+  const [transactions, setTransactions] = useState([
     { id: 1, type: 'ingreso', concept: 'Capital Semilla Inicial', amount: 100, date: '17/04/2026', status: 'Completado' },
     { id: 2, type: 'egreso', concept: 'Reserva para Paseo de Perros', amount: 15, date: 'Hoy', status: 'Retenido' },
-  ];
+  ]);
 
   const retainedBalance = transactions
     .filter(t => t.status === 'Retenido' && t.type === 'egreso')
@@ -165,8 +170,109 @@ const Wallet = () => {
               </div>
             </div>
             
-            <button className="btn-primary" style={{ width: '100%', marginTop: '2rem' }} onClick={() => setSelectedTx(null)}>
+            
+            {selectedTx.status === 'Retenido' && (
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+                <button 
+                  className="btn-primary" 
+                  style={{ flex: 1, padding: '0.5rem', backgroundColor: '#047857' }}
+                  onClick={() => {
+                    setShowRatingModal(true);
+                  }}
+                >
+                  <CheckCircle size={16} style={{ display: 'inline', marginRight: '0.25rem' }} /> Finalizar
+                </button>
+                <button 
+                  style={{ flex: 1, padding: '0.5rem', backgroundColor: 'transparent', border: '1px solid var(--color-red-600)', color: 'var(--color-red-600)', borderRadius: '0.5rem', cursor: 'pointer', fontWeight: 'bold' }}
+                  onClick={() => {
+                    setShowFraudModal(true);
+                  }}
+                >
+                  <AlertTriangle size={16} style={{ display: 'inline', marginRight: '0.25rem' }} /> Reportar
+                </button>
+              </div>
+            )}
+            
+            <button className="btn-primary" style={{ width: '100%', marginTop: '1rem' }} onClick={() => setSelectedTx(null)}>
               Cerrar
+            </button>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Rating Modal */}
+      {showRatingModal && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 110, padding: '1rem' }}>
+          <div className="card animate-in" style={{ width: '100%', maxWidth: '350px', textAlign: 'center' }}>
+            <h3 style={{ marginBottom: '1rem' }}>Califica el Servicio</h3>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.875rem' }}>¿Cómo fue tu experiencia con esta transacción?</p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '2rem' }}>
+              {[1,2,3,4,5].map(star => (
+                <Star 
+                  key={star} 
+                  size={32} 
+                  fill={star <= rating ? 'var(--color-orange-600)' : 'transparent'} 
+                  color={star <= rating ? 'var(--color-orange-600)' : 'var(--text-tertiary)'} 
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setRating(star)}
+                />
+              ))}
+            </div>
+            <button 
+              className="btn-primary" 
+              style={{ width: '100%' }}
+              onClick={() => {
+                setTransactions(transactions.map(t => t.id === selectedTx.id ? { ...t, status: 'Completado' } : t));
+                setShowRatingModal(false);
+                setSelectedTx(null);
+                setRating(0);
+                // Aquí simularíamos abrir el pop-up de medalla desbloqueada si aplicara
+                alert("¡Gracias por calificar! Se ha liberado el pago.");
+              }}
+              disabled={rating === 0}
+            >
+              Enviar Calificación
+            </button>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Fraud Modal */}
+      {showFraudModal && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 110, padding: '1rem' }}>
+          <div className="card animate-in" style={{ width: '100%', maxWidth: '400px', position: 'relative' }}>
+            <button onClick={() => setShowFraudModal(false)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', color: 'var(--text-tertiary)' }}>
+              <X size={20} />
+            </button>
+            <h3 style={{ marginBottom: '1rem', color: 'var(--color-red-600)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <AlertTriangle size={20} /> Reportar Incidencia
+            </h3>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem', fontSize: '0.875rem' }}>Describe el problema y proporciona evidencia. La transacción quedará retenida bajo revisión.</p>
+            
+            <textarea 
+              placeholder="Detalles del problema..."
+              rows={3}
+              style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', marginBottom: '1rem', resize: 'vertical' }}
+            />
+            
+            <div style={{ border: '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '1.5rem', textAlign: 'center', color: 'var(--text-tertiary)', cursor: 'pointer', marginBottom: '1.5rem' }}>
+              <ImageIcon size={24} style={{ margin: '0 auto 0.5rem' }} />
+              <p style={{ fontSize: '0.875rem' }}>Subir foto de evidencia</p>
+            </div>
+
+            <button 
+              className="btn-primary" 
+              style={{ width: '100%', backgroundColor: 'var(--color-red-600)' }}
+              onClick={() => {
+                setTransactions(transactions.map(t => t.id === selectedTx.id ? { ...t, status: 'Bajo Revisión' } : t));
+                setShowFraudModal(false);
+                setSelectedTx(null);
+                alert("Incidencia reportada. El equipo de soporte lo revisará pronto.");
+              }}
+            >
+              Enviar Reporte
             </button>
           </div>
         </div>,

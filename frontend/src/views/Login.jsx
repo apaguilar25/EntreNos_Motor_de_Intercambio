@@ -8,14 +8,15 @@ const Login = () => {
   
   // Login fields
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   
   // Register fields
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [description, setDescription] = useState('');
   const [profilePic, setProfilePic] = useState(null);
 
   const [error, setError] = useState('');
+
   const { setUser, setBalance } = useContext(AppContext);
   const navigate = useNavigate();
 
@@ -24,36 +25,34 @@ const Login = () => {
     setError('');
 
     if (isLogin) {
-      if (!email || !password) {
-        setError('Por favor, completa todos los campos.');
+      if (!email) {
+        setError('Por favor, completa el campo de correo.');
         return;
       }
       
       const domain = email.split('@')[1];
-      if (domain !== 'unimet.edu.ve') {
-        setError('El correo debe pertenecer al dominio unimet.edu.ve');
+      if (domain !== 'alameda.com') {
+        setError('El correo debe pertenecer al dominio oficial de la comunidad (alameda.com).');
         return;
       }
       
-      setUser({ name: 'Usuario Prueba', email });
-      setBalance(100);
-      navigate('/');
+      setUser({ name: email.split('@')[0], email });
+      navigate('/onboarding');
     } else {
-      if (!name || !email || !phone || !password) {
+      if (!name || !email || !phone || !description) {
         setError('Por favor, completa todos los campos obligatorios.');
         return;
       }
       
       const domain = email.split('@')[1];
-      if (domain !== 'unimet.edu.ve') {
-        setError('El correo debe pertenecer al dominio unimet.edu.ve');
+      if (domain !== 'alameda.com') {
+        setError('El correo debe pertenecer al dominio oficial de la comunidad (alameda.com).');
         return;
       }
 
       // Registro simulado
-      setUser({ name, email, phone });
-      setBalance(100);
-      navigate('/');
+      setUser({ name, email, phone, description });
+      navigate('/onboarding');
     }
   };
 
@@ -103,26 +102,26 @@ const Login = () => {
                   style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
                 />
               </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Descripción Personal</label>
+                <textarea 
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Cuenta un poco sobre ti..."
+                  rows={2}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', resize: 'vertical' }}
+                />
+              </div>
             </>
           )}
 
           <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Correo Universitario</label>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Correo Comunitario</label>
             <input 
               type="email" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="usuario@unimet.edu.ve"
-              style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
-            />
-          </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Contraseña</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder="usuario@alameda.com"
               style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
             />
           </div>

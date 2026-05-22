@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, Star, ChevronDown } from 'lucide-react';
+import { Search, Filter, Star, ChevronDown, Trophy, Sparkles, Medal, AlertCircle } from 'lucide-react';
+import { AppContext } from '../App';
 
 const Wall = () => {
   const navigate = useNavigate();
+  const { hasCatalog } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
 
@@ -27,7 +29,9 @@ const Wall = () => {
       title: 'Clases de Matemáticas',
       description: 'Necesito tutor para mi hijo de 3er año de secundaria para prepararse para el examen final.',
       price: 30,
-      timeAgo: 'hace 5 horas'
+      timeAgo: 'hace 5 horas',
+      isPodium: true,
+      podiumCategory: 'Embajador de Calidad'
     },
     {
       id: 3,
@@ -37,15 +41,34 @@ const Wall = () => {
       title: 'Paseo de Perros',
       description: 'Paseo tu mascota por el conjunto residencial en horarios de la mañana o tarde.',
       price: 15,
+      price: 15,
       timeAgo: 'hace 1 día'
     }
   ];
 
   return (
     <div className="animate-in">
+      {!hasCatalog && (
+        <div className="card" style={{ backgroundColor: 'var(--color-yellow-100)', borderColor: 'var(--color-orange-600)', marginBottom: '2rem', display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+          <AlertCircle color="var(--color-orange-600)" />
+          <div style={{ flex: 1 }}>
+            <h3 style={{ color: 'var(--color-orange-600)', marginBottom: '0.25rem' }}>¡Completa tu catálogo y recibe Capital Semilla!</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+              Aún no has configurado tus habilidades y necesidades. Hazlo ahora para recibir tus primeros 20 créditos y empezar a intercambiar con la comunidad.
+            </p>
+            <button 
+              className="btn-primary" 
+              style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }}
+              onClick={() => navigate('/onboarding')}
+            >
+              Completar Catálogo
+            </button>
+          </div>
+        </div>
+      )}
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h2>Muro de Publicaciones</h2>
-        <button className="btn-primary" onClick={() => navigate('/publish')}>Publicar</button>
       </div>
 
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
@@ -99,6 +122,9 @@ const Wall = () => {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        {mockPosts.length === 0 && (
+           <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: '2rem' }}>No hay publicaciones en este momento.</p>
+        )}
         {mockPosts.map((post, index) => (
           <div key={post.id} className="card interactive-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', animationDelay: `${index * 0.1}s` }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -135,14 +161,22 @@ const Wall = () => {
                   {post.user.charAt(0)}
                 </div>
                 <div>
-                  <div style={{ fontWeight: '500', fontSize: '0.875rem' }}>{post.user}</div>
+                  <div style={{ fontWeight: '500', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    {post.user}
+                  </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-warning)', fontSize: '0.75rem' }}>
                     <Star size={12} fill="currentColor" /> {post.reputation}
                   </div>
                 </div>
               </div>
               
-              <button className="btn-primary">Contactar</button>
+              <button 
+                className="btn-primary" 
+                style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+                onClick={() => navigate(`/request/${post.id}?type=${post.type}`)}
+              >
+                Contactar
+              </button>
             </div>
           </div>
         ))}

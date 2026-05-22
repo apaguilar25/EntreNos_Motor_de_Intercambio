@@ -55,27 +55,32 @@ const Auctions = () => {
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>Subastador: {auction.owner}</div>
               </div>
 
-              <div style={{ display: 'flex', gap: '2rem', marginTop: '1rem', flexWrap: 'wrap' }}>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Tiempo Restante</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-warning)', fontWeight: 'bold' }}>
-                    <Clock size={16} /> {auction.timeLeft}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '2rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', fontWeight: 'bold' }}>Tiempo Restante</span>
+                    <span style={{ color: 'var(--color-orange-600)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <Clock size={16} /> {auction.timeLeft}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', textTransform: 'uppercase', fontWeight: 'bold' }}>Mejor Oferta (Bienes)</span>
+                    <span style={{ color: 'var(--color-green-700)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <Hammer size={16} /> {auction.topOffer}
+                    </span>
                   </div>
                 </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', textTransform: 'uppercase' }}>Mejor Oferta (Bienes)</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-primary)', fontWeight: 'bold' }}>
-                    <Hammer size={16} /> {auction.topOffer}
-                  </div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
+                  <button 
+                    className="btn-primary" 
+                    style={{ backgroundColor: 'var(--color-green-700)', color: '#fff', padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+                    onClick={() => navigate(`/request/${auction.id}?type=subasta`)}
+                  >
+                    Pujar con Bienes
+                  </button>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{auction.currentOffers} pujas activas</span>
                 </div>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '0.5rem', minWidth: '150px' }}>
-              <button className="btn-primary" style={{ width: '100%' }}>Pujar con Bienes</button>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', textAlign: 'center' }}>
-                {auction.currentOffers} pujas activas
               </div>
             </div>
           </div>
