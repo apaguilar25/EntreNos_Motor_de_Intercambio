@@ -37,8 +37,7 @@ const Login = () => {
       }
       
       setUser({ name: email.split('@')[0], email });
-      setBalance(100);
-      navigate('/');
+      navigate('/onboarding');
     } else {
       if (!name || !email || !phone || !description) {
         setError('Por favor, completa todos los campos obligatorios.');
@@ -53,8 +52,7 @@ const Login = () => {
 
       // Registro simulado
       setUser({ name, email, phone, description });
-      setBalance(100);
-      navigate('/');
+      navigate('/onboarding');
     }
   };
 

@@ -6,7 +6,7 @@ const CreateAuction = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [duration, setDuration] = useState('24');
+  const [duration, setDuration] = useState('1');
   const [status, setStatus] = useState('Nuevo');
   const [hasPhoto, setHasPhoto] = useState(false);
 
@@ -69,10 +69,10 @@ const CreateAuction = () => {
             onChange={(e) => setDuration(e.target.value)}
             style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
           >
-            <option value="12">12 horas</option>
-            <option value="24">24 horas</option>
-            <option value="48">48 horas</option>
-            <option value="72">72 horas</option>
+            <option value="1">1 Día</option>
+            <option value="5">5 Días</option>
+            <option value="10">10 Días</option>
+            <option value="20">20 Días</option>
           </select>
         </div>
         <div>

@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, Star, ChevronDown, Trophy, Sparkles, Medal } from 'lucide-react';
+import { Search, Filter, Star, ChevronDown, Trophy, Sparkles, Medal, AlertCircle } from 'lucide-react';
+import { AppContext } from '../App';
 
 const Wall = () => {
   const navigate = useNavigate();
+  const { hasCatalog } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
 
@@ -46,9 +48,27 @@ const Wall = () => {
 
   return (
     <div className="animate-in">
+      {!hasCatalog && (
+        <div className="card" style={{ backgroundColor: 'var(--color-yellow-100)', borderColor: 'var(--color-orange-600)', marginBottom: '2rem', display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+          <AlertCircle color="var(--color-orange-600)" />
+          <div style={{ flex: 1 }}>
+            <h3 style={{ color: 'var(--color-orange-600)', marginBottom: '0.25rem' }}>¡Completa tu catálogo y recibe Capital Semilla!</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+              Aún no has configurado tus habilidades y necesidades. Hazlo ahora para recibir tus primeros 20 créditos y empezar a intercambiar con la comunidad.
+            </p>
+            <button 
+              className="btn-primary" 
+              style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }}
+              onClick={() => navigate('/onboarding')}
+            >
+              Completar Catálogo
+            </button>
+          </div>
+        </div>
+      )}
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h2>Muro de Publicaciones</h2>
-        <button className="btn-primary" onClick={() => navigate('/publish')}>Publicar</button>
       </div>
 
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>

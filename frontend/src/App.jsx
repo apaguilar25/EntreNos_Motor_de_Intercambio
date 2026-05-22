@@ -12,6 +12,7 @@ import ChangePassword from './views/ChangePassword';
 import Notifications from './views/Notifications';
 import PostDetails from './views/PostDetails';
 import MakeRequest from './views/MakeRequest';
+import CatalogOnboarding from './views/CatalogOnboarding';
 
 // Global Context Mock for Sprint 1
 export const AppContext = createContext();
@@ -19,7 +20,8 @@ export const AppContext = createContext();
 function App() {
   const [theme, setTheme] = useState('light');
   const [user, setUser] = useState(null); // null if not logged in
-  const [balance, setBalance] = useState(100); // 100 créditos iniciales
+  const [balance, setBalance] = useState(0); // 0 créditos iniciales, se ganan 100 al completar catálogo
+  const [hasCatalog, setHasCatalog] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -30,10 +32,11 @@ function App() {
   };
 
   return (
-    <AppContext.Provider value={{ theme, toggleTheme, user, setUser, balance, setBalance }}>
+    <AppContext.Provider value={{ theme, toggleTheme, user, setUser, balance, setBalance, hasCatalog, setHasCatalog }}>
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/onboarding" element={user ? <CatalogOnboarding /> : <Navigate to="/login" />} />
           <Route path="/" element={user ? <Layout /> : <Navigate to="/login" />}>
             <Route index element={<Wall />} />
             <Route path="auctions" element={<Auctions />} />

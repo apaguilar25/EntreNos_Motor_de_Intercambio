@@ -73,6 +73,10 @@ const MakeRequest = () => {
         alert('Debes indicar una cantidad válida para los bienes seleccionados.');
         return;
       }
+      if (!offerImage) {
+        alert('Es obligatorio adjuntar una imagen como evidencia visual física de los productos.');
+        return;
+      }
     } else {
       if (!message) {
         alert('Debes escribir un mensaje.');
@@ -165,7 +169,7 @@ const MakeRequest = () => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Imagen de la Oferta (Opcional)</label>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Imagen de la Oferta (Obligatorio)</label>
                   <div 
                     onClick={() => setOfferImage(!offerImage)}
                     style={{ border: offerImage ? '2px solid var(--accent-primary)' : '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '1rem', textAlign: 'center', color: offerImage ? 'var(--accent-primary)' : 'var(--text-tertiary)', cursor: 'pointer', backgroundColor: offerImage ? 'var(--bg-secondary)' : 'transparent' }}

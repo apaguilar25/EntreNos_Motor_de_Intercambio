@@ -22,7 +22,12 @@ const Profile = () => {
     <div className="animate-in">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h2>Mi Perfil y Catálogo</h2>
-
+        <button 
+          className="btn-primary" 
+          onClick={() => navigate('/onboarding')}
+        >
+          Editar Catálogo
+        </button>
       </div>
 
       {/* Tarjeta de Identidad */}
@@ -62,7 +67,6 @@ const Profile = () => {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <h3 style={{ fontSize: '1.25rem' }}>Mis Ofertas</h3>
-            <button className="btn-primary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }} onClick={() => navigate('/publish?type=oferta')}>Añadir</button>
           </div>
           <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div 
@@ -93,7 +97,6 @@ const Profile = () => {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <h3 style={{ fontSize: '1.25rem' }}>Mis Necesidades</h3>
-            <button className="btn-primary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem', backgroundColor: 'var(--color-yellow-100)', color: 'var(--color-orange-600)' }} onClick={() => navigate('/publish?type=demanda')}>Añadir</button>
           </div>
           <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div 
