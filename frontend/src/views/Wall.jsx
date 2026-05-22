@@ -6,7 +6,6 @@ const Wall = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const [activeTab, setActiveTab] = useState('explorar'); // 'explorar' | 'parati'
 
   // Mocks de publicaciones
   const mockPosts = [
@@ -40,19 +39,10 @@ const Wall = () => {
       title: 'Paseo de Perros',
       description: 'Paseo tu mascota por el conjunto residencial en horarios de la mañana o tarde.',
       price: 15,
-      timeAgo: 'hace 1 día',
-      isSuggested: true // Para simular HU6
+      price: 15,
+      timeAgo: 'hace 1 día'
     }
   ];
-
-  // Podio mock
-  const podium = [
-    { title: 'Proveedor Élite', user: 'Ana Rojas', rep: 5.0, icon: <Trophy size={16} color="var(--color-orange-600)" /> },
-    { title: 'Motor de la Economía', user: 'Luis Gomez', rep: 4.8, icon: <Star size={16} color="var(--accent-primary)" /> },
-    { title: 'Embajador de Calidad', user: 'María López', rep: 5.0, icon: <Medal size={16} color="var(--color-green-700)" /> },
-  ];
-
-  const displayedPosts = activeTab === 'parati' ? mockPosts.filter(p => p.isSuggested) : mockPosts;
 
   return (
     <div className="animate-in">
@@ -111,47 +101,11 @@ const Wall = () => {
         </div>
       </div>
 
-      {/* Podio Semanal (HU10) */}
-      <div className="card" style={{ marginBottom: '2rem', backgroundColor: 'var(--bg-secondary)', border: '1px dashed var(--border-color)' }}>
-        <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)' }}>
-          <Trophy size={20} color="var(--color-orange-600)" /> Podio Semanal
-        </h3>
-        <div style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
-          {podium.map((winner, idx) => (
-            <div key={idx} style={{ flex: '1', minWidth: '150px', backgroundColor: 'var(--bg-primary)', padding: '1rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-                {winner.user.charAt(0)}
-              </div>
-              <div style={{ fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>{winner.user}</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                {winner.icon} {winner.title}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Tabs (HU6) */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', borderBottom: '1px solid var(--border-color)' }}>
-        <button 
-          onClick={() => setActiveTab('explorar')}
-          style={{ padding: '0.5rem 1rem', background: 'none', border: 'none', borderBottom: activeTab === 'explorar' ? '2px solid var(--accent-primary)' : '2px solid transparent', color: activeTab === 'explorar' ? 'var(--accent-primary)' : 'var(--text-secondary)', fontWeight: activeTab === 'explorar' ? 'bold' : 'normal', cursor: 'pointer' }}
-        >
-          Explorar
-        </button>
-        <button 
-          onClick={() => setActiveTab('parati')}
-          style={{ padding: '0.5rem 1rem', background: 'none', border: 'none', borderBottom: activeTab === 'parati' ? '2px solid var(--accent-primary)' : '2px solid transparent', color: activeTab === 'parati' ? 'var(--accent-primary)' : 'var(--text-secondary)', fontWeight: activeTab === 'parati' ? 'bold' : 'normal', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
-        >
-          <Sparkles size={16} /> Para ti
-        </button>
-      </div>
-
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {displayedPosts.length === 0 && (
-           <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: '2rem' }}>No hay sugerencias en este momento.</p>
+        {mockPosts.length === 0 && (
+           <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: '2rem' }}>No hay publicaciones en este momento.</p>
         )}
-        {displayedPosts.map((post, index) => (
+        {mockPosts.map((post, index) => (
           <div key={post.id} className="card interactive-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', animationDelay: `${index * 0.1}s` }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
@@ -189,11 +143,6 @@ const Wall = () => {
                 <div>
                   <div style={{ fontWeight: '500', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     {post.user}
-                    {post.isPodium && (
-                      <span style={{ fontSize: '0.65rem', backgroundColor: 'var(--color-orange-600)', color: '#fff', padding: '0.125rem 0.5rem', borderRadius: '1rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                        <Trophy size={10} /> Vecino Destacado
-                      </span>
-                    )}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-warning)', fontSize: '0.75rem' }}>
                     <Star size={12} fill="currentColor" /> {post.reputation}

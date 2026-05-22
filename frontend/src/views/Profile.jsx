@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
-import { Star, Settings, ShieldCheck, Trophy, Medal, Award, XCircle } from 'lucide-react';
+import { Star, ShieldCheck, XCircle } from 'lucide-react';
 
 const Profile = () => {
   const { user } = useContext(AppContext);
@@ -22,13 +22,7 @@ const Profile = () => {
     <div className="animate-in">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h2>Mi Perfil y Catálogo</h2>
-        <button 
-          className="btn-primary" 
-          style={{ backgroundColor: 'transparent', color: 'var(--text-secondary)', border: '1px solid var(--border-color)' }}
-          onClick={() => navigate('/settings/password')}
-        >
-          <Settings size={18} />
-        </button>
+
       </div>
 
       {/* Tarjeta de Identidad */}
@@ -59,34 +53,6 @@ const Profile = () => {
               <Star size={16} fill="currentColor" /> 5.0
             </span>
             <span style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>12 transacciones exitosas</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Sección de Logros y Medallas (HU9) */}
-      <div style={{ marginBottom: '2rem' }}>
-        <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Trophy size={20} color="var(--color-orange-600)" /> Logros y Medallas
-        </h3>
-        <div className="card" style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', width: '100px', opacity: 1 }}>
-            <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-700)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.5rem' }}>
-              <Medal size={24} />
-            </div>
-            <span style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Primer Trueque</span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', width: '100px', opacity: 1 }}>
-            <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: 'var(--color-orange-100)', color: 'var(--color-orange-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.5rem' }}>
-              <Award size={24} />
-            </div>
-            <span style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>5 Estrellas</span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', width: '100px', opacity: 0.4 }}>
-            <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.5rem' }}>
-              <ShieldCheck size={24} />
-            </div>
-            <span style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Proveedor Confiable</span>
-            <span style={{ fontSize: '0.65rem' }}>Bloqueada</span>
           </div>
         </div>
       </div>

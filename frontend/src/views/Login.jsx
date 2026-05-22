@@ -8,7 +8,6 @@ const Login = () => {
   
   // Login fields
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   
   // Register fields
   const [name, setName] = useState('');
@@ -17,8 +16,6 @@ const Login = () => {
   const [profilePic, setProfilePic] = useState(null);
 
   const [error, setError] = useState('');
-  const [failedAttempts, setFailedAttempts] = useState(0);
-  const [isLocked, setIsLocked] = useState(false);
 
   const { setUser, setBalance } = useContext(AppContext);
   const navigate = useNavigate();
@@ -27,58 +24,30 @@ const Login = () => {
     e.preventDefault();
     setError('');
 
-    if (isLocked) {
-      setError('Cuenta bloqueada temporalmente por intentos fallidos. Intente en 24 horas.');
-      return;
-    }
-
     if (isLogin) {
-      if (!email || !password) {
-        setError('Por favor, completa todos los campos.');
+      if (!email) {
+        setError('Por favor, completa el campo de correo.');
         return;
       }
       
       const domain = email.split('@')[1];
-      if (domain !== 'unimet.edu.ve') {
-        setError('Correo o contraseña incorrectos.');
-        setFailedAttempts(prev => {
-          const newAttempts = prev + 1;
-          if (newAttempts >= 3) {
-            setIsLocked(true);
-            setError('Cuenta bloqueada temporalmente por intentos fallidos. Intente en 24 horas.');
-          }
-          return newAttempts;
-        });
+      if (domain !== 'alameda.com') {
+        setError('El correo debe pertenecer al dominio oficial de la comunidad (alameda.com).');
         return;
       }
       
-      // Simulating a failed password match randomly for mock purposes (optional, but let's just accept if correct domain)
-      if (password !== '123456' && password.length < 6) { // Mock strictness
-         setError('Correo o contraseña incorrectos.');
-         setFailedAttempts(prev => {
-          const newAttempts = prev + 1;
-          if (newAttempts >= 3) {
-            setIsLocked(true);
-            setError('Cuenta bloqueada temporalmente por intentos fallidos. Intente en 24 horas.');
-          }
-          return newAttempts;
-        });
-        return;
-      }
-
-      setFailedAttempts(0);
       setUser({ name: email.split('@')[0], email });
       setBalance(100);
       navigate('/');
     } else {
-      if (!name || !email || !phone || !password || !description) {
+      if (!name || !email || !phone || !description) {
         setError('Por favor, completa todos los campos obligatorios.');
         return;
       }
       
       const domain = email.split('@')[1];
-      if (domain !== 'unimet.edu.ve') {
-        setError('El correo debe pertenecer al dominio oficial de la comunidad (unimet.edu.ve).');
+      if (domain !== 'alameda.com') {
+        setError('El correo debe pertenecer al dominio oficial de la comunidad (alameda.com).');
         return;
       }
 
@@ -149,22 +118,12 @@ const Login = () => {
           )}
 
           <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Correo Universitario</label>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Correo Comunitario</label>
             <input 
               type="email" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="usuario@unimet.edu.ve"
-              style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
-            />
-          </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Contraseña</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder="usuario@alameda.com"
               style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
             />
           </div>
@@ -179,7 +138,7 @@ const Login = () => {
             </div>
           )}
 
-          <button type="submit" className="btn-primary" style={{ marginTop: '1rem', padding: '0.75rem' }} disabled={isLocked}>
+          <button type="submit" className="btn-primary" style={{ marginTop: '1rem', padding: '0.75rem' }}>
             {isLogin ? 'Ingresar' : 'Registrarse'}
           </button>
         </form>
