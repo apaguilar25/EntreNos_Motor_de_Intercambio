@@ -1,0 +1,164 @@
+@startuml
+
+skinparam style strictuml
+skinparam DefaultFontName Arial
+skinparam SequenceLifeLineBackgroundColor #E8F4F8
+skinparam SequenceLifeLineBorderColor #2C3E50
+skinparam ParticipantBackgroundColor #E8F4F8
+skinparam ParticipantBorderColor #2C3E50
+skinparam noteBackgroundColor #FDEDEC
+skinparam noteBorderColor #E74C3C
+
+title <size:20> Diagrama de Secuencia HU2: Muro de Intercambio y Motor de Búsqueda
+
+actor "<u>: Usuario</u>" as User
+participant "<u>: Sistema</u>" as UI
+control "<u>: MuroPublicaciones</u>" as Muro
+control "<u>: GestionUsuario</u>" as GU
+control "<u>: GestionSolicitudIntercambio</u>" as GSI
+participant "<u>: Monedero</u>" as M
+database "<u>: PersistenciaUsuario</u>\n(usuarios.json)" as PU
+
+loop Mientras el usuario decida continuar navegando
+
+    == 1. Carga del Muro y Saldo ==
+    User -> UI: Acceder al muro de publicaciones
+    activate UI
+
+    UI -> GU: buscarUsuario(idUsuarioActivo)
+    activate GU
+    GU -> PU: cargar()
+    activate PU
+    PU --> GU: List<Usuario>
+    deactivate PU
+    GU --> UI: usuarioActual
+    deactivate GU
+
+    UI -> Muro: obtenerPublicaciones()
+    activate Muro
+    note left of Muro
+      El muro lee directamente el JSON
+      para extraer habilidades y necesidades
+    end note
+    Muro -> PU: cargar()
+    activate PU
+    PU --> Muro: List<Usuario> (Extrae Ofertas/Demandas)
+    deactivate PU
+    Muro --> UI: listaPublicaciones
+    deactivate Muro
+
+    par
+        UI -> UI: Mostrar saldo de créditos disponible
+    else
+        UI -> UI: Desplegar lista de publicaciones
+    end
+    UI --> User: Muestra pantalla principal (Muro y Saldo)
+
+    == 2. Navegación y Selección ==
+    User -> UI: Seleccionar una publicación específica
+
+    alt ¿La publicación es de un Demandante o Ofertante?
+
+        group [Demandante (Necesidad)]
+            par
+                UI -> UI: Mostrar datos de la solicitud
+            else
+                UI -> UI: Mostrar descripción detallada
+            end
+            UI --> User: Muestra detalle de Necesidad
+        end
+
+        group [Ofertante (Habilidad)]
+            par
+                UI -> UI: Mostrar datos de la oferta
+            else
+                UI -> UI: Mostrar descripción detallada
+            else
+                UI -> UI: Mostrar precio en créditos
+            else
+                UI -> UI: Mostrar promedio de calificaciones en ese servicio
+            end
+            UI --> User: Muestra detalle de Oferta
+        end
+
+    end
+
+    == 3. Interacción: Enviar Solicitud ==
+    opt Si es de su interés
+        User -> UI: Seleccionar opción de enviar solicitud
+
+        alt ¿La publicación es de un ofertante? = [Sí]
+            UI -> M: tieneFondosSuficiente(precioCreditos)
+            activate M
+            M --> UI: boolean
+            deactivate M
+
+            alt ¿Tiene créditos suficientes? = [No]
+                UI --> User: Mostrar mensaje de error ("No tiene créditos suficientes")
+                note right of UI
+                  (D) Fin del flujo actual.
+                  Regresa al inicio del loop del muro.
+                end note
+                break Finalizar intento de solicitud
+                    UI --> User: Regresar al muro principal
+                end
+            end
+        end
+
+        UI -> GSI: registrarSolicitud(idOfertante, idDemandante, nombre, precio, descripcion)
+        activate GSI
+        GSI -> "<u>: SolicitudIntercambio</u>" as Sol  : new SolicitudIntercambio(idOfertante, idDemandante, nombre, precio, descripcion)
+
+        GSI -> GSI: enviarNotificacion(idDestinatario, mensaje, NUEVA_SOLICITUD_ENTRANTE)
+        GSI --> UI: solicitudRegistrada
+        deactivate GSI
+        UI --> User: Confirmar envío de solicitud
+
+        == 4. Evaluación de la Solicitud (Línea de tiempo) ==
+        ... Espera de respuesta (Máximo 5 días naturales) ...
+
+        alt ¿Han pasado 5 días de la fecha de envío sin respuesta?
+            GSI -> GSI: procesarExpiracionesAutomaticas()
+            activate GSI
+            GSI -> Sol: actualizarEstado(RECHAZADA)
+            GSI -> GSI: enviarNotificacion(idUsuarioActivo, mensaje, ESTADO_SOLICITUD_CAMBIADO)
+            deactivate GSI
+            UI --> User: Notificar rechazo por tiempo expirado
+
+        else [No han pasado 5 días]
+            [-> GSI: actualizarEstado(idSolicitud, respuesta)
+            note right of GSI
+              Evento Externo:
+              El sistema detecta la respuesta
+              asíncrona de la contraparte.
+            end note
+            activate GSI
+
+            alt ¿Cuál fue la respuesta a la solicitud? = [Fue aceptada]
+                GSI -> Sol: actualizarEstado(ACEPTADA)
+                GSI -> GSI: enviarNotificacion(idUsuarioActivo, mensaje, ESTADO_SOLICITUD_CAMBIADO)
+                deactivate GSI
+                UI --> User: Recibir notificación de aceptación
+                note across
+                  Preparar inicio de transacción.
+                  Esta acción vincula este escenario con la HU3.
+                end note
+
+            else [Fue rechazada]
+                activate GSI
+                GSI -> Sol: actualizarEstado(RECHAZADA)
+                GSI -> GSI: enviarNotificacion(idUsuarioActivo, mensaje, ESTADO_SOLICITUD_CAMBIADO)
+                deactivate GSI
+                UI --> User: Recibir notificación de rechazo
+            end
+        end
+
+    end
+
+end
+
+User -> UI: Seleccionar salir / dejar de navegar
+UI --> User: Finalizar navegación sin selección
+deactivate UI
+
+@enduml

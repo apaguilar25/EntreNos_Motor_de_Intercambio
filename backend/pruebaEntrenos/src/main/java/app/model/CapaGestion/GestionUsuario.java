@@ -153,16 +153,44 @@ public class GestionUsuario {
         System.out.println("[SISTEMA] Créditos revertidos (" + monto + ") para el usuario: " + idUsuario);
     }
 
-    // 6. Calcular Reputación Histórica (Preparado para el módulo de Transacciones)
+    // 4. Calcular Reputación Histórica
     public void calcularReputacionHistorica(String idUsuario) {
-        // TODO: A futuro, cargar las transacciones completadas del usuario,
-        // promediar las estrellas/calificaciones y hacer un persistenciaUsuario.guardar()
-        System.out.println("[SISTEMA] Lógica de reputación histórica pendiente del módulo de Transacciones para: " + idUsuario);
+        List<Usuario> usuarios = persistenciaUsuario.cargar();
+        boolean encontrado = false;
+
+        for (Usuario u : usuarios) {
+            if (u.getIdUsuario().equals(idUsuario)) {
+                System.out.println("[SISTEMA] Reputación histórica consolidada para " + idUsuario + ": " + u.getReputacionHistorica() + " estrellas.");
+                encontrado = true;
+                break;
+            }
+        }
+
+        if (!encontrado) throw new IllegalArgumentException("Usuario no encontrado: " + idUsuario);
+
+        persistenciaUsuario.guardar(usuarios);
     }
 
-    // 5. Calcular Reputación Servicio (Preparado para el módulo de Transacciones)
+    // 5. Calcular Reputación Servicio
     public void calcularReputacionServicio(String idUsuario, String nombreServicio, int calificacion) {
-        // TODO: A futuro, buscar la habilidad específica dentro del usuario y actualizar su score.
-        System.out.println("[SISTEMA] Lógica de calificación de servicio registrada para: " + nombreServicio);
+        List<Usuario> usuarios = persistenciaUsuario.cargar();
+        boolean encontrado = false;
+
+        for (Usuario u : usuarios) {
+            if (u.getIdUsuario().equals(idUsuario)) {
+                System.out.println("[SISTEMA] Servicio '" + nombreServicio + "' calificado con " + calificacion + " estrellas.");
+
+                double reputacionActual = (u.getReputacionHistorica() != null) ? u.getReputacionHistorica() : 0.0;
+                double nuevaReputacion = (reputacionActual == 0.0) ? calificacion : (reputacionActual + calificacion) / 2.0;
+
+                nuevaReputacion = Math.round(nuevaReputacion * 10.0) / 10.0;
+                u.setReputacionHistorica(nuevaReputacion);
+
+                encontrado = true;
+                break;
+            }
+        }
+        if (!encontrado) throw new IllegalArgumentException("Usuario no encontrado para calificar: " + idUsuario);
+        persistenciaUsuario.guardar(usuarios);
     }
 }
