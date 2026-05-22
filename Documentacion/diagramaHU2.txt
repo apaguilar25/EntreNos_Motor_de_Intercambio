@@ -1,0 +1,133 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+'Historia de Usuario 2
+
+package "Capa de Entidades" {
+
+    class MuroPublicaciones {
+        + obtenerPublicaciones(): Void
+        + filtrarPublicaciones(): Void
+    }
+
+    note right of MuroPublicaciones
+        El muro no aloja ni datos ni envia objetos "Publicacion".
+        Simplemente recoge y recicla las colecciones de
+        Habilidades y Necesidades de los Usuarios activos.
+    end note
+
+    class Usuario {
+        - idUsuario: String
+        - nombre: String
+        - correoElectronico: String
+        - telefono: String
+        - direccionPrincipal: String
+        - reputacionHistorica: Float
+        + Usuario(nombre: String, correoElectronico: String, telefono: String, imagen: Imagen)
+    }
+
+    class Monedero {
+        - creditosDisponibles: int
+        - creditosComprometidos: int
+        + tieneSaldoSuficiente(monto: int): Boolean
+        + retenerCreditosComprometidos(monto: int): void
+        + Monedero()
+    }
+
+    class SolicitudIntercambio {
+        - idSolicitudIntercambio: String
+        - fechaEmision: Date
+        - nombreServicio: String
+        - precioCreditos: int
+        - descripcion: String
+        - estado: Enum
+        + notificarContraparte(): Void
+        + verificarExpiracion(fechaActual: Date): Boolean
+        + rechazar(idIntercambio): Void
+        + actualizarEstado(estado: Enum): Void
+    }
+
+    note right of SolicitudIntercambio
+        verificarExpiracion() implementa
+        la regla de los 5 dias extraida del
+        diagrama de actividad.
+    end note
+
+    class Habilidad {
+        - nombre: String
+        - precioCreditos: int
+        - descripcionHabilidad: String
+        + Habilidad(nombre: String, precioCreditos: int, descripcionHabilidad: String)
+    }
+
+    class Necesidad {
+        - nombre: String
+        - descripcionNecesidad: String
+        + Necesidad(nombre: String, descripcionNecesidad: String)
+    }
+
+    class Transaccion {
+        - idTransaccion: String
+        - idOfertante: String
+        - idDemandante: String
+        - estado: Enum
+        - servicioCompletado
+          confirmacionOfertante: Boolean
+          confirmacionDemandante: Boolean
+        + Transaccion()
+    }
+
+    note right of Transaccion
+        La valoracion se encuentra en la Transaccion
+        ya que un servicio por si solo no posee calificacion.
+    end note
+
+    class Servicio {
+        - nombreServicio: String
+        - descripcionServicio: String
+        - calificacionServicio: int
+        + Servicio(nombreServicio: String, descripcionServicio: String)
+    }
+
+    ' Relaciones dentro de la Capa de Entidades
+    MuroPublicaciones --> Usuario : consulta listas de >
+    
+    Usuario "1" --> "1" Monedero
+    Usuario "1" --> "0..*" Habilidad : ofrece >
+    Usuario "1" --> "0..*" Necesidad : busca >
+    
+    SolicitudIntercambio --> "1" Usuario : recibe >
+    SolicitudIntercambio --> "1" Usuario : solicita >
+    SolicitudIntercambio --> "0" Necesidad : responde a >
+    SolicitudIntercambio --> "0" Habilidad : solicita >
+    SolicitudIntercambio "0..*" --> "1" Transaccion : genera >
+    
+    Transaccion --> Servicio
+}
+
+package "Capa de Gestion" {
+    
+    class GestorTransaccion {
+        + registrarTransaccion(idOfertante: String, idDemandante: String, nombreServicio: String): Void
+        + buscarTransaccion(idTransaccion: String): Transaccion
+        + actualizarEstado(estado: Enum): Void
+        + actualizarConfirmacionServicio(usuario): Void
+        + GestorTransaccion()
+    }
+
+    class GestorUsuario {
+        + registrarUsuario(nombre: String, correoElectronico: String, telefono: String, foto: String): Void
+        + calcularReputacionHistorica(idUsuario: String): Void
+        + calcularReputacionServicio(idUsuario: String, nombreServicio: String, calificacionServicio: int): Void
+        + buscarUsuario(idUsuario: String): Usuario
+        + modificarDatosUsuario(idUsuario: String): Void
+        + GestorUsuario()
+    }
+}
+
+' Relaciones de dependencia entre paquetes
+GestorTransaccion ..> Transaccion
+GestorTransaccion ..> SolicitudIntercambio
+GestorUsuario ..> Usuario
+
+@enduml

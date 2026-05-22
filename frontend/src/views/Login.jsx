@@ -1,33 +1,60 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
+import { Image as ImageIcon } from 'lucide-react';
 
 const Login = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  
+  // Login fields
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  
+  // Register fields
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [profilePic, setProfilePic] = useState(null);
+
   const [error, setError] = useState('');
   const { setUser, setBalance } = useContext(AppContext);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    // Requisito: Restricción de Dominio (Seguridad) -> dominio oficial de la comunidad
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@plazaalameda\.com$/;
-    
-    if (!emailRegex.test(email)) {
-      setError('El correo debe pertenecer al dominio oficial @plazaalameda.com');
-      return;
-    }
+    setError('');
 
-    if (password.length < 6) {
-      setError('Contraseña inválida.');
-      return;
-    }
+    if (isLogin) {
+      if (!email || !password) {
+        setError('Por favor, completa todos los campos.');
+        return;
+      }
+      
+      const domain = email.split('@')[1];
+      if (domain !== 'unimet.edu.ve') {
+        setError('El correo debe pertenecer al dominio unimet.edu.ve');
+        return;
+      }
+      
+      setUser({ name: 'Usuario Prueba', email });
+      setBalance(100);
+      navigate('/');
+    } else {
+      if (!name || !email || !phone || !password) {
+        setError('Por favor, completa todos los campos obligatorios.');
+        return;
+      }
+      
+      const domain = email.split('@')[1];
+      if (domain !== 'unimet.edu.ve') {
+        setError('El correo debe pertenecer al dominio unimet.edu.ve');
+        return;
+      }
 
-    // Mock successful login
-    setUser({ name: email.split('@')[0], email, role: 'Vecino' });
-    setBalance(100); // Capital Semilla
-    navigate('/');
+      // Registro simulado
+      setUser({ name, email, phone });
+      setBalance(100);
+      navigate('/');
+    }
   };
 
   return (
@@ -41,41 +68,52 @@ const Login = () => {
     }}>
       <div className="card animate-in" style={{ width: '100%', maxWidth: '400px' }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <h1 style={{ color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>entreNos</h1>
-          <p style={{ color: 'var(--text-tertiary)' }}>Bienvenido a Plaza Alameda</p>
+          <h1 style={{ marginBottom: '0.5rem', color: 'var(--accent-primary)' }}>entreNos</h1>
+          <h2 style={{ fontSize: '1.25rem', color: 'var(--text-secondary)' }}>
+            {isLogin ? 'Inicia sesión en tu cuenta' : 'Crea tu cuenta'}
+          </h2>
         </div>
 
         {error && (
-          <div style={{
-            backgroundColor: '#fee2e2',
-            color: '#dc2626',
-            padding: '0.75rem',
-            borderRadius: '0.5rem',
-            marginBottom: '1.5rem',
-            fontSize: '0.875rem'
-          }}>
+          <div style={{ backgroundColor: 'var(--bg-warning-soft)', color: 'var(--text-on-warning-soft)', padding: '0.75rem', borderRadius: '0.5rem', marginBottom: '1rem', fontSize: '0.875rem' }}>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {!isLogin && (
+            <>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Nombre Completo</label>
+                <input 
+                  type="text" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Ej: María Pérez"
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Teléfono</label>
+                <input 
+                  type="tel" 
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Ej: +58 412 1234567"
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
+                />
+              </div>
+            </>
+          )}
+
           <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Correo Electrónico</label>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Correo Universitario</label>
             <input 
               type="email" 
               value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="vecino@plazaalameda.com"
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                borderRadius: '0.5rem',
-                border: '1px solid var(--border-color)',
-                backgroundColor: 'var(--bg-primary)',
-                color: 'var(--text-primary)',
-                outline: 'none'
-              }}
-              required
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="usuario@unimet.edu.ve"
+              style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
             />
           </div>
           <div>
@@ -83,24 +121,44 @@ const Login = () => {
             <input 
               type="password" 
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                borderRadius: '0.5rem',
-                border: '1px solid var(--border-color)',
-                backgroundColor: 'var(--bg-primary)',
-                color: 'var(--text-primary)',
-                outline: 'none'
-              }}
-              required
+              style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
             />
           </div>
-          <button type="submit" className="btn-primary" style={{ marginTop: '1rem', width: '100%' }}>
-            Ingresar
+
+          {!isLogin && (
+            <div>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Foto de Perfil</label>
+              <div style={{ border: '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '1rem', textAlign: 'center', color: 'var(--text-tertiary)', cursor: 'pointer' }}>
+                <ImageIcon size={24} style={{ margin: '0 auto 0.5rem' }} />
+                <p style={{ fontSize: '0.875rem' }}>Subir foto</p>
+              </div>
+            </div>
+          )}
+
+          <button type="submit" className="btn-primary" style={{ marginTop: '1rem', padding: '0.75rem' }}>
+            {isLogin ? 'Ingresar' : 'Registrarse'}
           </button>
         </form>
+
+        <div style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+          {isLogin ? (
+            <>
+              ¿No tienes una cuenta?{' '}
+              <button onClick={() => { setIsLogin(false); setError(''); }} style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', fontWeight: 'bold', cursor: 'pointer' }}>
+                Regístrate aquí
+              </button>
+            </>
+          ) : (
+            <>
+              ¿Ya tienes una cuenta?{' '}
+              <button onClick={() => { setIsLogin(true); setError(''); }} style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', fontWeight: 'bold', cursor: 'pointer' }}>
+                Inicia sesión
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
