@@ -1,4 +1,4 @@
-package app.model.CapaControlador;
+package app.model.CapaControladores;
 
 import app.model.CapaEntidades.SolicitudIntercambio;
 import app.model.CapaEntidades.EstadoSolicitudIntercambio;

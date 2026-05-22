@@ -1,14 +1,19 @@
-package app.model.CapaControlador;
+package app.model.CapaControladores;
 
+import app.model.CapaEntidades.Imagen;
+import app.model.CapaEntidades.Monedero;
 import app.model.CapaEntidades.Usuario;
 import app.model.CapaGestion.GestionUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:5173") // Permite la comunicación con React
 public class UsuarioController {
 
     @Autowired
@@ -39,4 +44,33 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body("{\"error\": \"" + e.getMessage() + "\"}");
         }
     }
+
+
+    @PostMapping("/registrar")
+    public ResponseEntity<?> registrarUsuario(@RequestBody Usuario nuevoUsuario) {
+        try {
+            // 1. Criterio de Aceptación HU1: Validar dominio del correo comunitario
+            if (nuevoUsuario.getCorreoElectronico() == null || !nuevoUsuario.getCorreoElectronico().endsWith("@alameda.com")) {
+                return ResponseEntity.badRequest().body("El correo debe pertenecer al dominio oficial alameda.com");
+            }
+
+            // 2. Completar los datos automáticos requeridos por la HU1
+            nuevoUsuario.setIdUsuario(UUID.randomUUID().toString()); // ID único automático
+            nuevoUsuario.setMonedero(new Monedero());       // Capital Semilla inicial obligado
+
+            // 3. Manejo del atributo foto (Si viene vacío desde el frente, le asignamos un texto por defecto)
+            if (nuevoUsuario.getFotoPerfil() == null)
+                nuevoUsuario.setFotoPerfil(new Imagen("avatarPersona")); // 💡 Cambia 'setRutaFoto' por el nombre exacto de tu atributo string
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al registrar el usuario: " + e.getMessage());
+        }
+
+        // 4. Tu función de lectura y sobreescritura física en el archivo usuarios.json
+        gestionUsuario.registrarUsuario(nuevoUsuario);
+
+        // Respondemos al Frontend con el usuario ya guardado
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
+
+    }
+
 }

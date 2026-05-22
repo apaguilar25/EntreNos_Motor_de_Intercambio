@@ -7,54 +7,94 @@ const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   
   // Login fields
-  const [email, setEmail] = useState('');
+  const [correoElectronico, setcorreoElectronico] = useState('');
   
   // Register fields
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [description, setDescription] = useState('');
-  const [profilePic, setProfilePic] = useState(null);
+  const [nombre, setnombre] = useState('');
+  const [telefono, settelefono] = useState('');
+  const [descripcion, setdescripcion] = useState('');
+  const [fotoPerfil, setfotoPerfil] = useState(null);
 
   const [error, setError] = useState('');
 
   const { setUser, setBalance } = useContext(AppContext);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
+    // Validación común de dominio para ambos casos
+    if (correoElectronico) {
+      const domain = correoElectronico.split('@')[1];
+      if (domain !== 'alameda.com') {
+        setError('El correo debe pertenecer al dominio oficial de la comunidad (alameda.com).');
+        return;
+      }
+    }
+
     if (isLogin) {
-      if (!email) {
+      if (!correoElectronico) {
         setError('Por favor, completa el campo de correo.');
         return;
       }
       
-      const domain = email.split('@')[1];
-      if (domain !== 'alameda.com') {
-        setError('El correo debe pertenecer al dominio oficial de la comunidad (alameda.com).');
-        return;
-      }
-      
-      setUser({ name: email.split('@')[0], email });
-      navigate('/onboarding');
+      // Mantenemos la simulación del login por ahora (hasta que programen la HU7)
+      setUser({ nombre: correoElectronico.split('@')[0], correoElectronico });
+      setBalance(100);
+      navigate('/');
     } else {
-      if (!name || !email || !phone || !description) {
+      // --- REGISTRO REAL CON JAVA ---
+      if (!nombre || !correoElectronico || !telefono || !descripcion) {
         setError('Por favor, completa todos los campos obligatorios.');
         return;
       }
-      
-      const domain = email.split('@')[1];
-      if (domain !== 'alameda.com') {
-        setError('El correo debe pertenecer al dominio oficial de la comunidad (alameda.com).');
-        return;
-      }
 
-      // Registro simulado
-      setUser({ name, email, phone, description });
-      navigate('/onboarding');
+      // 1. Creamos el objeto con los nombres exactos que espera tu backend
+      const datosUsuario = {
+        nombre: nombre,
+        correoElectronico: correoElectronico,
+        telefono: telefono,
+        descripcion: descripcion
+      };
+
+      try {
+        // 2. Disparamos la petición POST al enchufe de Spring Boot
+        const response = await fetch('http://localhost:8080/api/usuarios/registrar', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json' // Le avisa a Java que va un JSON
+          },
+          body: JSON.stringify(datosUsuario) // Convierte el objeto de JS a texto plano
+        });
+
+        if (response.ok) {
+          const usuarioGuardado = await response.json(); // Java nos devuelve el usuario con su ID y Créditos
+          
+          // 3. Guardamos los datos reales del servidor en tu contexto de React
+          setUser({ 
+            nombre: usuarioGuardado.nombre, 
+            correoElectronico: usuarioGuardado.correoElectronico,
+            telefono: usuarioGuardado.telefono,
+            descripcion: usuarioGuardado.descripcion
+          });
+          
+          // Asignamos el capital semilla real que colocó el Backend
+          setBalance(usuarioGuardado.creditosDisponibles || 100); 
+          
+          // Redirigimos al Home
+          navigate('/');
+        } else {
+          const mensajeError = await response.text();
+          setError(mensajeError || 'Error al registrar en el servidor.');
+        }
+      } catch (err) {
+        console.error(err);
+        setError('No se pudo establecer conexión con el servidor Java. ¿Está encendido IntelliJ?');
+      }
     }
   };
+
 
   return (
     <div style={{
@@ -65,7 +105,7 @@ const Login = () => {
       backgroundColor: 'var(--bg-primary)',
       padding: '1rem'
     }}>
-      <div className="card animate-in" style={{ width: '100%', maxWidth: '400px' }}>
+      <div classnombre="card animate-in" style={{ width: '100%', maxWidth: '400px' }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <h1 style={{ marginBottom: '0.5rem', color: 'var(--accent-primary)' }}>entreNos</h1>
           <h2 style={{ fontSize: '1.25rem', color: 'var(--text-secondary)' }}>
@@ -86,8 +126,8 @@ const Login = () => {
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Nombre Completo</label>
                 <input 
                   type="text" 
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={nombre}
+                  onChange={(e) => setnombre(e.target.value)}
                   placeholder="Ej: María Pérez"
                   style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
                 />
@@ -96,8 +136,8 @@ const Login = () => {
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Teléfono</label>
                 <input 
                   type="tel" 
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  value={telefono}
+                  onChange={(e) => settelefono(e.target.value)}
                   placeholder="Ej: +58 412 1234567"
                   style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
                 />
@@ -105,8 +145,8 @@ const Login = () => {
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Descripción Personal</label>
                 <textarea 
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  value={descripcion}
+                  onChange={(e) => setdescripcion(e.target.value)}
                   placeholder="Cuenta un poco sobre ti..."
                   rows={2}
                   style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', resize: 'vertical' }}
@@ -118,9 +158,9 @@ const Login = () => {
           <div>
             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Correo Comunitario</label>
             <input 
-              type="email" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="correoElectronico" 
+              value={correoElectronico}
+              onChange={(e) => setcorreoElectronico(e.target.value)}
               placeholder="usuario@alameda.com"
               style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
             />
@@ -136,7 +176,7 @@ const Login = () => {
             </div>
           )}
 
-          <button type="submit" className="btn-primary" style={{ marginTop: '1rem', padding: '0.75rem' }}>
+          <button type="submit" classnombre="btn-primary" style={{ marginTop: '1rem', padding: '0.75rem' }}>
             {isLogin ? 'Ingresar' : 'Registrarse'}
           </button>
         </form>

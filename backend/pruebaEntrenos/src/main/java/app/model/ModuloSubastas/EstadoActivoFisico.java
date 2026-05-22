@@ -1,4 +1,4 @@
-package org.example.ModuloSubastas;
+package app.model.ModuloSubastas;
 
 public enum EstadoActivoFisico {
     NUEVO, USADO, REPARADO

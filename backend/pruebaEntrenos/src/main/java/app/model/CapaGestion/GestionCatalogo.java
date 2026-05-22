@@ -1,4 +1,4 @@
-package org.example.CapaGestion;
+package app.model.CapaGestion;
 
 public class GestionCatalogo {
 }

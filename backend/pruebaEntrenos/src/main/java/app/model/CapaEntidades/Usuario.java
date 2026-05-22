@@ -1,8 +1,9 @@
 package app.model.CapaEntidades;
+import app.model.ModuloSubastas.Oferta;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.UUID;
-import org.example.ModuloSubastas.Oferta;
 
 public class Usuario {
     private String idUsuario;

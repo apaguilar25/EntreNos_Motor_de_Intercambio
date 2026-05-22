@@ -1,4 +1,4 @@
-package org.example.ModuloSubastas;
+package app.model.ModuloSubastas;
 
 public enum EstadoSubasta {
     ACTIVA, FINALIZADA, EN_REVISION, CANCELADA

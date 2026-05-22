@@ -33,6 +33,22 @@ public class GestionUsuario {
         System.out.println("[SISTEMA] Usuario registrado con éxito: " + nuevoUsuario.getNombre());
     }
 
+    // Para usuario registrado desde el frontend
+    public void registrarUsuario(Usuario usuario) {
+        List<Usuario> usuarios = persistenciaUsuario.cargar();
+
+        Usuario nuevoUsuario = new Usuario();
+        // Generamos un ID único, ej: USR-A1B2C
+        nuevoUsuario.setIdUsuario("USR-" + UUID.randomUUID().toString().substring(0, 5).toUpperCase());
+        nuevoUsuario.setReputacionHistorica(0.0); // Nace con 0 de reputación
+        nuevoUsuario.getSancion().setSancionActiva(false); // Nace sin sanciones
+
+
+        usuarios.add(nuevoUsuario);
+        persistenciaUsuario.guardar(usuarios);
+        System.out.println("[SISTEMA] Usuario registrado con éxito: " + nuevoUsuario.getNombre());
+    }
+
     // 2. Buscar Usuario (Traducción de tu UML)
     public Usuario buscarUsuario(String idUsuario) {
         return persistenciaUsuario.cargar().stream()

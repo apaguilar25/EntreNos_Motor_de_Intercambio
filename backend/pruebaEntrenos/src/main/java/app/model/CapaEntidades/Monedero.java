@@ -4,6 +4,7 @@ public class Monedero {
 
     private int creditosDisponibles;
     private int creditosComprometidos;
+    private int creditosRetenidos;
 
     public boolean tieneFondosSuficientes(int costo){
         int restante = creditosDisponibles - costo;
@@ -23,6 +24,7 @@ public class Monedero {
     public Monedero() {
         this.creditosDisponibles = 0;
         this.creditosComprometidos = 0;
+        this.creditosRetenidos = 0;
     }
 
     public int getCreditosDisponibles() {
@@ -39,5 +41,13 @@ public class Monedero {
 
     public void setCreditosComprometidos(int creditosComprometidos) {
         this.creditosComprometidos = creditosComprometidos;
+    }
+
+    public int getCreditosRetenidos() {
+        return creditosRetenidos;
+    }
+
+    public void setCreditosRetenidos(int creditosRetenidos) {
+        this.creditosRetenidos = creditosRetenidos;
     }
 }
