@@ -1,0 +1,25 @@
+[
+  {
+    "idTransaccion": "TX-001",
+    "idOfertante": "USR-1001",
+    "idDemandante": "USR-1002",
+    "estado": "INICIADA",
+    "creditosRetenidos": 30,
+    "confirmacionOfertante": false,
+    "confirmacionDemandante": false,
+    "nombreServicio": "Clases de Guitarra",
+    "descripcion": "Intercambio de 3 horas de guitarra acústica básica por asesoría de software."
+  },
+  {
+    "idTransaccion": "TX-002",
+    "idOfertante": "USR-1002",
+    "idDemandante": "USR-1003",
+    "estado": "INICIADA",
+    "creditosRetenidos": 50,
+    "confirmacionOfertante": false,
+    "confirmacionDemandante": false,
+    "nombreServicio": "Clases de GuitarHero",
+    "descripcion": "Intercambio de 3 horas de guitarra acústica básica por asesoría de piano."
+  }
+
+]

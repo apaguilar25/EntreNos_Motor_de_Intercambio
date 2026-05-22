@@ -1,0 +1,27 @@
+[
+  {
+    "idSolicitudIntercambio": "SOL-001",
+    "idEmisor": "USR-1002",
+    "idReceptor": "USR-1001",
+    "idOfertante": "USR-1001",
+    "idDemandante": "USR-1002",
+    "nombreServicio": "Clases de Guitarra",
+    "descripcionServicio": "Intercambio de 3 horas de guitarra acústica básica por asesoría de software.",
+    "precioCreditos": 30,
+    "estado": "PENDIENTE",
+    "fechaEmision": "2026-05-22T00:00:00"
+  },
+  {
+    "idSolicitudIntercambio": "SOL-021",
+    "idEmisor": "USR-1032",
+    "idReceptor": "USR-1031",
+    "idOfertante": "USR-1021",
+    "idDemandante": "USR-1042",
+    "nombreServicio": "Clases de Piano",
+    "descripcionServicio": "Intercambio de 3 horas piano básico por asesoría de software.",
+    "precioCreditos": 30,
+    "estado": "PENDIENTE",
+    "fechaEmision": "2026-05-22T00:00:00"
+  }
+
+]

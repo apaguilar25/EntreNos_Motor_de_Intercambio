@@ -14,7 +14,7 @@ public class GestionUsuario {
     @Autowired
     private PersistenciaUsuario persistenciaUsuario;
 
-    // 1. Registrar Usuario (Traducción de tu UML)
+    // 1. Registrar Usuario
     public void registrarUsuario(String nombre, String correo, String telefono, String foto) {
         List<Usuario> usuarios = persistenciaUsuario.cargar();
 
@@ -49,7 +49,7 @@ public class GestionUsuario {
         System.out.println("[SISTEMA] Usuario registrado con éxito: " + nuevoUsuario.getNombre());
     }
 
-    // 2. Buscar Usuario (Traducción de tu UML)
+    // 2. Buscar Usuario
     public Usuario buscarUsuario(String idUsuario) {
         return persistenciaUsuario.cargar().stream()
                 .filter(u -> u.getIdUsuario().equals(idUsuario))

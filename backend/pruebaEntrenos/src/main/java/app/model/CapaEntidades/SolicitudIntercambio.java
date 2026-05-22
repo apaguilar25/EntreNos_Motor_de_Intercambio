@@ -71,6 +71,19 @@ public class SolicitudIntercambio {
         this.idSolicitudIntercambio = idSolicitudIntercambio;
     }
 
+    public SolicitudIntercambio(String idSolicitudIntercambio, String idOfertante, String idDemandante, Date fechaEmision, String nombreServicio, int precioCreditos, String descripcionServicio, EstadoSolicitudIntercambio estado, String idEmisor, String idReceptor) {
+        this.idSolicitudIntercambio = idSolicitudIntercambio;
+        this.idOfertante = idOfertante;
+        this.idDemandante = idDemandante;
+        this.fechaEmision = fechaEmision;
+        this.nombreServicio = nombreServicio;
+        this.precioCreditos = precioCreditos;
+        this.descripcionServicio = descripcionServicio;
+        this.estado = estado;
+        this.idEmisor = idEmisor;
+        this.idReceptor = idReceptor;
+    }
+
     public Date getFechaEmision() {
         return fechaEmision;
     }

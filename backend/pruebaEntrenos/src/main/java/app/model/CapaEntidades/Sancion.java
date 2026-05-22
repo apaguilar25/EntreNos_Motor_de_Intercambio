@@ -21,6 +21,9 @@ public class Sancion {
         this.sancionActiva = sancionActiva;
     }
 
+    public Sancion() {
+    }
+
     public LocalDate getFechaSancion() {
         return fechaSancion;
     }

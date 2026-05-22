@@ -10,6 +10,9 @@ public class Necesidad {
         this.descripcionNecesidad = descripcionNecesidad;
     }
 
+    public Necesidad() {
+    }
+
     public String getNombre() {
         return nombre;
     }

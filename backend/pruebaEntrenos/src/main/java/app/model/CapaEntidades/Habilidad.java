@@ -6,6 +6,9 @@ public class Habilidad {
     private int precioCreditos;
     private String descripcionHabilidad;
 
+    public Habilidad() {
+    }
+
     public Habilidad(String nombre, int precioCreditos, String descripcionHabilidad) {
         this.nombre = nombre;
         this.precioCreditos = precioCreditos;

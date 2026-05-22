@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public class PersistenciaNotificacion {
 
-    private final String RUTA_ARCHIVO = "src/main/java/app/model/data/notificaciones.json";
+    private final String RUTA_ARCHIVO = "backend/pruebaEntrenos/src/main/java/app/model/data/notificaciones.json";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public void guardar(List<Notificacion> notificaciones) {

@@ -14,12 +14,17 @@ import java.util.List;
 public class PersistenciaUsuario {
 
     // Ruta basada en tu árbol de directorios de la primera captura
-    private final String RUTA_ARCHIVO = "src/main/java/app/model/data/usuarios.json";
+// Agregamos la ruta del módulo backend antes del src
+    private final String RUTA_ARCHIVO = "backend/pruebaEntrenos/src/main/java/app/model/data/usuarios.json";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public void guardar(List<Usuario> usuarios) {
         try {
             File archivo = new File(RUTA_ARCHIVO);
+
+            System.out.println("[DEBUG] Guardando datos en: " + archivo.getAbsolutePath());
+
+
             archivo.getParentFile().mkdirs();
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(archivo, usuarios);
         } catch (IOException e) {
@@ -30,6 +35,10 @@ public class PersistenciaUsuario {
     // Cambiamos List<Object> por List<Usuario> para solucionar el error del Muro
     public List<Usuario> cargar() {
         File archivo = new File(RUTA_ARCHIVO);
+
+
+        System.out.println("[DEBUG] Buscando archivo JSON en: " + archivo.getAbsolutePath());
+
 
         // Si el archivo no existe o está vacío, devolvemos una lista vacía para evitar NullPointerException
         if (!archivo.exists() || archivo.length() == 0) {

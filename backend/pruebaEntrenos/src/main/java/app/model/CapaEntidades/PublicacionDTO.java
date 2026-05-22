@@ -21,6 +21,9 @@ public class PublicacionDTO {
         this.precioCreditos = precioCreditos;
     }
 
+    public PublicacionDTO() {
+    }
+
     // Getters necesarios para la serialización de Jackson (JSON)
     public String getIdUsuario() { return idUsuario; }
     public String getNombreUsuario() { return nombreUsuario; }

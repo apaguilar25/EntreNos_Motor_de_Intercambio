@@ -22,6 +22,8 @@ public class Notificacion {
         this.estadoLectura = false; // Por defecto nace sin leer
     }
 
+
+
     // Getters y Setters
     public String getIdNotificacion() { return idNotificacion; }
     public void setIdNotificacion(String idNotificacion) { this.idNotificacion = idNotificacion; }
