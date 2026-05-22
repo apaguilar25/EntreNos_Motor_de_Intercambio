@@ -11,18 +11,22 @@ public class Usuario {
     private String telefono;
     private String descripcionPersonal;
     private Double reputacionHistorica;
-    private boolean sancionActiva;
-    private LocalDate fechaSancion;
+    private Sancion sancion;
 
     // Asociaciones y Agregaciones
     private Monedero monedero;
-    private ArrayList<Habilidad> listaHabilidades;
-    private ArrayList<Necesidad> listaNecesidades;
+    private ArrayList<Habilidad> habilidades;
+    private ArrayList<Necesidad> necesidades;
     private ArrayList<Oferta> listaOfertasRealizadas;
     private ArrayList<Notificacion> notificaciones;
     private Imagen fotoPerfil;
 
     // Constructor
+
+    public Usuario() {
+        // Constructor vacío necesario para Jackson (Lectura de JSON)
+    }
+
     public Usuario(String nombre, String correoElectronico, String telefono, Imagen fotoPerfil) {
         this.idUsuario = UUID.randomUUID().toString();
         this.nombre = nombre;
@@ -30,10 +34,10 @@ public class Usuario {
         this.telefono = telefono;
         this.fotoPerfil = fotoPerfil;
         this.monedero = new Monedero();
-        this.listaHabilidades = new ArrayList<>();
-        this.listaNecesidades = new ArrayList<>();
+        this.habilidades = new ArrayList<>();
+        this.necesidades = new ArrayList<>();
         this.notificaciones = new ArrayList<>();
-        this.sancionActiva = false;
+        this.sancion = null; // No tiene sanción al inicio
         this.reputacionHistorica = 5.0; // Inicia con reputación perfecta
     }
 
@@ -80,11 +84,67 @@ public class Usuario {
     }
 
     public ArrayList<Habilidad> getHabilidades() {
-        return listaHabilidades;
+        return habilidades;
     }
 
-    public void setListaHabilidades(ArrayList<Habilidad> listaHabilidades) {
-        this.listaHabilidades = listaHabilidades;
+    public void setHabilidades(ArrayList<Habilidad> listaHabilidades) {
+        this.habilidades = listaHabilidades;
+    }
+
+    public ArrayList<Necesidad> getNecesidades() {
+        return necesidades;
+    }
+
+    public void setNecesidades(ArrayList<Necesidad> necesidades) {
+        this.necesidades = necesidades;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public Imagen getFotoPerfil() {
+        return fotoPerfil;
+    }
+
+    public void setFotoPerfil(Imagen fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
+    }
+
+    public Monedero getMonedero() {
+        return monedero;
+    }
+
+    public void setMonedero(Monedero monedero) {
+        this.monedero = monedero;
+    }
+
+    public ArrayList<Oferta> getListaOfertasRealizadas() {
+        return listaOfertasRealizadas;
+    }
+
+    public void setListaOfertasRealizadas(ArrayList<Oferta> listaOfertasRealizadas) {
+        this.listaOfertasRealizadas = listaOfertasRealizadas;
+    }
+
+    public ArrayList<Notificacion> getNotificaciones() {
+        return notificaciones;
+    }
+
+    public void setNotificaciones(ArrayList<Notificacion> notificaciones) {
+        this.notificaciones = notificaciones;
+    }
+
+    public Sancion getSancion() {
+        return sancion;
+    }
+
+    public void setSancion(Sancion sancion) {
+        this.sancion = sancion;
     }
 }
 

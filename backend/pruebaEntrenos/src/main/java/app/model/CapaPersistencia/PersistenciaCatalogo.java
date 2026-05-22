@@ -2,7 +2,7 @@ package app.model.CapaPersistencia;
 
 import java.util.List;
 
-public class PersistenciaCatalogo implements Persistencia{
+public class PersistenciaCatalogo {
 
     private static PersistenciaCatalogo instancia;
 
@@ -18,12 +18,10 @@ public class PersistenciaCatalogo implements Persistencia{
     }
 
 
-    @Override
     public List<Object> cargar() {
         return List.of();
     }
 
-    @Override
     public Void guardar(List<Object> datosGuardar) {
         return null;
     }

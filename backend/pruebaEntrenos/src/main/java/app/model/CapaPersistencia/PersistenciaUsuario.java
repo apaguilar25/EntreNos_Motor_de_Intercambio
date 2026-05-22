@@ -1,35 +1,47 @@
 package app.model.CapaPersistencia;
 
+import app.model.CapaEntidades.Usuario;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Repository;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class PersistenciaUsuario implements Persistencia {
+@Repository // Esto soluciona tu error de @Autowired
+public class PersistenciaUsuario {
 
-    private static PersistenciaUsuario instancia;
+    // Ruta basada en tu árbol de directorios de la primera captura
+    private final String RUTA_ARCHIVO = "src/main/java/app/model/data/usuarios.json";
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // Constructor privado
-    private PersistenciaUsuario() {
-        // Nada que agregar de momento
-    }
-
-    // Metod.o público y estático para instancia unica
-    public static PersistenciaUsuario getInstancia() {
-        if (instancia == null) {
-            instancia = new PersistenciaUsuario(); // Solo si no existe, se crea
+    public void guardar(List<Usuario> usuarios) {
+        try {
+            File archivo = new File(RUTA_ARCHIVO);
+            archivo.getParentFile().mkdirs();
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(archivo, usuarios);
+        } catch (IOException e) {
+            System.err.println("Error al guardar usuarios: " + e.getMessage());
         }
-        return instancia;
     }
 
-    @Override
-    public static List<Object> cargar() {
-        return List.of();
+    // Cambiamos List<Object> por List<Usuario> para solucionar el error del Muro
+    public List<Usuario> cargar() {
+        File archivo = new File(RUTA_ARCHIVO);
+
+        // Si el archivo no existe o está vacío, devolvemos una lista vacía para evitar NullPointerException
+        if (!archivo.exists() || archivo.length() == 0) {
+            return new ArrayList<>();
+        }
+
+        try {
+            // Jackson lee el JSON y lo transforma automáticamente en objetos Usuario
+            return objectMapper.readValue(archivo, new TypeReference<List<Usuario>>() {});
+        } catch (IOException e) {
+            System.err.println("Error al leer usuarios.json: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
-
-    @Override
-    public Void guardar(List<Object> datosGuardar) {
-        return null;
-    }
-
-
-
-
 }

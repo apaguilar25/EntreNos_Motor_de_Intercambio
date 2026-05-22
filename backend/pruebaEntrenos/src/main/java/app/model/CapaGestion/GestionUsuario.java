@@ -1,35 +1,79 @@
-package CapaGestion;
+package app.model.CapaGestion;
 
-import org.example.CapaEntidades.Necesidad;
-import org.example.CapaEntidades.Usuario;
+import app.model.CapaEntidades.Usuario;
+import app.model.CapaPersistencia.PersistenciaUsuario;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.UUID;
+
+@Service
 public class GestionUsuario {
 
+    @Autowired
+    private PersistenciaUsuario persistenciaUsuario;
 
-    public void registrarUsuario(String nombre, String correoElectronico, String telefono, String rutaFoto){
+    // 1. Registrar Usuario (Traducción de tu UML)
+    public void registrarUsuario(String nombre, String correo, String telefono, String foto) {
+        List<Usuario> usuarios = persistenciaUsuario.cargar();
 
+        Usuario nuevoUsuario = new Usuario();
+        // Generamos un ID único, ej: USR-A1B2C
+        nuevoUsuario.setIdUsuario("USR-" + UUID.randomUUID().toString().substring(0, 5).toUpperCase());
+        nuevoUsuario.setNombre(nombre);
+        nuevoUsuario.setCorreoElectronico(correo);
+        nuevoUsuario.setTelefono(telefono);
+        nuevoUsuario.setReputacionHistorica(0.0); // Nace con 0 de reputación
+        nuevoUsuario.getSancion().setSancionActiva(false); // Nace sin sanciones
+
+
+        usuarios.add(nuevoUsuario);
+        persistenciaUsuario.guardar(usuarios);
+        System.out.println("[SISTEMA] Usuario registrado con éxito: " + nuevoUsuario.getNombre());
     }
 
-    public void calcularReputacionHistorica(String idUsuario){
-
-    }
-
-    // En lugar de pasar nombreServicio, no seria mejor pasar id para tener uniformidad y manejar tod.o por ids
-    public void calcularReputacionServicio(String idUsuarioOfertante, int idServicio, int calificacionServicio){
-
-    }
-
+    // 2. Buscar Usuario (Traducción de tu UML)
     public Usuario buscarUsuario(String idUsuario) {
-
-        // PLACEHOLDER PARA QUE NO MARQUE ERROR
-        return new Usuario("abc", "abc", "abc", "abc");
+        return persistenciaUsuario.cargar().stream()
+                .filter(u -> u.getIdUsuario().equals(idUsuario))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + idUsuario));
     }
 
-    // Modificar Datos Usuario deberia tener en parametros lo que se le va a modificar. O no??
-    public void modificarDatosUsuario(String idUsuario, String nombre, String correoElectronico, String descripcionPersonal){
+    // 3. Modificar Datos Usuario (Adaptado para recibir los datos nuevos)
+    public void modificarDatosUsuario(String idUsuario, String nuevoNombre, String nuevoTelefono, String nuevaDescripcion) {
+        List<Usuario> usuarios = persistenciaUsuario.cargar();
+        boolean encontrado = false;
 
+        for (Usuario u : usuarios) {
+            if (u.getIdUsuario().equals(idUsuario)) {
+                if (nuevoNombre != null && !nuevoNombre.isEmpty()) u.setNombre(nuevoNombre);
+                if (nuevoTelefono != null && !nuevoTelefono.isEmpty()) u.setTelefono(nuevoTelefono);
+                if (nuevaDescripcion != null && !nuevaDescripcion.isEmpty()) u.setDescripcionPersonal(nuevaDescripcion);
+                encontrado = true;
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            throw new IllegalArgumentException("No se pudo modificar. Usuario no encontrado: " + idUsuario);
+        }
+
+        persistenciaUsuario.guardar(usuarios);
+        System.out.println("[SISTEMA] Datos actualizados para el usuario: " + idUsuario);
     }
 
-    public GestionUsuario() {
+    // 4. Calcular Reputación Histórica (Preparado para el módulo de Transacciones)
+    public void calcularReputacionHistorica(String idUsuario) {
+        // TODO: A futuro, cargar las transacciones completadas del usuario,
+        // promediar las estrellas/calificaciones y hacer un persistenciaUsuario.guardar()
+        System.out.println("[SISTEMA] Lógica de reputación histórica pendiente del módulo de Transacciones para: " + idUsuario);
+    }
+
+    // 5. Calcular Reputación Servicio (Preparado para el módulo de Transacciones)
+    public void calcularReputacionServicio(String idUsuario, String nombreServicio, int calificacion) {
+        // TODO: A futuro, buscar la habilidad específica dentro del usuario y actualizar su score.
+        System.out.println("[SISTEMA] Lógica de calificación de servicio registrada para: " + nombreServicio);
     }
 }

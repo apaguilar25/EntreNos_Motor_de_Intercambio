@@ -1,23 +1,33 @@
 package app.model.CapaEntidades;
-import java.CapaPersistencia.PersistenciaUsuario;
+
+import app.model.CapaDTO.PublicacionDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import app.model.CapaPersistencia.PersistenciaUsuario;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
+@Service
 public class MuroPublicaciones {
 
-    public ArrayList<PublicacionDTO> obtenerTodasLasPublicaciones() {
-        ArrayList<Usuario> usuarios = PersistenciaUsuario.cargarUsuarios();
-        ArrayList<PublicacionDTO> muro = new ArrayList<>();
+    @Autowired
+    private PersistenciaUsuario PersistenciaUsuario;
+
+    // Traduce obtenerPublicaciones() de tu diagrama
+    public List<PublicacionDTO> obtenerPublicaciones() {
+        List<Usuario> usuarios = PersistenciaUsuario.cargar();
+        List<PublicacionDTO> muro = new ArrayList<>();
 
         for (Usuario u : usuarios) {
-            // Mapear habilidades (Ofrece)
             if (u.getHabilidades() != null) {
                 u.getHabilidades().forEach(h -> muro.add(new PublicacionDTO(
                         u.getIdUsuario(), u.getNombre(), u.getReputacionHistorica(),
                         "HABILIDAD", h.getNombre(), h.getDescripcionHabilidad(), h.getPrecioCreditos()
                 )));
             }
-            // Mapear necesidades (Demanda)
             if (u.getNecesidades() != null) {
                 u.getNecesidades().forEach(n -> muro.add(new PublicacionDTO(
                         u.getIdUsuario(), u.getNombre(), u.getReputacionHistorica(),
@@ -28,8 +38,11 @@ public class MuroPublicaciones {
         return muro;
     }
 
-    public void filtrarPublicaciones(){
-
+    // Traduce filtrarPublicaciones() de tu diagrama
+    public List<PublicacionDTO> filtrarPublicaciones(String tipo, String servicio) {
+        return obtenerPublicaciones().stream()
+                .filter(p -> (tipo == null || tipo.isEmpty() || p.getTipoPublicacion().equalsIgnoreCase(tipo)))
+                .filter(p -> (servicio == null || servicio.isEmpty() || p.getNombreServicio().toLowerCase().contains(servicio.toLowerCase())))
+                .collect(Collectors.toList());
     }
-
 }

@@ -1,0 +1,61 @@
+[
+  {
+    "idUsuario": "USR-1001",
+    "nombre": "Ana Frontend",
+    "reputacionHistorica": 5,
+    "habilidades": [
+      {
+        "nombre": "Diseño Web en React",
+        "descripcionHabilidad": "Maquetado de interfaces modernas y responsivas usando React y TailwindCSS.",
+        "precioCreditos": 40
+      }
+    ],
+    "necesidades": [
+      {
+        "nombre": "Backend en Spring Boot",
+        "descripcionNecesidad": "Necesito a alguien que me configure los endpoints y la seguridad de mi API."
+      }
+    ]
+  },
+  {
+    "idUsuario": "USR-1002",
+    "nombre": "Carlos Backend",
+    "reputacionHistorica": 4,
+    "habilidades": [
+      {
+        "nombre": "Desarrollo en Spring Boot",
+        "descripcionHabilidad": "Creación de APIs REST, conexión a base de datos y arquitectura limpia en Java.",
+        "precioCreditos": 50
+      },
+      {
+        "nombre": "Clases de Guitarra",
+        "descripcionHabilidad": "Te enseño a tocar guitarra acústica desde cero. Clases de 1 hora.",
+        "precioCreditos": 15
+      }
+    ],
+    "necesidades": [
+      {
+        "nombre": "Diseño de Logo",
+        "descripcionNecesidad": "Requiero un logo minimalista para mi nuevo proyecto de software."
+      }
+    ]
+  },
+  {
+    "idUsuario": "USR-1003",
+    "nombre": "Luis Designer",
+    "reputacionHistorica": 5,
+    "habilidades": [
+      {
+        "nombre": "Diseño Gráfico Profesional",
+        "descripcionHabilidad": "Creación de logos, branding e identidad visual usando Illustrator y Figma.",
+        "precioCreditos": 35
+      }
+    ],
+    "necesidades": [
+      {
+        "nombre": "Clases de Guitarra",
+        "descripcionNecesidad": "Quiero aprender a tocar mis canciones favoritas de rock."
+      }
+    ]
+  }
+]
