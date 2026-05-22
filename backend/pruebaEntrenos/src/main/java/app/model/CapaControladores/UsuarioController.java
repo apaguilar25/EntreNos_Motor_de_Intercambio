@@ -45,7 +45,6 @@ public class UsuarioController {
         }
     }
 
-<<<<<<< HEAD
 
     @PostMapping("/registrar")
     public ResponseEntity<?> registrarUsuario(@RequestBody Usuario nuevoUsuario) {
@@ -74,7 +73,7 @@ public class UsuarioController {
 
     }
 
-=======
+
     // DTO interno para recibir el catálogo
     static class CatalogoDTO {
         public java.util.List<app.model.CapaEntidades.Habilidad> habilidades;
@@ -91,5 +90,5 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body("{\"error\": \"" + e.getMessage() + "\"}");
         }
     }
->>>>>>> db4991d (Conexion Back-Front HU1 y HU2 completo (creo))
+
 }

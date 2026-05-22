@@ -9,6 +9,7 @@ const Profile = () => {
   
   const [userProfile, setUserProfile] = useState(null);
   const [sentRequests, setSentRequests] = useState([]);
+  const [myAuctions, setMyAuctions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,6 +27,13 @@ const Profile = () => {
         if (sentResponse.ok) {
           const sentData = await sentResponse.json();
           setSentRequests(sentData);
+        }
+        
+        const auctionsResponse = await fetch(`http://localhost:8080/api/subastas`);
+        if (auctionsResponse.ok) {
+          const auctionsData = await auctionsResponse.json();
+          const mine = auctionsData.filter(s => s.idSubastador === user.id);
+          setMyAuctions(mine);
         }
       } catch (err) {
         console.error("Error cargando perfil", err);
@@ -53,6 +61,32 @@ const Profile = () => {
       } else {
         const errorData = await res.json();
         alert(errorData.error || "Error al cancelar la solicitud");
+      }
+    } catch (err) {
+      alert("Error de conexión");
+    }
+  };
+
+  const handleAdjudicar = async (oferta) => {
+    if (!window.confirm("¿Confirmas adjudicar este postor como el ganador? Esta acción no se puede deshacer.")) return;
+    try {
+      const res = await fetch(`http://localhost:8080/api/subastas/adjudicar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(oferta)
+      });
+      if (res.ok) {
+        alert("Ganador adjudicado con éxito. Subasta concluida.");
+        // Refetch
+        const auctionsResponse = await fetch(`http://localhost:8080/api/subastas`);
+        if (auctionsResponse.ok) {
+          const auctionsData = await auctionsResponse.json();
+          const mine = auctionsData.filter(s => s.idSubastador === user.id);
+          setMyAuctions(mine);
+        }
+      } else {
+        const errorData = await res.json();
+        alert(errorData.error || "Error al adjudicar la subasta");
       }
     } catch (err) {
       alert("Error de conexión");
@@ -165,9 +199,60 @@ const Profile = () => {
             <h3 style={{ fontSize: '1.25rem' }}>Mis Subastas</h3>
           </div>
           <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
-              Módulo en desarrollo por Backend. No hay subastas conectadas.
-            </div>
+            {loading ? (
+              <p style={{ textAlign: 'center', color: 'var(--text-tertiary)' }}>Cargando...</p>
+            ) : myAuctions.length === 0 ? (
+              <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
+                No tienes subastas activas.
+              </div>
+            ) : (
+              myAuctions.map((auction, idx) => (
+                <div key={idx} className="interactive-card" style={{ padding: '1rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <h4 style={{ margin: 0 }}>{auction.activoFisico?.nombreActivo}</h4>
+                    <span style={{ 
+                      padding: '0.25rem 0.5rem', 
+                      borderRadius: '1rem', 
+                      fontSize: '0.75rem', 
+                      fontWeight: 'bold',
+                      backgroundColor: auction.estado === 'ACTIVA' ? 'var(--color-yellow-100)' : 'var(--color-green-100)',
+                      color: auction.estado === 'ACTIVA' ? 'var(--color-orange-600)' : 'var(--color-green-700)'
+                    }}>
+                      {auction.estado}
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{auction.descripcion}</p>
+                  
+                  {auction.ofertas && auction.ofertas.length > 0 && (
+                    <div style={{ marginTop: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '0.5rem' }}>
+                      <h5 style={{ fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Pujas Recibidas:</h5>
+                      {auction.ofertas.map((of, i) => (
+                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem', backgroundColor: 'var(--bg-secondary)', borderRadius: '0.25rem', marginBottom: '0.5rem' }}>
+                          <div>
+                            <span style={{ fontWeight: 'bold', fontSize: '0.875rem' }}>De: {of.idOfertante}</span>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                              Bienes: {of.lineas?.map(l => `${l.cantidad}x ${l.bienConsumo?.nombreBienConsumo}`).join(', ')}
+                            </div>
+                          </div>
+                          {auction.estado === 'ACTIVA' && (
+                            <button 
+                              className="btn-primary" 
+                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--color-green-700)', color: '#fff' }}
+                              onClick={() => handleAdjudicar(of)}
+                            >
+                              Adjudicar
+                            </button>
+                          )}
+                          {of.esGanadora && (
+                            <span style={{ color: 'var(--color-green-700)', fontWeight: 'bold', fontSize: '0.75rem' }}>¡GANADORA!</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
           </div>
         </div>
 

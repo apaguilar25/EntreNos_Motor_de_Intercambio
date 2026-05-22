@@ -2,7 +2,9 @@ package app.model.CapaControladores;
 
 import app.model.CapaEntidades.SolicitudIntercambio;
 import app.model.CapaPersistencia.PersistenciaSolicitud;
+import app.model.CapaGestion.GestionSolicitudIntercambio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +16,9 @@ public class SolicitudIntercambioController {
 
     @Autowired
     private PersistenciaSolicitud persistenciaSolicitud;
+
+    @Autowired
+    private GestionSolicitudIntercambio gestionSolicitud;
 
     // 1. MÉTODOS GET: LISTAR TODO (El método que te faltaba para /api/solicitudes)
     @GetMapping

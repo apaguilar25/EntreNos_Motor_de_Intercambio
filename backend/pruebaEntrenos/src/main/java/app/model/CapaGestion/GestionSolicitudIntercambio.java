@@ -18,6 +18,9 @@ import java.util.List;
 public class GestionSolicitudIntercambio {
 
     @Autowired
+    private GestionTransaccion gestionTransaccion;
+
+    @Autowired
     private PersistenciaSolicitud persistenciaSolicitud;
 
     @Autowired
@@ -86,9 +89,6 @@ public class GestionSolicitudIntercambio {
                 .orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada."));
     }
 
-<<<<<<< HEAD
-    // 5. Actualizar estado y disparar Transacción si es ACEPTADA
-=======
     // 5. Obtener Solicitudes Enviadas por un Usuario
     public List<SolicitudIntercambio> obtenerSolicitudesEnviadas(String idEmisor) {
         return persistenciaSolicitud.cargar().stream()
@@ -96,9 +96,7 @@ public class GestionSolicitudIntercambio {
                 .collect(java.util.stream.Collectors.toList());
     }
 
-
-
->>>>>>> db4991d (Conexion Back-Front HU1 y HU2 completo (creo))
+    // 6. Actualizar estado y disparar Transacción si es ACEPTADA
     public void actualizarEstado(String idSolicitudIntercambio, EstadoSolicitudIntercambio estado) {
         List<SolicitudIntercambio> solicitudes = persistenciaSolicitud.cargar();
         boolean encontrado = false;
@@ -134,8 +132,6 @@ public class GestionSolicitudIntercambio {
 
         persistenciaSolicitud.guardar(solicitudes);
     }
-<<<<<<< HEAD
-=======
 
     public void cancelarSolicitud(String idSolicitudIntercambio) {
         List<SolicitudIntercambio> solicitudes = persistenciaSolicitud.cargar();
@@ -161,6 +157,4 @@ public class GestionSolicitudIntercambio {
         System.out.println("[SISTEMA] Solicitud " + idSolicitudIntercambio + " ha sido CANCELADA y se han devuelto los créditos.");
     }
 
-
->>>>>>> db4991d (Conexion Back-Front HU1 y HU2 completo (creo))
 }

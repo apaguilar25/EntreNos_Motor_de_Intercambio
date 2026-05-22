@@ -15,7 +15,7 @@ public class PersistenciaUsuario {
 
     // Ruta basada en tu árbol de directorios de la primera captura
 // Agregamos la ruta del módulo backend antes del src
-    private final String RUTA_ARCHIVO = "backend/pruebaEntrenos/src/main/java/app/model/data/usuarios.json";
+    private final String RUTA_ARCHIVO = "C:/Users/Personal/.gemini/antigravity/scratch/entreNos/backend/pruebaEntrenos/src/main/java/app/model/data/usuarios.json";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public void guardar(List<Usuario> usuarios) {

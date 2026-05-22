@@ -94,6 +94,37 @@ const MakeRequest = () => {
         alert('Es obligatorio adjuntar una imagen como evidencia visual física de los productos.');
         return;
       }
+
+      try {
+        const lineasPayload = Object.entries(selectedGoods).map(([goodId, qty]) => {
+          const goodInfo = availableGoods.find(g => g.id === parseInt(goodId));
+          return {
+            cantidad: qty,
+            bienConsumo: { nombreBienConsumo: goodInfo.name }
+          };
+        });
+
+        const payload = {
+          idOfertante: user?.id || 'USR-1002',
+          lineas: lineasPayload
+        };
+
+        const response = await fetch(`http://localhost:8080/api/subastas/${id}/ofertar`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const errData = await response.text();
+          throw new Error(errData || 'Error al enviar la oferta.');
+        }
+
+        alert('¡Oferta enviada con éxito!');
+        navigate(-1);
+      } catch (error) {
+        alert(error.message);
+      }
     } else {
       if (!message) {
         alert('Debes escribir un mensaje.');

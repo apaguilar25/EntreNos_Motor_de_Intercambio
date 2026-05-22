@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import app.model.CapaEntidades.EstadoActivoFisico;
 
 @RestController
 @RequestMapping("/api/subastas")
@@ -31,6 +33,25 @@ public class SubastaController {
     @GetMapping("/{id}")
     public Subasta obtenerPorId(@PathVariable String id) {
         return gestionSubasta.buscarSubasta(id);
+    }
+
+    // Endpoint para crear una subasta nueva
+    @PostMapping("/crear")
+    public ResponseEntity<String> crearSubasta(@RequestBody Map<String, Object> body) {
+        try {
+            String idSubastador = (String) body.get("idSubastador");
+            String descripcion = (String) body.get("descripcion");
+            String nombreActivo = (String) body.get("nombreActivo");
+            String estadoFisicoStr = (String) body.get("estadoFisico");
+            List<String> rutasImagenes = (List<String>) body.get("rutasImagenes");
+
+            EstadoActivoFisico estadoFisico = EstadoActivoFisico.valueOf(estadoFisicoStr.toUpperCase());
+            
+            gestionSubasta.registrarSubasta(idSubastador, descripcion, nombreActivo, estadoFisico, rutasImagenes);
+            return ResponseEntity.ok("{\"mensaje\": \"Subasta creada correctamente.\"}");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("{\"error\": \"" + e.getMessage() + "\"}");
+        }
     }
 
     // HU4: Adjudicar la oferta ganadora

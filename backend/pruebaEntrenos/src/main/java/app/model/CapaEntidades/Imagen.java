@@ -5,9 +5,17 @@ public class Imagen {
     public Imagen() {
     }
 
-    String rutaImagen;
+    private String rutaImagen;
 
     public Imagen(String rutaImagen) {
+        this.rutaImagen = rutaImagen;
+    }
+
+    public String getRutaImagen() {
+        return rutaImagen;
+    }
+
+    public void setRutaImagen(String rutaImagen) {
         this.rutaImagen = rutaImagen;
     }
 }

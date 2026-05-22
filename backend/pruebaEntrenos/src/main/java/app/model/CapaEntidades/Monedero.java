@@ -6,23 +6,7 @@ public class Monedero {
     private int creditosComprometidos;
     private int creditosRetenidos;
 
-    public boolean tieneFondosSuficientes(int costo){
-        int restante = creditosDisponibles - costo;
 
-        if (restante < 0) {
-            return false;
-        }
-        return true;
-    }
-
-    public void calcularCreditosComprometidos(int monto){
-        if (tieneFondosSuficientes(monto)) {
-            this.creditosDisponibles -= monto;
-            this.creditosComprometidos += monto;
-        } else {
-            throw new IllegalStateException("Fondos insuficientes para comprometer.");
-        }
-    }
 
     public void revertirCreditosComprometidos(int monto){
         if (this.creditosComprometidos >= monto) {

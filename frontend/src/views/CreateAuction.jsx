@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Image as ImageIcon } from 'lucide-react';
+import { AppContext } from '../App';
 
 const CreateAuction = () => {
   const navigate = useNavigate();
+  const { user } = React.useContext(AppContext);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [duration, setDuration] = useState('1');
-  const [status, setStatus] = useState('Nuevo');
+  const [status, setStatus] = useState('NUEVO');
   const [hasPhoto, setHasPhoto] = useState(false);
 
   return (
@@ -56,9 +58,9 @@ const CreateAuction = () => {
             onChange={(e) => setStatus(e.target.value)}
             style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
           >
-            <option value="Nuevo">Nuevo</option>
-            <option value="Usado">Usado</option>
-            <option value="Reparado">Reparado</option>
+            <option value="NUEVO">Nuevo</option>
+            <option value="USADO">Usado</option>
+            <option value="REPARADO">Reparado</option>
           </select>
         </div>
 
@@ -100,7 +102,7 @@ const CreateAuction = () => {
           <button 
             className="btn-primary" 
             style={{ flex: 1, padding: '0.75rem', borderRadius: '0.5rem', backgroundColor: 'var(--accent-warning)', color: '#fff' }}
-            onClick={() => {
+            onClick={async () => {
               if(!title || !description) {
                 alert("Por favor llena el título y la descripción.");
                 return;
@@ -109,8 +111,31 @@ const CreateAuction = () => {
                 alert("Debes subir al menos una foto del activo.");
                 return;
               }
-              alert('Subasta creada (Mock)');
-              navigate(-1);
+              
+              const payload = {
+                idSubastador: user?.id || 'USR-1001',
+                descripcion: description,
+                nombreActivo: title,
+                estadoFisico: status,
+                rutasImagenes: ["/ruta/foto1.jpg"]
+              };
+
+              try {
+                const res = await fetch('http://localhost:8080/api/subastas/crear', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                  alert('Subasta creada con éxito.');
+                  navigate(-1);
+                } else {
+                  const data = await res.json();
+                  alert(data.error || 'Error al crear la subasta');
+                }
+              } catch (error) {
+                alert('Error de red');
+              }
             }}
           >
             Crear Subasta

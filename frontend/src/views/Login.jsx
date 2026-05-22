@@ -39,17 +39,17 @@ const Login = () => {
         return;
       }
       
-      const domain = email.split('@')[1];
+      const domain = correoElectronico.split('@')[1];
       if (domain !== 'alameda.com') {
         setError('El correo debe pertenecer al dominio oficial de la comunidad (alameda.com).');
         return;
       }
-      const prefix = email.split('@')[0].toLowerCase();
+      const prefix = correoElectronico.split('@')[0].toLowerCase();
       let assignedId = 'USR-1001';
       if (prefix === 'carlos') assignedId = 'USR-1002';
       else if (prefix === 'luis') assignedId = 'USR-1003';
       
-      setUser({ id: assignedId, name: prefix.charAt(0).toUpperCase() + prefix.slice(1), email });
+      setUser({ id: assignedId, name: prefix.charAt(0).toUpperCase() + prefix.slice(1), email: correoElectronico });
       
       try {
         const response = await fetch(`http://localhost:8080/api/usuarios/${assignedId}`);
@@ -77,13 +77,13 @@ const Login = () => {
         return;
       }
 
-      const prefix = email.split('@')[0].toLowerCase();
+      const prefix = correoElectronico.split('@')[0].toLowerCase();
       let assignedId = 'USR-1001';
       if (prefix === 'carlos') assignedId = 'USR-1002';
       else if (prefix === 'luis') assignedId = 'USR-1003';
 
       // Registro simulado
-      setUser({ id: assignedId, name, email, phone, description });
+      setUser({ id: assignedId, name, email: correoElectronico, phone: telefono, description: descripcion });
       
       try {
         const response = await fetch(`http://localhost:8080/api/usuarios/${assignedId}`);

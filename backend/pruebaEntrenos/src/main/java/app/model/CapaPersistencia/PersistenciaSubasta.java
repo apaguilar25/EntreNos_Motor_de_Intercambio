@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public class PersistenciaSubasta {
 
-    private final String rutaArchivo = "backend/pruebaEntrenos/src/main/java/app/model/data/subasta.json";
+    private final String rutaArchivo = "C:/Users/Personal/.gemini/antigravity/scratch/entreNos/backend/pruebaEntrenos/src/main/java/app/model/data/subasta.json";
 
     private final ObjectMapper objectMapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

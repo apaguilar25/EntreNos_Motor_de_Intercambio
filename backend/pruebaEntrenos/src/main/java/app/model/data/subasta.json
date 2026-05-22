@@ -1,36 +1,31 @@
-[
-  {
-    "idSubasta": "SUB-101",
-    "idSubastador": "USR-1001",
-    "descripcion": "Subasto mi PlayStation 5 en perfecto estado por mercado de abastos.",
-    "fechaCreacion": "2026-05-22T10:00:00.000+00:00",
-    "fechaFinalizacion": "2026-05-29T10:00:00.000+00:00",
-    "estado": "ACTIVA",
-    "activoFisico": {
-      "nombreActivo": "PlayStation 5 Standard Edition",
-      "estadoFisico": "USADO",
-      "imagenes": [
-        { "ruta": "/img/ps5-frente.png" },
-        { "ruta": "/img/ps5-control.png" }
-      ]
-    },
-    "ofertas": [
-      {
-        "idSubasta": "SUB-101",
-        "idOfertante": "USR-1002",
-        "fechaDePublicacion": "2026-05-22T14:30:00.000+00:00",
-        "esGanadora": false,
-        "lineas": [
-          {
-            "cantidad": 5,
-            "bienConsumo": { "nombreBienConsumo": "Kilos de Arroz" }
-          },
-          {
-            "cantidad": 2,
-            "bienConsumo": { "nombreBienConsumo": "Litros de Aceite" }
-          }
-        ]
-      }
-    ]
-  }
-]
+[ {
+  "idSubasta" : "SUB-F12BF",
+  "idSubastador" : "USR-1001",
+  "descripcion" : "Test",
+  "fechaCreacion" : 1779448930047,
+  "fechaFinalizacion" : 1780053730047,
+  "estado" : "ACTIVA",
+  "activoFisico" : {
+    "nombreActivo" : "Test",
+    "estadoFisico" : "NUEVO",
+    "imagenes" : [ {
+      "rutaImagen" : "/ruta/foto1.jpg"
+    } ]
+  },
+  "ofertas" : [ ]
+}, {
+  "idSubasta" : "SUB-EF1F3",
+  "idSubastador" : "USR-1003",
+  "descripcion" : "gdfggdr",
+  "fechaCreacion" : 1779449010900,
+  "fechaFinalizacion" : 1780053810900,
+  "estado" : "ACTIVA",
+  "activoFisico" : {
+    "nombreActivo" : "4t43",
+    "estadoFisico" : "NUEVO",
+    "imagenes" : [ {
+      "rutaImagen" : "/ruta/foto1.jpg"
+    } ]
+  },
+  "ofertas" : [ ]
+} ]
