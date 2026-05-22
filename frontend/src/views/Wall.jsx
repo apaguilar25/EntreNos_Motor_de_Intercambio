@@ -142,7 +142,13 @@ const Wall = () => {
                 </div>
               </div>
               
-              <button className="btn-primary">Contactar</button>
+              <button 
+                className="btn-primary" 
+                style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+                onClick={() => navigate(`/request/${post.id}?type=${post.type}`)}
+              >
+                Contactar
+              </button>
             </div>
           </div>
         ))}
