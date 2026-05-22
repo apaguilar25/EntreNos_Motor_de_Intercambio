@@ -19,13 +19,38 @@ export const AppContext = createContext();
 
 function App() {
   const [theme, setTheme] = useState('light');
-  const [user, setUser] = useState(null); // null if not logged in
-  const [balance, setBalance] = useState(0); // 0 créditos iniciales, se ganan 100 al completar catálogo
-  const [hasCatalog, setHasCatalog] = useState(false);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('entreNosUser');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [balance, setBalance] = useState(() => {
+    const savedBalance = localStorage.getItem('entreNosBalance');
+    return savedBalance ? JSON.parse(savedBalance) : 0;
+  });
+  const [hasCatalog, setHasCatalog] = useState(() => {
+    const savedCatalog = localStorage.getItem('entreNosCatalog');
+    return savedCatalog ? JSON.parse(savedCatalog) : false;
+  });
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('entreNosUser', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('entreNosUser');
+    }
+  }, [user]);
+
+  useEffect(() => {
+    localStorage.setItem('entreNosBalance', JSON.stringify(balance));
+  }, [balance]);
+
+  useEffect(() => {
+    localStorage.setItem('entreNosCatalog', JSON.stringify(hasCatalog));
+  }, [hasCatalog]);
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');

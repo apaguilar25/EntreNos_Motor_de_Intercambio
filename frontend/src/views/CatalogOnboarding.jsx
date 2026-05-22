@@ -4,7 +4,7 @@ import { AppContext } from '../App';
 
 const CatalogOnboarding = () => {
   const navigate = useNavigate();
-  const { setHasCatalog, setBalance, hasCatalog } = useContext(AppContext);
+  const { user, setHasCatalog, setBalance, hasCatalog } = useContext(AppContext);
 
   const [skills, setSkills] = useState({});
   const [needs, setNeeds] = useState({});
@@ -59,7 +59,7 @@ const CatalogOnboarding = () => {
     }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     let valid = true;
     Object.values(skills).forEach(s => {
       if (!s.price || !s.description) valid = false;
@@ -73,15 +73,50 @@ const CatalogOnboarding = () => {
       return;
     }
 
-    if (!hasCatalog) {
-      setBalance(prev => prev + 20);
-      alert('¡Felicidades! Has configurado tu catálogo por primera vez y recibido 20 créditos de Capital Semilla.');
-    } else {
-      alert('Catálogo actualizado exitosamente.');
+    // Formatear para el Backend
+    const habilidadesArreglo = Object.keys(skills).map(id => {
+      const label = availableSkills.find(s => s.id === id).label;
+      return {
+        nombre: label,
+        descripcionHabilidad: skills[id].description,
+        precioCreditos: parseInt(skills[id].price) || 0
+      };
+    });
+
+    const necesidadesArreglo = Object.keys(needs).map(id => {
+      const label = availableNeeds.find(n => n.id === id).label;
+      return {
+        nombre: label,
+        descripcionNecesidad: needs[id].description
+      };
+    });
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/usuarios/${user?.id || 'USR-1001'}/catalogo`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          habilidades: habilidadesArreglo,
+          necesidades: necesidadesArreglo
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("Error guardando el catálogo en el servidor.");
+      }
+
+      if (!hasCatalog) {
+        setBalance(prev => prev + 20);
+        alert('¡Felicidades! Has configurado tu catálogo por primera vez y recibido 20 créditos de Capital Semilla.');
+      } else {
+        alert('Catálogo actualizado exitosamente.');
+      }
+      
+      setHasCatalog(true);
+      navigate('/profile'); // Redirige al perfil para que vea los cambios
+    } catch (err) {
+      alert(err.message);
     }
-    
-    setHasCatalog(true);
-    navigate('/');
   };
 
   return (

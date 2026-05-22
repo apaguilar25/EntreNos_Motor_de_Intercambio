@@ -4,7 +4,7 @@ import { AppContext } from '../App';
 import { Wallet as WalletIcon, ArrowUpRight, ArrowDownRight, Clock, X, Star, AlertTriangle, Image as ImageIcon, CheckCircle } from 'lucide-react';
 
 const Wallet = () => {
-  const { balance } = useContext(AppContext);
+  const { user, setBalance } = useContext(AppContext);
   const [selectedTx, setSelectedTx] = useState(null);
   
   // States for Modals
@@ -12,16 +12,33 @@ const Wallet = () => {
   const [showFraudModal, setShowFraudModal] = useState(false);
   const [rating, setRating] = useState(0);
 
-  const [transactions, setTransactions] = useState([
-    { id: 1, type: 'ingreso', concept: 'Capital Semilla Inicial', amount: 100, date: '17/04/2026', status: 'Completado' },
-    { id: 2, type: 'egreso', concept: 'Reserva para Paseo de Perros', amount: 15, date: 'Hoy', status: 'Retenido' },
-  ]);
+  const [transactions, setTransactions] = useState([]);
+  const [availableBalance, setAvailableBalance] = useState(0);
+  const [retainedBalance, setRetainedBalance] = useState(0);
 
-  const retainedBalance = transactions
-    .filter(t => t.status === 'Retenido' && t.type === 'egreso')
-    .reduce((acc, t) => acc + t.amount, 0);
+  React.useEffect(() => {
+    const fetchBalance = async () => {
+      if (!user?.id) return;
+      try {
+        const response = await fetch(`http://localhost:8080/api/usuarios/${user.id}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.monedero) {
+            setAvailableBalance(data.monedero.creditosDisponibles);
+            setRetainedBalance(data.monedero.creditosComprometidos);
+            if (setBalance) {
+                setBalance(data.monedero.creditosDisponibles);
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error cargando monedero:", err);
+      }
+    };
+    fetchBalance();
+  }, [user]);
 
-  const availableBalance = balance - retainedBalance;
+
 
   return (
     <div className="animate-in" style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -57,59 +74,9 @@ const Wallet = () => {
       </div>
 
       <h3 style={{ marginBottom: '1rem', fontSize: '1.25rem' }}>Historial de Transacciones</h3>
-      <div className="card" style={{ padding: '0' }}>
-        {transactions.map((tx, idx) => (
-          <div 
-            key={tx.id} 
-            className="interactive-card"
-            style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center', 
-              padding: '1rem 1.5rem',
-              borderBottom: idx === transactions.length - 1 ? 'none' : '1px solid var(--border-color)',
-              margin: 0,
-              borderRadius: 0
-            }}
-            onClick={() => setSelectedTx(tx)}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ 
-                width: '40px', 
-                height: '40px', 
-                borderRadius: '50%', 
-                backgroundColor: tx.type === 'ingreso' ? 'var(--color-green-100)' : 'var(--color-yellow-100)',
-                color: tx.type === 'ingreso' ? 'var(--color-green-700)' : 'var(--color-orange-600)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                {tx.type === 'ingreso' ? <ArrowDownRight size={20} /> : <ArrowUpRight size={20} />}
-              </div>
-              <div>
-                <div style={{ fontWeight: '600' }}>{tx.concept}</div>
-                <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)' }}>{tx.date}</div>
-              </div>
-            </div>
-
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ 
-                fontWeight: 'bold', 
-                fontSize: '1.125rem',
-                color: tx.type === 'ingreso' ? 'var(--accent-primary)' : 'var(--text-primary)'
-              }}>
-                {tx.type === 'ingreso' ? '+' : '-'}{tx.amount} cr
-              </div>
-              <div style={{ 
-                fontSize: '0.75rem', 
-                color: tx.status === 'Retenido' ? 'var(--color-orange-600)' : 'var(--text-tertiary)',
-                fontWeight: tx.status === 'Retenido' ? 'bold' : 'normal'
-              }}>
-                {tx.status}
-              </div>
-            </div>
-          </div>
-        ))}
+      <div className="card" style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--text-tertiary)' }}>
+        <p style={{ fontStyle: 'italic', marginBottom: '0.5rem' }}>Aún no hay transacciones en tu historial.</p>
+        <p style={{ fontSize: '0.875rem' }}>Módulo en desarrollo por el equipo Backend.</p>
       </div>
 
       {/* Receipt Modal */}

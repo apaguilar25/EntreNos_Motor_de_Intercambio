@@ -8,7 +8,7 @@ const MakeRequest = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const type = searchParams.get('type') || 'oferta'; // oferta, demanda, subasta
-  const { user, balance } = useContext(AppContext);
+  const { user, balance, setBalance } = useContext(AppContext);
 
   const [message, setMessage] = useState('');
   const [items, setItems] = useState('');
@@ -53,10 +53,27 @@ const MakeRequest = () => {
     }
   };
 
-  const data = postData[type] || postData.oferta;
-  const cost = parseInt(data.price);
+  const userIdUrl = searchParams.get('userId');
+  const priceUrl = searchParams.get('price');
+  const titleUrl = searchParams.get('title');
+  const descUrl = searchParams.get('desc');
+  const ownerUrl = searchParams.get('owner');
+  const repUrl = searchParams.get('rep');
 
-  const handleSubmit = (e) => {
+  // Si no hay datos en la URL, se usan los mock data (para subastas u otras vistas no conectadas aún)
+  const data = (titleUrl && ownerUrl) ? {
+    title: titleUrl,
+    description: descUrl,
+    owner: ownerUrl,
+    reputation: repUrl || 5.0,
+    price: priceUrl,
+    label: type.toUpperCase(),
+    userId: userIdUrl
+  } : (postData[type] || postData.oferta);
+
+  const cost = parseInt(data.price) || 0;
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (type === 'subasta') {
       const hasSelection = Object.keys(selectedGoods).length > 0;
@@ -95,10 +112,41 @@ const MakeRequest = () => {
           alert("Categoría añadida a tus intereses.");
         }
       }
+
+      // Enviar solicitud al backend
+      try {
+        const payload = {
+          idEmisor: user?.id || 'user-123',
+          idReceptor: data.userId || 'owner-456',
+          nombreServicio: data.title,
+          precioCreditos: cost,
+          descripcionServicio: message
+        };
+
+        const response = await fetch('http://localhost:8080/api/solicitudes/proponer', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error || 'Error al enviar la solicitud.');
+        }
+
+        // Descontar saldo localmente para reflejar el backend
+        if (cost > 0) {
+          setBalance(prev => prev - cost);
+        }
+
+        alert('¡Solicitud enviada con éxito!');
+        navigate(-1);
+      } catch (error) {
+        alert(error.message);
+      }
     }
-    
-    alert('¡Solicitud enviada con éxito!');
-    navigate(-1);
   };
 
   return (

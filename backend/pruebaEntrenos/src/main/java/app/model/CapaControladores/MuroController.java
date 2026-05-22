@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/muro")
-@CrossOrigin(origins = "http://localhost:5173") // Permite que React (puerto 3000) se conecte sin errores de CORS
+@CrossOrigin(origins = "http://localhost:5173") // Permite que React (Vite en puerto 5173) se conecte sin errores de CORS
 public class MuroController {
 
     @Autowired

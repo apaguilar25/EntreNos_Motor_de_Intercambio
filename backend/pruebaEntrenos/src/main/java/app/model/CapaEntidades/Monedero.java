@@ -6,7 +6,33 @@ public class Monedero {
     private int creditosComprometidos;
     private int creditosRetenidos;
 
-    // Constructor vacío obligatorio para Jackson (Lectura de JSON)
+    public boolean tieneFondosSuficientes(int costo){
+        int restante = creditosDisponibles - costo;
+
+        if (restante < 0) {
+            return false;
+        }
+        return true;
+    }
+
+    public void calcularCreditosComprometidos(int monto){
+        if (tieneFondosSuficientes(monto)) {
+            this.creditosDisponibles -= monto;
+            this.creditosComprometidos += monto;
+        } else {
+            throw new IllegalStateException("Fondos insuficientes para comprometer.");
+        }
+    }
+
+    public void revertirCreditosComprometidos(int monto){
+        if (this.creditosComprometidos >= monto) {
+            this.creditosComprometidos -= monto;
+            this.creditosDisponibles += monto;
+        } else {
+            throw new IllegalStateException("El monto a revertir es mayor a los créditos comprometidos.");
+        }
+    }
+
     public Monedero() {
         this.creditosDisponibles = 0;
         this.creditosComprometidos = 0;

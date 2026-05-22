@@ -44,6 +44,11 @@ public class SolicitudIntercambio {
         this.estado = EstadoSolicitudIntercambio.ACEPTADA;
     }
 
+    public void marcarComoCancelada() {
+        validarEstadoPendiente();
+        this.estado = EstadoSolicitudIntercambio.CANCELADA;
+    }
+
     public void marcarComoExpirada() {
         validarEstadoPendiente();
         this.estado = EstadoSolicitudIntercambio.RECHAZADA;

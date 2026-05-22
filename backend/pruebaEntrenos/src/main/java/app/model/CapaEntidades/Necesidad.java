@@ -5,6 +5,9 @@ public class Necesidad {
     private String nombre;
     private String descripcionNecesidad;
 
+    public Necesidad() {
+    }
+
     public Necesidad(String nombre, String descripcionNecesidad) {
         this.nombre = nombre;
         this.descripcionNecesidad = descripcionNecesidad;

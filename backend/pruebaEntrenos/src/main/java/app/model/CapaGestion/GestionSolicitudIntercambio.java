@@ -24,10 +24,16 @@ public class GestionSolicitudIntercambio {
     private PersistenciaNotificacion persistenciaNotificacion;
 
     @Autowired
-    private GestionTransaccion gestionTransaccion; // Conexión directa con la HU3
+    private GestionUsuario gestionUsuario;
 
-    // 1. Registrar Solicitud original
+    // 1. Registrar Solicitud adaptado a tus nuevos campos y constructor
     public void registrarSolicitud(String idEmisor, String idReceptor, String nombreServicio, int precioCreditos, String descripcionServicio) {
+        // Antes de crear la solicitud, intentamos comprometer los créditos. 
+        // Si no hay fondos, esto lanzará una excepción y detendrá el proceso.
+        if (precioCreditos > 0) {
+            gestionUsuario.comprometerCreditos(idEmisor, precioCreditos);
+        }
+
         List<SolicitudIntercambio> solicitudes = persistenciaSolicitud.cargar();
 
         SolicitudIntercambio nueva = new SolicitudIntercambio(
@@ -73,7 +79,6 @@ public class GestionSolicitudIntercambio {
         persistenciaNotificacion.guardar(buzon);
     }
 
-    // 4. Buscar Solicitud
     public SolicitudIntercambio buscarSolicitud(String idSolicitudIntercambio) {
         return persistenciaSolicitud.cargar().stream()
                 .filter(s -> s.getIdSolicitudIntercambio().equals(idSolicitudIntercambio))
@@ -81,7 +86,19 @@ public class GestionSolicitudIntercambio {
                 .orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada."));
     }
 
+<<<<<<< HEAD
     // 5. Actualizar estado y disparar Transacción si es ACEPTADA
+=======
+    // 5. Obtener Solicitudes Enviadas por un Usuario
+    public List<SolicitudIntercambio> obtenerSolicitudesEnviadas(String idEmisor) {
+        return persistenciaSolicitud.cargar().stream()
+                .filter(s -> s.getIdEmisor().equals(idEmisor))
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+
+
+>>>>>>> db4991d (Conexion Back-Front HU1 y HU2 completo (creo))
     public void actualizarEstado(String idSolicitudIntercambio, EstadoSolicitudIntercambio estado) {
         List<SolicitudIntercambio> solicitudes = persistenciaSolicitud.cargar();
         boolean encontrado = false;
@@ -117,4 +134,33 @@ public class GestionSolicitudIntercambio {
 
         persistenciaSolicitud.guardar(solicitudes);
     }
+<<<<<<< HEAD
+=======
+
+    public void cancelarSolicitud(String idSolicitudIntercambio) {
+        List<SolicitudIntercambio> solicitudes = persistenciaSolicitud.cargar();
+        boolean encontrado = false;
+
+        for (SolicitudIntercambio solicitud : solicitudes) {
+            if (solicitud.getIdSolicitudIntercambio().equals(idSolicitudIntercambio)) {
+                encontrado = true;
+                solicitud.marcarComoCancelada();
+                
+                if (solicitud.getPrecioCreditos() > 0) {
+                    gestionUsuario.revertirCreditosComprometidos(solicitud.getIdEmisor(), solicitud.getPrecioCreditos());
+                }
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            throw new IllegalArgumentException("No se encontró ninguna solicitud con el ID proporcionado: " + idSolicitudIntercambio);
+        }
+
+        persistenciaSolicitud.guardar(solicitudes);
+        System.out.println("[SISTEMA] Solicitud " + idSolicitudIntercambio + " ha sido CANCELADA y se han devuelto los créditos.");
+    }
+
+
+>>>>>>> db4991d (Conexion Back-Front HU1 y HU2 completo (creo))
 }

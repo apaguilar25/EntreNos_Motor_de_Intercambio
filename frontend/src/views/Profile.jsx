@@ -1,20 +1,61 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
-import { Star, ShieldCheck, XCircle } from 'lucide-react';
+import { Star, ShieldCheck, FileText } from 'lucide-react';
 
 const Profile = () => {
   const { user } = useContext(AppContext);
   const navigate = useNavigate();
   
-  const [bids, setBids] = useState([
-    { id: 1, auctionTitle: 'Cámara Fotográfica', myOffer: '4 Paquetes de Harina Pan', status: 'Activa' }
-  ]);
+  const [userProfile, setUserProfile] = useState(null);
+  const [sentRequests, setSentRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleRetractBid = (id) => {
-    if(window.confirm('¿Estás seguro que deseas retirar tu oferta de esta subasta?')) {
-      setBids(bids.filter(b => b.id !== id));
-      alert('Oferta retirada con éxito.');
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user?.id) return;
+      try {
+        setLoading(true);
+        const res = await fetch(`http://localhost:8080/api/usuarios/${user.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setUserProfile(data);
+        }
+        
+        const sentResponse = await fetch(`http://localhost:8080/api/solicitudes/enviadas/${user.id}`);
+        if (sentResponse.ok) {
+          const sentData = await sentResponse.json();
+          setSentRequests(sentData);
+        }
+      } catch (err) {
+        console.error("Error cargando perfil", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, [user]);
+
+  const handleCancelRequest = async (idSolicitud) => {
+    if (!window.confirm("¿Estás seguro que deseas cancelar esta solicitud? Los créditos serán devueltos a tu monedero.")) return;
+    try {
+      const res = await fetch(`http://localhost:8080/api/solicitudes/cancelar/${idSolicitud}`, {
+        method: 'PUT'
+      });
+      if (res.ok) {
+        alert("Solicitud cancelada con éxito.");
+        // Refetch sent requests to update UI
+        const sentResponse = await fetch(`http://localhost:8080/api/solicitudes/enviadas/${user.id}`);
+        if (sentResponse.ok) {
+          const sentData = await sentResponse.json();
+          setSentRequests(sentData);
+        }
+      } else {
+        const errorData = await res.json();
+        alert(errorData.error || "Error al cancelar la solicitud");
+      }
+    } catch (err) {
+      alert("Error de conexión");
     }
   };
 
@@ -55,9 +96,9 @@ const Profile = () => {
           <p style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>{user?.email || 'correo@plazaalameda.com'}</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-warning)', fontWeight: 'bold' }}>
-              <Star size={16} fill="currentColor" /> 5.0
+              <Star size={16} fill="currentColor" /> {userProfile?.reputacionHistorica || 5.0}
             </span>
-            <span style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>12 transacciones exitosas</span>
+            <span style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>Reputación de Comunidad</span>
           </div>
         </div>
       </div>
@@ -69,27 +110,25 @@ const Profile = () => {
             <h3 style={{ fontSize: '1.25rem' }}>Mis Ofertas</h3>
           </div>
           <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div 
-              className="interactive-card" 
-              style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}
-              onClick={() => navigate('/post/1')}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{ fontWeight: '600' }}>Asesoría Legal Básica</div>
-                <div style={{ background: 'var(--accent-warning)', color: '#fff', padding: '0.15rem 0.5rem', borderRadius: '1rem', fontSize: '0.7rem', fontWeight: 'bold' }}>1 Solicitud</div>
+            {loading ? (
+              <p style={{ textAlign: 'center', color: 'var(--text-tertiary)' }}>Cargando...</p>
+            ) : (!userProfile?.habilidades || userProfile.habilidades.length === 0) ? (
+              <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
+                No has registrado habilidades.
               </div>
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Revisión de contratos y documentos.</div>
-              <div style={{ color: 'var(--accent-primary)', fontWeight: 'bold', fontSize: '0.875rem', marginTop: '0.25rem' }}>40 cr</div>
-            </div>
-            <div 
-              className="interactive-card" 
-              style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}
-              onClick={() => navigate('/post/2')}
-            >
-              <div style={{ fontWeight: '600' }}>Traducción de Textos</div>
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Inglés a Español (por página).</div>
-              <div style={{ color: 'var(--accent-primary)', fontWeight: 'bold', fontSize: '0.875rem', marginTop: '0.25rem' }}>10 cr</div>
-            </div>
+            ) : (
+              userProfile.habilidades.map((hab, idx) => (
+                <div 
+                  key={idx}
+                  className="interactive-card" 
+                  style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}
+                >
+                  <div style={{ fontWeight: '600' }}>{hab.nombre}</div>
+                  <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{hab.descripcionHabilidad}</div>
+                  <div style={{ color: 'var(--accent-primary)', fontWeight: 'bold', fontSize: '0.875rem', marginTop: '0.25rem' }}>{hab.precioCreditos} cr</div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -99,18 +138,24 @@ const Profile = () => {
             <h3 style={{ fontSize: '1.25rem' }}>Mis Necesidades</h3>
           </div>
           <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div 
-              className="interactive-card" 
-              style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}
-              onClick={() => navigate('/post/3')}
-            >
-              <div style={{ fontWeight: '600' }}>Mantenimiento de Aire Acondicionado</div>
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Limpieza de filtros y revisión de gas.</div>
-              <div style={{ color: 'var(--color-orange-600)', fontWeight: 'bold', fontSize: '0.875rem', marginTop: '0.25rem' }}>Hasta 60 cr</div>
-            </div>
-            <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
-              No hay más necesidades registradas.
-            </div>
+            {loading ? (
+               <p style={{ textAlign: 'center', color: 'var(--text-tertiary)' }}>Cargando...</p>
+            ) : (!userProfile?.necesidades || userProfile.necesidades.length === 0) ? (
+              <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
+                No hay necesidades registradas.
+              </div>
+            ) : (
+              userProfile.necesidades.map((nec, idx) => (
+                <div 
+                  key={idx}
+                  className="interactive-card" 
+                  style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}
+                >
+                  <div style={{ fontWeight: '600' }}>{nec.nombre}</div>
+                  <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{nec.descripcionNecesidad}</div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -118,20 +163,10 @@ const Profile = () => {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <h3 style={{ fontSize: '1.25rem' }}>Mis Subastas</h3>
-            <button className="btn-primary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem', backgroundColor: 'var(--accent-warning)', color: '#fff' }} onClick={() => navigate('/create-auction')}>Añadir</button>
           </div>
           <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div 
-              className="interactive-card" 
-              style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}
-              onClick={() => navigate('/post/4')}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{ fontWeight: '600' }}>Bicicleta Montañera</div>
-                <div style={{ background: 'var(--accent-warning)', color: '#fff', padding: '0.15rem 0.5rem', borderRadius: '1rem', fontSize: '0.7rem', fontWeight: 'bold' }}>3 Pujas</div>
-              </div>
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Cambio por alimentos no perecederos.</div>
-              <div style={{ color: 'var(--accent-primary)', fontWeight: 'bold', fontSize: '0.875rem', marginTop: '0.25rem' }}>Mejor: 2 Harinas + 1 Arroz</div>
+            <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
+              Módulo en desarrollo por Backend. No hay subastas conectadas.
             </div>
           </div>
         </div>
@@ -142,25 +177,36 @@ const Profile = () => {
             <h3 style={{ fontSize: '1.25rem' }}>Mis Ofertas Enviadas</h3>
           </div>
           <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {bids.length === 0 ? (
+            {sentRequests.length === 0 ? (
               <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
                 No tienes ofertas activas.
               </div>
             ) : (
-              bids.map(bid => (
-                <div key={bid.id} style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}>
-                  <div style={{ fontWeight: '600', marginBottom: '0.25rem' }}>Subasta: {bid.auctionTitle}</div>
-                  <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Mi oferta: {bid.myOffer}</div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
-                    <span style={{ fontSize: '0.75rem', backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-700)', padding: '0.15rem 0.5rem', borderRadius: '1rem', fontWeight: 'bold' }}>
-                      {bid.status}
+              sentRequests.map((req, index) => (
+                <div key={index} style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <h4 style={{ marginBottom: '0.25rem', fontSize: '1rem' }}>{req.nombreServicio}</h4>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>A: {req.idReceptor} • Costo: {req.precioCreditos} cr</p>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <span style={{ 
+                      padding: '0.25rem 0.5rem', 
+                      borderRadius: '1rem', 
+                      fontSize: '0.75rem', 
+                      fontWeight: 'bold',
+                      backgroundColor: req.estado === 'PENDIENTE' ? 'var(--color-yellow-100)' : req.estado === 'ACEPTADA' ? 'var(--color-green-100)' : 'var(--color-red-100)',
+                      color: req.estado === 'PENDIENTE' ? 'var(--color-orange-600)' : req.estado === 'ACEPTADA' ? 'var(--color-green-700)' : 'var(--color-red-600)'
+                    }}>
+                      {req.estado}
                     </span>
-                    <button 
-                      style={{ background: 'transparent', border: 'none', color: 'var(--color-red-600)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', fontWeight: 'bold' }}
-                      onClick={() => handleRetractBid(bid.id)}
-                    >
-                      <XCircle size={14} /> Retirar
-                    </button>
+                    {req.estado === 'PENDIENTE' && (
+                      <button 
+                        style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-red-600)', color: 'var(--color-red-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                        onClick={() => handleCancelRequest(req.idSolicitudIntercambio)}
+                      >
+                        Cancelar
+                      </button>
+                    )}
                   </div>
                 </div>
               ))

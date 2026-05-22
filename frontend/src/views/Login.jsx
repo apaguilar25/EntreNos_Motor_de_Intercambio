@@ -17,7 +17,7 @@ const Login = () => {
 
   const [error, setError] = useState('');
 
-  const { setUser, setBalance } = useContext(AppContext);
+  const { setUser, setBalance, setHasCatalog } = useContext(AppContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -39,10 +39,37 @@ const Login = () => {
         return;
       }
       
-      // Mantenemos la simulación del login por ahora (hasta que programen la HU7)
-      setUser({ nombre: correoElectronico.split('@')[0], correoElectronico });
-      setBalance(100);
-      navigate('/');
+      const domain = email.split('@')[1];
+      if (domain !== 'alameda.com') {
+        setError('El correo debe pertenecer al dominio oficial de la comunidad (alameda.com).');
+        return;
+      }
+      const prefix = email.split('@')[0].toLowerCase();
+      let assignedId = 'USR-1001';
+      if (prefix === 'carlos') assignedId = 'USR-1002';
+      else if (prefix === 'luis') assignedId = 'USR-1003';
+      
+      setUser({ id: assignedId, name: prefix.charAt(0).toUpperCase() + prefix.slice(1), email });
+      
+      try {
+        const response = await fetch(`http://localhost:8080/api/usuarios/${assignedId}`);
+        if (response.ok) {
+           const data = await response.json();
+           const hasCat = (data.habilidades && data.habilidades.length > 0) || (data.necesidades && data.necesidades.length > 0);
+           setHasCatalog(hasCat);
+           if (data.monedero) setBalance(data.monedero.creditosDisponibles);
+           
+           if (hasCat) {
+              navigate('/');
+           } else {
+              navigate('/onboarding');
+           }
+        } else {
+           navigate('/onboarding');
+        }
+      } catch (err) {
+        navigate('/onboarding');
+      }
     } else {
       // --- REGISTRO REAL CON JAVA ---
       if (!nombre || !correoElectronico || !telefono || !descripcion) {
@@ -50,47 +77,32 @@ const Login = () => {
         return;
       }
 
-      // 1. Creamos el objeto con los nombres exactos que espera tu backend
-      const datosUsuario = {
-        nombre: nombre,
-        correoElectronico: correoElectronico,
-        telefono: telefono,
-        descripcion: descripcion
-      };
+      const prefix = email.split('@')[0].toLowerCase();
+      let assignedId = 'USR-1001';
+      if (prefix === 'carlos') assignedId = 'USR-1002';
+      else if (prefix === 'luis') assignedId = 'USR-1003';
 
+      // Registro simulado
+      setUser({ id: assignedId, name, email, phone, description });
+      
       try {
-        // 2. Disparamos la petición POST al enchufe de Spring Boot
-        const response = await fetch('http://localhost:8080/api/usuarios/registrar', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json' // Le avisa a Java que va un JSON
-          },
-          body: JSON.stringify(datosUsuario) // Convierte el objeto de JS a texto plano
-        });
-
+        const response = await fetch(`http://localhost:8080/api/usuarios/${assignedId}`);
         if (response.ok) {
-          const usuarioGuardado = await response.json(); // Java nos devuelve el usuario con su ID y Créditos
-          
-          // 3. Guardamos los datos reales del servidor en tu contexto de React
-          setUser({ 
-            nombre: usuarioGuardado.nombre, 
-            correoElectronico: usuarioGuardado.correoElectronico,
-            telefono: usuarioGuardado.telefono,
-            descripcion: usuarioGuardado.descripcion
-          });
-          
-          // Asignamos el capital semilla real que colocó el Backend
-          setBalance(usuarioGuardado.creditosDisponibles || 100); 
-          
-          // Redirigimos al Home
-          navigate('/');
+           const data = await response.json();
+           const hasCat = (data.habilidades && data.habilidades.length > 0) || (data.necesidades && data.necesidades.length > 0);
+           setHasCatalog(hasCat);
+           if (data.monedero) setBalance(data.monedero.creditosDisponibles);
+           
+           if (hasCat) {
+              navigate('/');
+           } else {
+              navigate('/onboarding');
+           }
         } else {
-          const mensajeError = await response.text();
-          setError(mensajeError || 'Error al registrar en el servidor.');
+           navigate('/onboarding');
         }
       } catch (err) {
-        console.error(err);
-        setError('No se pudo establecer conexión con el servidor Java. ¿Está encendido IntelliJ?');
+        navigate('/onboarding');
       }
     }
   };

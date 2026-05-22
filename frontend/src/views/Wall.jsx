@@ -1,50 +1,55 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Filter, Star, ChevronDown, Trophy, Sparkles, Medal, AlertCircle } from 'lucide-react';
 import { AppContext } from '../App';
 
 const Wall = () => {
   const navigate = useNavigate();
-  const { hasCatalog } = useContext(AppContext);
+  const { user, balance, hasCatalog } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Mocks de publicaciones
-  const mockPosts = [
-    {
-      id: 1,
-      type: 'oferta',
-      user: 'Juan Pérez',
-      reputation: 4.8,
-      title: 'Reparación de Computadoras',
-      description: 'Ofrezco servicio técnico para laptops y PCs de escritorio. Limpieza, formateo e instalación de software.',
-      price: 50,
-      timeAgo: 'hace 2 horas'
-    },
-    {
-      id: 2,
-      type: 'demanda',
-      user: 'María López',
-      reputation: 5.0,
-      title: 'Clases de Matemáticas',
-      description: 'Necesito tutor para mi hijo de 3er año de secundaria para prepararse para el examen final.',
-      price: 30,
-      timeAgo: 'hace 5 horas',
-      isPodium: true,
-      podiumCategory: 'Embajador de Calidad'
-    },
-    {
-      id: 3,
-      type: 'oferta',
-      user: 'Carlos Ruiz',
-      reputation: 4.2,
-      title: 'Paseo de Perros',
-      description: 'Paseo tu mascota por el conjunto residencial en horarios de la mañana o tarde.',
-      price: 15,
-      price: 15,
-      timeAgo: 'hace 1 día'
-    }
-  ];
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        let url = 'http://localhost:8080/api/muro';
+        if (searchTerm) {
+          url += `?servicio=${encodeURIComponent(searchTerm)}`;
+        }
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Error al cargar publicaciones');
+        const data = await response.json();
+        
+        // Mapear DTO al formato que usa la vista
+        const mappedPosts = data.map((item, index) => ({
+          id: index, // backend DTO doesn't have an ID for the publication yet
+          type: item.tipoPublicacion ? item.tipoPublicacion.toLowerCase() : 'oferta',
+          user: item.nombreUsuario || 'Usuario Desconocido',
+          userId: item.idUsuario,
+          reputation: item.reputacionUsuario || 0,
+          title: item.nombreServicio || 'Sin título',
+          description: item.descripcion || '',
+          price: item.precioCreditos || 0,
+          timeAgo: 'reciente'
+        }))
+        .filter(post => post.userId !== (user?.id || 'USR-1001'));
+        
+        setPosts(mappedPosts);
+        setError(null);
+      } catch (err) {
+        console.error(err);
+        setError('No se pudo conectar con el servidor.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, [searchTerm]);
 
   return (
     <div className="animate-in">
@@ -122,10 +127,12 @@ const Wall = () => {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {mockPosts.length === 0 && (
+        {loading && <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: '2rem' }}>Cargando publicaciones del Muro...</p>}
+        {error && <p style={{ textAlign: 'center', color: 'var(--color-red-600)', padding: '2rem' }}>{error}</p>}
+        {!loading && !error && posts.length === 0 && (
            <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: '2rem' }}>No hay publicaciones en este momento.</p>
         )}
-        {mockPosts.map((post, index) => (
+        {!loading && posts.map((post, index) => (
           <div key={post.id} className="card interactive-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', animationDelay: `${index * 0.1}s` }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
@@ -134,12 +141,12 @@ const Wall = () => {
                     fontSize: '0.75rem', 
                     padding: '0.25rem 0.5rem', 
                     borderRadius: '1rem',
-                    backgroundColor: post.type === 'oferta' ? 'var(--color-green-100)' : 'var(--color-yellow-100)',
-                    color: post.type === 'oferta' ? 'var(--color-green-700)' : 'var(--color-orange-600)',
+                    backgroundColor: post.type === 'oferta' || post.type === 'habilidad' ? 'var(--color-green-100)' : 'var(--color-yellow-100)',
+                    color: post.type === 'oferta' || post.type === 'habilidad' ? 'var(--color-green-700)' : 'var(--color-orange-600)',
                     fontWeight: 'bold',
                     textTransform: 'uppercase'
                   }}>
-                    {post.type}
+                    {post.type === 'habilidad' ? 'oferta' : post.type}
                   </span>
                   <span style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>{post.timeAgo}</span>
                 </div>
@@ -172,10 +179,18 @@ const Wall = () => {
               
               <button 
                 className="btn-primary" 
-                style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-                onClick={() => navigate(`/request/${post.id}?type=${post.type}`)}
+                style={{ 
+                  padding: '0.5rem 1rem', 
+                  fontSize: '0.875rem',
+                  backgroundColor: post.price > balance ? 'var(--bg-tertiary)' : undefined,
+                  color: post.price > balance ? 'var(--text-tertiary)' : undefined,
+                  border: post.price > balance ? 'none' : undefined,
+                  cursor: post.price > balance ? 'not-allowed' : 'pointer'
+                }}
+                disabled={post.price > balance}
+                onClick={() => navigate(`/request/${post.id}?type=${post.type}&userId=${post.userId}&price=${post.price}&title=${encodeURIComponent(post.title)}&desc=${encodeURIComponent(post.description)}&owner=${encodeURIComponent(post.user)}&rep=${post.reputation}`)}
               >
-                Contactar
+                {post.price > balance ? 'Sin créditos' : 'Contactar'}
               </button>
             </div>
           </div>

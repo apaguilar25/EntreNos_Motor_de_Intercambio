@@ -1,140 +1,11 @@
-﻿ucab02-grises.jpg 
-
-
-
-
-
-Especificación de Requisitos de Software
-<EntreNós>
-
-
-
-
-Versión <1.0>
-Histórico de Revisiones
-Fecha
-	Versión
-	Descripción
-	Autor(es)
-	13/05/26
-	1.0
-	Especificación detallada de las Historias de Usuario del Sprint 1 y Sprint 2. Diagrama de Actividades del Sprint 1. Definición de Requisitos Suplementarios organizados por categoría.
-	Aguilar, Andrea
-Bedros, Nabil
-Michelangeli, Gabriel
-Sifontes, Jesús
-Veliz, Miguel
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Tabla de Contenidos
-Sprint        5
-Sprint 1        5
-Historia de Usuario 1: Registro de Identidad y Catálogo de Talentos        5
-Historia de Usuario 2: Navegación y Evaluación de Oportunidades        10
-Historia de Usuario 3: Gestión de Transacciones Seguras y Valoración de Confianza        16
-Historia de Usuario 4: Gestión de Subastas de Activos por Bienes de Consumo        20
-Historia de Usuario 5: Participación en Subastas de Activos        26
-Sprint 2        31
-Historia de Usuario 6: Motor de Sugerencias y Emparejamiento Inteligente        31
-Historia de Usuario 7: Mecanismo de Autenticación Segura        34
-Historia de Usuario 8: Gestión de Incidencias y Validación de Cumplimiento        38
-Historia de Usuario 9: Sistema de Gamificación y Evolución del Socio        42
-Historia de Usuario 10: Visualización de Referentes y Podio Semanal        44
-Requisitos Suplementarios        47
-Eficiencia de Desempeño        47
-Tiempo de Respuesta en Transacciones        47
-Disponibilidad del Muro Comunitario        47
-Procesamiento de Notificaciones de Oferta        47
-Cierre de subastas        47
-Capacidad de Interacción        48
-Prevención de Errores por Insolvencia        48
-Confirmación de Acciones Destructivas        48
-Flujo de registro intuitivo        48
-Fiabilidad        49
-Persistencia y Recuperación ante Fallos        49
-Integridad en Transacciones P2P        49
-Mecanismos de verificación        49
-Seguridad        50
-Control de Acceso y Autorización        50
-Protección contra Ataques de Fuerza Bruta        50
-Integridad Ética del Sistema        50
-Privacidad de Datos Sensibles        50
-Restricción de Dominio        50
-Especificación de Requisitos de Software
-EntreNós
-
-
+﻿
 Este artefacto detalla los requisitos de software para el Sistema EntreNós, según dos grandes aspectos claves para su desarrollo: Las Historias de Usuario en cada Sprint con su especificación según el modelo Canvas, y las Especificaciones Suplementarias. Toda esta información establece los lineamientos y las restricciones que debe considerar el equipo de desarrollo del proyecto para el desarrollo del sistema.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Sprint
+Sprints:
 Sprint 1
+
+
+
 Historia de Usuario 1: Registro de Identidad y Catálogo de Talentos
 1) Historia de Usuario 
 Como miembro de la comunidad, quiero crear mi cuenta y perfil con mis datos personales, así como registrar mis habilidades y necesidades en el catálogo para que los demás usuarios puedan ver esta información en el muro de publicaciones e identificarme dentro de la plataforma comunitaria. 
@@ -156,68 +27,9 @@ Como miembro de la comunidad, quiero crear mi cuenta y perfil con mis datos pers
 * El sistema debe permitir al usuario editar el valor en créditos de sus habilidades en cualquier momento.
 * El sistema debe permitir al usuario editar la descripción de sus habilidades o necesidades en cualquier momento.
 * Al finalizar la creación del catálogo, el sistema debe añadir el capital semilla al monedero del usuario automáticamente.
+
+
 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Historia de Usuario 2: Navegación y Evaluación de Oportunidades
 1) Historia de Usuario 
 Como miembro de la comunidad, quiero navegar por el muro de ofertas y necesidades publicadas por otros miembros, ver sus descripciones y calificaciones, así como ver mi saldo de créditos disponible para encontrar oportunidades de intercambio que coincidan con mis deseos y presupuesto, evaluando la reputación de los socios antes de iniciar un trato.
@@ -243,27 +55,6 @@ Como miembro de la comunidad, quiero navegar por el muro de ofertas y necesidade
 	
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
 Historia de Usuario 3: Gestión de Transacciones Seguras y Valoración de Confianza
 1) Historia de Usuario 
 Como miembro de la comunidad, quiero realizar intercambios de servicios por créditos comunitarios con otros miembros, donde al finalizar se califique con estrellas el resultado del servicio realizado, para garantizar la integridad del pago mediante la liberación de fondos bajo conformidad de ambas partes, y que se proporcione una referencia de confiabilidad del socio que sea visible para toda la comunidad.
@@ -285,65 +76,12 @@ Como miembro de la comunidad, quiero realizar intercambios de servicios por cré
 * Una vez procesada la confirmación de ambas partes, el sistema debe acreditar el monto retenido al saldo del ofertante de forma instantánea.
 * Al finalizar el intercambio, el sistema debe abrir una ventana obligatoria para calificar el servicio recibido con estrellas.
 * Al guardar la calificación, el sistema debe recalcular el promedio de estrellas del usuario y actualizar su visibilidad en el muro y perfil de forma inmediata.
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 Historia de Usuario 4: Gestión de Subastas de Activos por Bienes de Consumo 
 1) Historia de Usuario 
 Como propietario de un activo físico, quiero publicar una subasta abierta a la comunidad para recibir y comparar múltiples propuestas de intercambio basadas en bienes de consumo, para adjudicar mi activo a la oferta que mejor satisfaga mis necesidades actuales bajo un esquema de competencia transparente.
-
-
 
 
 	2) Conversación
@@ -369,39 +107,6 @@ Como propietario de un activo físico, quiero publicar una subasta abierta a la 
 * Al confirmar un ganador o cancelar la subasta, el sistema debe disparar notificaciones automáticas a todos los postores involucrados informando el estatus final del proceso.
 * A partir del cierre de la licitación, si el propietario no ha adjudicado o cancelado la subasta dentro del lapso de 5 días desde que fue cerrada, el sistema ejecutará el cierre automático por inactividad.
 * En caso de inactividad, el sistema debe aplicar automáticamente una restricción al perfil del usuario, bloqueando la función de "Crear Nueva Subasta" por un periodo estricto de 72 horas.
-
-
-	
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -431,195 +136,6 @@ Como miembro de la comunidad interesado en un activo subastado, quiero registrar
 * El postor debe tener acceso al historial de sus propias ofertas enviadas en un panel personal.
 * El sistema debe permitir al postor retirar su oferta siempre que la subasta no haya sido cerrada.
 * El sistema debe confirmar mediante un mensaje en pantalla que la oferta fue enviada exitosamente al propietario.
-	
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Sprint 2
-
-
-Historia de Usuario 6: Motor de Sugerencias y Emparejamiento Inteligente
-1) Historia de Usuario 
-Como miembro de la comunidad, quiero que el sistema analice el catálogo de mi perfil y me sugiera automáticamente publicaciones que coincidan con mis habilidades y deseos registrados para localizar oportunidades de intercambio de forma eficiente, optimizando mi tiempo de navegación y fomentando la liquidez de servicios en la plataforma.
-
-
-	2) Conversación
-* Épica: Inteligencia de Negocio y Matching.
-* Escenario de Uso: El usuario selecciona la opción para obtener sugerencias, por lo que el sistema analiza su catálogo y contrasta sus “Deseos” con las "Habilidades" ofertadas por otros miembros y sus “Habilidades” con los “Deseos” solicitados por otros miembros, para generar una lista personalizada de recomendaciones en el inicio. Desde esta lista podrá enviar solicitudes para ofrecer o recibir un servicio de igual forma que en la vista general de la página principal.
-* Reglas de Negocio:
-   * Las sugerencias del sistema deben basarse en la coincidencia entre las publicaciones de "Habilidad" y los "Deseos" del catálogo del usuario.
-   * Las sugerencias deben dar prioridad en el orden de visualización a aquellos miembros de la comunidad que posean una reputación histórica superior a 4 estrellas.
-   * Si un usuario interactúa con una categoría de servicio que no está en sus "Deseos", el sistema ofrecerá la opción de integrarla a su perfil para refinar el algoritmo de búsqueda futura.
-* Alcance: Algoritmo de filtrado proactivo y sección de "Para ti" en la interfaz.
-* Dependencia: Historia 1 (Registro de Catálogo) e Historia 2 (Muro de Publicaciones).
-* Restricción: 
-   * El sistema debe bloquear cualquier lógica de emparejamiento que sugiera al usuario sus propias publicaciones de habilidades o servicios.
-	3) Criterios de Aceptación
-* El sistema debe mostrar una sección exclusiva con publicaciones sugeridas para el usuario basadas en la coincidencia entre los deseos y habilidades de su catálogo y las publicaciones activas.
-* El sistema debe permitir al usuario seleccionar un servicio que no se encuentra en su catálogo en ese momento, pero dándole la posibilidad de actualizar sus intereses.
-* Al modificar una etiqueta de "Deseos" en el catálogo personal, el sistema debe actualizar la lista de sugerencias de forma inmediata en la siguiente carga de la pantalla de inicio.
-	
-
-Historia de Usuario 7: Mecanismo de Autenticación Segura
-1) Historia de Usuario 
-Como miembro de la comunidad, quiero acceder a mi cuenta mediante validación de sesión por credenciales como correo y contraseña para garantizar la protección de mi monedero de créditos, la integridad de mis activos subastados y la privacidad de mis intercambios frente a accesos no autorizados.
-
-
-	2) Conversación
-* Épica: Seguridad y Control de Acceso. 
-* Escenario de Uso: El proceso inicia cuando el usuario accede a la pantalla de inicio de sesión e introduce su correo electrónico y contraseña, que el sistema valida. Al confirmarse la identidad, el usuario accede a la página principal con la posibilidad de visualizar su saldo en créditos comunitarios, el sistema habilita los procesos de adquisición y solicitud. Durante toda la navegación, el sistema garantiza la persistencia de esta validación para evitar re-autenticaciones innecesarias, manteniendo la protección de los activos hasta que el usuario decida finalizar la sesión de forma explícita o cierre el entorno de navegación, momento en el cual el sistema vuelve a bloquear preventivamente el acceso a todo el ecosistema.
-
-
-* Reglas de Negocio:
-   * El sistema debe dar por finalizada la sesión activa de forma automática si el usuario cierra la ventana del navegador o utiliza la opción explícita de "Cerrar Sesión".
-   * Tras registrarse 3 intentos de inicio de sesión fallidos, el sistema debe aplicar un bloqueo temporal de acceso para resguardar la seguridad de la cuenta.
-   * El sistema debe proporcionar una respuesta de error uniforme ante credenciales inválidas, evitando confirmar si el error reside específicamente en el correo o en la contraseña.
-* Alcance: Pantalla de inicio de sesión y validación de credenciales.
-* Dependencia: Historia 1 (Registro de Identidad).
-* Restricción: 
-   * El acceso a funciones críticas (transferencia de créditos, creación de subastas o edición de perfil) está estrictamente condicionado a la existencia de una sesión activa validada.
-   * Durante la introducción de la contraseña, el sistema debe ocultar los caracteres mediante el uso de puntos o asteriscos en la interfaz de usuario.
-	3) Criterios de Aceptación
-* El sistema debe contar con un formulario de entrada que exija tanto el correo electrónico como la contraseña para procesar cualquier solicitud de acceso.
-* El usuario debe tener disponible un botón de "Cerrar Sesión" fácilmente localizable en su perfil para finalizar su actividad de forma segura.
-* Una vez validado, el sistema debe mantener el estado de la sesión activo de forma consistente mientras el usuario se desplaza por las diferentes secciones de la plataforma.
-* El sistema debe ocultar los caracteres de la contraseña mediante puntos o asteriscos durante la escritura.
-* El sistema debe mostrar un mensaje de error genérico cuando los datos sean incorrectos, sin especificar si falló el correo o la clave.
-	
-
-Historia de Usuario 8: Gestión de Incidencias y Validación de Cumplimiento
-1) Historia de Usuario 
-Como miembro de la comunidad, quiero contar con un mecanismo para reportar irregularidades o fraudes durante un intercambio y poder adjuntar evidencias visuales del trabajo realizado cuando yo sea ofertante, para asegurar que la liberación de los créditos sea justa y que el administrador de la red comunitaria cuente con pruebas objetivas para resolver cualquier disputa entre las partes.
-
-
-	2) Conversación
-* Épica: Resolución de Conflictos y Arbitraje.
-* Escenario de Uso: El proceso se activa cuando surge un desacuerdo durante la ejecución de un intercambio, permitiendo que cualquiera de las partes acceda al detalle de la transacción activa para accionar el mecanismo de reporte. Al iniciar la incidencia, el sistema solicita obligatoriamente una descripción detallada del conflicto y, en el caso del ofertante, exige la carga de una fotografía como evidencia física del servicio o producto entregado. Una vez procesado el reporte, el sistema impide la liberación automática de los créditos y notifica automáticamente a la contraparte sobre la apertura del caso, retringiendo la posibilidad de emitir calificaciones de reputación mientras la disputa esté vigente. 
-
-
-* Reglas de Negocio:
-   * El sistema solo permitirá la activación del botón de "Reportar Fraude" mientras los fondos de la transacción se encuentren en estado de retención (Escrow) y esta no haya sido finalizada previamente.
-   * En situaciones de disputa, el sistema condicionará el envío del reporte a la carga de al menos una fotografía de respaldo por parte del ofertante como prueba de cumplimiento.
-   * Se restringirá el acceso al módulo de calificación por estrellas para cualquier transacción que posea una incidencia activa, evitando valoraciones sesgadas por el conflicto.
-   * Una vez reportada la irregularidad, la liberación de los fondos queda fuera del control de los usuarios involucrados, delegando la potestad de ejecución exclusivamente al rol de administrador.
-* Alcance: Formulario de reporte y módulo de carga de imágenes.
-* Dependencia: Historia 3 (Gestión de Transacciones).
-
-
-* Restricción: 
-   * El sistema debe impedir la liberación de los créditos si la transacción posee una incidencia.
-   * El sistema bloqueará el procesamiento del reporte si el campo de texto descriptivo se encuentra vacío o no cumple con una longitud mínima de caracteres.
-	3) Criterios de Aceptación
-* El sistema debe habilitar una opción de "Reportar Fraude" en cada transacción que esté en proceso.
-* Al intentar cancelar un proceso, el sistema debe solicitar la razón de la decisión y notificar a la contraparte para que esta pueda decidir si inicia una incidencia.
-* El sistema debe permitir al ofertante cargar una fotografía como evidencia del servicio realizado en caso de disputa.
-* Se debe verificar que, tras generarse el reporte, los créditos asociados permanezcan bloqueados y no sean acreditados a ninguna cuenta de forma automática.
-* El sistema debe mostrar un mensaje a los usuarios involucrados indicando que el intercambio ha sido marcado bajo revisión.
-* El sistema debe impedir que se califique con estrellas una transacción que se encuentre bajo revisión por incidencia.
-
-
-	
-
-Historia de Usuario 9: Sistema de Gamificación y Evolución del Socio
-1) Historia de Usuario 
-Como miembro de la comunidad, quiero que el sistema transforme mis logros de comportamiento positivo en medallas visibles en mi perfil y en recompensas como créditos comunitarios, para progresar dentro de la comunidad, aumentar mi capital disponible y certificar mi confiabilidad ante otros usuarios mediante un historial de méritos visible.
-
-
-	2) Conversación
-* Épica: Fidelización y Gamificación Económica. 
-* Escenario de Uso: El proceso se activa de manera automática en el momento en que una transacción cambia su estado a "Finalizado" o cuando el sistema detecta que un socio ha cumplido una racha específica de buen desempeño. De inmediato, el sistema ejecuta una verificación que contrasta las estadísticas actuales del usuario contra las reglas de los hitos definidos en la plataforma. Si el socio cumple con las condiciones para desbloquear un nuevo logro, el sistema efectúa una actualización en cadena: registra de forma permanente el identificador de la nueva medalla en el perfil del usuario, le transfiere el bono de créditos correspondiente directamente en el saldo de su monedero digital. El flujo concluye cuando el usuario es notificado en su interfaz mediante un mensaje emergente de felicitación que detalla la insignia obtenida y el monto acreditado, actualizando en tiempo real tanto su perfil público como su panel privado de metas alcanzadas.
-* Reglas de Negocio:
-   * Los bonos de créditos por medallas son de un solo uso por hito alcanzado.
-   * El saldo otorgado por el sistema (bono) se suma directamente al saldo contable del usuario.
-   * Las medallas y sus respectivos bonos económicos en créditos son de un solo uso.
-   * El capital semilla o los créditos otorgados por concepto de gamificación se sumarán directamente al saldo contable disponible del miembro, quedando inmediatamente habilitados para transacciones.
-   * Las insignias otorgadas se mantendrán vinculadas al perfil del usuario con un estado de visibilidad pública obligatoria para actuar como un certificado de confianza ante la red comunitaria.
-* Alcance: Motor de detección de hitos, asignación de insignias y actualización de saldos por premios. 
-* Dependencia: Historia 1 y Historia 3 (Transacciones Finalizadas). 
-
-
-* Restricción: 
-   * Los créditos inyectados por el sistema a través del motor de logros deben almacenarse bajo una categoría de transacción diferenciada, impidiendo que se confundan o mezclen con los registros de pagos ordinarios entre usuarios.
-   * El sistema tiene prohibido procesar o calcular hitos basados en transacciones que se encuentren en estado de incidencia, en procesos o canceladas.
-	3) Criterios de Aceptación
-* El sistema debe evaluar de forma automática si hubo cumplimiento de logro inmediatamente después de consolidarse el cierre de cualquier intercambio o subasta.
-* El monto del premio debe reflejarse en el balance del monedero del usuario de manera instantánea una vez recibido.
-* El sistema debe desplegar un cuadro de diálogo o pop-up interactivo de felicitación que le indique al usuario qué medalla ganó y cuántos créditos se le otorgaron.
-* El sistema debe incluir una sección dedicada para los logros del usuario dentro del menú de usuario, donde se muestren de forma diferenciada las medallas bloqueadas (pendientes) y las desbloqueadas (ganadas) para incentivar la participación.
-	
-
-Historia de Usuario 10: Visualización de Referentes y Podio Semanal
-1) Historia de Usuario 
-Como miembro de la comunidad, quiero visualizar un podio dinámico que destaque semanalmente a los vecinos con mayor impacto en tres categorías distintas, para identificar a los proveedores más confiables, reconocer a los usuarios que más dinamizan la economía y motivarme a mejorar mi propio posicionamiento en la plataforma.
-
-
-	2) Conversación
-* Épica: Dinamización Económica y Reputación Social.
-* Escenario de Uso: El proceso se ejecuta de manera automatizada y periódica al finalizar el ciclo semanal establecido. En ese momento, el sistema analiza las publicaciones e intercambios realizados, filtrando exclusivamente los registros que correspondan a los últimos siete días y cuyo estado se encuentre consolidado. Luego contabiliza el volumen de transacciones y el promedio de calificaciones de cada socio para determinar a los tres usuarios con mejor desempeño. Una vez procesados los datos, el sistema actualiza de manera inmediata el arreglo del podio en la persistencia local y refresca la interfaz principal de la plataforma, renderizando el "Cuadro de Honor" en tres categorías diferenciadas. A partir de ese momento, todos los miembros de la comunidad pueden visualizar a los vecinos destacados en el dashboard, acceder de forma directa a sus perfiles públicos y visualizar una insignia visual de distinción en cada una de las ofertas activas de dichos usuarios en el muro, manteniendo este estado de reconocimiento hasta el inicio del siguiente ciclo de cálculo.
-* Reglas de Negocio:
-   * El sistema debe ejecutar de forma automática el cálculo del ranking y la actualización del podio de forma semanal, específicamente cada lunes a las 00:00 horas, tomando en cuenta únicamente la actividad acumulada en los 7 días previos.
-   * Para que un usuario pueda calificar o ser evaluado por el algoritmo del podio, se requiere que haya completado un umbral mínimo de 5 transacciones válidas durante el ciclo de la semana en curso.
-   * En caso de que dos o más usuarios presenten un empate técnico en el volumen de servicios prestados, el sistema resolverá la posición de forma automática priorizando al usuario con el mayor promedio de estrellas en su reputación histórica general.
-* Alcance: Algoritmo de ordenamiento semanal y visualización del podio en el Dashboard.
-* Dependencia: Historia 3 y Historia 4 (Medallas).
-* Restricción: 
-   * El algoritmo de ordenamiento del ranking solo debe contabilizar transacciones que se encuentren con estado "Completada".
-	3) Criterios de Aceptación
-* El ranking debe basarse únicamente en datos de los últimos 7 días.
-* El podio debe dividirse en tres categorías: Proveedor Élite, Motor de la Economía y Embajador de Calidad.
-* El Cuadro de Honor debe mostrarse en un apartado destacado de la pantalla principal para todos los usuarios.
-* En caso de empate en cantidad de servicios, el sistema debe desempatar por el promedio de reputación histórica.
-* El sistema debe actualizar los nombres en el podio cada lunes a las 00:00 horas basándose en la actividad de la semana previa.
-* El sistema debe permitir hacer clic en los nombres del podio para visitar directamente el perfil de esos usuarios.
-* El sistema debe mostrar una etiqueta especial de "Vecino Destacado" en las publicaciones de aquellos que figuren actualmente en el podio.
-* El ranking debe reiniciarse automáticamente al finalizar el ciclo semanal.
-	
-
-
 
 
 

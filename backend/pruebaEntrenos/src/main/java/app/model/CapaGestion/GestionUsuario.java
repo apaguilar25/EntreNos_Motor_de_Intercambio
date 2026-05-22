@@ -1,5 +1,7 @@
 package app.model.CapaGestion;
 
+import app.model.CapaEntidades.Habilidad;
+import app.model.CapaEntidades.Necesidad;
 import app.model.CapaEntidades.Usuario;
 import app.model.CapaPersistencia.PersistenciaUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +82,78 @@ public class GestionUsuario {
         System.out.println("[SISTEMA] Datos actualizados para el usuario: " + idUsuario);
     }
 
-    // 4. Calcular Reputación Histórica (Preparado para el módulo de Transacciones)
+    // 4. Actualizar Catálogo de Usuario (Habilidades y Necesidades)
+    public void actualizarCatalogo(String idUsuario, List<Habilidad> habilidades, List<Necesidad> necesidades) {
+        List<Usuario> usuarios = persistenciaUsuario.cargar();
+        boolean encontrado = false;
+
+        for (Usuario u : usuarios) {
+            if (u.getIdUsuario().equals(idUsuario)) {
+                u.setHabilidades(new java.util.ArrayList<>(habilidades));
+                u.setNecesidades(new java.util.ArrayList<>(necesidades));
+                encontrado = true;
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            throw new IllegalArgumentException("No se pudo actualizar el catálogo. Usuario no encontrado: " + idUsuario);
+        }
+
+        persistenciaUsuario.guardar(usuarios);
+        System.out.println("[SISTEMA] Catálogo actualizado para el usuario: " + idUsuario);
+    }
+
+    // 5. Comprometer Créditos del Monedero
+    public void comprometerCreditos(String idUsuario, int monto) {
+        List<Usuario> usuarios = persistenciaUsuario.cargar();
+        boolean encontrado = false;
+
+        for (Usuario u : usuarios) {
+            if (u.getIdUsuario().equals(idUsuario)) {
+                if (u.getMonedero() == null) {
+                    app.model.CapaEntidades.Monedero nuevoMonedero = new app.model.CapaEntidades.Monedero();
+                    nuevoMonedero.setCreditosDisponibles(20);
+                    u.setMonedero(nuevoMonedero);
+                }
+                u.getMonedero().calcularCreditosComprometidos(monto);
+                encontrado = true;
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            throw new IllegalArgumentException("No se encontró el usuario para comprometer créditos: " + idUsuario);
+        }
+
+        persistenciaUsuario.guardar(usuarios);
+        System.out.println("[SISTEMA] Créditos comprometidos (" + monto + ") para el usuario: " + idUsuario);
+    }
+
+    // 5.5 Revertir Créditos Comprometidos
+    public void revertirCreditosComprometidos(String idUsuario, int monto) {
+        List<Usuario> usuarios = persistenciaUsuario.cargar();
+        boolean encontrado = false;
+
+        for (Usuario u : usuarios) {
+            if (u.getIdUsuario().equals(idUsuario)) {
+                if (u.getMonedero() != null) {
+                    u.getMonedero().revertirCreditosComprometidos(monto);
+                }
+                encontrado = true;
+                break;
+            }
+        }
+
+        if (!encontrado) {
+            throw new IllegalArgumentException("No se encontró el usuario para revertir créditos: " + idUsuario);
+        }
+
+        persistenciaUsuario.guardar(usuarios);
+        System.out.println("[SISTEMA] Créditos revertidos (" + monto + ") para el usuario: " + idUsuario);
+    }
+
+    // 6. Calcular Reputación Histórica (Preparado para el módulo de Transacciones)
     public void calcularReputacionHistorica(String idUsuario) {
         // TODO: A futuro, cargar las transacciones completadas del usuario,
         // promediar las estrellas/calificaciones y hacer un persistenciaUsuario.guardar()

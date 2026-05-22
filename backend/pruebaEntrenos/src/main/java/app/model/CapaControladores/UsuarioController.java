@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "http://localhost:5173") // Permite la comunicación con React
+@CrossOrigin(origins = "http://localhost:5173")
 public class UsuarioController {
 
     @Autowired
@@ -45,6 +45,7 @@ public class UsuarioController {
         }
     }
 
+<<<<<<< HEAD
 
     @PostMapping("/registrar")
     public ResponseEntity<?> registrarUsuario(@RequestBody Usuario nuevoUsuario) {
@@ -73,4 +74,22 @@ public class UsuarioController {
 
     }
 
+=======
+    // DTO interno para recibir el catálogo
+    static class CatalogoDTO {
+        public java.util.List<app.model.CapaEntidades.Habilidad> habilidades;
+        public java.util.List<app.model.CapaEntidades.Necesidad> necesidades;
+    }
+
+    // Actualizar el catálogo (habilidades y necesidades)
+    @PutMapping("/{id}/catalogo")
+    public ResponseEntity<String> actualizarCatalogo(@PathVariable String id, @RequestBody CatalogoDTO catalogoDTO) {
+        try {
+            gestionUsuario.actualizarCatalogo(id, catalogoDTO.habilidades, catalogoDTO.necesidades);
+            return ResponseEntity.ok("{\"mensaje\": \"Catálogo actualizado correctamente.\"}");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("{\"error\": \"" + e.getMessage() + "\"}");
+        }
+    }
+>>>>>>> db4991d (Conexion Back-Front HU1 y HU2 completo (creo))
 }

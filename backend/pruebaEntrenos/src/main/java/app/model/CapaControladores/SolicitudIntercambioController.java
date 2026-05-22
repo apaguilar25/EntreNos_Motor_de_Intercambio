@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/solicitudes")
-@CrossOrigin(origins = "*") // Permite la conexión limpia con el frontend (Vite)
+@CrossOrigin(origins = "http://localhost:5173")
 public class SolicitudIntercambioController {
 
     @Autowired
@@ -28,5 +28,27 @@ public class SolicitudIntercambioController {
                 .filter(s -> s.getIdSolicitudIntercambio().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada con el ID: " + id));
+    }
+
+    // 3. Endpoint para obtener las solicitudes enviadas por un usuario
+    @GetMapping("/enviadas/{idEmisor}")
+    public ResponseEntity<java.util.List<SolicitudIntercambio>> obtenerEnviadas(@PathVariable String idEmisor) {
+        try {
+            java.util.List<SolicitudIntercambio> enviadas = gestionSolicitud.obtenerSolicitudesEnviadas(idEmisor);
+            return ResponseEntity.ok(enviadas);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // 4. Endpoint para cancelar una solicitud pendiente
+    @PutMapping("/cancelar/{idSolicitud}")
+    public ResponseEntity<String> cancelarSolicitud(@PathVariable String idSolicitud) {
+        try {
+            gestionSolicitud.cancelarSolicitud(idSolicitud);
+            return ResponseEntity.ok("{\"mensaje\": \"Solicitud cancelada correctamente y créditos devueltos.\"}");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("{\"error\": \"" + e.getMessage() + "\"}");
+        }
     }
 }
