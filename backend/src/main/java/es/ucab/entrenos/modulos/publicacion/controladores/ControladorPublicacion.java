@@ -1,4 +1,84 @@
 package es.ucab.entrenos.modulos.publicacion.controladores;
 
+import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
+import es.ucab.entrenos.modulos.publicacion.modelos.Transaccion;
+import es.ucab.entrenos.modulos.publicacion.servicios.ServicioPublicacion;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+@RestController
+@RequestMapping("/api/publicaciones")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ControladorPublicacion {
+    private final ServicioPublicacion servicioPublicacion;
+    @Autowired
+    public ControladorPublicacion(ServicioPublicacion servicioPublicacion) {
+        this.servicioPublicacion = servicioPublicacion;
+    }
+    // --- Endpoints de Publicación ---
+    @GetMapping
+    public ResponseEntity<List<Publicacion>> obtenerPublicaciones(
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) String servicio) {
+        List<Publicacion> filtradas = servicioPublicacion.obtenerPublicacionesFiltradas(tipo, servicio);
+        return ResponseEntity.ok(filtradas);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Publicacion> obtenerPorId(@PathVariable String id) {
+        return servicioPublicacion.obtenerPublicacionPorId(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+    @PostMapping
+    public ResponseEntity<Publicacion> crear(@RequestBody Publicacion publicacion) {
+        Publicacion nueva = servicioPublicacion.crearPublicacion(publicacion);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable String id) {
+        if (servicioPublicacion.eliminarPublicacion(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+    // --- Endpoints de Transacción ---
+    @GetMapping("/transacciones")
+    public ResponseEntity<List<Transaccion>> obtenerTransacciones() {
+        return ResponseEntity.ok(servicioPublicacion.obtenerTodasLasTransacciones());
+    }
+    @GetMapping("/transacciones/{id}")
+    public ResponseEntity<Transaccion> obtenerTransaccionPorId(@PathVariable String id) {
+        return servicioPublicacion.obtenerTransaccionPorId(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+    @PostMapping("/transacciones")
+    public ResponseEntity<Transaccion> crearTransaccion(@RequestBody Transaccion transaccion) {
+        Transaccion nueva = servicioPublicacion.crearTransaccion(transaccion);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
+    }
+    @PostMapping("/transacciones/{id}/confirmar-ofertante")
+    public ResponseEntity<Transaccion> confirmarOfertante(@PathVariable String id) {
+        try {
+            Transaccion t = servicioPublicacion.confirmarOfertante(id);
+            return ResponseEntity.ok(t);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+    @PostMapping("/transacciones/{id}/confirmar-demandante")
+    public ResponseEntity<Transaccion> confirmarDemandante(@PathVariable String id) {
+        try {
+            Transaccion t = servicioPublicacion.confirmarDemandante(id);
+            return ResponseEntity.ok(t);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
 }
