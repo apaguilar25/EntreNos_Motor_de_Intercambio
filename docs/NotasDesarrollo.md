@@ -1,3 +1,14 @@
+
+- Cambios en Habilidad y Necesidad:
+  - Habilidad ya no tendra precio asociado sino que se le asignara desde cada publicacion
+  - Habilidad que ofrezco y necesito seran la misma clase, estaran divididos por contexto
+  - Es mucho mas intuitivo y simplifica logica para la persistencia
+  - Se le agrego atributo Categoria por los tags del ERS
+  - Tiene descripcionCapacidad
+    - Al ofrecer, es la experiencia que tiene en el tema
+    - Al necesitar, es la descripcion del problema por el cual necesita el servicio
+
+-------------------------------------  *  -------------------------------------  *  -------------------------------------
 GestionCatalogo eliminada, cambiar logica para simplificar
 
 Resumen de Archivos de Persistencias
