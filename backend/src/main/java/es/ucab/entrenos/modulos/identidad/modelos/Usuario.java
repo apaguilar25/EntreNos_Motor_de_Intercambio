@@ -13,6 +13,11 @@ public class Usuario {
         private ArrayList<Habilidad> habilidadesOfrecidas;
         private ArrayList<Habilidad> habilidadesNecesitadas;
 
+        private int intentosFallidos;
+        private boolean cuentaBloqueada;
+        private long tiempoDesbloqueoMillis; // Para contar las 24 horas
+
+    // --- * Constructores * ---
 
     public Usuario() {
     }
@@ -29,6 +34,9 @@ public class Usuario {
         this.habilidadesNecesitadas = new ArrayList<>();
     }
 
+    // --- * Metodos * ---
+
+    // - * Habilidades * -
 
     public void agregarHabilidadOfrecida(Habilidad nuevaHabilidad) {
         if (nuevaHabilidad == null) {
@@ -44,67 +52,78 @@ public class Usuario {
         this.habilidadesOfrecidas.add(nuevaHabilidad);
     }
 
-    public void agregarHabilidadNecesitada(Habilidad habilidadNecesitada) {
+    /**
+     * Agrega un servicio que el usuario está buscando.
+     */
+    public void agregarNecesidad(Habilidad nuevaNecesidad) {
+        if (nuevaNecesidad == null) {
+            throw new IllegalArgumentException("La necesidad no puede estar vacía.");
+        }
 
+        // Se verifica duplicidad
+        if (this.habilidadesNecesitadas.contains(nuevaNecesidad)) {
+            throw new IllegalStateException("Error: Ya tienes esta necesidad registrada.");
+        }
 
-        this.habilidadesNecesitadas.add(habilidadNecesitada);
+        this.habilidadesNecesitadas.add(nuevaNecesidad);
     }
 
-    public Monedero getMonedero() {
-        return monedero;
+    /**
+     * Elimina una habilidad del perfil del usuario.
+     */
+    public void removerHabilidadOfrecida(Habilidad habilidadRemover) {
+        if (!this.habilidadesOfrecidas.contains(habilidadRemover)) {
+            throw new IllegalStateException("El usuario no posee esta habilidad en su perfil.");
+        }
+        this.habilidadesOfrecidas.remove(habilidadRemover);
     }
 
-    public void setMonedero(Monedero monedero) {
-        this.monedero = monedero;
+    /**
+     * Elimina una habilidad necesitada del perfil del usuario.
+     */
+    public void removerHabilidadNecesitada(Habilidad habilidadRemover) {
+        if (!this.habilidadesNecesitadas.contains(habilidadRemover)) {
+            throw new IllegalStateException("El usuario no posee esta habilidad en su perfil.");
+        }
+        this.habilidadesNecesitadas.remove(habilidadRemover);
     }
 
+    // - * Monedero * -
+    /**
+     * Delega la responsabilidad de descontar créditos a la Billetera.
+     */
+    public void pagarServicio(int montoCreditos) {
+        // La Billetera internamente validará que no quede en saldo negativo
+        this.billetera.descontar(montoCreditos);
+    }
+
+    public void recibirCreditos(int montoCreditos) {
+        this.billetera.acreditar(montoCreditos);
+    }
+
+
+
+    // - * Seguridad * -
+
+    // Pendiente agregar funciones referentes al estado de bloqueo.
+    // La logica como tal va en la carpeta Seguridad pero lo que guarda el estado va aca
+
+
+    // --- * Getters * ---
+
+    public String getId() { return id; }
+    public String getNombre() { return nombre; }
+    public String getCorreo() { return correoElectronico; }
+
+    public Monedero getMonedero() {return monedero;}
+
+    // Getters inmutables: Se devuelven copias para proteger los datos
     public ArrayList<Habilidad> getHabilidadesOfrecidas() {
-        return habilidadesOfrecidas;
+        return new ArrayList<>(this.habilidadesOfrecidas);
     }
 
-    public void setHabilidadesOfrecidas(ArrayList<Habilidad> habilidadesOfrecidas) {
-        this.habilidadesOfrecidas = habilidadesOfrecidas;
+    public ArrayList<Habilidad> getNecesidadesBusqueda() {
+        return new ArrayList<>(this.habilidadesNecesitadas);
     }
-
-    public ArrayList<Habilidad> getHabilidadesNecesitadas() {
-        return habilidadesNecesitadas;
-    }
-
-    public void setHabilidadesNecesitadas(ArrayList<Habilidad> habilidadesNecesitadas) {
-        this.habilidadesNecesitadas = habilidadesNecesitadas;
-    }
-
-    public String getId() {
-            return id;
-        }
-    
-        public void setId(String id) {
-            this.id = id;
-        }
-    
-        public String getNombre() {
-            return nombre;
-        }
-    
-        public void setNombre(String nombre) {
-            this.nombre = nombre;
-        }
-    
-        public String getCorreoElectronico() {
-            return correoElectronico;
-        }
-    
-        public void setCorreoElectronico(String correoElectronico) {
-            this.correoElectronico = correoElectronico;
-        }
-    
-        public String getContrasena() {
-            return contrasena;
-        }
-    
-        public void setContrasena(String contrasena) {
-            this.contrasena = contrasena;
-        }
-
 
 }
