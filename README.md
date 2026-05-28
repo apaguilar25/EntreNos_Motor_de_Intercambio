@@ -22,8 +22,7 @@ EntreNos_Motor_de_Intercambio/
 │       ├── nucleo/                      # ÉPICA 5: Persistencia y Seguridad 
 │       │   ├── base_de_datos/
 │       │   │   └── ManejadorArchivoJson.java # Lógica para leer/escribir/bloquear archivos
-│       │   └── seguridad/
-│       │       └── VerificadorIntegridad.java # Valida el Checksum (Requisito ERS)
+│       │   └── seguridad/               # Pendiente por cualquier cosa que haya que validar
 │       │
 │       └── modulos/                     # Módulos del negocio (Separados por Épicas)
 │           │
