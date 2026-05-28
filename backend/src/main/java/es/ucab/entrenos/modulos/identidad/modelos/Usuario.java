@@ -92,13 +92,13 @@ public class Usuario {
     /**
      * Delega la responsabilidad de descontar créditos a la Billetera.
      */
-    public void pagarServicio(int montoCreditos) {
+    public void pagarServicio(float montoCreditos) {
         // La Billetera internamente validará que no quede en saldo negativo
-        this.billetera.descontar(montoCreditos);
+        this.monedero.descontar(montoCreditos);
     }
 
-    public void recibirCreditos(int montoCreditos) {
-        this.billetera.acreditar(montoCreditos);
+    public void recibirCreditos(float montoCreditos) {
+        this.monedero.acreditar(montoCreditos);
     }
 
 

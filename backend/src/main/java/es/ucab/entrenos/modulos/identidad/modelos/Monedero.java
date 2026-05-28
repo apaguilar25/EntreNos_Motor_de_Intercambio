@@ -3,7 +3,13 @@ package es.ucab.entrenos.modulos.identidad.modelos;
 public class Monedero {
 
     private int creditosDisponibles;
-    private int
 
+    public void acreditar(float montoCreditos){
+        return;
+    }
+
+    public void descontar(float montoCreditos){
+        return;
+    }
 
 }
