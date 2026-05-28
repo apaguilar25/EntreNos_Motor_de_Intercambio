@@ -1,6 +1,5 @@
 package modelOldDated.CapaGestion;
 
-import app.modelREVISAR.CapaEntidades.*;
 import modelOldDated.CapaEntidades.*;
 import modelOldDated.CapaPersistencia.PersistenciaSubasta;
 import modelOldDated.CapaPersistencia.PersistenciaNotificacion;
