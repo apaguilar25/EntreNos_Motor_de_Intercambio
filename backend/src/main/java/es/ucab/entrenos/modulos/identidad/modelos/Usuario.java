@@ -7,93 +7,109 @@ public class Usuario {
         private String id;
         private String nombre;
         private String correoElectronico;
-        private String contrasena;
+        private String telefono;
+        private String descripcionPersonal;
+        private boolean catalogoCompletado; // Controla la inyección del Capital Semilla
+        private String contrasenaHash;
 
         private Monedero monedero;
-        private ArrayList<Habilidad> habilidadesOfrecidas;
-        private ArrayList<Habilidad> habilidadesNecesitadas;
+        private ArrayList<HabilidadOfrecida> habilidadesOfrecidas;
+        private ArrayList<NecesidadRegistrada> necesidadesRegistradas;
+
 
         private int intentosFallidos;
         private boolean cuentaBloqueada;
         private long tiempoDesbloqueoMillis; // Para contar las 24 horas
+        private long primerIntentoFallidoMillis; // Guarda la hora del primer error
+
+        // --- * Perfil y Reputación * ---
+        private String urlFotoPerfil;
+        private float promedioCalificacion;
+        private int cantidadCalificaciones; // Ej: 15 (Para saber entre cuántos se dividió)
+
+        // --- * Sanciones Administrativas (Diferente al bloqueo de seguridad por Login) * ---
+        private boolean cuentaSuspendida;
+        private long finSuspensionMillis; // Cuando termina la suspensión administrativa
 
     // --- * Constructores * ---
 
     public Usuario() {
     }
 
-    // Siempre se crea habilidades aunque este vacia
-    // Contrasenia se toma en cuenta para sprint 2, por eso no esta en este constructor todavia
-    public Usuario(String id, String nombre, String correoElectronico, Monedero monedero) {
+    public Usuario(String id, String nombre, String correoElectronico, String telefono, String descripcionPersonal, String contrasenaHash) {
         this.id = id;
         this.nombre = nombre;
         this.correoElectronico = correoElectronico;
-        this.monedero = monedero;
+        this.telefono = telefono;
+        this.descripcionPersonal = descripcionPersonal;
+        this.contrasenaHash = contrasenaHash;
+
         this.monedero = new Monedero();
         this.habilidadesOfrecidas = new ArrayList<>();
-        this.habilidadesNecesitadas = new ArrayList<>();
+        this.necesidadesRegistradas = new ArrayList<>();
+
+        this.intentosFallidos = 0;
+        this.cuentaBloqueada = false;
+        this.cuentaSuspendida = false;
+        this.catalogoCompletado = false; // Nace en false hasta que configure sus habilidades
+
+        this.urlFotoPerfil = "default.png";
+        this.promedioCalificacion = 0.0f;
+        this.cantidadCalificaciones = 0;
     }
 
     // --- * Metodos * ---
 
-    // - * Habilidades * -
+    // - * Metodos de Catálogo y Capital Semilla * -
 
-    public void agregarHabilidadOfrecida(Habilidad nuevaHabilidad) {
-        if (nuevaHabilidad == null) {
-            throw new IllegalArgumentException("La habilidad no puede estar vacía.");
+    /**
+     * ERS: Al finalizar la creación del catálogo, el sistema debe añadir
+     * el capital semilla al monedero del usuario automáticamente.
+     */
+    public void finalizarConfiguracionCatalogo(float capitalSemilla) {
+        if (this.catalogoCompletado) {
+            throw new IllegalStateException("El usuario ya completó su catálogo y reclamó su capital semilla.");
         }
+        this.catalogoCompletado = true;
+        this.monedero.acreditar(capitalSemilla);
+    }
 
-        // Se verifica con el equals() de la clase Habilidad,
-        // .contains() compara los IDs.
+    public void agregarHabilidadOfrecida(HabilidadOfrecida nuevaHabilidad) {
+        if (nuevaHabilidad == null) throw new IllegalArgumentException("La habilidad ofrecida no puede estar vacía.");
         if (this.habilidadesOfrecidas.contains(nuevaHabilidad)) {
             throw new IllegalStateException("Error: Ya ofreces esta habilidad en tu perfil.");
         }
-
         this.habilidadesOfrecidas.add(nuevaHabilidad);
     }
 
-    /**
-     * Agrega un servicio que el usuario está buscando.
-     */
-    public void agregarNecesidad(Habilidad nuevaNecesidad) {
-        if (nuevaNecesidad == null) {
-            throw new IllegalArgumentException("La necesidad no puede estar vacía.");
-        }
-
-        // Se verifica duplicidad
-        if (this.habilidadesNecesitadas.contains(nuevaNecesidad)) {
+    public void agregarNecesidad(NecesidadRegistrada nuevaNecesidad) {
+        if (nuevaNecesidad == null) throw new IllegalArgumentException("La necesidad no puede estar vacía.");
+        if (this.necesidadesRegistradas.contains(nuevaNecesidad)) {
             throw new IllegalStateException("Error: Ya tienes esta necesidad registrada.");
         }
-
-        this.habilidadesNecesitadas.add(nuevaNecesidad);
+        this.necesidadesRegistradas.add(nuevaNecesidad);
     }
 
-    /**
-     * Elimina una habilidad del perfil del usuario.
-     */
-    public void removerHabilidadOfrecida(Habilidad habilidadRemover) {
+    public void removerHabilidadOfrecida(HabilidadOfrecida habilidadRemover) {
         if (!this.habilidadesOfrecidas.contains(habilidadRemover)) {
             throw new IllegalStateException("El usuario no posee esta habilidad en su perfil.");
         }
         this.habilidadesOfrecidas.remove(habilidadRemover);
     }
 
-    /**
-     * Elimina una habilidad necesitada del perfil del usuario.
-     */
-    public void removerHabilidadNecesitada(Habilidad habilidadRemover) {
-        if (!this.habilidadesNecesitadas.contains(habilidadRemover)) {
-            throw new IllegalStateException("El usuario no posee esta habilidad en su perfil.");
+    public void removerNecesidad(NecesidadRegistrada necesidadRemover) {
+        if (!this.necesidadesRegistradas.contains(necesidadRemover)) {
+            throw new IllegalStateException("El usuario no posee esta necesidad en su perfil.");
         }
-        this.habilidadesNecesitadas.remove(habilidadRemover);
+        this.necesidadesRegistradas.remove(necesidadRemover);
     }
 
+
     // - * Monedero * -
-    /**
-     * Delega la responsabilidad de descontar créditos a la Billetera.
-     */
+
+    // Delega la responsabilidad de descontar créditos a la Billetera.
+
     public void pagarServicio(float montoCreditos) {
-        // La Billetera internamente validará que no quede en saldo negativo
         this.monedero.descontar(montoCreditos);
     }
 
@@ -102,28 +118,62 @@ public class Usuario {
     }
 
 
+    // - * Seguridad (Login) * -
 
-    // - * Seguridad * -
+    public void incrementarIntentosFallidos(){
+        this.intentosFallidos++;
+    }
 
-    // Pendiente agregar funciones referentes al estado de bloqueo.
-    // La logica como tal va en la carpeta Seguridad pero lo que guarda el estado va aca
+    public boolean isCuentaBloqueada(){
+        return this.cuentaBloqueada;
+    }
 
+    public void bloquearCuenta(long duracionMillis){
+        this.cuentaBloqueada = true;
 
-    // --- * Getters * ---
+        // Indica a que hora se desbloqueara la cuenta, sumando el tiempo actual con la duracion del bloqueo
+        this.tiempoDesbloqueoMillis = System.currentTimeMillis() + duracionMillis;
+    }
 
+    public void resetearIntentosFallidos(){
+        this.intentosFallidos = 0;
+    }
+
+    public void setPrimerIntentoFallidoMillis(long primerIntentoFallidoMillis) {
+        this.primerIntentoFallidoMillis = primerIntentoFallidoMillis;
+    }
+
+    public void desbloquearCuenta(){
+        this.cuentaBloqueada = false;
+        this.tiempoDesbloqueoMillis = 0;
+        this.intentosFallidos = 0;
+    }
+
+    // --- * Getters y Setters Básicos * ---
     public String getId() { return id; }
     public String getNombre() { return nombre; }
-    public String getCorreo() { return correoElectronico; }
+    public String getCorreoElectronico() { return correoElectronico; }
+    public String getTelefono() { return telefono; }
+    public String getDescripcionPersonal() { return descripcionPersonal; }
+    public String getContrasenaHash() { return contrasenaHash; }
+    public Monedero getMonedero() { return monedero; }
+    public boolean isCatalogoCompletado() { return catalogoCompletado; }
 
-    public Monedero getMonedero() {return monedero;}
+    public int getIntentosFallidos() { return intentosFallidos; }
+    public long getPrimerIntentoFallidoMillis() { return primerIntentoFallidoMillis; }
+    public long getTiempoDesbloqueoMillis() { return tiempoDesbloqueoMillis; }
 
-    // Getters inmutables: Se devuelven copias para proteger los datos
-    public ArrayList<Habilidad> getHabilidadesOfrecidas() {
+    // Getters inmutables (Devuelven copias de las listas envolventes)
+    public ArrayList<HabilidadOfrecida> getHabilidadesOfrecidas() {
         return new ArrayList<>(this.habilidadesOfrecidas);
     }
 
-    public ArrayList<Habilidad> getNecesidadesBusqueda() {
-        return new ArrayList<>(this.habilidadesNecesitadas);
+    public ArrayList<NecesidadRegistrada> getNecesidadesRegistradas() {
+        return new ArrayList<>(this.necesidadesRegistradas);
     }
 
+    // Setters
+    public void setTelefono(String telefono) { this.telefono = telefono; }
+    public void setDescripcionPersonal(String descripcionPersonal) { this.descripcionPersonal = descripcionPersonal; }
+    public void setUrlFotoPerfil(String urlFotoPerfil) { this.urlFotoPerfil = urlFotoPerfil; }
 }

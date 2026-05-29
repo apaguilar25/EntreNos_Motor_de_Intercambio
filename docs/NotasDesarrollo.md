@@ -1,4 +1,14 @@
 
+- Para proteccion de ataques contra fuerza bruta: 5 intentos fallidos en menos de 3 minutos → Cuenta Bloqueada 24h
+- Met.odos de usuario no devuelven feedback, cosas como eliminarHabilidadPerfil. Solo los errores dan mensajes.
+  - No se si esta bien asi o deberiamos hacer que todo devuelva algun mensaje 
+
+Nota: 
+    Comentarios de Commits mas nuevos ↑
+    Comentarios de Commits mas viejos ↓
+
+-------------------------------------  *  -------------------------------------  *  ------------------------------------
+
 - Cambios en Habilidad y Necesidad:
   - Habilidad ya no tendra precio asociado sino que se le asignara desde cada publicacion
   - Habilidad que ofrezco y necesito seran la misma clase, estaran divididos por contexto
@@ -8,7 +18,7 @@
     - Al ofrecer, es la experiencia que tiene en el tema
     - Al necesitar, es la descripcion del problema por el cual necesita el servicio
 
--------------------------------------  *  -------------------------------------  *  -------------------------------------
+-------------------------------------  *  -------------------------------------  *  ------------------------------------
 GestionCatalogo eliminada, cambiar logica para simplificar
 
 Resumen de Archivos de Persistencias
