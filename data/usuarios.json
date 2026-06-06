@@ -1,0 +1,50 @@
+[
+  {
+    "id": "d251f336-95e4-470a-8102-af35d9555521",
+    "nombre": "Mecatron Decepticon",
+    "correoElectronico": "carlos@comunidad.com",
+    "telefono": "+584141234567",
+    "descripcionPersonal": "Hola, soy nuevo en la comunidad y estoy dispuesto a ayudar.",
+    "catalogoCompletado": true,
+    "contrasenaHash": "$2a$10$xDwjBepddAXVpZJVJhn0xOUrub7NWLStXT3D6F7Ah1569UodsSKya",
+    "monedero": {
+      "creditosDisponibles": 50.0
+    },
+    "habilidadesOfrecidas": [
+      {
+        "habilidadBase": {
+          "id": "PLOMERIA",
+          "categoria": ""
+        },
+        "precioCreditos": 150,
+        "descripcionServicio": "Reparación de tuberías y filtraciones en baños."
+      },
+      {
+        "habilidadBase": {
+          "id": "PLOMERIA",
+          "categoria": ""
+        },
+        "precioCreditos": 80,
+        "descripcionServicio": "Destapar cañerías simples."
+      }
+    ],
+    "necesidadesRegistradas": [
+      {
+        "necesidadBase": {
+          "id": "COMPUTACION",
+          "categoria": ""
+        },
+        "descripcionCondiciones": "Necesito alguien que repare mi computadora portátil, no enciende."
+      }
+    ],
+    "intentosFallidos": 0,
+    "cuentaBloqueada": false,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "cuentaSuspendida": false,
+    "finSuspensionMillis": 0
+  }
+]

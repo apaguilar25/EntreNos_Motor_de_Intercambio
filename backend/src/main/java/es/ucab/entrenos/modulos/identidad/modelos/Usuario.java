@@ -167,6 +167,26 @@ public class Usuario {
         return new ArrayList<>(this.habilidadesOfrecidas);
     }
 
+    public String getUrlFotoPerfil() {
+        return urlFotoPerfil;
+    }
+
+    public float getPromedioCalificacion() {
+        return promedioCalificacion;
+    }
+
+    public int getCantidadCalificaciones() {
+        return cantidadCalificaciones;
+    }
+
+    public boolean isCuentaSuspendida() {
+        return cuentaSuspendida;
+    }
+
+    public long getFinSuspensionMillis() {
+        return finSuspensionMillis;
+    }
+
     public ArrayList<NecesidadRegistrada> getNecesidadesRegistradas() {
         return new ArrayList<>(this.necesidadesRegistradas);
     }
