@@ -16,7 +16,6 @@ public class Usuario {
         private ArrayList<HabilidadOfrecida> habilidadesOfrecidas;
         private ArrayList<NecesidadRegistrada> necesidadesRegistradas;
 
-
         private int intentosFallidos;
         private boolean cuentaBloqueada;
         private long tiempoDesbloqueoMillis; // Para contar las 24 horas

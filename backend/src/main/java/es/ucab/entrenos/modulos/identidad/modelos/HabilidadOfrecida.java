@@ -12,7 +12,7 @@ public class HabilidadOfrecida {
     public HabilidadOfrecida(Habilidad habilidadBase, int precioCreditos, String descripcionServicio) {
         if (habilidadBase == null) throw new IllegalArgumentException("La habilidad no puede ser nula.");
         this.habilidadBase = habilidadBase;
-        setPrecioCreditos(precioCreditos); // Usamos el setter para aprovechar la validación
+        setPrecioCreditos(precioCreditos); // Se usa el setter para aprovechar la validación (precio >= 0)
         setDescripcionServicio(descripcionServicio);
     }
 
@@ -38,18 +38,20 @@ public class HabilidadOfrecida {
         this.descripcionServicio = descripcionServicio;
     }
 
-    // Sobreescribimos equals para que el .contains() de Usuario detecte duplicados
-    // basándose en la habilidad base (Ej: no puedes ofrecer "Plomería" dos veces)
+    // Se permite varias habilidades de la misma categoria mientras tengan descripciones distintas
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         HabilidadOfrecida that = (HabilidadOfrecida) o;
-        return Objects.equals(habilidadBase, that.habilidadBase);
+
+        // Compara habilidad base y descripción (ignorando mayúsculas y espacios extra para evitar trampas)
+        return Objects.equals(habilidadBase, that.habilidadBase) &&
+                this.descripcionServicio.trim().equalsIgnoreCase(that.descripcionServicio.trim());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(habilidadBase);
+        return Objects.hash(habilidadBase, descripcionServicio.trim().toLowerCase());
     }
 }
