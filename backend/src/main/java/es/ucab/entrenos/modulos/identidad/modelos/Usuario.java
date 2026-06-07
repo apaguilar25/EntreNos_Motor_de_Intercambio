@@ -1,5 +1,7 @@
 package es.ucab.entrenos.modulos.identidad.modelos;
 
+import es.ucab.entrenos.modulos.identidad.excepciones.HabilidadDuplicadaException;
+
 import java.util.ArrayList;
 
 public class Usuario {
@@ -76,7 +78,8 @@ public class Usuario {
     public void agregarHabilidadOfrecida(HabilidadOfrecida nuevaHabilidad) {
         if (nuevaHabilidad == null) throw new IllegalArgumentException("La habilidad ofrecida no puede estar vacía.");
         if (this.habilidadesOfrecidas.contains(nuevaHabilidad)) {
-            throw new IllegalStateException("Error: Ya ofreces esta habilidad en tu perfil.");
+            // Mejora de mensaje:
+            throw new HabilidadDuplicadaException("Error: La habilidad '" + nuevaHabilidad.getDescripcionServicio() + "' ya está registrada en tu perfil.");
         }
         this.habilidadesOfrecidas.add(nuevaHabilidad);
     }

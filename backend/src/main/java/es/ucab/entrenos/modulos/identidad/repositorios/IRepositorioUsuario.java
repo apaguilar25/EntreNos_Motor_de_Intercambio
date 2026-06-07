@@ -9,6 +9,7 @@ public interface IRepositorioUsuario {
 
     Optional<Usuario> buscarPorCorreo(String correo);
     Optional<Usuario> buscarPorId(String id);
+    Optional<Usuario> buscarPorTelefono(String telefono);
 
     void guardar(Usuario usuario);
     ArrayList<Usuario> listarUsuarios();

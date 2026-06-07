@@ -103,6 +103,17 @@ public class RepositorioUsuario implements IRepositorioUsuario {
                 .findFirst();
     }
 
+    public synchronized Optional<Usuario> buscarPorTelefono(String telefono) {
+        if (telefono == null || telefono.trim().isEmpty()) return Optional.empty();
+
+        ArrayList<Usuario> usuarios = listarUsuarios();
+
+        return usuarios.stream()
+                .filter(u -> u.getTelefono().equals(telefono.trim()))
+                .findFirst();
+    }
+
+
     @Override
     public synchronized Optional<Usuario> buscarPorCorreo(String correo) {
         if (correo == null || correo.trim().isEmpty()) return Optional.empty();
@@ -114,4 +125,8 @@ public class RepositorioUsuario implements IRepositorioUsuario {
                 .filter(u -> u.getCorreoElectronico().equalsIgnoreCase(correo.trim()))
                 .findFirst();
     }
+
+
+
+
 }

@@ -1,5 +1,7 @@
 package es.ucab.entrenos.modulos.identidad.servicios;
 
+import es.ucab.entrenos.modulos.identidad.excepciones.CorreoDuplicadoException;
+import es.ucab.entrenos.modulos.identidad.excepciones.TelefonoDuplicadoException;
 import es.ucab.entrenos.modulos.identidad.modelos.HabilidadOfrecida;
 import es.ucab.entrenos.modulos.identidad.modelos.NecesidadRegistrada;
 import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
@@ -25,23 +27,32 @@ public class ServicioUsuario {
         this.encriptador = new BCryptPasswordEncoder();
     }
 
+    public Optional<Usuario> buscarPorId(String id) {
+        return repositorioUsuario.buscarPorId(id);
+    }
 
     //  Registro inicial del usuario (Aún sin catálogo)
     public Usuario registrarUsuario(String nombre, String correoElectronico, String telefono, String descripcionPersonal, String contrasenaPlana) {
 
         // 1. Validar que el correo no esté registrado previamente
-        Optional<Usuario> usuarioExistente = repositorioUsuario.buscarPorCorreo(correoElectronico);
-        if (usuarioExistente.isPresent()) {
-            throw new IllegalArgumentException("El correo electrónico ya se encuentra registrado en la comunidad.");
+        Optional<Usuario> usuarioMismoCorreo = repositorioUsuario.buscarPorCorreo(correoElectronico);
+        if (usuarioMismoCorreo.isPresent()) {
+            throw new CorreoDuplicadoException("El correo electrónico ya se encuentra registrado en la comunidad.");
         }
 
-        // 2. Encriptar la contraseña
+        // 2. NUEVO: Validar que el teléfono no esté registrado previamente
+        Optional<Usuario> usuarioMismoTelefono = repositorioUsuario.buscarPorTelefono(telefono);
+        if (usuarioMismoTelefono.isPresent()) {
+            throw new TelefonoDuplicadoException("El número de teléfono ya está asociado a otra cuenta en la comunidad.");
+        }
+
+        // 3. Encriptar la contraseña
         String contrasenaHash = encriptador.encode(contrasenaPlana);
 
-        // 3. Generar un ID único universal para el usuario
+        // 4. Generar un ID único universal para el usuario
         String nuevoId = UUID.randomUUID().toString();
 
-        // 4. Crear el objeto Usuario (nace con Monedero en 0 y catalogoCompletado en false)
+        // 5. Crear el objeto Usuario (nace con Monedero en 0 y catalogoCompletado en false)
         Usuario nuevoUsuario = new Usuario(
                 nuevoId,
                 nombre,
@@ -51,7 +62,7 @@ public class ServicioUsuario {
                 contrasenaHash
         );
 
-        // 5. Guardar en el JSON a través del repositorio
+        // 6. Guardar en el JSON a través del repositorio
         repositorioUsuario.guardar(nuevoUsuario);
 
         return nuevoUsuario;
@@ -63,7 +74,7 @@ public class ServicioUsuario {
     public void configurarCatalogo(String idUsuario, List<HabilidadOfrecida> ofertas, List<NecesidadRegistrada> necesidades) {
 
         // 1. Buscar al usuario en la base de datos (JSON)
-        Optional<Usuario> usuarioOpt = repositorioUsuario.buscarPorId(idUsuario);
+        Optional<Usuario> usuarioOpt = buscarPorId(idUsuario);
         if (usuarioOpt.isEmpty()) {
             throw new IllegalArgumentException("Usuario no encontrado.");
         }
@@ -94,7 +105,7 @@ public class ServicioUsuario {
 
     // Carga/Actualización de la Foto de Perfil (Criterio de Aceptación 1)
     public void actualizarFotoPerfil(String idUsuario, String urlNuevaFoto) {
-        Optional<Usuario> usuarioOpt = repositorioUsuario.buscarPorId(idUsuario);
+        Optional<Usuario> usuarioOpt = buscarPorId(idUsuario);
         if (usuarioOpt.isEmpty()) {
             throw new IllegalArgumentException("Usuario no encontrado.");
         }
@@ -112,7 +123,7 @@ public class ServicioUsuario {
     //  PASO 4: Edición de Habilidades Ofrecidas (Criterios de Aceptación 5 y 6)
     //  Permite editar el precio en créditos y la descripción en cualquier momento.
     public void editarHabilidadOfrecida(String idUsuario, HabilidadOfrecida habilidadEditada) {
-        Optional<Usuario> usuarioOpt = repositorioUsuario.buscarPorId(idUsuario);
+        Optional<Usuario> usuarioOpt = buscarPorId(idUsuario);
         if (usuarioOpt.isEmpty()) {
             throw new IllegalArgumentException("Usuario no encontrado.");
         }
@@ -132,7 +143,7 @@ public class ServicioUsuario {
      * Permite editar la descripción (condiciones) en cualquier momento.
      */
     public void editarNecesidadRegistrada(String idUsuario, NecesidadRegistrada necesidadEditada) {
-        Optional<Usuario> usuarioOpt = repositorioUsuario.buscarPorId(idUsuario);
+        Optional<Usuario> usuarioOpt = buscarPorId(idUsuario);
         if (usuarioOpt.isEmpty()) {
             throw new IllegalArgumentException("Usuario no encontrado.");
         }
