@@ -15,12 +15,12 @@ public class ServicioHabilidad {
 
     public ServicioHabilidad(RepositorioHabilidad repositorioHabilidad) {
         this.repositorioHabilidad = repositorioHabilidad;
-        // Al encender el servidor, leemos el JSON UNA SOLA VEZ y lo guardamos en RAM
+        // Leemos el disco duro UNA SOLA VEZ y guardamos en RAM
         this.cacheHabilidades = repositorioHabilidad.listarTodas();
     }
 
     public List<Habilidad> obtenerTodas() {
-        // Devolvemos la memoria RAM, es 100 veces más rápido que leer el disco
+        // Devolvemos la lista desde la RAM (ultra rápido)
         return this.cacheHabilidades;
     }
 

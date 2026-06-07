@@ -31,6 +31,12 @@ public class ServicioUsuario {
         return repositorioUsuario.buscarPorId(id);
     }
 
+    public void actualizarReputacion(String idReceptor, float calificacion) {
+        // TODO implementar funcion
+
+        return;
+    }
+
     //  Registro inicial del usuario (Aún sin catálogo)
     public Usuario registrarUsuario(String nombre, String correoElectronico, String telefono, String descripcionPersonal, String contrasenaPlana) {
 
@@ -122,18 +128,12 @@ public class ServicioUsuario {
 
     //  PASO 4: Edición de Habilidades Ofrecidas (Criterios de Aceptación 5 y 6)
     //  Permite editar el precio en créditos y la descripción en cualquier momento.
-    public void editarHabilidadOfrecida(String idUsuario, HabilidadOfrecida habilidadEditada) {
-        Optional<Usuario> usuarioOpt = buscarPorId(idUsuario);
-        if (usuarioOpt.isEmpty()) {
-            throw new IllegalArgumentException("Usuario no encontrado.");
-        }
+    public void editarHabilidadOfrecida(String idUsuario, String idInstancia, int precioCreditos, String descripcionServicio) {
+        Usuario usuario = repositorioUsuario.buscarPorId(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
 
-        Usuario usuario = usuarioOpt.get();
-
-        // Buscamos si el usuario realmente tiene esta habilidad registrada
-        // (El equals() que programaste nos ayuda a encontrarla por la Habilidad Base)
-        usuario.removerHabilidadOfrecida(habilidadEditada); // Quitamos la versión vieja
-        usuario.agregarHabilidadOfrecida(habilidadEditada); // Agregamos la nueva versión con precio/descripción actualizados
+        // Delegamos la inteligencia a la clase Usuario pasándole el idInstancia
+        usuario.actualizarHabilidadOfrecida(idInstancia, precioCreditos, descripcionServicio);
 
         repositorioUsuario.guardar(usuario);
     }
@@ -142,18 +142,31 @@ public class ServicioUsuario {
      * PASO 5: Edición de Necesidades Registradas (Criterio de Aceptación 6)
      * Permite editar la descripción (condiciones) en cualquier momento.
      */
-    public void editarNecesidadRegistrada(String idUsuario, NecesidadRegistrada necesidadEditada) {
-        Optional<Usuario> usuarioOpt = buscarPorId(idUsuario);
-        if (usuarioOpt.isEmpty()) {
-            throw new IllegalArgumentException("Usuario no encontrado.");
-        }
+    public void editarNecesidadRegistrada(String idUsuario, String idInstancia, String descripcionCondiciones) {
+        Usuario usuario = repositorioUsuario.buscarPorId(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
 
-        Usuario usuario = usuarioOpt.get();
-
-        usuario.removerNecesidad(necesidadEditada); // Quitamos la vieja
-        usuario.agregarNecesidad(necesidadEditada); // Agregamos la actualizada
+        // Delegamos la inteligencia a la clase Usuario pasándole el idInstancia
+        usuario.actualizarNecesidadRegistrada(idInstancia, descripcionCondiciones);
 
         repositorioUsuario.guardar(usuario);
     }
+
+    public void eliminarHabilidadOfrecida(String idUsuario, String idInstancia) {
+        Usuario usuario = repositorioUsuario.buscarPorId(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+
+        usuario.eliminarHabilidadOfrecida(idInstancia);
+        repositorioUsuario.guardar(usuario);
+    }
+
+    public void eliminarNecesidadRegistrada(String idUsuario, String idInstancia) {
+        Usuario usuario = repositorioUsuario.buscarPorId(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+
+        usuario.eliminarNecesidadRegistrada(idInstancia);
+        repositorioUsuario.guardar(usuario);
+    }
+
 
 }

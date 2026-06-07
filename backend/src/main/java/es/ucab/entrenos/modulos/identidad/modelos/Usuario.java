@@ -76,12 +76,64 @@ public class Usuario {
     }
 
     public void agregarHabilidadOfrecida(HabilidadOfrecida nuevaHabilidad) {
-        if (nuevaHabilidad == null) throw new IllegalArgumentException("La habilidad ofrecida no puede estar vacía.");
-        if (this.habilidadesOfrecidas.contains(nuevaHabilidad)) {
-            // Mejora de mensaje:
-            throw new HabilidadDuplicadaException("Error: La habilidad '" + nuevaHabilidad.getDescripcionServicio() + "' ya está registrada en tu perfil.");
+        if (nuevaHabilidad == null) throw new IllegalArgumentException("La habilidad no puede ser nula.");
+
+        // Validamos que no tenga otra oferta con la misma habilidad Y la misma descripción
+        boolean duplicada = this.habilidadesOfrecidas.stream()
+                .anyMatch(h -> h.getHabilidadBase().getId().equals(nuevaHabilidad.getHabilidadBase().getId())
+                        && h.getDescripcionServicio().equalsIgnoreCase(nuevaHabilidad.getDescripcionServicio()));
+
+        if (duplicada) {
+            throw new IllegalStateException("Ya tienes una oferta para esta habilidad con la misma descripción.");
         }
+
         this.habilidadesOfrecidas.add(nuevaHabilidad);
+    }
+
+    public void actualizarHabilidadOfrecida(String idCategoria, int nuevoPrecio, String nuevaDescripcion) {
+        // 1. Buscamos la habilidad SOLO por su ID (Ej: "HAB-001")
+        HabilidadOfrecida existente = null;
+        for (HabilidadOfrecida h : this.habilidadesOfrecidas) {
+            if (h.getHabilidadBase().getId().equals(idCategoria)) {
+                existente = h;
+                break;
+            }
+        }
+
+        // 2. Si no la encuentra, lanzamos error
+        if (existente == null) {
+            throw new IllegalArgumentException("El usuario no posee esta habilidad en su perfil.");
+        }
+
+        // 3. Actualización inteligente (Si envían 0, ignoramos el precio. Si envían texto vacío, ignoramos la descripción)
+        if (nuevoPrecio > 0) {
+            existente.setPrecioCreditos(nuevoPrecio);
+        }
+
+        if (nuevaDescripcion != null && !nuevaDescripcion.trim().isEmpty()) {
+            existente.setDescripcionServicio(nuevaDescripcion);
+        }
+    }
+
+    public void actualizarNecesidadRegistrada(String idInstancia, String nuevaDescripcion) {
+        // 1. Buscamos la necesidad específica por su ID de INSTANCIA
+        NecesidadRegistrada existente = this.necesidadesRegistradas.stream()
+                .filter(n -> n.getIdInstancia().equals(idInstancia))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró la necesidad específica en el perfil del usuario."));
+
+        // 2. Si hay una nueva descripción válida, verificamos que no choque con otra existente
+        if (nuevaDescripcion != null && !nuevaDescripcion.trim().isEmpty() && !nuevaDescripcion.equals(existente.getDescripcionCondiciones())) {
+            boolean conflicto = this.necesidadesRegistradas.stream()
+                    .anyMatch(n -> !n.getIdInstancia().equals(idInstancia)
+                            && n.getNecesidadBase().getId().equals(existente.getNecesidadBase().getId())
+                            && n.getDescripcionCondiciones().equalsIgnoreCase(nuevaDescripcion.trim()));
+
+            if (conflicto) {
+                throw new IllegalStateException("Ya tienes otra necesidad de esta misma categoría con esas condiciones exactas.");
+            }
+            existente.setDescripcionCondiciones(nuevaDescripcion.trim());
+        }
     }
 
     public void agregarNecesidad(NecesidadRegistrada nuevaNecesidad) {
@@ -92,20 +144,22 @@ public class Usuario {
         this.necesidadesRegistradas.add(nuevaNecesidad);
     }
 
-    public void removerHabilidadOfrecida(HabilidadOfrecida habilidadRemover) {
-        if (!this.habilidadesOfrecidas.contains(habilidadRemover)) {
-            throw new IllegalStateException("El usuario no posee esta habilidad en su perfil.");
-        }
-        this.habilidadesOfrecidas.remove(habilidadRemover);
-    }
+    public void eliminarHabilidadOfrecida(String idInstancia) {
+        // Intentamos remover el objeto cuyo idInstancia coincida
+        boolean eliminado = this.habilidadesOfrecidas.removeIf(h -> h.getIdInstancia().equals(idInstancia));
 
-    public void removerNecesidad(NecesidadRegistrada necesidadRemover) {
-        if (!this.necesidadesRegistradas.contains(necesidadRemover)) {
-            throw new IllegalStateException("El usuario no posee esta necesidad en su perfil.");
+        if (!eliminado) {
+            throw new IllegalArgumentException("No se encontró la oferta específica para eliminar.");
         }
-        this.necesidadesRegistradas.remove(necesidadRemover);
     }
+    public void eliminarNecesidadRegistrada(String idInstancia) {
+        // Intentamos remover el objeto cuyo idInstancia coincida
+        boolean eliminado = this.necesidadesRegistradas.removeIf(n -> n.getIdInstancia().equals(idInstancia));
 
+        if (!eliminado) {
+            throw new IllegalArgumentException("No se encontró la necesidad específica para eliminar.");
+        }
+    }
 
     // - * Monedero * -
 

@@ -1,38 +1,38 @@
 [
   {
-    "id": "49965096-21d0-4777-89bc-b63760403cf1",
+    "id": "e2970c75-d59b-470b-a00d-b7fadac61bf0",
     "nombre": "Carlos Fontanero",
     "correoElectronico": "carlos@comunidad.com",
     "telefono": "+584141234567",
     "descripcionPersonal": "Hola, soy nuevo en la comunidad y estoy dispuesto a ayudar.",
     "catalogoCompletado": true,
-    "contrasenaHash": "$2a$10$Ba8luUCJfpuxO9r.mADRwOdrj7xPLwbMPFn7IIfjYt88EC5dKD6yi",
+    "contrasenaHash": "$2a$10$EwKDhtfl9uYvqImwv/M2aOQKvLCyZ3hYqFUUrJvzzH6a99A5u8.1O",
     "monedero": {
       "creditosDisponibles": 50.0
     },
     "habilidadesOfrecidas": [
       {
         "habilidadBase": {
-          "id": "PLOMERIA",
-          "categoria": ""
-        },
-        "precioCreditos": 150,
-        "descripcionServicio": "Reparación de tuberías y filtraciones en baños."
-      },
-      {
-        "habilidadBase": {
-          "id": "PLOMERIA",
-          "categoria": ""
+          "id": "HAB-002",
+          "categoria": "Electricidad"
         },
         "precioCreditos": 80,
         "descripcionServicio": "Destapar cañerías simples."
+      },
+      {
+        "habilidadBase": {
+          "id": "HAB-001",
+          "categoria": "Plomería"
+        },
+        "precioCreditos": 117,
+        "descripcionServicio": "Reparación de tuberías y filtraciones en baños."
       }
     ],
     "necesidadesRegistradas": [
       {
         "necesidadBase": {
-          "id": "COMPUTACION",
-          "categoria": ""
+          "id": "HAB-005",
+          "categoria": "Soporte Técnico / Computación"
         },
         "descripcionCondiciones": "Necesito alguien que repare mi computadora portátil, no enciende."
       }
@@ -48,43 +48,18 @@
     "finSuspensionMillis": 0
   },
   {
-    "id": "7eba8bae-e4e0-4cd7-845a-0e19a6559172",
+    "id": "275f2faf-a22e-491b-93bd-1c14b2e3bd01",
     "nombre": "Jose Panadero",
     "correoElectronico": "jose@comunidad.com",
-    "telefono": "+584141234567",
-    "descripcionPersonal": "Hola, soy un panadero experto con mas de 15 años de experiencia en el negocio.",
-    "catalogoCompletado": true,
-    "contrasenaHash": "$2a$10$dcxSS7mM9azE.oAnf02Bv.kln1XgsJrAqXnz7iBPhSwYO2TH51MpG",
+    "telefono": "+584249876543",
+    "descripcionPersonal": "Soy un panadero experto con mas de 15 años de experiencia en el negocio.",
+    "catalogoCompletado": false,
+    "contrasenaHash": "$2a$10$Xc9czsCeoZ6bAtJj/Ct0d.vrdkPsr7GGtZc0fSBFFD8OR9R1ONZhC",
     "monedero": {
-      "creditosDisponibles": 50.0
+      "creditosDisponibles": 0.0
     },
-    "habilidadesOfrecidas": [
-      {
-        "habilidadBase": {
-          "id": "HAB-001",
-          "categoria": ""
-        },
-        "precioCreditos": 150,
-        "descripcionServicio": "Reparación de tuberías y filtraciones en baños."
-      },
-      {
-        "habilidadBase": {
-          "id": "HAB-002",
-          "categoria": ""
-        },
-        "precioCreditos": 80,
-        "descripcionServicio": "Destapar cañerías simples."
-      }
-    ],
-    "necesidadesRegistradas": [
-      {
-        "necesidadBase": {
-          "id": "COMPUTACION",
-          "categoria": ""
-        },
-        "descripcionCondiciones": "Necesito alguien que repare mi computadora portátil, no enciende."
-      }
-    ],
+    "habilidadesOfrecidas": [],
+    "necesidadesRegistradas": [],
     "intentosFallidos": 0,
     "cuentaBloqueada": false,
     "tiempoDesbloqueoMillis": 0,

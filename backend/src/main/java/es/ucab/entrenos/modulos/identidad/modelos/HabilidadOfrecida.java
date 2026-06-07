@@ -1,26 +1,41 @@
 package es.ucab.entrenos.modulos.identidad.modelos;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class HabilidadOfrecida {
+
+    private final String idInstancia; // El identificador único e inmutable
     private Habilidad habilidadBase;
     private int precioCreditos;
     private String descripcionServicio;
 
-    public HabilidadOfrecida() {}
+    // Constructor vacio requerido por librerias
+    public HabilidadOfrecida() {
+        this.idInstancia = UUID.randomUUID().toString();
+    }
 
     public HabilidadOfrecida(Habilidad habilidadBase, int precioCreditos, String descripcionServicio) {
         if (habilidadBase == null) throw new IllegalArgumentException("La habilidad no puede ser nula.");
+
+        this.idInstancia = UUID.randomUUID().toString(); // Nace con su ID único
         this.habilidadBase = habilidadBase;
-        setPrecioCreditos(precioCreditos); // Se usa el setter para aprovechar la validación (precio >= 0)
-        setDescripcionServicio(descripcionServicio);
+        setPrecioCreditos(precioCreditos); // Aprovechamos la validación del setter
+        setDescripcionServicio(descripcionServicio); // Aprovechamos la validación del setter
     }
 
-    public Habilidad getHabilidadBase() { return habilidadBase; }
+    public String getIdInstancia() {
+        return idInstancia;
+    }
 
-    public int getPrecioCreditos() { return precioCreditos; }
+    public Habilidad getHabilidadBase() {
+        return habilidadBase;
+    }
 
-    // Requisito: Permite editar el valor en cualquier momento y valida que sea positivo
+    public int getPrecioCreditos() {
+        return precioCreditos;
+    }
+
     public void setPrecioCreditos(int precioCreditos) {
         if (precioCreditos <= 0) {
             throw new IllegalArgumentException("El valor en créditos debe ser un número entero positivo.");
@@ -28,9 +43,10 @@ public class HabilidadOfrecida {
         this.precioCreditos = precioCreditos;
     }
 
-    public String getDescripcionServicio() { return descripcionServicio; }
+    public String getDescripcionServicio() {
+        return descripcionServicio;
+    }
 
-    // Requisito: Permite editar la descripción en cualquier momento
     public void setDescripcionServicio(String descripcionServicio) {
         if (descripcionServicio == null || descripcionServicio.trim().isEmpty()) {
             throw new IllegalArgumentException("La descripción es obligatoria.");
@@ -38,20 +54,17 @@ public class HabilidadOfrecida {
         this.descripcionServicio = descripcionServicio;
     }
 
-    // Se permite varias habilidades de la misma categoria mientras tengan descripciones distintas
+    // Ahora la igualdad se basa estrictamente en el ID de Instancia (UUID)
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         HabilidadOfrecida that = (HabilidadOfrecida) o;
-
-        // Compara habilidad base y descripción (ignorando mayúsculas y espacios extra para evitar trampas)
-        return Objects.equals(habilidadBase, that.habilidadBase) &&
-                this.descripcionServicio.trim().equalsIgnoreCase(that.descripcionServicio.trim());
+        return Objects.equals(idInstancia, that.idInstancia);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(habilidadBase, descripcionServicio.trim().toLowerCase());
+        return Objects.hash(idInstancia);
     }
 }

@@ -1,15 +1,22 @@
 package es.ucab.entrenos.modulos.identidad.modelos;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class NecesidadRegistrada {
+    private final String idInstancia; // El identificador único e inmutable
     private Habilidad necesidadBase;
     private String descripcionCondiciones;
 
-    public NecesidadRegistrada() {}
+    // Constructor vacio requerido por librerias
+    public NecesidadRegistrada() {
+        this.idInstancia = UUID.randomUUID().toString();
+    }
 
     public NecesidadRegistrada(Habilidad necesidadBase, String descripcionCondiciones) {
         if (necesidadBase == null) throw new IllegalArgumentException("La necesidad no puede ser nula.");
+
+        this.idInstancia = UUID.randomUUID().toString(); // Nace con su ID único
         this.necesidadBase = necesidadBase;
         setDescripcionCondiciones(descripcionCondiciones);
     }
@@ -17,6 +24,10 @@ public class NecesidadRegistrada {
     public Habilidad getNecesidadBase() { return necesidadBase; }
 
     public String getDescripcionCondiciones() { return descripcionCondiciones; }
+
+    public String getIdInstancia() {
+        return idInstancia;
+    }
 
     // Requisito: Permite editar la descripción en cualquier momento
     public void setDescripcionCondiciones(String descripcionCondiciones) {
@@ -26,20 +37,17 @@ public class NecesidadRegistrada {
         this.descripcionCondiciones = descripcionCondiciones;
     }
 
-    // Se permiten varias habilidades de la misma categoria mientras tengan descripciones distintas
+    // Se permiten varias habilidades de la misma categoria mientras tengan ids distintas
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NecesidadRegistrada that = (NecesidadRegistrada) o;
-
-        // Compara habilidad base y descripción (ignorando mayúsculas y espacios extra para evitar trampas)
-        return Objects.equals(necesidadBase, that.necesidadBase) &&
-                this.descripcionCondiciones.trim().equalsIgnoreCase(that.descripcionCondiciones.trim());
+        return Objects.equals(idInstancia, that.idInstancia);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(necesidadBase, descripcionCondiciones.trim().toLowerCase());
+        return Objects.hash(idInstancia);
     }
 }

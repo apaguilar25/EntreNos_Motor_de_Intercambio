@@ -1,8 +1,6 @@
 package es.ucab.entrenos.modulos.identidad.controladores;
 
-import es.ucab.entrenos.modulos.identidad.dtos.ConfiguracionCatalogoRequestDTO;
-import es.ucab.entrenos.modulos.identidad.dtos.PerfilUsuarioResponseDTO;
-import es.ucab.entrenos.modulos.identidad.dtos.RegistroUsuarioRequestDTO;
+import es.ucab.entrenos.modulos.identidad.dtos.*;
 import es.ucab.entrenos.modulos.identidad.excepciones.CorreoDuplicadoException;
 import es.ucab.entrenos.modulos.identidad.excepciones.TelefonoDuplicadoException;
 import es.ucab.entrenos.modulos.identidad.modelos.Habilidad;
@@ -25,15 +23,11 @@ public class ControladorUsuario {
     private final ServicioUsuario servicioUsuario;
     private final ServicioHabilidad servicioHabilidad;
 
-    // Inyección de dependencias por constructor
     public ControladorUsuario(ServicioUsuario servicioUsuario, ServicioHabilidad servicioHabilidad) {
         this.servicioUsuario = servicioUsuario;
         this.servicioHabilidad = servicioHabilidad;
     }
 
-    /**
-     * Endpoint 1: Registro inicial del usuario
-     */
     @PostMapping("/registro")
     public ResponseEntity<?> registrar(@RequestBody RegistroUsuarioRequestDTO request) {
         try {
@@ -49,28 +43,20 @@ public class ControladorUsuario {
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
         } catch (CorreoDuplicadoException | TelefonoDuplicadoException e) {
-            // Atrapamos los errores de duplicidad de datos
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage()); // 409 Conflict es ideal para duplicados
-
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (IllegalArgumentException e) {
-            // Atrapamos errores generales (ej. campos vacíos)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    /**
-     * Endpoint 2: Configuración del Catálogo y Capital Semilla
-     */
     @PostMapping("/{id}/catalogo")
     public ResponseEntity<?> configurarCatalogo(@PathVariable String id, @RequestBody ConfiguracionCatalogoRequestDTO request) {
         try {
-            // Se eliminó el bloque duplicado. Ahora solo usamos el bloque validado.
             List<HabilidadOfrecida> ofertas = new ArrayList<>();
             if (request.getOfertas() != null) {
                 for (ConfiguracionCatalogoRequestDTO.OfertaDTO o : request.getOfertas()) {
                     Habilidad baseReal = servicioHabilidad.buscarPorId(o.getIdHabilidadCategoria())
                             .orElseThrow(() -> new IllegalArgumentException("La habilidad " + o.getIdHabilidadCategoria() + " no es válida."));
-
                     ofertas.add(new HabilidadOfrecida(baseReal, o.getPrecioCreditos(), o.getDescripcionServicio()));
                 }
             }
@@ -80,7 +66,6 @@ public class ControladorUsuario {
                 for (ConfiguracionCatalogoRequestDTO.NecesidadDTO n : request.getNecesidades()) {
                     Habilidad baseReal = servicioHabilidad.buscarPorId(n.getIdHabilidadCategoria())
                             .orElseThrow(() -> new IllegalArgumentException("La necesidad " + n.getIdHabilidadCategoria() + " no es válida."));
-
                     necesidades.add(new NecesidadRegistrada(baseReal, n.getDescripcionCondiciones()));
                 }
             }
@@ -94,50 +79,75 @@ public class ControladorUsuario {
     }
 
     /**
-     * Endpoint 3: Editar una habilidad ofrecida existente
+     * Endpoint 3: Editar una habilidad ofrecida existente (MODIFICADO PARA USAR idInstancia)
      */
     @PutMapping("/{id}/habilidades")
     public ResponseEntity<?> editarHabilidadOfrecida(
             @PathVariable String id,
-            @RequestBody ConfiguracionCatalogoRequestDTO.OfertaDTO request) {
+            @RequestBody EdicionOfertaDTO request) {
         try {
-            // MEJORA: También validamos que la categoría exista al momento de editar
-            Habilidad baseReal = servicioHabilidad.buscarPorId(request.getIdHabilidadCategoria())
-                    .orElseThrow(() -> new IllegalArgumentException("La habilidad " + request.getIdHabilidadCategoria() + " no es válida."));
+            // Ya no buscamos la categoría, delegamos la edición directamente usando el idInstancia
+            servicioUsuario.editarHabilidadOfrecida(
+                    id,
+                    request.getIdInstancia(),
+                    request.getPrecioCreditos(),
+                    request.getDescripcionServicio()
+            );
 
-            HabilidadOfrecida habilidadEditada = new HabilidadOfrecida(baseReal, request.getPrecioCreditos(), request.getDescripcionServicio());
-
-            servicioUsuario.editarHabilidadOfrecida(id, habilidadEditada);
-            return ResponseEntity.ok().body("Habilidad editada con éxito.");
+            return ResponseEntity.ok().body("Oferta específica editada con éxito.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     /**
-     * Endpoint 4: Editar una necesidad registrada existente
+     * Endpoint 4: Editar una necesidad registrada existente (MODIFICADO PARA USAR idInstancia)
      */
     @PutMapping("/{id}/necesidades")
     public ResponseEntity<?> editarNecesidadRegistrada(
             @PathVariable String id,
-            @RequestBody ConfiguracionCatalogoRequestDTO.NecesidadDTO request) {
+            @RequestBody EdicionNecesidadDTO request) {
         try {
-            // MEJORA: También validamos que la categoría exista al momento de editar
-            Habilidad baseReal = servicioHabilidad.buscarPorId(request.getIdHabilidadCategoria())
-                    .orElseThrow(() -> new IllegalArgumentException("La necesidad " + request.getIdHabilidadCategoria() + " no es válida."));
+            // Al igual que las ofertas, delegamos la edición usando el idInstancia
+            servicioUsuario.editarNecesidadRegistrada(
+                    id,
+                    request.getIdInstancia(),
+                    request.getDescripcionCondiciones()
+            );
 
-            NecesidadRegistrada necesidadEditada = new NecesidadRegistrada(baseReal, request.getDescripcionCondiciones());
-
-            servicioUsuario.editarNecesidadRegistrada(id, necesidadEditada);
-            return ResponseEntity.ok().body("Necesidad editada con éxito.");
+            return ResponseEntity.ok().body("Necesidad específica editada con éxito.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    /**
-     * Endpoint 5: Actualizar foto de perfil
-     */
+    // Eliminar habilidad ofrecida
+    @DeleteMapping("/{id}/habilidades/{idInstancia}")
+    public ResponseEntity<?> eliminarHabilidadOfrecida(
+            @PathVariable String id,
+            @PathVariable String idInstancia) {
+        try {
+            servicioUsuario.eliminarHabilidadOfrecida(id, idInstancia);
+            return ResponseEntity.ok().body("Oferta eliminada del catálogo con éxito.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    // Eliminar necesidad registrada
+    @DeleteMapping("/{id}/necesidades/{idInstancia}")
+    public ResponseEntity<?> eliminarNecesidadRegistrada(
+            @PathVariable String id,
+            @PathVariable String idInstancia) {
+        try {
+            servicioUsuario.eliminarNecesidadRegistrada(id, idInstancia);
+            return ResponseEntity.ok().body("Necesidad eliminada del catálogo con éxito.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+
     @PatchMapping("/{id}/foto")
     public ResponseEntity<?> actualizarFotoPerfil(
             @PathVariable String id,
@@ -151,12 +161,8 @@ public class ControladorUsuario {
         }
     }
 
-    /**
-     * Endpoint 6: Obtener el perfil completo del usuario
-     */
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerPerfil(@PathVariable String id) {
-        // Asume que agregaste buscarPorId en ServicioUsuario
         java.util.Optional<Usuario> usuarioOpt = servicioUsuario.buscarPorId(id);
 
         if (usuarioOpt.isPresent()) {
@@ -166,4 +172,5 @@ public class ControladorUsuario {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
         }
     }
+
 }

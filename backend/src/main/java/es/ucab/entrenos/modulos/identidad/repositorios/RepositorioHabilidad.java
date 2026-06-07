@@ -20,18 +20,20 @@ public class RepositorioHabilidad {
 
     public RepositorioHabilidad() {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
-        inicializarArchivo();
+        inicializarArchivo(); // <-- ¡Aquí ocurre la magia automáticamente al encender la app!
     }
 
     private void inicializarArchivo() {
         try {
             File archivo = new File(RUTA_ARCHIVO);
+            // Creamos la carpeta "data" si no existe
             if (archivo.getParentFile() != null && !archivo.getParentFile().exists()) {
                 archivo.getParentFile().mkdirs();
             }
+            // Si el archivo JSON no existe, lo creamos y lo llenamos
             if (!archivo.exists()) {
                 archivo.createNewFile();
-                // Si no existe, creamos la lista por defecto y la guardamos
+
                 List<Habilidad> iniciales = new ArrayList<>();
                 iniciales.add(new Habilidad("HAB-001", "Plomería"));
                 iniciales.add(new Habilidad("HAB-002", "Electricidad"));
