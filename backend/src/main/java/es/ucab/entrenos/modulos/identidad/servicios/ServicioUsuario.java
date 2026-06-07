@@ -2,6 +2,7 @@ package es.ucab.entrenos.modulos.identidad.servicios;
 
 import es.ucab.entrenos.modulos.identidad.excepciones.CorreoDuplicadoException;
 import es.ucab.entrenos.modulos.identidad.excepciones.TelefonoDuplicadoException;
+import es.ucab.entrenos.modulos.identidad.modelos.Habilidad;
 import es.ucab.entrenos.modulos.identidad.modelos.HabilidadOfrecida;
 import es.ucab.entrenos.modulos.identidad.modelos.NecesidadRegistrada;
 import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
@@ -38,27 +39,42 @@ public class ServicioUsuario {
     }
 
     //  Registro inicial del usuario (Aún sin catálogo)
-    public Usuario registrarUsuario(String nombre, String correoElectronico, String telefono, String descripcionPersonal, String contrasenaPlana) {
+    public Usuario registrarUsuario(String nombre, String correoElectronico, String telefono,
+                                    String descripcionPersonal, String contrasenaPlana) {
 
-        // 1. Validar que el correo no esté registrado previamente
+        // 1. VALIDACIÓN: Restricción de Dominio estricta
+        if (correoElectronico == null || correoElectronico.trim().isEmpty()) {
+            throw new IllegalArgumentException("El correo electrónico es obligatorio.");
+        }
+
+        // 2. Expresión regular que obliga a que el correo termine exactamente en @alameda.com
+        // Acepta letras, números, puntos, guiones y caracteres especiales estándar en el nombre de usuario
+        String regexDominio = "^[A-Za-z0-9._%+-]+@alameda\\.com$";
+
+        if (!correoElectronico.matches(regexDominio)) {
+            throw new IllegalArgumentException("Error: El correo electrónico debe pertenecer exclusivamente " +
+                    "al dominio oficial de la comunidad (@alameda.com).");
+        }
+
+        // 3. Validar que el correo no esté registrado previamente
         Optional<Usuario> usuarioMismoCorreo = repositorioUsuario.buscarPorCorreo(correoElectronico);
         if (usuarioMismoCorreo.isPresent()) {
             throw new CorreoDuplicadoException("El correo electrónico ya se encuentra registrado en la comunidad.");
         }
 
-        // 2. NUEVO: Validar que el teléfono no esté registrado previamente
+        // 4. NUEVO: Validar que el teléfono no esté registrado previamente
         Optional<Usuario> usuarioMismoTelefono = repositorioUsuario.buscarPorTelefono(telefono);
         if (usuarioMismoTelefono.isPresent()) {
             throw new TelefonoDuplicadoException("El número de teléfono ya está asociado a otra cuenta en la comunidad.");
         }
 
-        // 3. Encriptar la contraseña
+        // 5. Encriptar la contraseña
         String contrasenaHash = encriptador.encode(contrasenaPlana);
 
-        // 4. Generar un ID único universal para el usuario
+        // 6. Generar un ID único universal para el usuario
         String nuevoId = UUID.randomUUID().toString();
 
-        // 5. Crear el objeto Usuario (nace con Monedero en 0 y catalogoCompletado en false)
+        // 7. Crear el objeto Usuario (nace con Monedero en 0 y catalogoCompletado en false)
         Usuario nuevoUsuario = new Usuario(
                 nuevoId,
                 nombre,
@@ -68,7 +84,7 @@ public class ServicioUsuario {
                 contrasenaHash
         );
 
-        // 6. Guardar en el JSON a través del repositorio
+        // 8. Guardar en el JSON a través del repositorio
         repositorioUsuario.guardar(nuevoUsuario);
 
         return nuevoUsuario;
@@ -106,6 +122,32 @@ public class ServicioUsuario {
         usuario.finalizarConfiguracionCatalogo(CAPITAL_SEMILLA_INICIAL);
 
         // 6. Sobreescribir el usuario en el JSON con su nuevo saldo y habilidades
+        repositorioUsuario.guardar(usuario);
+    }
+
+    // --- AGREGAR OFERTA INDIVIDUAL ---
+    public void agregarHabilidadIndividual(String idUsuario, Habilidad habilidadBase, int precioCreditos, String descripcionServicio) {
+        Usuario usuario = repositorioUsuario.buscarPorId(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+
+        HabilidadOfrecida nuevaOferta = new HabilidadOfrecida(habilidadBase, precioCreditos, descripcionServicio);
+
+        // El modelo Usuario se encarga de validar que no sea duplicada
+        usuario.agregarHabilidadOfrecida(nuevaOferta);
+
+        repositorioUsuario.guardar(usuario);
+    }
+
+    // --- AGREGAR NECESIDAD INDIVIDUAL ---
+    public void agregarNecesidadIndividual(String idUsuario, Habilidad necesidadBase, String descripcionCondiciones) {
+        Usuario usuario = repositorioUsuario.buscarPorId(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+
+        NecesidadRegistrada nuevaNecesidad = new NecesidadRegistrada(necesidadBase, descripcionCondiciones);
+
+        // El modelo Usuario se encarga de validar que no sea duplicada
+        usuario.agregarNecesidad(nuevaNecesidad);
+
         repositorioUsuario.guardar(usuario);
     }
 

@@ -11,9 +11,10 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public class RepositorioHabilidad {
+public class RepositorioHabilidad implements IRepositorioHabilidad {
 
     private static final String RUTA_ARCHIVO = "data/habilidades.json";
     private final Gson gson;
@@ -30,7 +31,7 @@ public class RepositorioHabilidad {
             if (archivo.getParentFile() != null && !archivo.getParentFile().exists()) {
                 archivo.getParentFile().mkdirs();
             }
-            // Si el archivo JSON no existe, lo creamos y lo llenamos
+            // Si el archivo JSON no existe, lo creamos y lo llenamos con el catálogo base
             if (!archivo.exists()) {
                 archivo.createNewFile();
 
@@ -48,6 +49,9 @@ public class RepositorioHabilidad {
         }
     }
 
+    // --- NUEVOS MÉTODOS DE LA INTERFAZ ---
+
+    @Override
     public synchronized List<Habilidad> listarTodas() {
         try (Reader reader = new InputStreamReader(new FileInputStream(RUTA_ARCHIVO), StandardCharsets.UTF_8)) {
             Type tipoLista = new TypeToken<ArrayList<Habilidad>>() {}.getType();
@@ -57,6 +61,39 @@ public class RepositorioHabilidad {
             throw new RuntimeException("Error al leer el catálogo de habilidades.", e);
         }
     }
+
+    @Override
+    public Optional<Habilidad> buscarPorId(String id) {
+        // Usamos Streams para buscar rápidamente la habilidad en la lista
+        return listarTodas().stream()
+                .filter(h -> h.getId().equals(id))
+                .findFirst();
+    }
+
+    @Override
+    public synchronized void guardar(Habilidad habilidadGuardar) {
+        List<Habilidad> habilidades = listarTodas();
+        boolean existe = false;
+
+        // Buscamos si la habilidad ya existe para actualizarla
+        for (int i = 0; i < habilidades.size(); i++) {
+            if (habilidades.get(i).getId().equals(habilidadGuardar.getId())) {
+                habilidades.set(i, habilidadGuardar); // Reemplazamos la vieja por la nueva
+                existe = true;
+                break;
+            }
+        }
+
+        // Si no existía en el JSON, significa que es una creación nueva
+        if (!existe) {
+            habilidades.add(habilidadGuardar);
+        }
+
+        // Guardamos la lista completa de nuevo en el archivo
+        guardarTodas(habilidades);
+    }
+
+    // --- MÉTODO PRIVADO DE ESCRITURA ---
 
     private synchronized void guardarTodas(List<Habilidad> habilidades) {
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(RUTA_ARCHIVO), StandardCharsets.UTF_8)) {

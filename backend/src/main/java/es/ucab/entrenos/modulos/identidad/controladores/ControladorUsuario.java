@@ -79,7 +79,7 @@ public class ControladorUsuario {
     }
 
     /**
-     * Endpoint 3: Editar una habilidad ofrecida existente (MODIFICADO PARA USAR idInstancia)
+     * Endpoint 3: Editar una habilidad ofrecida existente
      */
     @PutMapping("/{id}/habilidades")
     public ResponseEntity<?> editarHabilidadOfrecida(
@@ -101,7 +101,7 @@ public class ControladorUsuario {
     }
 
     /**
-     * Endpoint 4: Editar una necesidad registrada existente (MODIFICADO PARA USAR idInstancia)
+     * Endpoint 4: Editar una necesidad registrada existente
      */
     @PutMapping("/{id}/necesidades")
     public ResponseEntity<?> editarNecesidadRegistrada(
@@ -170,6 +170,44 @@ public class ControladorUsuario {
             return ResponseEntity.ok(perfilSaneado);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
+        }
+    }
+
+    // Agregar Habilidad a Usuario
+    @PostMapping("/{id}/habilidades")
+    public ResponseEntity<?> agregarHabilidadIndividual(
+            @PathVariable String id,
+            @RequestBody NuevaOfertaIndividualDTO request) {
+        try {
+            // 1. Validamos que la categoría maestra exista
+            Habilidad habilidadBase = servicioHabilidad.buscarPorId(request.getIdHabilidadCategoria())
+                    .orElseThrow(() -> new IllegalArgumentException("La categoría de habilidad maestra no existe en el sistema."));
+
+            // 2. Agregamos al usuario
+            servicioUsuario.agregarHabilidadIndividual(id, habilidadBase, request.getPrecioCreditos(), request.getDescripcionServicio());
+
+            return ResponseEntity.status(HttpStatus.CREATED).body("Habilidad agregada al catálogo del usuario con éxito.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    // Agregar Necesidad a Usuario
+    @PostMapping("/{id}/necesidades")
+    public ResponseEntity<?> agregarNecesidadIndividual(
+            @PathVariable String id,
+            @RequestBody NuevaNecesidadIndividualDTO request) {
+        try {
+            // 1. Validamos que la categoría maestra exista
+            Habilidad necesidadBase = servicioHabilidad.buscarPorId(request.getIdHabilidadCategoria())
+                    .orElseThrow(() -> new IllegalArgumentException("La categoría de habilidad maestra no existe en el sistema."));
+
+            // 2. Agregamos al usuario
+            servicioUsuario.agregarNecesidadIndividual(id, necesidadBase, request.getDescripcionCondiciones());
+
+            return ResponseEntity.status(HttpStatus.CREATED).body("Necesidad agregada al catálogo del usuario con éxito.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 

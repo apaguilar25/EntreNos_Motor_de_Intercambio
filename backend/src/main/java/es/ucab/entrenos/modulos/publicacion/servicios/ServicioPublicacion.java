@@ -26,7 +26,9 @@ public class ServicioPublicacion {
     public List<Publicacion> obtenerPublicacionesFiltradas(String tipo, String servicio) {
         return repositorioPublicacion.obtenerTodas().stream()
                 .filter(p -> tipo == null || tipo.isEmpty() || p.getTipoPublicacion().equalsIgnoreCase(tipo))
-                .filter(p -> servicio == null || servicio.isEmpty() || p.getNombreServicio().toLowerCase().contains(servicio.toLowerCase()) || p.getDescripcion().toLowerCase().contains(servicio.toLowerCase()))
+                .filter(p -> servicio == null || servicio.isEmpty() ||
+                        p.getNombreServicio().toLowerCase().contains(servicio.toLowerCase()) ||
+                        p.getDescripcion().toLowerCase().contains(servicio.toLowerCase()))
                 .collect(Collectors.toList());
     }
     public Publicacion crearPublicacion(Publicacion publicacion) {

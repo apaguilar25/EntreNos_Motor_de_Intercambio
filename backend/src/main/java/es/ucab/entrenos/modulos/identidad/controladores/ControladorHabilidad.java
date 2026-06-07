@@ -2,10 +2,9 @@ package es.ucab.entrenos.modulos.identidad.controladores;
 
 import es.ucab.entrenos.modulos.identidad.modelos.Habilidad;
 import es.ucab.entrenos.modulos.identidad.servicios.ServicioHabilidad;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,13 +18,34 @@ public class ControladorHabilidad {
         this.servicioHabilidad = servicioHabilidad;
     }
 
-    /**
-     * Endpoint: GET http://localhost:8080/api/habilidades
-     * Propósito: Devuelve la lista de las 5 habilidades oficiales del sistema.
-     */
     @GetMapping
-    public ResponseEntity<List<Habilidad>> listarHabilidadesSoportadas() {
-        List<Habilidad> catalogo = servicioHabilidad.obtenerTodas();
-        return ResponseEntity.ok(catalogo);
+    public ResponseEntity<List<Habilidad>> listarHabilidades() {
+        return ResponseEntity.ok(servicioHabilidad.obtenerTodas());
+    }
+
+    @PostMapping
+    public ResponseEntity<?> crearHabilidad(@RequestBody java.util.Map<String, String> request) {
+        try {
+            String categoria = request.get("categoria");
+            Habilidad nueva = servicioHabilidad.crearHabilidad(categoria);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editarHabilidad(
+            @PathVariable String id,
+            @RequestBody java.util.Map<String, String> request) {
+        try {
+            String nuevaCategoria = request.get("categoria");
+            servicioHabilidad.editarHabilidad(id, nuevaCategoria);
+            return ResponseEntity.ok().body("Habilidad maestra actualizada con éxito.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage()); // 409 Conflict si hay duplicados
+        }
     }
 }
