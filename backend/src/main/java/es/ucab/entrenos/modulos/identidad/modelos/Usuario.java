@@ -90,28 +90,31 @@ public class Usuario {
         this.habilidadesOfrecidas.add(nuevaHabilidad);
     }
 
-    public void actualizarHabilidadOfrecida(String idCategoria, int nuevoPrecio, String nuevaDescripcion) {
-        // 1. Buscamos la habilidad SOLO por su ID (Ej: "HAB-001")
-        HabilidadOfrecida existente = null;
-        for (HabilidadOfrecida h : this.habilidadesOfrecidas) {
-            if (h.getHabilidadBase().getId().equals(idCategoria)) {
-                existente = h;
-                break;
+    public void actualizarHabilidadOfrecida(String idInstancia, int nuevoPrecio, String nuevaDescripcion) {
+        // 1. Buscamos la oferta específica por su ID de INSTANCIA
+        HabilidadOfrecida existente = this.habilidadesOfrecidas.stream()
+                .filter(h -> h.getIdInstancia().equals(idInstancia))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró la oferta específica en el perfil del usuario."));
+
+        // 2. Si hay una nueva descripción válida, verificamos que no choque con otra existente
+        if (nuevaDescripcion != null && !nuevaDescripcion.trim().isEmpty() && !nuevaDescripcion.equals(existente.getDescripcionServicio())) {
+
+            // Validamos que no exista otra oferta de la MISMA categoría con esa MISMA descripción
+            boolean conflicto = this.habilidadesOfrecidas.stream()
+                    .anyMatch(h -> !h.getIdInstancia().equals(idInstancia)
+                            && h.getHabilidadBase().getId().equals(existente.getHabilidadBase().getId())
+                            && h.getDescripcionServicio().equalsIgnoreCase(nuevaDescripcion.trim()));
+
+            if (conflicto) {
+                throw new IllegalStateException("Ya tienes otra oferta de esta misma categoría con esa descripción.");
             }
+            existente.setDescripcionServicio(nuevaDescripcion.trim());
         }
 
-        // 2. Si no la encuentra, lanzamos error
-        if (existente == null) {
-            throw new IllegalArgumentException("El usuario no posee esta habilidad en su perfil.");
-        }
-
-        // 3. Actualización inteligente (Si envían 0, ignoramos el precio. Si envían texto vacío, ignoramos la descripción)
+        // 3. Actualizamos el precio de forma inteligente
         if (nuevoPrecio > 0) {
             existente.setPrecioCreditos(nuevoPrecio);
-        }
-
-        if (nuevaDescripcion != null && !nuevaDescripcion.trim().isEmpty()) {
-            existente.setDescripcionServicio(nuevaDescripcion);
         }
     }
 
@@ -138,9 +141,16 @@ public class Usuario {
 
     public void agregarNecesidad(NecesidadRegistrada nuevaNecesidad) {
         if (nuevaNecesidad == null) throw new IllegalArgumentException("La necesidad no puede estar vacía.");
-        if (this.necesidadesRegistradas.contains(nuevaNecesidad)) {
-            throw new IllegalStateException("Error: Ya tienes esta necesidad registrada.");
+
+        // Validamos que no tenga otra necesidad con la misma categoría Y las mismas condiciones
+        boolean duplicada = this.necesidadesRegistradas.stream()
+                .anyMatch(n -> n.getNecesidadBase().getId().equals(nuevaNecesidad.getNecesidadBase().getId())
+                        && n.getDescripcionCondiciones().equalsIgnoreCase(nuevaNecesidad.getDescripcionCondiciones()));
+
+        if (duplicada) {
+            throw new IllegalStateException("Error: Ya tienes esta necesidad registrada con esas mismas condiciones.");
         }
+
         this.necesidadesRegistradas.add(nuevaNecesidad);
     }
 
