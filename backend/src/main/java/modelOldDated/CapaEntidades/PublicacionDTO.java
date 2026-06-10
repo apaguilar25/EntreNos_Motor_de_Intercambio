@@ -24,7 +24,6 @@ public class PublicacionDTO {
     public PublicacionDTO() {
     }
 
-    // Getters necesarios para la serialización de Jackson (JSON)
     public String getIdUsuario() { return idUsuario; }
     public String getNombreUsuario() { return nombreUsuario; }
     public double getReputacionUsuario() { return reputacionUsuario; }

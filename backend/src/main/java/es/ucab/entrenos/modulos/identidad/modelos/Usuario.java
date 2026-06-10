@@ -190,8 +190,24 @@ public class Usuario {
         this.intentosFallidos++;
     }
 
-    public boolean isCuentaBloqueada(){
-        return this.cuentaBloqueada;
+//    public boolean isCuentaBloqueada(){
+//        return this.cuentaBloqueada;
+//    }
+
+    // Añadir esto en tu sección de Métodos de Usuario.java
+    public void aplicarSancionPorInactividadSubasta() {
+        this.cuentaSuspendida = true;
+        // 72 horas convertidas a milisegundos
+        this.finSuspensionMillis = System.currentTimeMillis() + (72L * 60 * 60 * 1000);
+    }
+
+    public boolean tieneSancionActiva() {
+        // Si estaba suspendido pero el tiempo ya pasó, le quitamos la sanción
+        if (this.cuentaSuspendida && System.currentTimeMillis() > this.finSuspensionMillis) {
+            this.cuentaSuspendida = false;
+            this.finSuspensionMillis = 0;
+        }
+        return this.cuentaSuspendida;
     }
 
     public void bloquearCuenta(long duracionMillis){
@@ -256,6 +272,10 @@ public class Usuario {
 
     public ArrayList<NecesidadRegistrada> getNecesidadesRegistradas() {
         return new ArrayList<>(this.necesidadesRegistradas);
+    }
+
+    public boolean isCuentaBloqueada() {
+        return cuentaBloqueada;
     }
 
     // Setters
