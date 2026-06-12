@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public class Usuario {
 
         private String id;
+        private RolUsuario rol;
         private String nombre;
         private String correoElectronico;
         private String telefono;
@@ -21,7 +22,10 @@ public class Usuario {
         private int intentosFallidos;
         private boolean cuentaBloqueada;
         private long tiempoDesbloqueoMillis; // Para contar las 24 horas
-        private long primerIntentoFallidoMillis; // Guarda la hora del primer error
+        private long primerIntentoFallidoMillis; // Guarda la hora del primer intento fallido
+        private int reportesFraudeValidados;
+        private boolean baneadoPermanentemente;
+        private int version; // Variable para controlar sincronizacion en persistencia y evitar condiciones de carrera
 
         // --- * Perfil y Reputación * ---
         private String urlFotoPerfil;
@@ -32,6 +36,7 @@ public class Usuario {
         private boolean cuentaSuspendida;
         private long finSuspensionMillis; // Cuando termina la suspensión administrativa
 
+
     // --- * Constructores * ---
 
     public Usuario() {
@@ -40,6 +45,7 @@ public class Usuario {
     public Usuario(String id, String nombre, String correoElectronico, String telefono, String descripcionPersonal, String contrasenaHash) {
         this.id = id;
         this.nombre = nombre;
+        this.rol = RolUsuario.MIEMBRO_COMUNIDAD;
         this.correoElectronico = correoElectronico;
         this.telefono = telefono;
         this.descripcionPersonal = descripcionPersonal;
@@ -52,6 +58,9 @@ public class Usuario {
         this.intentosFallidos = 0;
         this.cuentaBloqueada = false;
         this.cuentaSuspendida = false;
+        this.reportesFraudeValidados = 0;
+        this.baneadoPermanentemente = false;
+
         this.catalogoCompletado = false; // Nace en false hasta que configure sus habilidades
 
         this.urlFotoPerfil = "default.png";
@@ -184,17 +193,56 @@ public class Usuario {
     }
 
 
-    // - * Seguridad (Login) * -
+    // =========================================================================
+    // - * MÉTODOS DE NEGOCIO: SEGURIDAD Y CONTROL DE ACCESO * -
+    // =========================================================================
+    /**
+     * Registra un fallo por datos erroneos en el login
+     * aplica un bloqueo estricto de 24 horas si alcanza los 5 intentos fallidos
+     * en menos de 3 minutos.
+     */
+    public void registrarIntentoFallido(long ventanaMs, int maxIntentos, long duracionBloqueoMs) {
+        long ahora = System.currentTimeMillis();
 
-    public void incrementarIntentosFallidos(){
+        // 1. Validar si la ventana de tiempo del ataque de fuerza bruta ya caducó
+        if (this.intentosFallidos > 0 && (ahora - this.primerIntentoFallidoMillis > ventanaMs)) {
+            this.intentosFallidos = 0;
+            this.primerIntentoFallidoMillis = 0;
+        }
+
+        // 2. Registrar el error actual
+        if (this.intentosFallidos == 0) {
+            this.primerIntentoFallidoMillis = ahora; // Iniciamos el cronómetro de la ráfaga
+        }
         this.intentosFallidos++;
+
+        // 3. Aplicar sanción inmediata si se llegó al límite de intentos permitidos
+        if (this.intentosFallidos >= maxIntentos) {
+            this.cuentaBloqueada = true;
+            this.tiempoDesbloqueoMillis = ahora + duracionBloqueoMs;
+        }
     }
 
-//    public boolean isCuentaBloqueada(){
-//        return this.cuentaBloqueada;
-//    }
+    public void registrarInicioSesionExitoso() {
+        this.intentosFallidos = 0;
+        this.primerIntentoFallidoMillis = 0;
+    }
 
-    // Añadir esto en tu sección de Métodos de Usuario.java
+    public boolean evaluarBloqueoTemporal(long ahora) {
+        if (this.cuentaBloqueada) {
+            if (ahora >= this.tiempoDesbloqueoMillis) {
+                // El castigo terminó: se libera el estado internamente
+                this.cuentaBloqueada = false;
+                this.tiempoDesbloqueoMillis = 0;
+                this.intentosFallidos = 0;
+                this.primerIntentoFallidoMillis = 0;
+            } else {
+                return true; // Sigue bloqueado
+            }
+        }
+        return false;
+    }
+
     public void aplicarSancionPorInactividadSubasta() {
         this.cuentaSuspendida = true;
         // 72 horas convertidas a milisegundos
@@ -210,12 +258,6 @@ public class Usuario {
         return this.cuentaSuspendida;
     }
 
-    public void bloquearCuenta(long duracionMillis){
-        this.cuentaBloqueada = true;
-
-        // Indica a que hora se desbloqueara la cuenta, sumando el tiempo actual con la duracion del bloqueo
-        this.tiempoDesbloqueoMillis = System.currentTimeMillis() + duracionMillis;
-    }
 
     public void resetearIntentosFallidos(){
         this.intentosFallidos = 0;
@@ -225,10 +267,25 @@ public class Usuario {
         this.primerIntentoFallidoMillis = primerIntentoFallidoMillis;
     }
 
-    public void desbloquearCuenta(){
-        this.cuentaBloqueada = false;
-        this.tiempoDesbloqueoMillis = 0;
-        this.intentosFallidos = 0;
+    // =========================================================================
+    // - * MÉTODOS DE NEGOCIO: SEGURIDAD Y CONTROL DE ACCESO * -
+    // =========================================================================
+    /**
+     * Registro de Fraude (Lleva a Baneo)
+     */    public void registrarReporteFraudeValidado() {
+        this.reportesFraudeValidados++;
+        // Si alcanza 2 reportes, se bloquea el acceso de por vida
+        if (this.reportesFraudeValidados >= 2) {
+            this.baneadoPermanentemente = true;
+        }
+    }
+
+    public boolean isBaneadoPermanentemente() {
+        return baneadoPermanentemente;
+    }
+
+    public boolean isCuentaBloqueada() {
+        return cuentaBloqueada;
     }
 
     // --- * Getters y Setters Básicos * ---
@@ -262,24 +319,32 @@ public class Usuario {
         return cantidadCalificaciones;
     }
 
+    public boolean isAdministrador() {
+        return this.rol == RolUsuario.ADMINISTRADOR;
+    }
+        // Todo, borrar isCuentaSuspendida porque ya existe y se utilizar isCuentaBloqueada (?
     public boolean isCuentaSuspendida() {
         return cuentaSuspendida;
-    }
-
-    public long getFinSuspensionMillis() {
-        return finSuspensionMillis;
     }
 
     public ArrayList<NecesidadRegistrada> getNecesidadesRegistradas() {
         return new ArrayList<>(this.necesidadesRegistradas);
     }
 
-    public boolean isCuentaBloqueada() {
-        return cuentaBloqueada;
-    }
+    public RolUsuario getRol() { return rol; }
 
     // Setters
     public void setTelefono(String telefono) { this.telefono = telefono; }
     public void setDescripcionPersonal(String descripcionPersonal) { this.descripcionPersonal = descripcionPersonal; }
     public void setUrlFotoPerfil(String urlFotoPerfil) { this.urlFotoPerfil = urlFotoPerfil; }
+
+    public int getVersion() {return version;}
+
+    public void setVersion(int version) {this.version = version;}
+
+    public void setRol(RolUsuario rol) { this.rol = rol; }
+
+
+
 }
+

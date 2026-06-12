@@ -3,7 +3,9 @@ package es.ucab.entrenos.modulos.identidad.repositorios;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import es.ucab.entrenos.modulos.identidad.modelos.RolUsuario;
 import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
@@ -30,19 +32,37 @@ public class RepositorioUsuario implements IRepositorioUsuario {
         try {
             File archivo = new File(RUTA_ARCHIVO);
             if (archivo.getParentFile() != null && !archivo.getParentFile().exists()) {
-                archivo.getParentFile().mkdirs(); // Crea la carpeta 'data' si no existe
+                archivo.getParentFile().mkdirs();
             }
             if (!archivo.exists()) {
                 archivo.createNewFile();
-                // Inicializamos con un arreglo vacío [] para que GSON no explote al leerlo por primera vez
-                try (FileWriter writer = new FileWriter(archivo, StandardCharsets.UTF_8)) {
-                    writer.write("[]");
-                }
+
+                // --- INYECCIÓN DEL SÚPER ADMINISTRADOR (USANDO CONSTRUCTOR) ---
+                ArrayList<Usuario> seed = new ArrayList<>();
+
+                // El objeto nace en un estado 100% válido y con su monedero/listas inicializadas
+                Usuario admin = new Usuario(
+                        java.util.UUID.randomUUID().toString(),
+                        "Super Administrador",
+                        "admin@alameda.com",
+                        "0000000000",
+                        "Administrador general de la comunidad",
+                        new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder().encode("admin123")
+                );
+
+                // Le asignamos su rol de altos privilegios
+                admin.setRol(es.ucab.entrenos.modulos.identidad.modelos.RolUsuario.ADMINISTRADOR);
+
+                seed.add(admin);
+                escribirArchivo(seed); // Lo guardamos en el JSON
             }
         } catch (IOException e) {
-            throw new RuntimeException("Error crítico: No se pudo inicializar el almacenamiento JSON de usuarios.", e);
+            throw new RuntimeException("Error al crear el archivo de base de datos de usuarios.", e);
         }
     }
+
+
+
 
     // Lee tod.o el archivo JSON y lo convierte en una lista de usuarios en RAM.
     @Override
@@ -61,35 +81,70 @@ public class RepositorioUsuario implements IRepositorioUsuario {
     //  Guarda o actualiza un usuario en el archivo JSON.
     //  Si el ID ya existe, sobreescribe los datos (Modificación). Si no, lo añade (Registro).
     @Override
-    public synchronized void guardar(Usuario usuario) {
-        if (usuario == null) {
-            throw new IllegalArgumentException("No se puede guardar un usuario nulo.");
+    public synchronized void guardar(Usuario usuarioGuardar) {
+        // 1. Salvaguardas y validaciones defensivas
+        if (usuarioGuardar == null) {
+            throw new IllegalArgumentException("El usuario a guardar no puede ser nulo.");
+        }
+        if (usuarioGuardar.getId() == null || usuarioGuardar.getId().trim().isEmpty()) {
+            throw new IllegalArgumentException("No se puede guardar un usuario sin un identificador (ID) válido.");
+        }
+        if (usuarioGuardar.getMonedero() == null) {
+            throw new IllegalArgumentException("Error de consistencia: El usuario debe poseer un Monedero inicializado.");
         }
 
-        // 1. Cargar la lista actual de usuarios en memoria
-        ArrayList<Usuario> usuariosActivos = listarUsuarios();
+        ArrayList<Usuario> usuarios = listarUsuarios();
+        boolean existe = false;
 
-        // 2. Buscar si el usuario ya existe en el archivo usando su ID
-        int indiceExistente = -1;
-        for (int i = 0; i < usuariosActivos.size(); i++) {
-            if (usuariosActivos.get(i).getId().equals(usuario.getId())) {
-                indiceExistente = i;
+        for (int i = 0; i < usuarios.size(); i++) {
+            Usuario uBD = usuarios.get(i);
+            if (uBD.getId().equals(usuarioGuardar.getId())) {
+
+                // LÓGICA DE BLOQUEO OPTIMISTA
+                if (uBD.getVersion() != usuarioGuardar.getVersion()) {
+                    throw new es.ucab.entrenos.modulos.identidad.excepciones.ConcurrenciaException(
+                            "Error de concurrencia: El usuario " + usuarioGuardar.getCorreoElectronico() +
+                                    " fue modificado por otra transacción. Por favor, recargue e intente de nuevo."
+                    );
+                }
+
+                // Si la versión coincide, incrementamos el sello de versión
+                usuarioGuardar.setVersion(usuarioGuardar.getVersion() + 1);
+                usuarios.set(i, usuarioGuardar);
+                existe = true;
                 break;
             }
         }
 
-        // 3. Si ya existía (es una edición), lo reemplazamos. Si no, lo añadimos (es nuevo)
-        if (indiceExistente != -1) {
-            usuariosActivos.set(indiceExistente, usuario);
-        } else {
-            usuariosActivos.add(usuario);
+        if (!existe) {
+            // Registro nuevo: Nace con versión cero
+            usuarioGuardar.setVersion(0);
+            usuarios.add(usuarioGuardar);
         }
 
-        // 4. Reescribir completamente el archivo JSON con la lista actualizada
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(RUTA_ARCHIVO), StandardCharsets.UTF_8)) {
-            gson.toJson(usuariosActivos, writer);
+        // Persistencia física en el archivo JSON
+        escribirArchivo(usuarios);
+    }
+
+    /**
+     * Persiste de forma segura la lista completa de usuarios en el archivo físico JSON.
+     * Utiliza exclusión mutua (synchronized) para evitar colisiones de escritura a nivel de hilos.
+     * @param usuariosActivos Lista de usuarios actualizados a guardar.
+     */
+    private synchronized void escribirArchivo(ArrayList<Usuario> usuariosActivos) {
+        if (usuariosActivos == null) {
+            return;
+        }
+
+        try (Writer writer = new OutputStreamWriter(
+                new FileOutputStream(RUTA_ARCHIVO), StandardCharsets.UTF_8)) {
+
+            // Serializa la lista con formato estético (Pretty Printing)
+            this.gson.toJson(usuariosActivos, writer);
+
         } catch (IOException e) {
-            throw new RuntimeException("Error crítico al escribir en el almacenamiento local JSON.", e);
+            // Se lanza una excepción en tiempo de ejecución para notificar el fallo crítico de infraestructura
+            throw new RuntimeException("Error crítico de infraestructura: No se pudo escribir en el almacenamiento local JSON (" + RUTA_ARCHIVO + ").", e);
         }
     }
 
@@ -125,8 +180,5 @@ public class RepositorioUsuario implements IRepositorioUsuario {
                 .filter(u -> u.getCorreoElectronico().equalsIgnoreCase(correo.trim()))
                 .findFirst();
     }
-
-
-
 
 }

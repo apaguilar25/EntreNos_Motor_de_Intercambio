@@ -4,6 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import es.ucab.entrenos.modulos.identidad.modelos.Habilidad;
+import es.ucab.entrenos.modulos.identidad.modelos.Monedero;
+import es.ucab.entrenos.modulos.identidad.modelos.RolUsuario;
+import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
@@ -27,14 +31,14 @@ public class RepositorioHabilidad implements IRepositorioHabilidad {
     private void inicializarArchivo() {
         try {
             File archivo = new File(RUTA_ARCHIVO);
-            // Creamos la carpeta "data" si no existe
-            if (archivo.getParentFile() != null && !archivo.getParentFile().exists()) {
+            if (archivo.getParentFile() != null && !archivo.getParentFile().exists()) { // Se crea la carpeta "data" si no existe
                 archivo.getParentFile().mkdirs();
             }
-            // Si el archivo JSON no existe, lo creamos y lo llenamos con el catálogo base
+            // Si el archivo JSON no existe, se crea y es llenado con el catálogo base
             if (!archivo.exists()) {
                 archivo.createNewFile();
 
+                // Se crean y agregan habilidades predeterminadas al catalogo base
                 List<Habilidad> iniciales = new ArrayList<>();
                 iniciales.add(new Habilidad("HAB-001", "Plomería"));
                 iniciales.add(new Habilidad("HAB-002", "Electricidad"));

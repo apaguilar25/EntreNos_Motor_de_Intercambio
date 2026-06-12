@@ -20,6 +20,10 @@ public class ServicioUsuario {
     private final IRepositorioUsuario repositorioUsuario;
     private final BCryptPasswordEncoder encriptador;
 
+    // Expresión regular que obliga a que el correo termine exactamente en @alameda.com
+    // Acepta letras, números, puntos, guiones y caracteres especiales estándar en el nombre de usuario
+    private static final String REGEX_DOMINIO_COMUNIDAD = "^[A-Za-z0-9._%+-]+@alameda\\.com$";
+
     // El capital semilla definido en el ERS
     private static final float CAPITAL_SEMILLA_INICIAL = 50.0f;
 
@@ -42,22 +46,14 @@ public class ServicioUsuario {
     public Usuario registrarUsuario(String nombre, String correoElectronico, String telefono,
                                     String descripcionPersonal, String contrasenaPlana) {
 
-        // 1. VALIDACIÓN: Restricción de Dominio estricta
-        if (correoElectronico == null || correoElectronico.trim().isEmpty()) {
-            throw new IllegalArgumentException("El correo electrónico es obligatorio.");
-        }
-
-        // 2. Expresión regular que obliga a que el correo termine exactamente en @alameda.com
-        // Acepta letras, números, puntos, guiones y caracteres especiales estándar en el nombre de usuario
-        String regexDominio = "^[A-Za-z0-9._%+-]+@alameda\\.com$";
-
-        if (!correoElectronico.matches(regexDominio)) {
-            throw new IllegalArgumentException("Error: El correo electrónico debe pertenecer exclusivamente " +
-                    "al dominio oficial de la comunidad (@alameda.com).");
+        // 1. VALIDACIÓN DEL DOMINIO MEDIANTE REGEX
+        String correoLimpio = correoElectronico.trim().toLowerCase();
+        if (!correoLimpio.matches(REGEX_DOMINIO_COMUNIDAD)) {
+            throw new IllegalArgumentException("Acceso denegado: El correo electrónico debe pertenecer al dominio oficial (@alameda.com).");
         }
 
         // 3. Validar que el correo no esté registrado previamente
-        Optional<Usuario> usuarioMismoCorreo = repositorioUsuario.buscarPorCorreo(correoElectronico);
+        Optional<Usuario> usuarioMismoCorreo = repositorioUsuario.buscarPorCorreo(correoLimpio);
         if (usuarioMismoCorreo.isPresent()) {
             throw new CorreoDuplicadoException("El correo electrónico ya se encuentra registrado en la comunidad.");
         }
@@ -78,7 +74,7 @@ public class ServicioUsuario {
         Usuario nuevoUsuario = new Usuario(
                 nuevoId,
                 nombre,
-                correoElectronico,
+                correoLimpio,
                 telefono,
                 descripcionPersonal,
                 contrasenaHash
