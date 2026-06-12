@@ -161,6 +161,17 @@ public class ControladorUsuario {
         }
     }
 
+    @GetMapping("/{id}/saldo")
+    public ResponseEntity<?> obtenerSaldo(@PathVariable String id) {
+        Optional<Usuario> usuarioOpt = servicioUsuario.buscarPorId(id);
+        if (usuarioOpt.isPresent()) {
+            Monedero m = usuarioOpt.get().getMonedero();
+            SaldoResponseDTO saldo = new SaldoResponseDTO(m.getCreditosDisponibles(), m.getCreditosRetenidos());
+            return ResponseEntity.ok(saldo);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerPerfil(@PathVariable String id) {
         java.util.Optional<Usuario> usuarioOpt = servicioUsuario.buscarPorId(id);
