@@ -13,54 +13,60 @@ public class ServicioAutenticacion {
     private final IRepositorioUsuario repositorioUsuario;
     private final BCryptPasswordEncoder encriptador;
 
-    // Parámetros estrictos definidos en la especificación ERS del sistema
-    private static final long VENTANA_TRES_MINUTOS_MS = 3L * 60 * 1000;
-    private static final long BLOQUEO_VEINTICUATRO_HORAS_MS = 24L * 60 * 60 * 1000;
-    private static final int MAX_INTENTOS_FALLIDOS = 5;
-
     public ServicioAutenticacion(IRepositorioUsuario repositorioUsuario) {
         this.repositorioUsuario = repositorioUsuario;
         this.encriptador = new BCryptPasswordEncoder();
     }
 
-    private boolean contrasenaCorrecta(Usuario usuario, String contrasenaPlana) {
-        return encriptador.matches(contrasenaPlana, usuario.getContrasenaHash());
-    }
+    /**
+     * Autentica al usuario evaluando primero en qué estado se encuentra su máquina de estados.
+     */
+    public Usuario login(String correo, String contrasenaPlana) {
+        if (correo == null || correo.trim().isEmpty() || contrasenaPlana == null || contrasenaPlana.trim().isEmpty()) {
+            throw new IllegalArgumentException("El correo y la contraseña son campos requeridos.");
+        }
 
-    public boolean login(String correo, String contrasena) {
         String correoLimpio = correo.trim().toLowerCase();
-        long ahora = System.currentTimeMillis();
 
         // 1. VERIFICACIÓN DE EXISTENCIA
         Optional<Usuario> usuarioOpt = repositorioUsuario.buscarPorCorreo(correoLimpio);
         if (usuarioOpt.isEmpty()) {
             throw new SecurityException("Credenciales inválidas.");
         }
+
         Usuario usuario = usuarioOpt.get();
 
-        // 2. INTEGRIDAD ÉTICA (Bloqueo Permanente por Fraude - Requisito ERS)
-        if (usuario.isBaneadoPermanentemente()) {
-            throw new SecurityException("Acceso denegado: Esta cuenta ha sido inhabilitada permanentemente por la administración debido a reportes de fraude validados.");
-        }
+        // 2. EVALUACIÓN DE LA MÁQUINA DE ESTADOS
+        // El mét.odo getEstado() de Usuario ya se encargó de auto-desbloquear si el tiempo caducó.
+        switch (usuario.getEstado()) {
 
-        // 3. CONTROL DE FUERZA BRUTA (Bloqueo Temporal de 24h - Requisito ERS)
-        if (usuario.evaluarBloqueoTemporal(ahora)) {
-            repositorioUsuario.guardar(usuario);
-            throw new SecurityException("La cuenta se encuentra bloqueada temporalmente por seguridad.");
-        }
+            case SUSPENDIDO_FRAUDE:
+                throw new SecurityException("Acceso denegado: Esta cuenta ha sido inhabilitada permanentemente por la administración debido a violaciones éticas.");
 
-        // 4. VALIDACIÓN DE CREDENCIALES
-        if (contrasenaCorrecta(usuario, contrasena)) {
-            usuario.registrarInicioSesionExitoso();
-            repositorioUsuario.guardar(usuario);
-            return true;
-        } else {
-            // El usuario falló: delegamos el cálculo de la ventana de 3 minutos y 5 intentos a la entidad
-            usuario.registrarIntentoFallido(VENTANA_TRES_MINUTOS_MS, MAX_INTENTOS_FALLIDOS, BLOQUEO_VEINTICUATRO_HORAS_MS);
-            repositorioUsuario.guardar(usuario);
-            throw new SecurityException("Credenciales inválidas.");
+            case SUSPENDIDO_SUBASTA:
+                long horasSubasta = (usuario.getTiempoDesbloqueoMillis() - System.currentTimeMillis()) / (1000 * 60 * 60);
+                throw new SecurityException("Cuenta suspendida temporalmente por inactividad o abandono en subastas. Intente nuevamente en " + (horasSubasta + 1) + " horas.");
+
+            case BLOQUEADO_SEGURIDAD:
+                long horasSeguridad = (usuario.getTiempoDesbloqueoMillis() - System.currentTimeMillis()) / (1000 * 60 * 60);
+                throw new SecurityException("Cuenta bloqueada temporalmente por múltiples intentos fallidos. Intente nuevamente en " + (horasSeguridad + 1) + " horas.");
+
+            case ACTIVO:
+                // 3. VALIDACIÓN CRIPTOGRÁFICA DE LA CONTRASEÑA
+                if (encriptador.matches(contrasenaPlana, usuario.getContrasenaHash())) {
+                    // ÉXITO
+                    usuario.registrarInicioSesionExitoso();
+                    repositorioUsuario.guardar(usuario);
+                    return usuario;
+                } else {
+                    // FALLO
+                    usuario.registrarIntentoFallido();
+                    repositorioUsuario.guardar(usuario);
+                    throw new SecurityException("Credenciales inválidas.");
+                }
+
+            default:
+                throw new IllegalStateException("Estado de cuenta desconocido.");
         }
     }
-
-
 }
