@@ -250,6 +250,14 @@ public class Usuario {
     public boolean tieneSancionActiva() {
         return getEstado() == EstadoCuenta.SUSPENDIDO_SUBASTA;
     }
+    public void agregarCalificacion(int calificacion) {
+        if (calificacion < 1 || calificacion > 5) {
+            throw new IllegalArgumentException("La calificación debe estar entre 1 y 5.");
+        }
+        float sumaActual = this.promedioCalificacion * this.cantidadCalificaciones;
+        this.cantidadCalificaciones++;
+        this.promedioCalificacion = (sumaActual + calificacion) / this.cantidadCalificaciones;
+    }
 
     public boolean isAdministrador() {
         return this.rol == RolUsuario.ADMINISTRADOR;
