@@ -3,10 +3,7 @@ package es.ucab.entrenos.modulos.identidad.controladores;
 import es.ucab.entrenos.modulos.identidad.dtos.*;
 import es.ucab.entrenos.modulos.identidad.excepciones.CorreoDuplicadoException;
 import es.ucab.entrenos.modulos.identidad.excepciones.TelefonoDuplicadoException;
-import es.ucab.entrenos.modulos.identidad.modelos.Habilidad;
-import es.ucab.entrenos.modulos.identidad.modelos.HabilidadOfrecida;
-import es.ucab.entrenos.modulos.identidad.modelos.NecesidadRegistrada;
-import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
+import es.ucab.entrenos.modulos.identidad.modelos.*;
 import es.ucab.entrenos.modulos.identidad.servicios.ServicioHabilidad;
 import es.ucab.entrenos.modulos.identidad.servicios.ServicioUsuario;
 import org.springframework.http.HttpStatus;
@@ -15,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/usuarios")

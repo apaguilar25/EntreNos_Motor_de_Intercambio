@@ -9,38 +9,28 @@ public class Usuario {
     private String correoElectronico;
     private String telefono;
     private String descripcionPersonal;
-    private boolean catalogoCompletado;
     private String contrasenaHash;
     private int version;
 
     private Monedero monedero;
-    private ArrayList<HabilidadOfrecida> habilidadesOfrecidas;
-    private ArrayList<NecesidadRegistrada> necesidadesRegistradas;
+    // El catálogo se vuelve privado y oculto para el mundo exterior
+    private CatalogoUsuario catalogo;
 
-    // --- * Control de Acceso y Estado Único * ---
     private EstadoCuenta estado;
     private int intentosFallidos;
-    private long tiempoDesbloqueoMillis; // Sirve tanto para las 24h de Login como para las 72h de Subasta
+    private long tiempoDesbloqueoMillis;
     private long primerIntentoFallidoMillis;
-    private int reportesFraudeValidados; // Requisito ERS: Máximo 2
+    private int reportesFraudeValidados;
 
-    // --- * Perfil y Reputación * ---
     private String urlFotoPerfil;
     private float promedioCalificacion;
     private int cantidadCalificaciones;
-
     private RolUsuario rol;
-
-    /*==================== ==================== ====================
-     * Constructores
-     * ==================== ==================== ====================
-     */
 
     public Usuario() {
         this.estado = EstadoCuenta.ACTIVO;
         this.rol = RolUsuario.MIEMBRO_COMUNIDAD;
-        this.habilidadesOfrecidas = new ArrayList<>();
-        this.necesidadesRegistradas = new ArrayList<>();
+        this.catalogo = new CatalogoUsuario();
         this.intentosFallidos = 0;
         this.reportesFraudeValidados = 0;
     }
@@ -55,105 +45,73 @@ public class Usuario {
         this.estado = EstadoCuenta.ACTIVO;
         this.rol = RolUsuario.MIEMBRO_COMUNIDAD;
         this.monedero = new Monedero(0.0f);
-        this.habilidadesOfrecidas = new ArrayList<>();
-        this.necesidadesRegistradas = new ArrayList<>();
+        this.catalogo = new CatalogoUsuario();
         this.urlFotoPerfil = "default.png";
         this.intentosFallidos = 0;
         this.reportesFraudeValidados = 0;
     }
 
     /** ==================== ==================== ====================
-     * Catálogo, Habilidades y Capital Semilla
+     * Interacción con el Catálogo y Capital Semilla
      * ==================== ==================== ====================
      */
+    // Tu propuesta exacta: El servicio pide las habilidades al Usuario, no al catálogo
+    public ArrayList<HabilidadOfrecida> getHabilidadesOfrecidas() {
+        return this.catalogo.getHabilidadesOfrecidas();
+    }
+
+    public ArrayList<NecesidadRegistrada> getNecesidadesRegistradas() {
+        return this.catalogo.getNecesidadesRegistradas();
+    }
+
+    public boolean isCatalogoCompletado() {
+        return this.catalogo.isCompletado();
+    }
+
+    /**
+     * El Guardián: Centraliza la validación de estado antes de mutar el catálogo.
+     */
+    private void asegurarUsuarioActivo() {
+        if (this.getEstado() != EstadoCuenta.ACTIVO) {
+            throw new IllegalStateException("Operación denegada: La cuenta del usuario no se encuentra activa debido a una sanción o bloqueo de seguridad.");
+        }
+    }
 
     public void finalizarConfiguracionCatalogo(float capitalSemilla) {
-        if (this.catalogoCompletado) {
-            throw new IllegalStateException("El usuario ya completó su catálogo y reclamó su capital semilla.");
-        }
-        this.catalogoCompletado = true;
+        asegurarUsuarioActivo();
+        this.catalogo.marcarComoCompletado();
         this.monedero.acreditar(capitalSemilla);
     }
 
     public void agregarHabilidadOfrecida(HabilidadOfrecida nuevaHabilidad) {
-        if (nuevaHabilidad == null) throw new IllegalArgumentException("La habilidad no puede ser nula.");
-
-        boolean duplicada = this.habilidadesOfrecidas.stream()
-                .anyMatch(h -> h.getHabilidadBase().getId().equals(nuevaHabilidad.getHabilidadBase().getId())
-                        && h.getDescripcionServicio().equalsIgnoreCase(nuevaHabilidad.getDescripcionServicio()));
-
-        if (duplicada) {
-            throw new IllegalStateException("Ya tienes una oferta para esta habilidad con la misma descripción.");
-        }
-        this.habilidadesOfrecidas.add(nuevaHabilidad);
+        asegurarUsuarioActivo(); // Si está bloqueado, explota aquí y protege el catálogo
+        this.catalogo.agregarHabilidadOfrecida(nuevaHabilidad);
     }
 
     public void actualizarHabilidadOfrecida(String idInstancia, int nuevoPrecio, String nuevaDescripcion) {
-        HabilidadOfrecida existente = this.habilidadesOfrecidas.stream()
-                .filter(h -> h.getIdInstancia().equals(idInstancia))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No se encontró la oferta específica en el perfil del usuario."));
-
-        if (nuevaDescripcion != null && !nuevaDescripcion.trim().isEmpty() && !nuevaDescripcion.equals(existente.getDescripcionServicio())) {
-            boolean conflicto = this.habilidadesOfrecidas.stream()
-                    .anyMatch(h -> !h.getIdInstancia().equals(idInstancia)
-                            && h.getHabilidadBase().getId().equals(existente.getHabilidadBase().getId())
-                            && h.getDescripcionServicio().equalsIgnoreCase(nuevaDescripcion.trim()));
-
-            if (conflicto) {
-                throw new IllegalStateException("Ya tienes otra oferta de esta misma categoría con esa descripción.");
-            }
-            existente.setDescripcionServicio(nuevaDescripcion.trim());
-        }
-
-        if (nuevoPrecio > 0) {
-            existente.setPrecioCreditos(nuevoPrecio);
-        }
-    }
-
-    public void actualizarNecesidadRegistrada(String idInstancia, String nuevaDescripcion) {
-        NecesidadRegistrada existente = this.necesidadesRegistradas.stream()
-                .filter(n -> n.getIdInstancia().equals(idInstancia))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No se encontró la necesidad específica."));
-
-        if (nuevaDescripcion != null && !nuevaDescripcion.trim().isEmpty() && !nuevaDescripcion.equals(existente.getDescripcionCondiciones())) {
-            boolean conflicto = this.necesidadesRegistradas.stream()
-                    .anyMatch(n -> !n.getIdInstancia().equals(idInstancia)
-                            && n.getNecesidadBase().getId().equals(existente.getNecesidadBase().getId())
-                            && n.getDescripcionCondiciones().equalsIgnoreCase(nuevaDescripcion.trim()));
-
-            if (conflicto) {
-                throw new IllegalStateException("Ya tienes otra necesidad de esta misma categoría con esas condiciones exactas.");
-            }
-            existente.setDescripcionCondiciones(nuevaDescripcion.trim());
-        }
-    }
-
-    public void agregarNecesidad(NecesidadRegistrada nuevaNecesidad) {
-        if (nuevaNecesidad == null) throw new IllegalArgumentException("La necesidad no puede estar vacía.");
-
-        boolean duplicada = this.necesidadesRegistradas.stream()
-                .anyMatch(n -> n.getNecesidadBase().getId().equals(nuevaNecesidad.getNecesidadBase().getId())
-                        && n.getDescripcionCondiciones().equalsIgnoreCase(nuevaNecesidad.getDescripcionCondiciones()));
-
-        if (duplicada) {
-            throw new IllegalStateException("Error: Ya tienes esta necesidad registrada con esas mismas condiciones.");
-        }
-        this.necesidadesRegistradas.add(nuevaNecesidad);
+        asegurarUsuarioActivo();
+        this.catalogo.actualizarHabilidadOfrecida(idInstancia, nuevoPrecio, nuevaDescripcion);
     }
 
     public void eliminarHabilidadOfrecida(String idInstancia) {
-        boolean eliminado = this.habilidadesOfrecidas.removeIf(h -> h.getIdInstancia().equals(idInstancia));
-        if (!eliminado) throw new IllegalArgumentException("No se encontró la oferta específica para eliminar.");
+        asegurarUsuarioActivo();
+        this.catalogo.eliminarHabilidadOfrecida(idInstancia);
+    }
+
+    public void agregarNecesidad(NecesidadRegistrada nuevaNecesidad) {
+        asegurarUsuarioActivo();
+        this.catalogo.agregarNecesidad(nuevaNecesidad);
+    }
+
+    public void actualizarNecesidadRegistrada(String idInstancia, String nuevaDescripcion) {
+        asegurarUsuarioActivo();
+        this.catalogo.actualizarNecesidadRegistrada(idInstancia, nuevaDescripcion);
     }
 
     public void eliminarNecesidadRegistrada(String idInstancia) {
-        boolean eliminado = this.necesidadesRegistradas.removeIf(n -> n.getIdInstancia().equals(idInstancia));
-        if (!eliminado) throw new IllegalArgumentException("No se encontró la necesidad específica para eliminar.");
+        asegurarUsuarioActivo();
+        this.catalogo.eliminarNecesidadRegistrada(idInstancia);
     }
-
-    public boolean isCatalogoCompletado() { return catalogoCompletado; }
 
     /** ==================== ==================== ====================
      *                          Monedero
@@ -280,11 +238,8 @@ public class Usuario {
     public float getPromedioCalificacion() { return promedioCalificacion; }
     public int getCantidadCalificaciones() { return cantidadCalificaciones; }
 
-    public ArrayList<HabilidadOfrecida> getHabilidadesOfrecidas() { return new ArrayList<>(this.habilidadesOfrecidas); }
-    public ArrayList<NecesidadRegistrada> getNecesidadesRegistradas() { return new ArrayList<>(this.necesidadesRegistradas); }
 
     // Setters
-    public void setCatalogoCompletado(boolean c) { this.catalogoCompletado = c; }
     public void setTelefono(String telefono) { this.telefono = telefono; }
     public void setDescripcionPersonal(String descripcionPersonal) { this.descripcionPersonal = descripcionPersonal; }
     public void setUrlFotoPerfil(String urlFotoPerfil) { this.urlFotoPerfil = urlFotoPerfil; }

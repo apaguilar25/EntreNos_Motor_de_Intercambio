@@ -3,6 +3,7 @@ package es.ucab.entrenos.modulos.identidad.repositorios;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import es.ucab.entrenos.modulos.identidad.excepciones.ConcurrenciaException;
 import es.ucab.entrenos.modulos.identidad.modelos.RolUsuario;
 import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -62,8 +63,6 @@ public class RepositorioUsuario implements IRepositorioUsuario {
     }
 
 
-
-
     // Lee tod.o el archivo JSON y lo convierte en una lista de usuarios en RAM.
     @Override
     public synchronized ArrayList<Usuario> listarUsuarios() {
@@ -102,7 +101,7 @@ public class RepositorioUsuario implements IRepositorioUsuario {
 
                 // LÓGICA DE BLOQUEO OPTIMISTA
                 if (uBD.getVersion() != usuarioGuardar.getVersion()) {
-                    throw new es.ucab.entrenos.modulos.identidad.excepciones.ConcurrenciaException(
+                    throw new ConcurrenciaException(
                             "Error de concurrencia: El usuario " + usuarioGuardar.getCorreoElectronico() +
                                     " fue modificado por otra transacción. Por favor, recargue e intente de nuevo."
                     );
