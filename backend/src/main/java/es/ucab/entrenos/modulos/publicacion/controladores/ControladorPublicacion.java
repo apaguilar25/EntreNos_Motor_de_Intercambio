@@ -1,5 +1,8 @@
 package es.ucab.entrenos.modulos.publicacion.controladores;
 
+import es.ucab.entrenos.modulos.publicacion.dto.RecomendacionDTO;
+import es.ucab.entrenos.modulos.publicacion.dto.RespuestaSolicitudDTO;
+import es.ucab.entrenos.modulos.publicacion.dto.SolicitudRequestDTO;
 import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Transaccion;
 import es.ucab.entrenos.modulos.publicacion.servicios.ServicioPublicacion;
@@ -43,6 +46,52 @@ public class ControladorPublicacion {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+
+    // --- HU2: Endpoints de Solicitud ---
+    @PostMapping("/{id}/solicitar")
+    public ResponseEntity<?> solicitar(@PathVariable String id,
+                                       @RequestBody SolicitudRequestDTO dto) {
+        try {
+            Publicacion pub = servicioPublicacion.solicitarPublicacion(
+                    id, dto.getIdUsuario(), dto.getNombreUsuario());
+            return ResponseEntity.ok(pub);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/{id}/responder")
+    public ResponseEntity<?> responder(@PathVariable String id,
+                                       @RequestBody RespuestaSolicitudDTO dto) {
+        try {
+            Publicacion pub = servicioPublicacion.responderSolicitud(
+                    id, dto.getIdUsuario(), dto.isAceptar());
+            return ResponseEntity.ok(pub);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    // --- HU6: Endpoint de Recomendadas ---
+    @GetMapping("/recomendadas/{idUsuario}")
+    public ResponseEntity<List<RecomendacionDTO>> recomendadas(
+            @PathVariable String idUsuario) {
+        return ResponseEntity.ok(
+                servicioPublicacion.obtenerRecomendadas(idUsuario));
+    }
+
+    // --- HU3: Calificaciones de una publicación ---
+    @GetMapping("/{id}/calificaciones")
+    public ResponseEntity<List<Transaccion>> calificaciones(
+            @PathVariable String id) {
+        return ResponseEntity.ok(
+                servicioPublicacion.obtenerCalificacionesPorPublicacion(id));
+    }
+
     // --- Endpoints de Transacción ---
     @GetMapping("/transacciones")
     public ResponseEntity<List<Transaccion>> obtenerTransacciones() {
