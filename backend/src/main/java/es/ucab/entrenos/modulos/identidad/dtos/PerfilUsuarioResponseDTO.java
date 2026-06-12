@@ -12,10 +12,11 @@ public class PerfilUsuarioResponseDTO {
     private String telefono;
     private String descripcionPersonal;
     private String urlFotoPerfil;
-    private float creditosDisponibles; // Sacado del Monedero
+    private float creditosDisponibles;
     private boolean catalogoCompletado;
+    private float promedioCalificacion;
+    private int cantidadCalificaciones;
 
-    // Podemos devolver las listas tal cual porque las clases envoltorio no tienen datos sensibles
     private List<HabilidadOfrecida> ofertas;
     private List<NecesidadRegistrada> necesidades;
 
@@ -27,51 +28,25 @@ public class PerfilUsuarioResponseDTO {
         this.correoElectronico = usuario.getCorreoElectronico();
         this.telefono = usuario.getTelefono();
         this.descripcionPersonal = usuario.getDescripcionPersonal();
-        this.urlFotoPerfil = usuario.getUrlFotoPerfil(); // "default.png" inicialmente
-        this.creditosDisponibles = usuario.getMonedero().getCreditosDisponibles(); // 0 o 50 (Capital Semilla)
+        this.urlFotoPerfil = usuario.getUrlFotoPerfil();
+        this.creditosDisponibles = usuario.getMonedero().getCreditosDisponibles();
         this.catalogoCompletado = usuario.isCatalogoCompletado();
+        this.promedioCalificacion = usuario.getPromedioCalificacion();
+        this.cantidadCalificaciones = usuario.getCantidadCalificaciones();
         this.ofertas = usuario.getHabilidadesOfrecidas();
         this.necesidades = usuario.getNecesidadesRegistradas();
     }
 
-    // Getters
-    public String getId() {
-        return id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getCorreoElectronico() {
-        return correoElectronico;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public String getDescripcionPersonal() {
-        return descripcionPersonal;
-    }
-
-    public String getUrlFotoPerfil() {
-        return urlFotoPerfil;
-    }
-
-    public float getCreditosDisponibles() {
-        return creditosDisponibles;
-    }
-
-    public boolean isCatalogoCompletado() {
-        return catalogoCompletado;
-    }
-
-    public List<HabilidadOfrecida> getOfertas() {
-        return ofertas;
-    }
-
-    public List<NecesidadRegistrada> getNecesidades() {
-        return necesidades;
-    }
+    public String getId() { return id; }
+    public String getNombre() { return nombre; }
+    public String getCorreoElectronico() { return correoElectronico; }
+    public String getTelefono() { return telefono; }
+    public String getDescripcionPersonal() { return descripcionPersonal; }
+    public String getUrlFotoPerfil() { return urlFotoPerfil; }
+    public float getCreditosDisponibles() { return creditosDisponibles; }
+    public boolean isCatalogoCompletado() { return catalogoCompletado; }
+    public float getPromedioCalificacion() { return promedioCalificacion; }
+    public int getCantidadCalificaciones() { return cantidadCalificaciones; }
+    public List<HabilidadOfrecida> getOfertas() { return ofertas; }
+    public List<NecesidadRegistrada> getNecesidades() { return necesidades; }
 }
