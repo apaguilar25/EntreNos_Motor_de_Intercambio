@@ -2,13 +2,10 @@ package es.ucab.entrenos.modulos.publicacion.modelos;
 
 import java.util.UUID;
 
-/**
- * Transacción de intercambio de servicio por créditos comunitarios (HU2/HU3/HU8).
- */
 public class Transaccion {
 
     private String idTransaccion;
-    private String idPublicacion;     // Publicación que originó esta transacción
+    private String idPublicacion;
     private String idOfertante;
     private String idDemandante;
     private EstadoTransaccion estado;
@@ -18,17 +15,16 @@ public class Transaccion {
     private String nombreServicio;
     private String descripcion;
     private long fechaCreacion;
-
-    // HU2: Fecha límite de 5 días para aceptar/rechazar
     private long fechaLimiteAceptacion;
-
-    // HU8: Reporte de incidencia/fraude
     private boolean tieneIncidencia;
     private String descripcionIncidencia;
     private String urlEvidenciaIncidencia;
-
-    // HU3: Calificación del servicio (1–5 estrellas)
-    private Integer calificacionDada; // null hasta que se califique
+    private Integer calificacionOfertante;
+    private String comentarioOfertante;
+    private long fechaConfirmacionOfertante;
+    private long fechaConfirmacionDemandante;
+    private boolean sancionado;
+    private int version;
 
     public Transaccion() {}
 
@@ -45,49 +41,49 @@ public class Transaccion {
         this.confirmacionOfertante = false;
         this.confirmacionDemandante = false;
         this.fechaCreacion = System.currentTimeMillis();
-        // HU2: 5 días para aceptar o rechazar
         this.fechaLimiteAceptacion = System.currentTimeMillis() + (5L * 24 * 60 * 60 * 1000);
         this.tieneIncidencia = false;
     }
 
-    // HU3: Confirmar entrega por el ofertante
     public void confirmarEntregaOfertante() {
-        if (this.estado != EstadoTransaccion.INICIADA) {
-            throw new IllegalStateException("Solo se puede confirmar una transacción en estado INICIADA.");
+        if (this.estado == EstadoTransaccion.EN_DISPUTA || this.estado == EstadoTransaccion.FINALIZADA) {
+            throw new IllegalStateException("No se puede confirmar en estado " + this.estado + ".");
         }
         if (this.tieneIncidencia) {
             throw new IllegalStateException("No se puede confirmar mientras exista una incidencia activa.");
+        }
+        if (this.estado == EstadoTransaccion.PENDIENTE) {
+            this.estado = EstadoTransaccion.INICIADA;
         }
         this.confirmacionOfertante = true;
         verificarCompletitud();
     }
 
-    // HU3: Confirmar recepción por el demandante
     public void confirmarRecepcionDemandante() {
-        if (this.estado != EstadoTransaccion.INICIADA) {
-            throw new IllegalStateException("Solo se puede confirmar una transacción en estado INICIADA.");
+        if (this.estado == EstadoTransaccion.EN_DISPUTA || this.estado == EstadoTransaccion.FINALIZADA) {
+            throw new IllegalStateException("No se puede confirmar en estado " + this.estado + ".");
         }
         if (this.tieneIncidencia) {
             throw new IllegalStateException("No se puede confirmar mientras exista una incidencia activa.");
+        }
+        if (this.estado == EstadoTransaccion.PENDIENTE) {
+            this.estado = EstadoTransaccion.INICIADA;
         }
         this.confirmacionDemandante = true;
         verificarCompletitud();
     }
 
-    // Si ambas partes confirmaron → FINALIZADA
     private void verificarCompletitud() {
         if (this.confirmacionOfertante && this.confirmacionDemandante) {
             this.estado = EstadoTransaccion.FINALIZADA;
         }
     }
 
-    // HU2: Verificar si expiró el plazo de 5 días para aceptar
     public boolean haExpiradoPlazoAceptacion() {
         return this.estado == EstadoTransaccion.PENDIENTE
                 && System.currentTimeMillis() > this.fechaLimiteAceptacion;
     }
 
-    // HU8: Reportar incidencia/fraude
     public void reportarIncidencia(String descripcion, String urlEvidencia) {
         if (this.estado != EstadoTransaccion.INICIADA) {
             throw new IllegalStateException("Solo se puede reportar una incidencia en transacciones INICIADAS.");
@@ -101,7 +97,6 @@ public class Transaccion {
         this.estado = EstadoTransaccion.EN_DISPUTA;
     }
 
-    // --- Getters ---
     public String getIdTransaccion() { return idTransaccion; }
     public String getIdPublicacion() { return idPublicacion; }
     public String getIdOfertante() { return idOfertante; }
@@ -117,9 +112,15 @@ public class Transaccion {
     public boolean isTieneIncidencia() { return tieneIncidencia; }
     public String getDescripcionIncidencia() { return descripcionIncidencia; }
     public String getUrlEvidenciaIncidencia() { return urlEvidenciaIncidencia; }
-    public Integer getCalificacionDada() { return calificacionDada; }
+    public Integer getCalificacionOfertante() { return calificacionOfertante; }
+    public String getComentarioOfertante() { return comentarioOfertante; }
+    public long getFechaConfirmacionOfertante() { return fechaConfirmacionOfertante; }
+    public long getFechaConfirmacionDemandante() { return fechaConfirmacionDemandante; }
+    public boolean isSancionado() { return sancionado; }
 
-    // --- Setters ---
+    public int getVersion() { return version; }
+    public void setVersion(int version) { this.version = version; }
+
     public void setIdTransaccion(String idTransaccion) { this.idTransaccion = idTransaccion; }
     public void setIdPublicacion(String idPublicacion) { this.idPublicacion = idPublicacion; }
     public void setIdOfertante(String idOfertante) { this.idOfertante = idOfertante; }
@@ -135,6 +136,9 @@ public class Transaccion {
     public void setTieneIncidencia(boolean tieneIncidencia) { this.tieneIncidencia = tieneIncidencia; }
     public void setDescripcionIncidencia(String descripcionIncidencia) { this.descripcionIncidencia = descripcionIncidencia; }
     public void setUrlEvidenciaIncidencia(String urlEvidenciaIncidencia) { this.urlEvidenciaIncidencia = urlEvidenciaIncidencia; }
-    public void setCalificacionDada(Integer calificacionDada) { this.calificacionDada = calificacionDada; }
+    public void setCalificacionOfertante(Integer calificacionOfertante) { this.calificacionOfertante = calificacionOfertante; }
+    public void setComentarioOfertante(String comentarioOfertante) { this.comentarioOfertante = comentarioOfertante; }
+    public void setFechaConfirmacionOfertante(long fechaConfirmacionOfertante) { this.fechaConfirmacionOfertante = fechaConfirmacionOfertante; }
+    public void setFechaConfirmacionDemandante(long fechaConfirmacionDemandante) { this.fechaConfirmacionDemandante = fechaConfirmacionDemandante; }
+    public void setSancionado(boolean sancionado) { this.sancionado = sancionado; }
 }
-
