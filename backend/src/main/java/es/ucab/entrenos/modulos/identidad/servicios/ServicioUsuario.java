@@ -33,6 +33,10 @@ public class ServicioUsuario {
         return repositorioUsuario.buscarPorId(id);
     }
 
+    public void guardar(Usuario usuario) {
+        repositorioUsuario.guardar(usuario);
+    }
+
     public void actualizarReputacion(String idReceptor, float calificacion) {
         // TODO implementar funcion
         return;
@@ -84,7 +88,7 @@ public class ServicioUsuario {
         );
 
         // 8. Guardar en el JSON a través del repositorio
-        repositorioUsuario.guardar(nuevoUsuario);
+        guardar(nuevoUsuario);
 
         return nuevoUsuario;
     }
@@ -110,7 +114,7 @@ public class ServicioUsuario {
         }
 
         usuario.finalizarConfiguracionCatalogo(CAPITAL_SEMILLA_INICIAL);
-        repositorioUsuario.guardar(usuario);
+        guardar(usuario);
     }
 
     // --- AGREGAR OFERTA INDIVIDUAL ---
@@ -122,7 +126,7 @@ public class ServicioUsuario {
 
         HabilidadOfrecida nuevaOferta = new HabilidadOfrecida(habilidadBase, precioCreditos, descripcionServicio);
         usuario.agregarHabilidadOfrecida(nuevaOferta);
-        repositorioUsuario.guardar(usuario);
+        guardar(usuario);
     }
 
     // --- AGREGAR NECESIDAD INDIVIDUAL ---
@@ -134,7 +138,7 @@ public class ServicioUsuario {
 
         NecesidadRegistrada nuevaNecesidad = new NecesidadRegistrada(necesidadBase, descripcionCondiciones);
         usuario.agregarNecesidad(nuevaNecesidad);
-        repositorioUsuario.guardar(usuario);
+        guardar(usuario);
     }
 
     // Carga/Actualización de la Foto de Perfil
@@ -149,7 +153,7 @@ public class ServicioUsuario {
         }
 
         usuario.setUrlFotoPerfil(urlNuevaFoto);
-        repositorioUsuario.guardar(usuario);
+        guardar(usuario);
     }
 
 
@@ -161,7 +165,7 @@ public class ServicioUsuario {
         verificarUsuarioActivo(usuario); // Defensa en profundidad
 
         usuario.actualizarHabilidadOfrecida(idInstancia, precioCreditos, descripcionServicio);
-        repositorioUsuario.guardar(usuario);
+        guardar(usuario);
     }
 
     // PASO 5: Edición de Necesidades Registradas
@@ -172,7 +176,7 @@ public class ServicioUsuario {
         verificarUsuarioActivo(usuario); // Defensa en profundidad
 
         usuario.actualizarNecesidadRegistrada(idInstancia, descripcionCondiciones);
-        repositorioUsuario.guardar(usuario);
+        guardar(usuario);
     }
 
     public void eliminarHabilidadOfrecida(String idUsuario, String idInstancia) {
@@ -182,7 +186,7 @@ public class ServicioUsuario {
         verificarUsuarioActivo(usuario); // Defensa en profundidad
 
         usuario.eliminarHabilidadOfrecida(idInstancia);
-        repositorioUsuario.guardar(usuario);
+        guardar(usuario);
     }
 
     public void eliminarNecesidadRegistrada(String idUsuario, String idInstancia) {
@@ -192,7 +196,7 @@ public class ServicioUsuario {
         verificarUsuarioActivo(usuario); // Defensa en profundidad
 
         usuario.eliminarNecesidadRegistrada(idInstancia);
-        repositorioUsuario.guardar(usuario);
+        guardar(usuario);
     }
 
     // ========================================================================

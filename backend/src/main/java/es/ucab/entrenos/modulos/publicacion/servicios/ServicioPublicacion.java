@@ -1,7 +1,6 @@
 package es.ucab.entrenos.modulos.publicacion.servicios;
 
 import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
-import es.ucab.entrenos.modulos.identidad.repositorios.IRepositorioUsuario;
 import es.ucab.entrenos.modulos.identidad.servicios.ServicioUsuario;
 import es.ucab.entrenos.modulos.notificacion.modelos.TipoNotificacion;
 import es.ucab.entrenos.modulos.notificacion.servicios.ServicioNotificacion;
@@ -20,7 +19,6 @@ public class ServicioPublicacion {
     private final IRepositorioPublicacion repositorioPublicacion;
     private final IRepositorioTransaccion repositorioTransaccion;
     private final ServicioUsuario servicioUsuario;
-    private final IRepositorioUsuario repositorioUsuario;
     private final ServicioNotificacion servicioNotificacion;
     private static final Random RANDOM = new Random();
     private static final String[] COMENTARIOS_SIMULADOS = {
@@ -33,12 +31,11 @@ public class ServicioPublicacion {
 
     public ServicioPublicacion(IRepositorioPublicacion repositorioPublicacion,
                                IRepositorioTransaccion repositorioTransaccion,
-                               ServicioUsuario servicioUsuario, IRepositorioUsuario repositorioUsuario,
+                               ServicioUsuario servicioUsuario,
                                ServicioNotificacion servicioNotificacion) {
         this.repositorioPublicacion = repositorioPublicacion;
         this.repositorioTransaccion = repositorioTransaccion;
         this.servicioUsuario = servicioUsuario;
-        this.repositorioUsuario = repositorioUsuario;
         this.servicioNotificacion = servicioNotificacion;
     }
 
@@ -193,7 +190,7 @@ public class ServicioPublicacion {
             Usuario demandante = servicioUsuario.buscarPorId(solicitanteId)
                     .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
             demandante.getMonedero().retener(pub.getPrecioCreditos());
-            repositorioUsuario.guardar(demandante);
+            servicioUsuario.guardar(demandante);
             Transaccion tx = new Transaccion(
                 pub.getIdPublicacion(),
                 pub.getIdUsuario(),
@@ -276,8 +273,8 @@ public class ServicioPublicacion {
                 .orElseThrow(() -> new IllegalArgumentException("Demandante no encontrado."));
         demandante.getMonedero().liberarRetencion();
         ofertante.getMonedero().acreditar(t.getCreditosRetenidos());
-        repositorioUsuario.guardar(demandante);
-        repositorioUsuario.guardar(ofertante);
+        servicioUsuario.guardar(demandante);
+        servicioUsuario.guardar(ofertante);
         servicioNotificacion.enviarNotificacion("SISTEMA", t.getIdOfertante(),
                 "Recibiste " + t.getCreditosRetenidos() + " créditos por el servicio: " + t.getNombreServicio(),
                 TipoNotificacion.MOVIMIENTO_MONEDERO);
