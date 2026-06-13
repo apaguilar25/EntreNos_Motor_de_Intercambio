@@ -1,0 +1,9 @@
+[ {
+  "idNotificacion" : "b1445d8e-ba54-405f-9b47-f188bed58489",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "8dde084f-a5cc-4bec-a63d-7cff8590595d",
+  "mensaje" : "¡Alguien ha ofertado en tu subasta de Bicicleta Montañera Rin 29!",
+  "tipo" : "NUEVA_OFERTA_SUBASTA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1781359254224
+} ]

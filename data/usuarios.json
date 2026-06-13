@@ -6,7 +6,7 @@
     "telefono": "+584249876543",
     "descripcionPersonal": "Soy un panadero experto con mas de 15 años de experiencia en el negocio.",
     "contrasenaHash": "$2a$10$43Hty/bB9TUWjYtoXiibKeKHF4ItWYj5mo0kIXPv6Ekzi92rTKGw.",
-    "version": 0,
+    "version": 1,
     "monedero": {
       "creditosDisponibles": 0.0,
       "creditosRetenidos": 0.0
@@ -33,7 +33,7 @@
     "telefono": "+584141234757",
     "descripcionPersonal": "Hola, soy nuevo en la comunidad y estoy dispuesto a ayudar.",
     "contrasenaHash": "$2a$10$PRFXfNvHj5LV7mZFcAk/4e0F.4j47Aqpr9.gQofs6WJiylS0Zetkq",
-    "version": 7,
+    "version": 8,
     "monedero": {
       "creditosDisponibles": 50.0,
       "creditosRetenidos": 0.0
@@ -124,7 +124,7 @@
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
     "contrasenaHash": "$2a$10$r/Vvgcw3nWYy.TP7s9DksO/.T7MIs/ZZ8MkVt9yO.QmzQVd/EfvCy",
-    "version": 2,
+    "version": 4,
     "monedero": {
       "creditosDisponibles": 0.0,
       "creditosRetenidos": 0.0
