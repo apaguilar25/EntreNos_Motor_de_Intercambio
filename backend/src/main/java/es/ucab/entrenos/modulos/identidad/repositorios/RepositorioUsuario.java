@@ -4,9 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import es.ucab.entrenos.modulos.identidad.excepciones.ConcurrenciaException;
-import es.ucab.entrenos.modulos.identidad.modelos.RolUsuario;
 import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
@@ -14,6 +12,9 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Repository
 public class RepositorioUsuario implements IRepositorioUsuario {
@@ -22,14 +23,20 @@ public class RepositorioUsuario implements IRepositorioUsuario {
     private static final String RUTA_ARCHIVO = "data/usuarios.json";
     private final Gson gson;
 
+    // --- MAGIA ARQUITECTÓNICA: Caché y Candados Concurrentes ---
+    private final ConcurrentHashMap<String, Usuario> cacheUsuarios = new ConcurrentHashMap<>();
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+
     public RepositorioUsuario() {
-        // GsonBuilder con setPrettyPrinting hace que el archivo JSON sea legible para humanos
         this.gson = new GsonBuilder().setPrettyPrinting().create();
-        inicializarArchivo();
+        inicializarArchivoYCache();
     }
 
-    //  Asegura que la carpeta y el archivo JSON existan antes de cualquier operación.
-    private void inicializarArchivo() {
+    /**
+     * Asegura que el archivo JSON exista. Si no existe, crea al Super Admin.
+     * Luego, carga todo el archivo a la Memoria RAM (Caché) para búsquedas ultrarrápidas.
+     */
+    private void inicializarArchivoYCache() {
         try {
             File archivo = new File(RUTA_ARCHIVO);
             if (archivo.getParentFile() != null && !archivo.getParentFile().exists()) {
@@ -38,10 +45,8 @@ public class RepositorioUsuario implements IRepositorioUsuario {
             if (!archivo.exists()) {
                 archivo.createNewFile();
 
-                // --- INYECCIÓN DEL SÚPER ADMINISTRADOR (USANDO CONSTRUCTOR) ---
+                // INYECCIÓN DEL SÚPER ADMINISTRADOR
                 ArrayList<Usuario> seed = new ArrayList<>();
-
-                // El objeto nace en un estado 100% válido y con su monedero/listas inicializadas
                 Usuario admin = new Usuario(
                         java.util.UUID.randomUUID().toString(),
                         "Super Administrador",
@@ -51,133 +56,163 @@ public class RepositorioUsuario implements IRepositorioUsuario {
                         new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder().encode("admin123")
                 );
 
-                // Le asignamos su rol de altos privilegios
                 admin.setRol(es.ucab.entrenos.modulos.identidad.modelos.RolUsuario.ADMINISTRADOR);
-
+                admin.setVersion(0);
                 seed.add(admin);
-                escribirArchivo(seed); // Lo guardamos en el JSON
+
+                // Guardamos directamente en el disco duro porque el caché aún no se ha levantado
+                try (Writer writer = new OutputStreamWriter(new FileOutputStream(RUTA_ARCHIVO), StandardCharsets.UTF_8)) {
+                    this.gson.toJson(seed, writer);
+                }
             }
+
+            // CARGA A LA CACHÉ (Indexación en Memoria)
+            cargarCacheDesdeArchivo();
+
         } catch (IOException e) {
-            throw new RuntimeException("Error al crear el archivo de base de datos de usuarios.", e);
+            throw new RuntimeException("Error crítico al inicializar la persistencia JSON de Usuarios.", e);
         }
     }
 
-
-    // Lee tod.o el archivo JSON y lo convierte en una lista de usuarios en RAM.
-    @Override
-    public synchronized ArrayList<Usuario> listarUsuarios() {
+    /**
+     * Lee el disco duro UNA SOLA VEZ y vuelca los usuarios en el ConcurrentHashMap.
+     */
+    private void cargarCacheDesdeArchivo() {
         try (Reader reader = new InputStreamReader(new FileInputStream(RUTA_ARCHIVO), StandardCharsets.UTF_8)) {
             Type tipoLista = new TypeToken<ArrayList<Usuario>>() {}.getType();
             ArrayList<Usuario> usuarios = gson.fromJson(reader, tipoLista);
 
-            // Si el archivo está vacío por alguna razón, retornamos una lista vacía en lugar de null
-            return usuarios != null ? usuarios : new ArrayList<>();
+            if (usuarios != null) {
+                for (Usuario u : usuarios) {
+                    cacheUsuarios.put(u.getId(), u);
+                }
+            }
         } catch (IOException e) {
-            throw new RuntimeException("Error al leer el catálogo de usuarios desde el almacenamiento.", e);
+            throw new RuntimeException("Error al leer el catálogo de usuarios hacia la caché.", e);
         }
     }
 
-    //  Guarda o actualiza un usuario en el archivo JSON.
-    //  Si el ID ya existe, sobreescribe los datos (Modificación). Si no, lo añade (Registro).
+    /**
+     * Lista todos los usuarios.
+     * RÁPIDO: Lee directamente de la memoria RAM, no del disco.
+     */
     @Override
-    public synchronized void guardar(Usuario usuarioGuardar) {
-        // 1. Salvaguardas y validaciones defensivas
-        if (usuarioGuardar == null) {
-            throw new IllegalArgumentException("El usuario a guardar no puede ser nulo.");
+    public ArrayList<Usuario> listarUsuarios() {
+        lock.readLock().lock();
+        try {
+            return new ArrayList<>(cacheUsuarios.values());
+        } finally {
+            lock.readLock().unlock();
         }
-        if (usuarioGuardar.getId() == null || usuarioGuardar.getId().trim().isEmpty()) {
-            throw new IllegalArgumentException("No se puede guardar un usuario sin un identificador (ID) válido.");
-        }
-        if (usuarioGuardar.getMonedero() == null) {
-            throw new IllegalArgumentException("Error de consistencia: El usuario debe poseer un Monedero inicializado.");
+    }
+
+    /**
+     * Guarda o actualiza un usuario aplicando Bloqueo Optimista, Exclusión Mutua y Prevención Check-Then-Act.
+     */
+    @Override
+    public void guardar(Usuario usuarioGuardar) {
+        if (usuarioGuardar == null || usuarioGuardar.getId() == null || usuarioGuardar.getId().trim().isEmpty()) {
+            throw new IllegalArgumentException("Usuario inválido para guardar.");
         }
 
-        ArrayList<Usuario> usuarios = listarUsuarios();
-        boolean existe = false;
+        // Bloqueo de escritura: Nadie más puede leer ni escribir mientras actualizamos la caché y el disco
+        lock.writeLock().lock();
+        try {
+            Usuario uBD = cacheUsuarios.get(usuarioGuardar.getId());
 
-        for (int i = 0; i < usuarios.size(); i++) {
-            Usuario uBD = usuarios.get(i);
-            if (uBD.getId().equals(usuarioGuardar.getId())) {
-
-                // LÓGICA DE BLOQUEO OPTIMISTA
-                if (uBD.getVersion() != usuarioGuardar.getVersion()) {
+            if (uBD != null) {
+                // LÓGICA DE BLOQUEO OPTIMISTA: Verificamos contra la memoria (O(1) de complejidad)
+                if (usuarioGuardar.getVersion() <= uBD.getVersion()) {
                     throw new ConcurrenciaException(
                             "Error de concurrencia: El usuario " + usuarioGuardar.getCorreoElectronico() +
                                     " fue modificado por otra transacción. Por favor, recargue e intente de nuevo."
                     );
                 }
+            } else {
+                // 1. Si es un usuario nuevo (Registro), forzamos su versión inicial a 0 por seguridad
+                if (usuarioGuardar.getVersion() > 0) {
+                    throw new IllegalStateException("Un usuario nuevo no puede nacer con una versión superior a 0.");
+                }
 
-                // Si la versión coincide, incrementamos el sello de versión
-                usuarioGuardar.setVersion(usuarioGuardar.getVersion() + 1);
-                usuarios.set(i, usuarioGuardar);
-                existe = true;
-                break;
+                // 2. LÓGICA CHECK-THEN-ACT: Validamos unicidad DENTRO del candado de escritura
+                boolean correoYaTomado = cacheUsuarios.values().stream()
+                        .anyMatch(u -> u.getCorreoElectronico().equalsIgnoreCase(usuarioGuardar.getCorreoElectronico()));
+
+                boolean telefonoYaTomado = cacheUsuarios.values().stream()
+                        .anyMatch(u -> u.getTelefono().equals(usuarioGuardar.getTelefono()));
+
+                if (correoYaTomado) {
+                    throw new IllegalStateException("Condición de carrera evitada: El correo electrónico ya fue registrado durante el procesamiento.");
+                }
+                if (telefonoYaTomado) {
+                    throw new IllegalStateException("Condición de carrera evitada: El teléfono ya fue registrado durante el procesamiento.");
+                }
             }
-        }
 
-        if (!existe) {
-            // Registro nuevo: Nace con versión cero
-            usuarioGuardar.setVersion(0);
-            usuarios.add(usuarioGuardar);
-        }
+            // 3. Actualizamos la memoria ultrarrápida
+            cacheUsuarios.put(usuarioGuardar.getId(), usuarioGuardar);
 
-        // Persistencia física en el archivo JSON
-        escribirArchivo(usuarios);
+            // 4. Volcamos la memoria completa al disco duro de forma segura
+            escribirArchivoFisico();
+
+        } finally {
+            // SIEMPRE liberar el candado, incluso si ocurre una excepción
+            lock.writeLock().unlock();
+        }
     }
 
     /**
-     * Persiste de forma segura la lista completa de usuarios en el archivo físico JSON.
-     * Utiliza exclusión mutua (synchronized) para evitar colisiones de escritura a nivel de hilos.
-     * @param usuariosActivos Lista de usuarios actualizados a guardar.
+     * Persistencia física: Convierte el mapa de caché a JSON y lo guarda.
      */
-    private synchronized void escribirArchivo(ArrayList<Usuario> usuariosActivos) {
-        if (usuariosActivos == null) {
-            return;
-        }
-
-        try (Writer writer = new OutputStreamWriter(
-                new FileOutputStream(RUTA_ARCHIVO), StandardCharsets.UTF_8)) {
-
-            // Serializa la lista con formato estético (Pretty Printing)
-            this.gson.toJson(usuariosActivos, writer);
-
+    private void escribirArchivoFisico() {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(RUTA_ARCHIVO), StandardCharsets.UTF_8)) {
+            // Guardamos los valores del HashMap como una lista JSON
+            this.gson.toJson(cacheUsuarios.values(), writer);
         } catch (IOException e) {
-            // Se lanza una excepción en tiempo de ejecución para notificar el fallo crítico de infraestructura
-            throw new RuntimeException("Error crítico de infraestructura: No se pudo escribir en el almacenamiento local JSON (" + RUTA_ARCHIVO + ").", e);
+            throw new RuntimeException("Error crítico de infraestructura: No se pudo escribir en el JSON local.", e);
         }
     }
 
+    /**
+     * Búsquedas Ultrarrápidas: Complejidad O(1) leyendo directo de RAM.
+     * Múltiples hilos pueden hacer esto al mismo tiempo gracias al readLock.
+     */
     @Override
-    public synchronized Optional<Usuario> buscarPorId(String id) {
+    public Optional<Usuario> buscarPorId(String id) {
         if (id == null || id.trim().isEmpty()) return Optional.empty();
 
-        ArrayList<Usuario> usuarios = listarUsuarios();
-        return usuarios.stream()
-                .filter(u -> u.getId().equals(id))
-                .findFirst();
+        lock.readLock().lock();
+        try {
+            return Optional.ofNullable(cacheUsuarios.get(id));
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
-    public synchronized Optional<Usuario> buscarPorTelefono(String telefono) {
+    public Optional<Usuario> buscarPorTelefono(String telefono) {
         if (telefono == null || telefono.trim().isEmpty()) return Optional.empty();
 
-        ArrayList<Usuario> usuarios = listarUsuarios();
-
-        return usuarios.stream()
-                .filter(u -> u.getTelefono().equals(telefono.trim()))
-                .findFirst();
+        lock.readLock().lock();
+        try {
+            return cacheUsuarios.values().stream()
+                    .filter(u -> u.getTelefono().equals(telefono.trim()))
+                    .findFirst();
+        } finally {
+            lock.readLock().unlock();
+        }
     }
-
 
     @Override
-    public synchronized Optional<Usuario> buscarPorCorreo(String correo) {
+    public Optional<Usuario> buscarPorCorreo(String correo) {
         if (correo == null || correo.trim().isEmpty()) return Optional.empty();
 
-        ArrayList<Usuario> usuarios = listarUsuarios();
-
-        // Buscamos ignorando mayúsculas/minúsculas para evitar problemas de login habituales
-        return usuarios.stream()
-                .filter(u -> u.getCorreoElectronico().equalsIgnoreCase(correo.trim()))
-                .findFirst();
+        lock.readLock().lock();
+        try {
+            return cacheUsuarios.values().stream()
+                    .filter(u -> u.getCorreoElectronico().equalsIgnoreCase(correo.trim()))
+                    .findFirst();
+        } finally {
+            lock.readLock().unlock();
+        }
     }
-
 }
