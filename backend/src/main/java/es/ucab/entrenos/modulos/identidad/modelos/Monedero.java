@@ -4,6 +4,7 @@ public class Monedero {
 
     private float creditosDisponibles;
     private float creditosRetenidos;
+    private float creditosPorLogros;
 
     public Monedero() {
     }
@@ -17,7 +18,12 @@ public class Monedero {
             this.creditosDisponibles += montoCreditos;
         }
     }
-
+    public void acreditarLogro(float montoCreditos){
+        if(montoCreditos > 0){
+            this.creditosDisponibles += montoCreditos;
+            this.creditosPorLogros += montoCreditos;
+        }
+    }
     public void descontar(float montoCreditos) {
         if (montoCreditos <= 0) {
             throw new IllegalArgumentException("El monto a descontar debe ser positivo.");
@@ -59,5 +65,8 @@ public class Monedero {
 
     public float getCreditosRetenidos() {
         return creditosRetenidos;
+    }
+    public float getCreditosPorLogros() {
+        return creditosPorLogros;
     }
 }
