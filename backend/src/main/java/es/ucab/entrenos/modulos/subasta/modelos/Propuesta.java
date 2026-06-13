@@ -1,6 +1,5 @@
 package es.ucab.entrenos.modulos.subasta.modelos;
 
-import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,51 +7,109 @@ import java.util.UUID;
 
 public class Propuesta {
 
-    private String id;
-    private String idSubasta; // Referencia por si la necesitamos en reportes futuros
-    private Usuario postor; // La persona que hace la oferta
+    private String idPropuesta;
+    private String idSubasta;
 
-    // Detalles del artículo que se está ofreciendo a cambio
-    private String nombreActivoOfrecido;
+    // Bajo acoplamiento. Solo guardamos el ID, no el objeto Usuario completo.
+    private String idPostor;
+
+    // HU5: Reemplazamos el activo único por una lista para permitir múltiples bienes con cantidades
+    private List<BienOfrecido> bienesOfrecidos;
+
     private String descripcion;
+    private EstadoPropuesta estadoPropuesta;
     private EstadoFisico estadoFisico;
     private List<String> imagenesUrls;
 
-    private LocalDateTime fechaPuja;
+    private LocalDateTime fechaPropuesta;
 
+    // Constructor vacío necesario para que Jackson pueda deserializar desde el JSON
     public Propuesta() {
-        this.fechaPuja = LocalDateTime.now();
+        this.fechaPropuesta = LocalDateTime.now();
         this.imagenesUrls = new ArrayList<>();
+        this.bienesOfrecidos = new ArrayList<>();
     }
 
-    public Propuesta(Usuario postor, String idSubasta, String nombreActivoOfrecido,
+    public Propuesta(String idPostor, String idSubasta, List<BienOfrecido> bienesOfrecidos,
                      String descripcion, EstadoFisico estadoFisico, List<String> imagenesUrls) {
 
-        if (postor == null) throw new IllegalArgumentException("La puja debe tener un postor.");
-        if (nombreActivoOfrecido == null || nombreActivoOfrecido.trim().isEmpty()) throw new IllegalArgumentException("Debes especificar el nombre del activo ofrecido.");
-        if (descripcion == null || descripcion.trim().isEmpty()) throw new IllegalArgumentException("La descripción del activo ofrecido es obligatoria.");
-        if (estadoFisico == null) throw new IllegalArgumentException("El estado físico es obligatorio.");
-        if (imagenesUrls == null || imagenesUrls.isEmpty()) throw new IllegalArgumentException("Debes incluir al menos una foto del activo ofrecido.");
+        if (idPostor == null || idPostor.trim().isEmpty())
+            throw new IllegalArgumentException("La propuesta debe tener un id de postor válido.");
+        if (idSubasta == null || idSubasta.trim().isEmpty())
+            throw new IllegalArgumentException("La propuesta debe estar referenciada a una subasta.");
+        if (bienesOfrecidos == null || bienesOfrecidos.isEmpty())
+            throw new IllegalArgumentException("Debes incluir al menos un bien ofrecido en tu propuesta.");
+        if (descripcion == null || descripcion.trim().isEmpty())
+            throw new IllegalArgumentException("La descripción de la propuesta es obligatoria.");
+        if (estadoFisico == null)
+            throw new IllegalArgumentException("El estado físico general es obligatorio.");
+        if (imagenesUrls == null || imagenesUrls.isEmpty())
+            throw new IllegalArgumentException("Debes incluir al menos una foto como evidencia visual.");
 
-        this.id = "PUJ-" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        // CAMBIO: El prefijo ahora es PROP- reflejando la terminología correcta
+        this.idPropuesta = "PROP-" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
         this.idSubasta = idSubasta;
-        this.postor = postor;
-        this.nombreActivoOfrecido = nombreActivoOfrecido;
+        this.idPostor = idPostor;
+        this.bienesOfrecidos = new ArrayList<>(bienesOfrecidos);
         this.descripcion = descripcion;
         this.estadoFisico = estadoFisico;
         this.imagenesUrls = new ArrayList<>(imagenesUrls);
-        this.fechaPuja = LocalDateTime.now();
+        this.fechaPropuesta = LocalDateTime.now();
+
+        // Inicializamos el estado por defecto
+        this.estadoPropuesta = EstadoPropuesta.EN_EVALUACION;
     }
 
+    // --- MÉTODOS DE COMPORTAMIENTO ---
 
+    public void marcarComoAceptada() {
+        this.estadoPropuesta = EstadoPropuesta.ACEPTADA;
+    }
 
-    // Getters
-    public String getId() { return id; }
+    public void marcarComoRechazada() {
+        this.estadoPropuesta = EstadoPropuesta.RECHAZADA;
+    }
+
+    // --- SETTERS PARA EDICIÓN (Requisito de la HU5) ---
+    // Permiten editar la propuesta mientras la subasta siga activa
+
+    public void setBienesOfrecidos(List<BienOfrecido> bienesOfrecidos) {
+        if (bienesOfrecidos == null || bienesOfrecidos.isEmpty()) {
+            throw new IllegalArgumentException("Debes ofrecer al menos un bien.");
+        }
+        this.bienesOfrecidos = new ArrayList<>(bienesOfrecidos);
+    }
+
+    public void setDescripcion(String descripcion) {
+        if (descripcion == null || descripcion.trim().isEmpty()) {
+            throw new IllegalArgumentException("La descripción es obligatoria.");
+        }
+        this.descripcion = descripcion;
+    }
+
+    public void setEstadoFisico(EstadoFisico estadoFisico) {
+        if (estadoFisico == null) {
+            throw new IllegalArgumentException("El estado físico es obligatorio.");
+        }
+        this.estadoFisico = estadoFisico;
+    }
+
+    public void setImagenesUrls(List<String> imagenesUrls) {
+        if (imagenesUrls == null || imagenesUrls.isEmpty()) {
+            throw new IllegalArgumentException("La evidencia visual es obligatoria.");
+        }
+        this.imagenesUrls = new ArrayList<>(imagenesUrls);
+    }
+
+    // --- GETTERS ---
+
+    public String getIdPropuesta() { return idPropuesta; }
     public String getIdSubasta() { return idSubasta; }
-    public Usuario getPostor() { return postor; }
-    public String getNombreActivoOfrecido() { return nombreActivoOfrecido; }
+    public String getIdPostor() { return idPostor; }
+    public List<BienOfrecido> getBienesOfrecidos() { return new ArrayList<>(bienesOfrecidos); }
     public String getDescripcion() { return descripcion; }
     public EstadoFisico getEstadoFisico() { return estadoFisico; }
     public List<String> getImagenesUrls() { return new ArrayList<>(imagenesUrls); }
-    public LocalDateTime getFechaPuja() { return fechaPuja; }
+    public LocalDateTime getFechaPropuesta() { return fechaPropuesta; }
+    public EstadoPropuesta getEstadoPropuesta() { return estadoPropuesta; }
 }

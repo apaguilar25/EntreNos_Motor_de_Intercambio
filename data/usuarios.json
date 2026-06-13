@@ -81,13 +81,50 @@
     "rol": "MIEMBRO_COMUNIDAD"
   },
   {
+    "id": "75908a5b-6887-48ac-a4fa-1588b1729414",
+    "nombre": "Carlos Fontanero",
+    "correoElectronico": "carlos8@alameda.com",
+    "telefono": "+584141234750",
+    "descripcionPersonal": "Hola, soy nuevo en la comunidad y estoy dispuesto a ayudar.",
+    "contrasenaHash": "$2a$10$8zYfz8obIqYqs6VbJwdbOOOrhn9whieAnxAeldqFlFuyJpiweXBt6",
+    "version": 1,
+    "monedero": {
+      "creditosDisponibles": 0.0,
+      "creditosRetenidos": 0.0
+    },
+    "catalogo": {
+      "completado": false,
+      "habilidadesOfrecidas": [
+        {
+          "idInstancia": "fd571b0b-42dc-4da7-b431-fde80c839b11",
+          "habilidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "precioCreditos": 150,
+          "descripcionServicio": "Pan canilla de excelente calidad"
+        }
+      ],
+      "necesidadesRegistradas": []
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "MIEMBRO_COMUNIDAD"
+  },
+  {
     "id": "d6ed5d51-8d8f-4c91-846f-c56c8a0f1d96",
     "nombre": "Super Administrador",
     "correoElectronico": "admin@alameda.com",
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
     "contrasenaHash": "$2a$10$r/Vvgcw3nWYy.TP7s9DksO/.T7MIs/ZZ8MkVt9yO.QmzQVd/EfvCy",
-    "version": 1,
+    "version": 2,
     "monedero": {
       "creditosDisponibles": 0.0,
       "creditosRetenidos": 0.0

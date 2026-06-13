@@ -1,0 +1,19 @@
+[
+  {
+    "id": "SUB-5E2D649C",
+    "idPropietario": "d6ed5d51-8d8f-4c91-846f-c56c8a0f1d96",
+    "nombreActivo": "Bicicleta Montañera",
+    "descripcion": "Bicicleta rin 29 en excelente estado, lista para usar.",
+    "estadoFisico": "USADO",
+    "imagenesUrls": [
+      "https://ejemplo.com/foto1.jpg"
+    ],
+    "fechaInicio": "2026-06-13T03:17:12.757524",
+    "fechaFinalizacionLicitacion": "2026-06-20T03:17:12.7565243",
+    "estado": "CANCELADA",
+    "propuestas": [],
+    "propietarioConfirmoEntrega": false,
+    "ganadorConfirmoEntrega": false,
+    "version": 1
+  }
+]

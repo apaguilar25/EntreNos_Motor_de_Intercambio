@@ -1,113 +1,134 @@
 package es.ucab.entrenos.modulos.subasta.servicios;
 
+import es.ucab.entrenos.modulos.identidad.modelos.EstadoCuenta;
 import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
 import es.ucab.entrenos.modulos.identidad.repositorios.IRepositorioUsuario;
+import es.ucab.entrenos.modulos.notificacion.modelos.TipoNotificacion;
+import es.ucab.entrenos.modulos.notificacion.servicios.ServicioNotificacion;
+import es.ucab.entrenos.modulos.subasta.dtos.AdjudicacionResponseDTO;
+import es.ucab.entrenos.modulos.subasta.dtos.ContactoUsuarioDTO;
 import es.ucab.entrenos.modulos.subasta.modelos.EstadoFisico;
 import es.ucab.entrenos.modulos.subasta.modelos.EstadoSubasta;
 import es.ucab.entrenos.modulos.subasta.modelos.Propuesta;
 import es.ucab.entrenos.modulos.subasta.modelos.Subasta;
-import es.ucab.entrenos.modulos.subasta.repositorios.*;
+import es.ucab.entrenos.modulos.subasta.repositorios.IRepositorioSubasta;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ServicioSubasta {
 
     private final IRepositorioSubasta repositorioSubasta;
     private final IRepositorioUsuario repositorioUsuario;
+    private final ServicioNotificacion servicioNotificacion;
 
-    public ServicioSubasta(IRepositorioSubasta repositorioSubasta, IRepositorioUsuario repositorioUsuario) {
+    public ServicioSubasta(IRepositorioSubasta repositorioSubasta, IRepositorioUsuario repositorioUsuario, ServicioNotificacion servicioNotificacion) {
         this.repositorioSubasta = repositorioSubasta;
         this.repositorioUsuario = repositorioUsuario;
+        this.servicioNotificacion = servicioNotificacion;
     }
 
-    // --- 1. MÉTODOS ACCIONADOS POR EL USUARIO ---
-
-    public Subasta publicarSubasta(Usuario propietario, String nombreActivo, String descripcion,
-                                   EstadoFisico estadoFisico, List<String> imagenes,
-                                   LocalDateTime fechaCierre) {
-
-        String nuevoId = "SUB-" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
-
-        // El constructor de Subasta validará las reglas de negocio (sanciones, fechas, etc.)
-        Subasta nuevaSubasta = new Subasta(nuevoId, propietario, nombreActivo, descripcion, estadoFisico, imagenes, fechaCierre);
-
-        repositorioSubasta.guardar(nuevaSubasta);
-        return nuevaSubasta;
-    }
-
-    public Propuesta enviarPuja(String idSubasta, Usuario postor, String nombreActivoOfrecido,
-                                String descripcion, EstadoFisico estadoFisico, List<String> imagenes) {
-
-        // 1. Buscamos la subasta en nuestro repositorio JSON
-        Subasta subasta = repositorioSubasta.buscarPorId(idSubasta)
-                .orElseThrow(() -> new IllegalArgumentException("❌ Error: No se encontró ninguna subasta con el ID proporcionado."));
-
-        // 2. Instanciamos la Propuesta (Su constructor validará que no falten datos ni fotos)
-        Propuesta nuevaPropuesta = new Propuesta(postor, idSubasta, nombreActivoOfrecido, descripcion, estadoFisico, imagenes);
-
-        // 3. Intentamos registrar la propuesta en la subasta.
-        // ¡Magia del DDD! La propia clase Subasta decidirá si la acepta o si lanza una excepción
-        // (por ejemplo, si la subasta está cerrada o si el usuario es el dueño).
-        subasta.registrarPropuesta(nuevaPropuesta);
-
-        // 4. Si la subasta aceptó la propuesta sin lanzar errores, guardamos la subasta actualizada en el JSON
-        repositorioSubasta.guardar(subasta);
-
-        return nuevaPropuesta;
-    }
-
-    // --- 2. MÉTODOS ACCIONADOS AUTOMÁTICAMENTE POR EL SISTEMA (CRON JOBS) ---
-
-    /**
-     * Tarea 1: Cierra las licitaciones cuando se alcanza la fecha límite.
-     * Se ejecuta automáticamente cada 5 minutos.
-     */
-    @Scheduled(fixedRate = 300000) // 300,000 milisegundos = 5 minutos
-    public void automatizarCierreDeLicitaciones() {
-        List<Subasta> subastasActivas = repositorioSubasta.listarTodas().stream()
-                .filter(s -> s.getEstado() == EstadoSubasta.ACTIVA)
-                .toList();
-
-        for (Subasta subasta : subastasActivas) {
-            if (LocalDateTime.now().isAfter(subasta.getFechaFinalizacionLicitacion())) {
-                // El tiempo expiró, cambiamos el estado
-                subasta.setEstado(EstadoSubasta.ESPERANDO_DECISION);
-                repositorioSubasta.guardar(subasta);
-                System.out.println("⏰ Sistema: La subasta " + subasta.getId() + " ha cerrado su fase de licitación.");
-            }
+    private void asegurarUsuarioHabilitado(String idUsuario) {
+        Usuario u = repositorioUsuario.buscarPorId(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+        if (u.getEstado() != EstadoCuenta.ACTIVO) {
+            throw new IllegalStateException("Tu cuenta no está activa. No puedes operar en subastas.");
         }
     }
 
-    /**
-     * Tarea 2: Sanciona a los usuarios que dejan vencer los 5 días de gracia para elegir un ganador.
-     * Se ejecuta automáticamente cada hora.
-     */
-    @Scheduled(fixedRate = 3600000) // 3,600,000 milisegundos = 1 hora
-    public void automatizarSancionesPorInactividad() {
-        List<Subasta> subastasEsperando = repositorioSubasta.listarTodas().stream()
-                .filter(s -> s.getEstado() == EstadoSubasta.ESPERANDO_DECISION)
+    public Subasta crearSubasta(String idPropietario, String nombreActivo, String descripcion, EstadoFisico estadoFisico, List<String> imagenesUrls, LocalDateTime fechaCierre) {
+        asegurarUsuarioHabilitado(idPropietario);
+        Subasta subasta = new Subasta(idPropietario, nombreActivo, descripcion, estadoFisico, imagenesUrls, fechaCierre);
+        repositorioSubasta.guardar(subasta);
+        return subasta;
+    }
+
+    public List<Subasta> listarSubastasActivas() {
+        return repositorioSubasta.listarTodas().stream()
+                .filter(s -> s.getEstado() == EstadoSubasta.ACTIVA)
+                .collect(Collectors.toList());
+    }
+
+    public AdjudicacionResponseDTO adjudicarGanador(String idPropietario, String idSubasta, String idPropuesta) {
+        Subasta subasta = repositorioSubasta.buscarPorId(idSubasta)
+                .orElseThrow(() -> new IllegalArgumentException("Subasta no encontrada."));
+
+        if (!subasta.getIdPropietario().equals(idPropietario)) {
+            throw new SecurityException("Solo el creador de la subasta puede elegir al ganador.");
+        }
+
+        subasta.adjudicarGanador(idPropuesta);
+        subasta.incrementarVersion();
+        repositorioSubasta.guardar(subasta);
+
+        Propuesta ganadora = subasta.getPropuestas().stream()
+                .filter(p -> p.getIdPropuesta().equals(idPropuesta)).findFirst().get();
+
+        servicioNotificacion.enviarNotificacion(ganadora.getIdPostor(), "¡Felicidades! Tu propuesta ha sido elegida como ganadora.", TipoNotificacion.SUBASTA_GANADA);
+
+        Usuario usuarioGanador = repositorioUsuario.buscarPorId(ganadora.getIdPostor())
+                .orElseThrow(() -> new IllegalStateException("El usuario ganador ya no existe."));
+
+        ContactoUsuarioDTO contacto = new ContactoUsuarioDTO(usuarioGanador.getNombre(), usuarioGanador.getCorreoElectronico(), usuarioGanador.getTelefono());
+
+        return new AdjudicacionResponseDTO("¡Subasta adjudicada! Comunícate con el ganador.", subasta, contacto);
+    }
+
+    public void cancelarSubastaManual(String idPropietario, String idSubasta) {
+        Subasta subasta = repositorioSubasta.buscarPorId(idSubasta).orElseThrow(() -> new IllegalArgumentException("Subasta no encontrada."));
+        if (!subasta.getIdPropietario().equals(idPropietario)) throw new SecurityException("Solo el creador puede cancelar la subasta.");
+
+        subasta.cancelarSubasta();
+        subasta.incrementarVersion();
+        repositorioSubasta.guardar(subasta);
+
+        for (Propuesta p : subasta.getPropuestas()) {
+            servicioNotificacion.enviarNotificacion(p.getIdPostor(), "La subasta en la que participabas ha sido cancelada.", TipoNotificacion.SUBASTA_CANCELADA);
+        }
+    }
+
+    // --- CRON JOBS ---
+    @Scheduled(fixedRate = 60000)
+    public void automatizarCierreDeLicitaciones() {
+        List<Subasta> subastasVencidas = repositorioSubasta.listarTodas().stream()
+                .filter(s -> s.getEstado() == EstadoSubasta.ACTIVA && LocalDateTime.now().isAfter(s.getFechaFinalizacionLicitacion()))
                 .toList();
 
-        for (Subasta subasta : subastasEsperando) {
-            // Usamos el método inteligente que creaste en el modelo
-            if (subasta.haExpiradoPlazoDeResolucion()) {
+        for (Subasta subasta : subastasVencidas) {
+            if (subasta.getPropuestas().isEmpty()) {
+                subasta.cancelarSubastaDesierta();
+            } else {
+                subasta.cerrarFaseLicitacion();
+                servicioNotificacion.enviarNotificacion(subasta.getIdPropietario(), "Tu subasta terminó. Tienes propuestas pendientes.", TipoNotificacion.SUBASTA_POR_REVISAR);
+            }
+            subasta.incrementarVersion();
+            repositorioSubasta.guardar(subasta);
+        }
+    }
 
-                // 1. Cancelamos la subasta
-                subasta.setEstado(EstadoSubasta.CERRADA_POR_INACTIVIDAD);
-                repositorioSubasta.guardar(subasta);
+    @Scheduled(fixedRate = 3600000)
+    public void sancionarPropietariosInactivos() {
+        List<Subasta> subastasAbandonadas = repositorioSubasta.listarTodas().stream()
+                .filter(s -> s.getEstado() == EstadoSubasta.ESPERANDO_DECISION && LocalDateTime.now().isAfter(s.getFechaFinalizacionLicitacion().plusDays(5)))
+                .toList();
 
-                // 2. Buscamos al propietario y le aplicamos la sanción (reutilizando métodos de Identidad)
-                Usuario propietarioInfractor = subasta.getPropietario();
-                propietarioInfractor.aplicarSancionPorInactividadSubasta();
-                repositorioUsuario.guardar(propietarioInfractor);
+        for (Subasta subasta : subastasAbandonadas) {
+            subasta.cancelarSubasta();
+            subasta.incrementarVersion();
+            repositorioSubasta.guardar(subasta);
 
-                System.out.println("🚨 Sistema: Subasta " + subasta.getId() + " cerrada por inactividad. Usuario "
-                        + propietarioInfractor.getCorreoElectronico() + " sancionado por 72 horas.");
+            Usuario propietario = repositorioUsuario.buscarPorId(subasta.getIdPropietario()).orElse(null);
+            if (propietario != null) {
+                propietario.aplicarSancionPorInactividadSubasta();
+                repositorioUsuario.guardar(propietario);
+                servicioNotificacion.enviarNotificacion(propietario.getId(), "Cuenta suspendida por abandonar subasta (5 días inactivo).", TipoNotificacion.SANCION_APLICADA);
+            }
+            for (Propuesta p : subasta.getPropuestas()) {
+                servicioNotificacion.enviarNotificacion(p.getIdPostor(), "Subasta cancelada por inactividad del dueño.", TipoNotificacion.SUBASTA_CANCELADA);
             }
         }
     }

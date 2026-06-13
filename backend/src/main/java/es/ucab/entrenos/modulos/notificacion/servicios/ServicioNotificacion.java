@@ -19,6 +19,16 @@ public class ServicioNotificacion {
         repositorioNotificacion.guardar(notificacion);
     }
 
+    /**
+     * SOBRECARGA PARA NOTIFICACIONES DEL SISTEMA:
+     * Este método se usa cuando el propio backend (Cron Jobs o Reglas de Negocio)
+     * necesita notificar a un usuario sin que haya un remitente humano.
+     */
+    public void enviarNotificacion(String idDestinatario, String mensaje, TipoNotificacion tipo) {
+        // Reutilizamos la lógica del método original, pero inyectamos "SISTEMA" como remitente
+        this.enviarNotificacion("SISTEMA", idDestinatario, mensaje, tipo);
+    }
+
     public List<Notificacion> obtenerNotificaciones(String idDestinatario) {
         return repositorioNotificacion.obtenerPorDestinatario(idDestinatario);
     }

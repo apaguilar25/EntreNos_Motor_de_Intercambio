@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IRepositorioSubasta {
-    void guardar(Subasta subasta);
-    Optional<Subasta> buscarPorId(String id);
     List<Subasta> listarTodas();
+    Optional<Subasta> buscarPorId(String idSubasta);
+
+    void guardar(Subasta subasta);
 }
