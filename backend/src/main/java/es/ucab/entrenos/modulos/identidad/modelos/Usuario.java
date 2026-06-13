@@ -79,7 +79,7 @@ public class Usuario {
 
     public void finalizarConfiguracionCatalogo(float capitalSemilla) {
         asegurarUsuarioActivo();
-        incrementarEstado();
+        incrementarVersion();
         this.catalogo.marcarComoCompletado();
         this.monedero.acreditar(capitalSemilla);
     }
@@ -87,38 +87,38 @@ public class Usuario {
     // Habilidad Ofrecida
     public void agregarHabilidadOfrecida(HabilidadOfrecida nuevaHabilidad) {
         asegurarUsuarioActivo(); // Si está bloqueado, explota aquí y protege el catálogo
-        incrementarEstado();
+        incrementarVersion();
         this.catalogo.agregarHabilidadOfrecida(nuevaHabilidad);
     }
 
     public void actualizarHabilidadOfrecida(String idInstancia, int nuevoPrecio, String nuevaDescripcion) {
         asegurarUsuarioActivo();
-        incrementarEstado();
+        incrementarVersion();
         this.catalogo.actualizarHabilidadOfrecida(idInstancia, nuevoPrecio, nuevaDescripcion);
     }
 
     public void eliminarHabilidadOfrecida(String idInstancia) {
         asegurarUsuarioActivo();
-        incrementarEstado();
+        incrementarVersion();
         this.catalogo.eliminarHabilidadOfrecida(idInstancia);
     }
 
     // Necesidad Registrada
     public void agregarNecesidad(NecesidadRegistrada nuevaNecesidad) {
         asegurarUsuarioActivo();
-        incrementarEstado();
+        incrementarVersion();
         this.catalogo.agregarNecesidad(nuevaNecesidad);
     }
 
     public void actualizarNecesidadRegistrada(String idInstancia, String nuevaDescripcion) {
         asegurarUsuarioActivo();
-        incrementarEstado();
+        incrementarVersion();
         this.catalogo.actualizarNecesidadRegistrada(idInstancia, nuevaDescripcion);
     }
 
     public void eliminarNecesidadRegistrada(String idInstancia) {
         asegurarUsuarioActivo();
-        incrementarEstado();
+        incrementarVersion();
         this.catalogo.eliminarNecesidadRegistrada(idInstancia);
     }
 
@@ -129,13 +129,13 @@ public class Usuario {
 
     public void pagarServicio(float montoCreditos) {
         asegurarUsuarioActivo();
-        incrementarEstado();
+        incrementarVersion();
         this.monedero.descontar(montoCreditos);
     }
 
     public void recibirCreditos(float montoCreditos) {
         asegurarUsuarioActivo();
-        incrementarEstado();
+        incrementarVersion();
         this.monedero.acreditar(montoCreditos);
     }
 
@@ -146,7 +146,7 @@ public class Usuario {
 
     public void registrarIntentoFallido() {
         if (this.estado != EstadoCuenta.ACTIVO) return;
-        incrementarEstado();
+        incrementarVersion();
 
         long ahora = System.currentTimeMillis();
 
@@ -164,7 +164,7 @@ public class Usuario {
     }
 
     public void registrarInicioSesionExitoso() {
-        incrementarEstado();
+//        incrementarVersion();
         this.intentosFallidos = 0;
         this.primerIntentoFallidoMillis = 0;
     }
@@ -172,7 +172,7 @@ public class Usuario {
     // Refactorizado: Aplica la sanción usando el Enum y la misma variable de tiempo
     public void aplicarSancionPorInactividadSubasta() {
         if (this.estado == EstadoCuenta.SUSPENDIDO_FRAUDE) return; // Fraude pesa más
-        incrementarEstado();
+        incrementarVersion();
 
         this.estado = EstadoCuenta.SUSPENDIDO_SUBASTA;
         this.tiempoDesbloqueoMillis = System.currentTimeMillis() + (72L * 60 * 60 * 1000);
@@ -181,7 +181,7 @@ public class Usuario {
     // Procesa la sanción del administrador. Al llegar a 2 se suspende permanentemente.
     public void registrarReporteFraudeValidado() {
         if (this.estado == EstadoCuenta.SUSPENDIDO_FRAUDE) return;
-        incrementarEstado();
+        incrementarVersion();
 
         this.reportesFraudeValidados++;
         if (this.reportesFraudeValidados >= 2) {
@@ -189,7 +189,7 @@ public class Usuario {
         }
     }
 
-    public void incrementarEstado(){
+    public void incrementarVersion(){
         this.version++;
     }
 
@@ -230,7 +230,7 @@ public class Usuario {
         return getEstado() == EstadoCuenta.SUSPENDIDO_SUBASTA;
     }
     public void agregarCalificacion(int calificacion) {
-        incrementarEstado();
+        incrementarVersion();
         if (calificacion < 1 || calificacion > 5) {
             throw new IllegalArgumentException("La calificación debe estar entre 1 y 5.");
         }
@@ -264,12 +264,12 @@ public class Usuario {
     // Setters
     public void setUrlFotoPerfil(String urlFotoPerfil) {
         asegurarUsuarioActivo();
-        incrementarEstado();
+        incrementarVersion();
         this.urlFotoPerfil = urlFotoPerfil;
     }
     public void setPrimerIntentoFallidoMillis(long primerIntentoFallidoMillis) { this.primerIntentoFallidoMillis = primerIntentoFallidoMillis; }
     public void setRol(RolUsuario rol) {
-        incrementarEstado();
+        incrementarVersion();
         this.rol = rol;
     }
 

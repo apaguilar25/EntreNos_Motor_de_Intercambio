@@ -19,11 +19,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @Repository
 public class RepositorioUsuario implements IRepositorioUsuario {
 
-    // Ruta del archivo local en la raíz del proyecto o una carpeta de datos
     private static final String RUTA_ARCHIVO = "data/usuarios.json";
     private final Gson gson;
 
-    // --- MAGIA ARQUITECTÓNICA: Caché y Candados Concurrentes ---
     private final ConcurrentHashMap<String, Usuario> cacheUsuarios = new ConcurrentHashMap<>();
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -32,10 +30,6 @@ public class RepositorioUsuario implements IRepositorioUsuario {
         inicializarArchivoYCache();
     }
 
-    /**
-     * Asegura que el archivo JSON exista. Si no existe, crea al Super Admin.
-     * Luego, carga todo el archivo a la Memoria RAM (Caché) para búsquedas ultrarrápidas.
-     */
     private void inicializarArchivoYCache() {
         try {
             File archivo = new File(RUTA_ARCHIVO);
@@ -45,7 +39,6 @@ public class RepositorioUsuario implements IRepositorioUsuario {
             if (!archivo.exists()) {
                 archivo.createNewFile();
 
-                // INYECCIÓN DEL SÚPER ADMINISTRADOR
                 ArrayList<Usuario> seed = new ArrayList<>();
                 Usuario admin = new Usuario(
                         java.util.UUID.randomUUID().toString(),
@@ -60,13 +53,11 @@ public class RepositorioUsuario implements IRepositorioUsuario {
                 admin.setVersion(0);
                 seed.add(admin);
 
-                // Guardamos directamente en el disco duro porque el caché aún no se ha levantado
                 try (Writer writer = new OutputStreamWriter(new FileOutputStream(RUTA_ARCHIVO), StandardCharsets.UTF_8)) {
                     this.gson.toJson(seed, writer);
                 }
             }
 
-            // CARGA A LA CACHÉ (Indexación en Memoria)
             cargarCacheDesdeArchivo();
 
         } catch (IOException e) {
@@ -74,9 +65,6 @@ public class RepositorioUsuario implements IRepositorioUsuario {
         }
     }
 
-    /**
-     * Lee el disco duro UNA SOLA VEZ y vuelca los usuarios en el ConcurrentHashMap.
-     */
     private void cargarCacheDesdeArchivo() {
         try (Reader reader = new InputStreamReader(new FileInputStream(RUTA_ARCHIVO), StandardCharsets.UTF_8)) {
             Type tipoLista = new TypeToken<ArrayList<Usuario>>() {}.getType();
@@ -93,35 +81,42 @@ public class RepositorioUsuario implements IRepositorioUsuario {
     }
 
     /**
-     * Lista todos los usuarios.
-     * RÁPIDO: Lee directamente de la memoria RAM, no del disco.
+     * MÁS MAGIA ARQUITECTÓNICA: Clonación profunda.
+     * Simula el comportamiento de una Base de Datos real devolviendo copias de los registros,
+     * evitando que las referencias en RAM sean mutadas accidentalmente fuera de los candados.
      */
+    private Usuario clonar(Usuario u) {
+        if (u == null) return null;
+        // Convertimos el objeto a JSON y lo volvemos a leer para crear una instancia totalmente nueva
+        return this.gson.fromJson(this.gson.toJson(u), Usuario.class);
+    }
+
     @Override
     public ArrayList<Usuario> listarUsuarios() {
         lock.readLock().lock();
         try {
-            return new ArrayList<>(cacheUsuarios.values());
+            ArrayList<Usuario> copiaSegura = new ArrayList<>();
+            for (Usuario u : cacheUsuarios.values()) {
+                copiaSegura.add(clonar(u)); // Devolvemos clones
+            }
+            return copiaSegura;
         } finally {
             lock.readLock().unlock();
         }
     }
 
-    /**
-     * Guarda o actualiza un usuario aplicando Bloqueo Optimista, Exclusión Mutua y Prevención Check-Then-Act.
-     */
     @Override
     public void guardar(Usuario usuarioGuardar) {
         if (usuarioGuardar == null || usuarioGuardar.getId() == null || usuarioGuardar.getId().trim().isEmpty()) {
             throw new IllegalArgumentException("Usuario inválido para guardar.");
         }
 
-        // Bloqueo de escritura: Nadie más puede leer ni escribir mientras actualizamos la caché y el disco
         lock.writeLock().lock();
         try {
             Usuario uBD = cacheUsuarios.get(usuarioGuardar.getId());
 
             if (uBD != null) {
-                // LÓGICA DE BLOQUEO OPTIMISTA: Verificamos contra la memoria (O(1) de complejidad)
+                // LÓGICA DE BLOQUEO OPTIMISTA
                 if (usuarioGuardar.getVersion() <= uBD.getVersion()) {
                     throw new ConcurrenciaException(
                             "Error de concurrencia: El usuario " + usuarioGuardar.getCorreoElectronico() +
@@ -129,12 +124,10 @@ public class RepositorioUsuario implements IRepositorioUsuario {
                     );
                 }
             } else {
-                // 1. Si es un usuario nuevo (Registro), forzamos su versión inicial a 0 por seguridad
                 if (usuarioGuardar.getVersion() > 0) {
                     throw new IllegalStateException("Un usuario nuevo no puede nacer con una versión superior a 0.");
                 }
 
-                // 2. LÓGICA CHECK-THEN-ACT: Validamos unicidad DENTRO del candado de escritura
                 boolean correoYaTomado = cacheUsuarios.values().stream()
                         .anyMatch(u -> u.getCorreoElectronico().equalsIgnoreCase(usuarioGuardar.getCorreoElectronico()));
 
@@ -149,41 +142,30 @@ public class RepositorioUsuario implements IRepositorioUsuario {
                 }
             }
 
-            // 3. Actualizamos la memoria ultrarrápida
-            cacheUsuarios.put(usuarioGuardar.getId(), usuarioGuardar);
-
-            // 4. Volcamos la memoria completa al disco duro de forma segura
+            // Guardamos un CLON en el caché para proteger la referencia original de futuras modificaciones externas
+            cacheUsuarios.put(usuarioGuardar.getId(), clonar(usuarioGuardar));
             escribirArchivoFisico();
 
         } finally {
-            // SIEMPRE liberar el candado, incluso si ocurre una excepción
             lock.writeLock().unlock();
         }
     }
 
-    /**
-     * Persistencia física: Convierte el mapa de caché a JSON y lo guarda.
-     */
     private void escribirArchivoFisico() {
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(RUTA_ARCHIVO), StandardCharsets.UTF_8)) {
-            // Guardamos los valores del HashMap como una lista JSON
             this.gson.toJson(cacheUsuarios.values(), writer);
         } catch (IOException e) {
             throw new RuntimeException("Error crítico de infraestructura: No se pudo escribir en el JSON local.", e);
         }
     }
 
-    /**
-     * Búsquedas Ultrarrápidas: Complejidad O(1) leyendo directo de RAM.
-     * Múltiples hilos pueden hacer esto al mismo tiempo gracias al readLock.
-     */
     @Override
     public Optional<Usuario> buscarPorId(String id) {
         if (id == null || id.trim().isEmpty()) return Optional.empty();
 
         lock.readLock().lock();
         try {
-            return Optional.ofNullable(cacheUsuarios.get(id));
+            return Optional.ofNullable(clonar(cacheUsuarios.get(id)));
         } finally {
             lock.readLock().unlock();
         }
@@ -196,6 +178,7 @@ public class RepositorioUsuario implements IRepositorioUsuario {
         try {
             return cacheUsuarios.values().stream()
                     .filter(u -> u.getTelefono().equals(telefono.trim()))
+                    .map(this::clonar) // Entregamos un clon
                     .findFirst();
         } finally {
             lock.readLock().unlock();
@@ -210,6 +193,7 @@ public class RepositorioUsuario implements IRepositorioUsuario {
         try {
             return cacheUsuarios.values().stream()
                     .filter(u -> u.getCorreoElectronico().equalsIgnoreCase(correo.trim()))
+                    .map(this::clonar) // Entregamos un clon
                     .findFirst();
         } finally {
             lock.readLock().unlock();

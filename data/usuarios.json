@@ -1,104 +1,110 @@
 [
   {
-    "id": "75073ed0-c999-42e2-a295-9df8e54c54e9",
-    "nombre": "Carlos Fontanero",
-    "correoElectronico": "carlos@comunidad.com",
-    "telefono": "+584141234567",
-    "descripcionPersonal": "Hola, soy nuevo en la comunidad y estoy dispuesto a ayudar.",
-    "catalogoCompletado": true,
-    "contrasenaHash": "$2a$10$tEnLdJnVxg54P2.u9C5gn.DSDGymM0YasAoZJZG.O7HiVq7EJffnO",
-    "monedero": {
-      "creditosDisponibles": 50.0
-    },
-    "habilidadesOfrecidas": [
-      {
-        "idInstancia": "bbf4a442-cae2-427d-91b4-6e8f823f7323",
-        "habilidadBase": {
-          "id": "HAB-001",
-          "categoria": "Plomería"
-        },
-        "precioCreditos": 80,
-        "descripcionServicio": "Nueva y renovada descripcion compleja"
-      },
-      {
-        "idInstancia": "f9a20960-2a3b-43fc-88c7-f57c1f889b6f",
-        "habilidadBase": {
-          "id": "HAB-002",
-          "categoria": "Electricidad"
-        },
-        "precioCreditos": 80,
-        "descripcionServicio": "Destapar cañerías simples."
-      }
-    ],
-    "necesidadesRegistradas": [
-      {
-        "idInstancia": "d778786b-5dbb-4bf1-9fde-0dc0b975cf87",
-        "necesidadBase": {
-          "id": "HAB-005",
-          "categoria": "Soporte Técnico / Computación"
-        },
-        "descripcionCondiciones": "Necesito alguien que repare mi computadora portátil, no enciende."
-      }
-    ],
-    "intentosFallidos": 0,
-    "cuentaBloqueada": false,
-    "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
-    "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 0.0,
-    "cantidadCalificaciones": 0,
-    "cuentaSuspendida": false,
-    "finSuspensionMillis": 0
-  },
-  {
-    "id": "0fba0f9f-df67-4df4-8233-206f6bebe7bf",
+    "id": "6ae72435-d88f-433e-9617-6b26d547d913",
     "nombre": "Jose Panadero",
-    "correoElectronico": "jose@comunidad.com",
+    "correoElectronico": "jose@alameda.com",
     "telefono": "+584249876543",
     "descripcionPersonal": "Soy un panadero experto con mas de 15 años de experiencia en el negocio.",
-    "catalogoCompletado": false,
-    "contrasenaHash": "$2a$10$Yua8jBwAktPPbP/JudNsJeeCVWSPtf3P9QjmnXgqlZbx1jQJ478A.",
+    "contrasenaHash": "$2a$10$43Hty/bB9TUWjYtoXiibKeKHF4ItWYj5mo0kIXPv6Ekzi92rTKGw.",
+    "version": 0,
     "monedero": {
-      "creditosDisponibles": 0.0
+      "creditosDisponibles": 0.0,
+      "creditosRetenidos": 0.0
     },
-    "habilidadesOfrecidas": [
-      {
-        "idInstancia": "4a1ea3fe-91f8-47dd-b28e-4851775cf62c",
-        "habilidadBase": {
-          "id": "HAB-001",
-          "categoria": "Plomería"
-        },
-        "precioCreditos": 50,
-        "descripcionServicio": "Reparacion de tuberias y destape de cañerias"
-      },
-      {
-        "idInstancia": "b50d9b60-dc43-4fc5-908b-968c013786b9",
-        "habilidadBase": {
-          "id": "HAB-005",
-          "categoria": "Soporte Técnico / Computación"
-        },
-        "precioCreditos": 150,
-        "descripcionServicio": "Panes acemitas de excelente calidad"
-      }
-    ],
-    "necesidadesRegistradas": [
-      {
-        "idInstancia": "624e1165-5aa6-4102-acf3-b83ab0c40501",
-        "necesidadBase": {
-          "id": "HAB-002",
-          "categoria": "Electricidad"
-        },
-        "descripcionCondiciones": "Busco profesor particular para nivelación de cálculo integral los fines de semana."
-      }
-    ],
+    "catalogo": {
+      "completado": false,
+      "habilidadesOfrecidas": [],
+      "necesidadesRegistradas": []
+    },
+    "estado": "ACTIVO",
     "intentosFallidos": 0,
-    "cuentaBloqueada": false,
     "tiempoDesbloqueoMillis": 0,
     "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
     "promedioCalificacion": 0.0,
     "cantidadCalificaciones": 0,
-    "cuentaSuspendida": false,
-    "finSuspensionMillis": 0
+    "rol": "MIEMBRO_COMUNIDAD"
+  },
+  {
+    "id": "8dde084f-a5cc-4bec-a63d-7cff8590595d",
+    "nombre": "Carlos Fontanero",
+    "correoElectronico": "carlos3222@alameda.com",
+    "telefono": "+584141234757",
+    "descripcionPersonal": "Hola, soy nuevo en la comunidad y estoy dispuesto a ayudar.",
+    "contrasenaHash": "$2a$10$PRFXfNvHj5LV7mZFcAk/4e0F.4j47Aqpr9.gQofs6WJiylS0Zetkq",
+    "version": 7,
+    "monedero": {
+      "creditosDisponibles": 50.0,
+      "creditosRetenidos": 0.0
+    },
+    "catalogo": {
+      "completado": true,
+      "habilidadesOfrecidas": [
+        {
+          "idInstancia": "1922fbc9-78f5-4048-a455-76a12f54aea7",
+          "habilidadBase": {
+            "id": "HAB-001",
+            "categoria": "Plomería"
+          },
+          "precioCreditos": 150,
+          "descripcionServicio": "Reparación de tuberías y filtraciones en baños."
+        }
+      ],
+      "necesidadesRegistradas": [
+        {
+          "idInstancia": "08a1652c-7ced-473a-9587-4cec47c38c51",
+          "necesidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "descripcionCondiciones": "Necesito alguien que repare mi computadora portátil, no enciende."
+        },
+        {
+          "idInstancia": "06da7860-c344-41d2-a587-6426a61e8744",
+          "necesidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "descripcionCondiciones": "Busco profesor particular para nivelación de cálculo integral los fines de semana."
+        }
+      ]
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "MIEMBRO_COMUNIDAD"
+  },
+  {
+    "id": "d6ed5d51-8d8f-4c91-846f-c56c8a0f1d96",
+    "nombre": "Super Administrador",
+    "correoElectronico": "admin@alameda.com",
+    "telefono": "0000000000",
+    "descripcionPersonal": "Administrador general de la comunidad",
+    "contrasenaHash": "$2a$10$r/Vvgcw3nWYy.TP7s9DksO/.T7MIs/ZZ8MkVt9yO.QmzQVd/EfvCy",
+    "version": 1,
+    "monedero": {
+      "creditosDisponibles": 0.0,
+      "creditosRetenidos": 0.0
+    },
+    "catalogo": {
+      "completado": false,
+      "habilidadesOfrecidas": [],
+      "necesidadesRegistradas": []
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "ADMINISTRADOR"
   }
 ]

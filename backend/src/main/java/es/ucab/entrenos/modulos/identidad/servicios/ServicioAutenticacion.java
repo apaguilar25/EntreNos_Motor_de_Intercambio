@@ -56,7 +56,9 @@ public class ServicioAutenticacion {
                 if (encriptador.matches(contrasenaPlana, usuario.getContrasenaHash())) {
                     // ÉXITO
                     usuario.registrarInicioSesionExitoso();
+                    usuario.incrementarVersion();
                     repositorioUsuario.guardar(usuario);
+
                     return usuario;
                 } else {
                     // FALLO
