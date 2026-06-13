@@ -194,7 +194,7 @@ public class ServicioPublicacion {
             Usuario demandante = servicioUsuario.buscarPorId(solicitanteId)
                     .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
             demandante.getMonedero().retener(pub.getPrecioCreditos());
-            demandante.incrementarEstado();
+            demandante.incrementarVersion();
             servicioUsuario.guardar(demandante);
             Transaccion tx = new Transaccion(
                 pub.getIdPublicacion(),
@@ -285,9 +285,9 @@ public class ServicioPublicacion {
         Usuario demandante = servicioUsuario.buscarPorId(t.getIdDemandante())
                 .orElseThrow(() -> new IllegalArgumentException("Demandante no encontrado."));
         demandante.getMonedero().liberarRetencion();
-        demandante.incrementarEstado();
+        demandante.incrementarVersion();
         ofertante.getMonedero().acreditar(t.getCreditosRetenidos());
-        ofertante.incrementarEstado();
+        ofertante.incrementarVersion();
         servicioUsuario.guardar(demandante);
         servicioUsuario.guardar(ofertante);
         servicioNotificacion.enviarNotificacion("SISTEMA", t.getIdOfertante(),

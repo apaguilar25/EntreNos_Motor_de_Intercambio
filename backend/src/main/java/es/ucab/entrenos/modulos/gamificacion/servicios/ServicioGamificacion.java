@@ -110,7 +110,7 @@ public class ServicioGamificacion {
         Usuario usuario = servicioUsuario.buscarPorId(idUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + idUsuario));
         usuario.getMonedero().acreditarLogro(logro.getBonoCreditos());
-        usuario.incrementarEstado();
+        usuario.incrementarVersion();
         servicioUsuario.guardar(usuario);
 
         servicioNotificacion.enviarNotificacion("SISTEMA", idUsuario,
