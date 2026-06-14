@@ -1,5 +1,6 @@
 package es.ucab.entrenos.modulos.publicacion.controladores;
 
+import es.ucab.entrenos.modulos.publicacion.dtos.ConfirmacionTransaccionResponseDTO;
 import es.ucab.entrenos.modulos.publicacion.dto.RecomendacionDTO;
 import es.ucab.entrenos.modulos.publicacion.dto.RespuestaSolicitudDTO;
 import es.ucab.entrenos.modulos.publicacion.dto.SolicitudRequestDTO;
@@ -84,6 +85,17 @@ public class ControladorPublicacion {
                 servicioPublicacion.obtenerRecomendadas(idUsuario));
     }
 
+    @PostMapping("/recomendadas/{idUsuario}/adoptar/{idPublicacion}")
+    public ResponseEntity<?> adoptar(@PathVariable String idUsuario,
+                                     @PathVariable String idPublicacion) {
+        try {
+            List<RecomendacionDTO> actualizadas = servicioPublicacion.adoptarRecomendacion(idUsuario, idPublicacion);
+            return ResponseEntity.ok(actualizadas);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     // --- HU3: Calificaciones de una publicación ---
     @GetMapping("/{id}/calificaciones")
     public ResponseEntity<List<Transaccion>> calificaciones(
@@ -109,25 +121,25 @@ public class ControladorPublicacion {
         return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
     }
     @PostMapping("/transacciones/{id}/confirmar-ofertante")
-    public ResponseEntity<Transaccion> confirmarOfertante(@PathVariable String id) {
+    public ResponseEntity<?> confirmarOfertante(@PathVariable String id) {
         try {
-            Transaccion t = servicioPublicacion.confirmarOfertante(id);
-            return ResponseEntity.ok(t);
+            ConfirmacionTransaccionResponseDTO respuesta = servicioPublicacion.confirmarOfertante(id);
+            return ResponseEntity.ok(respuesta);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
     @PostMapping("/transacciones/{id}/confirmar-demandante")
-    public ResponseEntity<Transaccion> confirmarDemandante(@PathVariable String id) {
+    public ResponseEntity<?> confirmarDemandante(@PathVariable String id) {
         try {
-            Transaccion t = servicioPublicacion.confirmarDemandante(id);
-            return ResponseEntity.ok(t);
+            ConfirmacionTransaccionResponseDTO respuesta = servicioPublicacion.confirmarDemandante(id);
+            return ResponseEntity.ok(respuesta);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }
