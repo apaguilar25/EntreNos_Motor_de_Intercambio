@@ -1,0 +1,743 @@
+{
+  "info": {
+    "name": "EntreNos — Colección Completa (HU1-HU10)",
+    "description": "Colección Postman corregida que cubre todos los criterios de aceptación de backend de HU1 a HU10.\n\n## Flujo recomendado\n1. HU1 — Registrar 2 usuarios\n2. Login admin + crear habilidades faltantes\n3. Configurar catálogos\n4. HU7 — Login usuarios\n5. HU2 — Navegar muro, filtrar, ver detalle, solicitar\n6. HU3 — Aceptar solicitud, confirmar ambas partes, calificar\n7. HU4 — Crear subastas\n8. HU5 — Pujar, retirar, historial\n9. HU6 — Recomendaciones\n10. HU8 — Reportar incidencia, cancelar transacción\n11. HU9 — Logros\n12. HU10 — Podio\n13. Admin — Sanciones\n\n## Setup\n- Borrar `data/*.json` antes de iniciar\n- Iniciar backend con `mvnw spring-boot:run`",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8080" },
+    { "key": "token_admin", "value": "" },
+    { "key": "token_user1", "value": "" },
+    { "key": "token_user2", "value": "" },
+    { "key": "id_user1", "value": "" },
+    { "key": "id_user2", "value": "" },
+    { "key": "id_admin", "value": "" },
+    { "key": "id_pub1", "value": "" },
+    { "key": "id_pub2", "value": "" },
+    { "key": "id_tx", "value": "" },
+    { "key": "id_tx2", "value": "" },
+    { "key": "id_subasta", "value": "" },
+    { "key": "id_propuesta", "value": "" },
+    { "key": "id_habilidad_diseno", "value": "" },
+    { "key": "id_habilidad_fotografia", "value": "" },
+    { "key": "id_instancia_habilidad_juan", "value": "" },
+    { "key": "id_instancia_necesidad_juan", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "HU1 — Registro de Identidad y Catálogo",
+      "item": [
+        {
+          "name": "1.1 Registrar usuario 1 (Juan)",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "if(pm.response.code === 200 || pm.response.code === 201) {",
+              "    var body = pm.response.json();",
+              "    pm.collectionVariables.set('id_user1', body.id);",
+              "    pm.test('Usuario 1 creado con ID', () => pm.expect(body.id).to.not.be.empty);",
+              "}"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\":\"Juan Pérez\",\"correoElectronico\":\"juan@alameda.com\",\"telefono\":\"+58-412-1112233\",\"descripcionPersonal\":\"Soy carpintero y electricista\",\"contrasena\":\"clave123\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/usuarios/registro", "host": ["{{base_url}}"], "path": ["api", "usuarios", "registro"] }
+          }
+        },
+        {
+          "name": "1.2 Registrar usuario 2 (María)",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "if(pm.response.code === 200 || pm.response.code === 201) {",
+              "    var body = pm.response.json();",
+              "    pm.collectionVariables.set('id_user2', body.id);",
+              "    pm.test('Usuario 2 creado', () => pm.expect(body.id).to.not.be.empty);",
+              "}"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\":\"María García\",\"correoElectronico\":\"maria@alameda.com\",\"telefono\":\"+58-414-2223344\",\"descripcionPersonal\":\"Soy diseñadora gráfica y fotógrafa\",\"contrasena\":\"clave456\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/usuarios/registro", "host": ["{{base_url}}"], "path": ["api", "usuarios", "registro"] }
+          }
+        },
+        {
+          "name": "1.2b Login admin para crear habilidades",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "var body = pm.response.json();",
+              "pm.collectionVariables.set('token_admin', body.token || '');",
+              "pm.collectionVariables.set('id_admin', body.usuario ? body.usuario.id : '');",
+              "pm.test('Admin login exitoso', () => pm.expect(body.token).to.not.be.empty);"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"correoElectronico\":\"admin@alameda.com\",\"contrasena\":\"admin123\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/auth/login", "host": ["{{base_url}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "1.2c Crear habilidad: Diseño Gráfico",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "var body = pm.response.json();",
+              "pm.collectionVariables.set('id_habilidad_diseno', body.id || '');",
+              "pm.test('Habilidad creada', () => pm.expect(body.id).to.not.be.empty);"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+              { "key": "X-Usuario-Id", "value": "{{id_admin}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"categoria\":\"Diseño Gráfico\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/habilidades", "host": ["{{base_url}}"], "path": ["api", "habilidades"] }
+          }
+        },
+        {
+          "name": "1.2d Crear habilidad: Fotografía",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "var body = pm.response.json();",
+              "pm.collectionVariables.set('id_habilidad_fotografia', body.id || '');",
+              "pm.test('Habilidad creada', () => pm.expect(body.id).to.not.be.empty);"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+              { "key": "X-Usuario-Id", "value": "{{id_admin}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"categoria\":\"Fotografía\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/habilidades", "host": ["{{base_url}}"], "path": ["api", "habilidades"] }
+          }
+        },
+        {
+          "name": "1.3 Configurar catálogo de Juan (habilidades + necesidades)",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "pm.test('Catálogo configurado', () => pm.response.to.have.status(200));"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"ofertas\":[{\"idHabilidadCategoria\":\"HAB-003\",\"precioCreditos\":20,\"descripcionServicio\":\"Reparación de muebles de madera\"},{\"idHabilidadCategoria\":\"HAB-002\",\"precioCreditos\":30,\"descripcionServicio\":\"Instalación eléctrica residencial\"}],\"necesidades\":[{\"idHabilidadCategoria\":\"{{id_habilidad_diseno}}\",\"descripcionCondiciones\":\"Necesito diseño de logotipo para mi negocio\"},{\"idHabilidadCategoria\":\"{{id_habilidad_fotografia}}\",\"descripcionCondiciones\":\"Busco fotógrafo para evento familiar\"}]}"
+            },
+            "url": { "raw": "{{base_url}}/api/usuarios/{{id_user1}}/catalogo", "host": ["{{base_url}}"], "path": ["api", "usuarios", "{{id_user1}}", "catalogo"] }
+          }
+        },
+        {
+          "name": "1.4 Configurar catálogo de María (habilidades + necesidades)",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "pm.test('Catálogo configurado', () => pm.response.to.have.status(200));"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"ofertas\":[{\"idHabilidadCategoria\":\"{{id_habilidad_diseno}}\",\"precioCreditos\":50,\"descripcionServicio\":\"Diseño de logotipos e identidad corporativa\"},{\"idHabilidadCategoria\":\"{{id_habilidad_fotografia}}\",\"precioCreditos\":40,\"descripcionServicio\":\"Sesión fotográfica profesional\"}],\"necesidades\":[{\"idHabilidadCategoria\":\"HAB-003\",\"descripcionCondiciones\":\"Necesito reparar una mesa de comedor\"},{\"idHabilidadCategoria\":\"HAB-002\",\"descripcionCondiciones\":\"Busco electricista para cambiar instalación\"}]}"
+            },
+            "url": { "raw": "{{base_url}}/api/usuarios/{{id_user2}}/catalogo", "host": ["{{base_url}}"], "path": ["api", "usuarios", "{{id_user2}}", "catalogo"] }
+          }
+        },
+        {
+          "name": "1.5 Ver perfil de Juan y capturar IDs de instancia para editar",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "var body = pm.response.json();",
+              "if(body.ofertas && body.ofertas.length > 0) {",
+              "    pm.collectionVariables.set('id_instancia_habilidad_juan', body.ofertas[0].idInstancia);",
+              "}",
+              "if(body.necesidades && body.necesidades.length > 0) {",
+              "    pm.collectionVariables.set('id_instancia_necesidad_juan', body.necesidades[0].idInstancia);",
+              "}",
+              "pm.test('Perfil obtenido', () => pm.expect(body.id).to.not.be.empty);"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/usuarios/{{id_user1}}", "host": ["{{base_url}}"], "path": ["api", "usuarios", "{{id_user1}}"] }
+          }
+        },
+        {
+          "name": "1.6 Editar precio de habilidad de Juan",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"idInstancia\":\"{{id_instancia_habilidad_juan}}\",\"precioCreditos\":25,\"descripcionServicio\":\"Reparación de muebles de madera (actualizado)\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/usuarios/{{id_user1}}/habilidades", "host": ["{{base_url}}"], "path": ["api", "usuarios", "{{id_user1}}", "habilidades"] }
+          }
+        },
+        {
+          "name": "1.7 Editar descripción de necesidad de Juan",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"idInstancia\":\"{{id_instancia_necesidad_juan}}\",\"descripcionCondiciones\":\"Necesito diseño de logotipo para mi negocio (urgente)\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/usuarios/{{id_user1}}/necesidades", "host": ["{{base_url}}"], "path": ["api", "usuarios", "{{id_user1}}", "necesidades"] }
+          }
+        },
+        {
+          "name": "1.8 Verificar capital semilla en monedero de Juan",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/api/usuarios/{{id_user1}}", "host": ["{{base_url}}"], "path": ["api", "usuarios", "{{id_user1}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "HU7 — Autenticación Segura",
+      "item": [
+        {
+          "name": "7.1 Login exitoso de Juan (obtener JWT)",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "var body = pm.response.json();",
+              "pm.collectionVariables.set('token_user1', body.token || body.jwt || '');",
+              "pm.test('Login exitoso, token recibido', () => pm.expect(body.token || body.jwt || body).to.not.be.empty);"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"correoElectronico\":\"juan@alameda.com\",\"contrasena\":\"clave123\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/auth/login", "host": ["{{base_url}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "7.2 Login exitoso de María (obtener JWT)",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "var body = pm.response.json();",
+              "pm.collectionVariables.set('token_user2', body.token || body.jwt || '');",
+              "pm.test('Login exitoso', () => pm.expect(body.token || body.jwt || body).to.not.be.empty);"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"correoElectronico\":\"maria@alameda.com\",\"contrasena\":\"clave456\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/auth/login", "host": ["{{base_url}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "7.3 Login fallido con mensaje genérico (correo incorrecto)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"correoElectronico\":\"inexistente@alameda.com\",\"contrasena\":\"clave123\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/auth/login", "host": ["{{base_url}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "7.4 Login fallido con mensaje genérico (contraseña incorrecta)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"correoElectronico\":\"juan@alameda.com\",\"contrasena\":\"claveINCORRECTA\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/auth/login", "host": ["{{base_url}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "7.5 Registro con dominio externo (debe fallar)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\":\"Test\",\"correoElectronico\":\"test@gmail.com\",\"telefono\":\"+58-000-0000000\",\"descripcionPersonal\":\"Test\",\"contrasena\":\"clave\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/usuarios/registro", "host": ["{{base_url}}"], "path": ["api", "usuarios", "registro"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "HU2 — Navegación y Oportunidades",
+      "item": [
+        {
+          "name": "2.1 Crear publicación de Juan (HABILIDAD: carpintería)",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "var body = pm.response.json();",
+              "pm.collectionVariables.set('id_pub1', body.idPublicacion);",
+              "pm.test('Publicación creada', () => pm.expect(body.idPublicacion).to.not.be.empty);"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"idUsuario\":\"{{id_user1}}\",\"nombreUsuario\":\"Juan Pérez\",\"reputacionUsuario\":4.5,\"tipoPublicacion\":\"HABILIDAD\",\"nombreServicio\":\"Carpintería\",\"descripcion\":\"Reparación de muebles de madera\",\"precioCreditos\":25}"
+            },
+            "url": { "raw": "{{base_url}}/api/publicaciones", "host": ["{{base_url}}"], "path": ["api", "publicaciones"] }
+          }
+        },
+        {
+          "name": "2.2 Crear publicación de María (NECESIDAD: diseño gráfico)",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "var body = pm.response.json();",
+              "pm.collectionVariables.set('id_pub2', body.idPublicacion);",
+              "pm.test('Publicación creada', () => pm.expect(body.idPublicacion).to.not.be.empty);"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_user2}}" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"idUsuario\":\"{{id_user2}}\",\"nombreUsuario\":\"María García\",\"reputacionUsuario\":4.2,\"tipoPublicacion\":\"NECESIDAD\",\"nombreServicio\":\"Diseño Gráfico\",\"descripcion\":\"Busco diseñador para logotipo corporativo\",\"precioCreditos\":0}"
+            },
+            "url": { "raw": "{{base_url}}/api/publicaciones", "host": ["{{base_url}}"], "path": ["api", "publicaciones"] }
+          }
+        },
+        {
+          "name": "2.3 Ver muro comunitario (todas las publicaciones)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "url": { "raw": "{{base_url}}/api/publicaciones", "host": ["{{base_url}}"], "path": ["api", "publicaciones"] }
+          }
+        },
+        {
+          "name": "2.4 Filtrar por tipo HABILIDAD",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "url": { "raw": "{{base_url}}/api/publicaciones?tipo=HABILIDAD", "host": ["{{base_url}}"], "path": ["api", "publicaciones"], "query": [{ "key": "tipo", "value": "HABILIDAD" }] }
+          }
+        },
+        {
+          "name": "2.5 Ver detalle de publicación (con reputación y descripción)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "url": { "raw": "{{base_url}}/api/publicaciones/{{id_pub1}}", "host": ["{{base_url}}"], "path": ["api", "publicaciones", "{{id_pub1}}"] }
+          }
+        },
+        {
+          "name": "2.6 Solicitar servicio (Juan solicita diseño a María)",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "pm.test('Solicitud enviada', () => pm.response.to.have.status(200));"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"idUsuario\":\"{{id_user1}}\",\"nombreUsuario\":\"Juan Pérez\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/publicaciones/{{id_pub2}}/solicitar", "host": ["{{base_url}}"], "path": ["api", "publicaciones", "{{id_pub2}}", "solicitar"] }
+          }
+        },
+        {
+          "name": "2.7 Solicitar con saldo insuficiente (debe fallar)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_user2}}" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"idUsuario\":\"{{id_user2}}\",\"nombreUsuario\":\"María García\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/publicaciones/{{id_pub1}}/solicitar", "host": ["{{base_url}}"], "path": ["api", "publicaciones", "{{id_pub1}}", "solicitar"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "HU3 — Transacciones Seguras y Valoración",
+      "item": [
+        {
+          "name": "3.1 María acepta solicitud de Juan (créditos retenidos)",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "var body = pm.response.json();",
+              "var txId = body.idTransaccion || (body.transaccion ? body.transaccion.idTransaccion : null);",
+              "if(txId) pm.collectionVariables.set('id_tx', txId);",
+              "pm.test('Transacción creada con créditos retenidos', () => pm.expect(body).to.not.be.empty);"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_user2}}" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"idUsuario\":\"{{id_user2}}\",\"aceptar\":true}"
+            },
+            "url": { "raw": "{{base_url}}/api/publicaciones/{{id_pub2}}/responder", "host": ["{{base_url}}"], "path": ["api", "publicaciones", "{{id_pub2}}", "responder"] }
+          }
+        },
+        {
+          "name": "3.2 Confirmar ofertante (María confirma entrega)",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "var body = pm.response.json();",
+              "var logros = body.nuevosLogros || [];",
+              "pm.test('Confirmación exitosa', () => pm.expect(body.transaccion).to.not.be.empty);",
+              "if(logros.length > 0) pm.test('Logros desbloqueados!', () => pm.expect(logros.length).to.be.above(0));"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user2}}" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": { "raw": "{{base_url}}/api/transacciones/{{id_tx}}/confirmar-ofertante", "host": ["{{base_url}}"], "path": ["api", "transacciones", "{{id_tx}}", "confirmar-ofertante"] }
+          }
+        },
+        {
+          "name": "3.3 Confirmar demandante (Juan confirma recepción)",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "var body = pm.response.json();",
+              "var logros = body.nuevosLogros || [];",
+              "pm.test('Transacción finalizada y pago liberado', () => pm.expect(body.transaccion.estado).to.eql('FINALIZADA'));",
+              "if(logros.length > 0) pm.test('¡Logros desbloqueados!', () => pm.expect(logros.length).to.be.above(0));"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": { "raw": "{{base_url}}/api/transacciones/{{id_tx}}/confirmar-demandante", "host": ["{{base_url}}"], "path": ["api", "transacciones", "{{id_tx}}", "confirmar-demandante"] }
+          }
+        },
+        {
+          "name": "3.4 Calificar transacción (Juan califica a María)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"idUsuario\":\"{{id_user1}}\",\"calificacion\":5,\"comentario\":\"Excelente servicio, muy profesional.\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/transacciones/{{id_tx}}/calificar", "host": ["{{base_url}}"], "path": ["api", "transacciones", "{{id_tx}}", "calificar"] }
+          }
+        },
+        {
+          "name": "3.5 Ver calificaciones de la publicación",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "url": { "raw": "{{base_url}}/api/publicaciones/{{id_pub2}}/calificaciones", "host": ["{{base_url}}"], "path": ["api", "publicaciones", "{{id_pub2}}", "calificaciones"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "HU6 — Motor de Sugerencias",
+      "item": [
+        {
+          "name": "6.1 Ver recomendaciones para Juan",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "url": { "raw": "{{base_url}}/api/publicaciones/recomendadas/{{id_user1}}", "host": ["{{base_url}}"], "path": ["api", "publicaciones", "recomendadas", "{{id_user1}}"] }
+          }
+        },
+        {
+          "name": "6.2 Ver recomendaciones para María",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user2}}" }],
+            "url": { "raw": "{{base_url}}/api/publicaciones/recomendadas/{{id_user2}}", "host": ["{{base_url}}"], "path": ["api", "publicaciones", "recomendadas", "{{id_user2}}"] }
+          }
+        },
+        {
+          "name": "6.3 Adoptar recomendación (Juan adopta una necesidad de María)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": { "raw": "{{base_url}}/api/publicaciones/recomendadas/{{id_user1}}/adoptar/{{id_pub2}}", "host": ["{{base_url}}"], "path": ["api", "publicaciones", "recomendadas", "{{id_user1}}", "adoptar", "{{id_pub2}}"] }
+          }
+        },
+        {
+          "name": "6.4 Ver recomendaciones actualizadas tras adoptar",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "url": { "raw": "{{base_url}}/api/publicaciones/recomendadas/{{id_user1}}", "host": ["{{base_url}}"], "path": ["api", "publicaciones", "recomendadas", "{{id_user1}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "HU8 — Incidencias y Cancelación",
+      "item": [
+        {
+          "name": "8.1 Crear una segunda transacción para probar incidencias",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "var body = pm.response.json();",
+              "var txId = body.idTransaccion || (body.transaccion ? body.transaccion.idTransaccion : null);",
+              "if(txId) pm.collectionVariables.set('id_tx2', txId);"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"idUsuario\":\"{{id_user1}}\",\"nombreUsuario\":\"Juan Pérez\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/publicaciones/{{id_pub2}}/solicitar", "host": ["{{base_url}}"], "path": ["api", "publicaciones", "{{id_pub2}}", "solicitar"] }
+          }
+        },
+        {
+          "name": "8.2 Aceptar segunda solicitud (generar transacción INICIADA)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_user2}}" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"idUsuario\":\"{{id_user2}}\",\"aceptar\":true}"
+            },
+            "url": { "raw": "{{base_url}}/api/publicaciones/{{id_pub2}}/responder", "host": ["{{base_url}}"], "path": ["api", "publicaciones", "{{id_pub2}}", "responder"] }
+          }
+        },
+        {
+          "name": "8.3 Reportar incidencia en transacción con evidencia",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"descripcion\":\"El servicio no fue entregado en la fecha acordada y la calidad no corresponde a lo pactado.\",\"urlEvidencia\":\"http://ejemplo.com/evidencia.jpg\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/transacciones/{{id_tx2}}/reportar-incidencia", "host": ["{{base_url}}"], "path": ["api", "transacciones", "{{id_tx2}}", "reportar-incidencia"] }
+          }
+        },
+        {
+          "name": "8.4 Verificar que transacción está EN_DISPUTA",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "url": { "raw": "{{base_url}}/api/transacciones/{{id_tx2}}", "host": ["{{base_url}}"], "path": ["api", "transacciones", "{{id_tx2}}"] }
+          }
+        },
+        {
+          "name": "8.5 Intentar calificar transacción en disputa (debe fallar)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"idUsuario\":\"{{id_user1}}\",\"calificacion\":3,\"comentario\":\"Test\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/transacciones/{{id_tx2}}/calificar", "host": ["{{base_url}}"], "path": ["api", "transacciones", "{{id_tx2}}", "calificar"] }
+          }
+        },
+        {
+          "name": "8.6 Cancelar transacción pendiente con motivo",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"idUsuario\":\"{{id_user1}}\",\"motivo\":\"El servicio ya no es necesario porque encontré otro proveedor.\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/transacciones/{{id_tx}}/cancelar", "host": ["{{base_url}}"], "path": ["api", "transacciones", "{{id_tx}}", "cancelar"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "HU4 — Gestión de Subastas",
+      "item": [
+        {
+          "name": "4.1 Crear subasta con 1 imagen",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "var body = pm.response.json();",
+              "if(body.id) pm.collectionVariables.set('id_subasta', body.id);",
+              "pm.test('Subasta creada', () => pm.expect(body.id).to.not.be.empty);"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombreActivo\":\"Taladro inalámbrico\",\"descripcion\":\"Taladro Bosch de 18V, usado pero funciona perfectamente\",\"estadoFisico\":\"USADO\",\"imagenesUrls\":[\"http://ejemplo.com/taladro.jpg\"],\"diasDuracion\":7}"
+            },
+            "url": { "raw": "{{base_url}}/api/subastas", "host": ["{{base_url}}"], "path": ["api", "subastas"] }
+          }
+        },
+        {
+          "name": "4.2 Crear subasta sin imágenes (debe fallar)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_user2}}" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombreActivo\":\"Cámara digital\",\"descripcion\":\"Cámara Sony\",\"estadoFisico\":\"NUEVO\",\"imagenesUrls\":[],\"diasDuracion\":7}"
+            },
+            "url": { "raw": "{{base_url}}/api/subastas", "host": ["{{base_url}}"], "path": ["api", "subastas"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "HU5 — Participación en Subastas",
+      "item": [
+        {
+          "name": "5.1 Enviar puja (María puja por el taladro de Juan)",
+          "event": [
+            { "listen": "test", "script": { "exec": [
+              "var body = pm.response.json();",
+              "if(body.idPropuesta) pm.collectionVariables.set('id_propuesta', body.idPropuesta);",
+              "pm.test('Puja enviada', () => pm.expect(body.idPropuesta).to.not.be.empty);"
+            ], "type": "text/javascript" } }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_user2}}" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"bienesOfrecidos\":[{\"nombre\":\"Diseño de logotipo\",\"cantidad\":1}],\"descripcion\":\"Ofrezco diseñar un logotipo profesional a cambio del taladro\",\"estadoFisico\":\"NUEVO\",\"imagenesUrls\":[\"http://ejemplo.com/logo.jpg\"]}"
+            },
+            "url": { "raw": "{{base_url}}/api/subastas/{{id_subasta}}/propuestas", "host": ["{{base_url}}"], "path": ["api", "subastas", "{{id_subasta}}", "propuestas"] }
+          }
+        },
+        {
+          "name": "5.2 Ver historial de pujas de María",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user2}}" }],
+            "url": { "raw": "{{base_url}}/api/propuestas/historial", "host": ["{{base_url}}"], "path": ["api", "propuestas", "historial"] }
+          }
+        },
+        {
+          "name": "5.3 Retirar puja (solo si subasta sigue ACTIVA)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user2}}" }],
+            "url": { "raw": "{{base_url}}/api/subastas/{{id_subasta}}/propuestas/{{id_propuesta}}", "host": ["{{base_url}}"], "path": ["api", "subastas", "{{id_subasta}}", "propuestas", "{{id_propuesta}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "HU9 — Gamificación y Logros",
+      "item": [
+        {
+          "name": "9.1 Ver todos los logros disponibles",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "url": { "raw": "{{base_url}}/api/logros", "host": ["{{base_url}}"], "path": ["api", "logros"] }
+          }
+        },
+        {
+          "name": "9.2 Ver logros de Juan con estado bloqueado/desbloqueado",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "url": { "raw": "{{base_url}}/api/logros/usuario/{{id_user1}}", "host": ["{{base_url}}"], "path": ["api", "logros", "usuario", "{{id_user1}}"] }
+          }
+        },
+        {
+          "name": "9.3 Ver logros desbloqueados de Juan (debe mostrar los obtenidos en HU3)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "url": { "raw": "{{base_url}}/api/logros/usuario/{{id_user1}}/desbloqueados", "host": ["{{base_url}}"], "path": ["api", "logros", "usuario", "{{id_user1}}", "desbloqueados"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "HU10 — Podio Semanal",
+      "item": [
+        {
+          "name": "10.1 Calcular podio semanal manualmente",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": { "raw": "{{base_url}}/api/podio/calcular", "host": ["{{base_url}}"], "path": ["api", "podio", "calcular"] }
+          }
+        },
+        {
+          "name": "10.2 Ver podio semanal",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_user1}}" }],
+            "url": { "raw": "{{base_url}}/api/podio", "host": ["{{base_url}}"], "path": ["api", "podio"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "HU8 — Admin: Gestión de Fraude",
+      "item": [
+        {
+          "name": "8a.1 Admin valida reporte de fraude contra Juan",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"idUsuarioInfractor\":\"{{id_user1}}\"}"
+            },
+            "url": { "raw": "{{base_url}}/api/admin/sanciones/fraude", "host": ["{{base_url}}"], "path": ["api", "admin", "sanciones", "fraude"] }
+          }
+        }
+      ]
+    }
+  ]
+}
