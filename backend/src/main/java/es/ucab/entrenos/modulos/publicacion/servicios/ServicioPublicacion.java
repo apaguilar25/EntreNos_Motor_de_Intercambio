@@ -1,10 +1,15 @@
 package es.ucab.entrenos.modulos.publicacion.servicios;
 
+import es.ucab.entrenos.modulos.gamificacion.modelos.LogroDesbloqueado;
 import es.ucab.entrenos.modulos.gamificacion.servicios.ServicioGamificacion;
+import es.ucab.entrenos.modulos.identidad.modelos.Habilidad;
+import es.ucab.entrenos.modulos.identidad.modelos.HabilidadOfrecida;
+import es.ucab.entrenos.modulos.identidad.modelos.NecesidadRegistrada;
 import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
 import es.ucab.entrenos.modulos.identidad.servicios.ServicioUsuario;
 import es.ucab.entrenos.modulos.notificacion.modelos.TipoNotificacion;
 import es.ucab.entrenos.modulos.notificacion.servicios.ServicioNotificacion;
+import es.ucab.entrenos.modulos.publicacion.dto.ConfirmacionTransaccionResponseDTO;
 import es.ucab.entrenos.modulos.publicacion.dto.RecomendacionDTO;
 import es.ucab.entrenos.modulos.publicacion.modelos.EstadoTransaccion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
@@ -235,7 +240,7 @@ public class ServicioPublicacion {
         return transaccion;
     }
 
-    public Transaccion confirmarOfertante(String idTransaccion) {
+    public ConfirmacionTransaccionResponseDTO confirmarOfertante(String idTransaccion) {
         Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
                 .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada: " + idTransaccion));
         EstadoTransaccion estadoAnterior = t.getEstado();
@@ -247,17 +252,18 @@ public class ServicioPublicacion {
             procesarPago(t);
         }
         repositorioTransaccion.guardar(t);
+        List<LogroDesbloqueado> nuevosLogros = new ArrayList<>();
         if (t.getEstado() == EstadoTransaccion.FINALIZADA) {
-            servicioGamificacion.evaluarLogros(t.getIdOfertante());
-            servicioGamificacion.evaluarLogros(t.getIdDemandante());
+            nuevosLogros.addAll(servicioGamificacion.evaluarLogros(t.getIdOfertante()));
+            nuevosLogros.addAll(servicioGamificacion.evaluarLogros(t.getIdDemandante()));
         }
         servicioNotificacion.enviarNotificacion(t.getIdOfertante(), t.getIdDemandante(),
                 "El ofertante confirmó la entrega del servicio: " + t.getNombreServicio(),
                 TipoNotificacion.TRANSACCION_ACTUALIZADA);
-        return t;
+        return new ConfirmacionTransaccionResponseDTO(t, nuevosLogros);
     }
 
-    public Transaccion confirmarDemandante(String idTransaccion) {
+    public ConfirmacionTransaccionResponseDTO confirmarDemandante(String idTransaccion) {
         Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
                 .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada: " + idTransaccion));
         EstadoTransaccion estadoAnterior = t.getEstado();
@@ -269,14 +275,15 @@ public class ServicioPublicacion {
             procesarPago(t);
         }
         repositorioTransaccion.guardar(t);
+        List<LogroDesbloqueado> nuevosLogros = new ArrayList<>();
         if (t.getEstado() == EstadoTransaccion.FINALIZADA) {
-            servicioGamificacion.evaluarLogros(t.getIdOfertante());
-            servicioGamificacion.evaluarLogros(t.getIdDemandante());
+            nuevosLogros.addAll(servicioGamificacion.evaluarLogros(t.getIdOfertante()));
+            nuevosLogros.addAll(servicioGamificacion.evaluarLogros(t.getIdDemandante()));
         }
         servicioNotificacion.enviarNotificacion(t.getIdDemandante(), t.getIdOfertante(),
                 "El demandante confirmó la recepción del servicio: " + t.getNombreServicio(),
                 TipoNotificacion.TRANSACCION_ACTUALIZADA);
-        return t;
+        return new ConfirmacionTransaccionResponseDTO(t, nuevosLogros);
     }
 
     private void procesarPago(Transaccion t) {
@@ -366,5 +373,73 @@ public class ServicioPublicacion {
                 .filter(t -> t.getIdPublicacion().equals(idPublicacion)
                         && t.getEstado() == EstadoTransaccion.FINALIZADA)
                 .collect(Collectors.toList());
+    }
+
+    public List<RecomendacionDTO> adoptarRecomendacion(String idUsuario, String idPublicacion) {
+        Publicacion pub = repositorioPublicacion.obtenerPorId(idPublicacion)
+                .orElseThrow(() -> new IllegalArgumentException("Publicación no encontrada: " + idPublicacion));
+        if (pub.getIdUsuario().equals(idUsuario)) {
+            throw new IllegalArgumentException("No puedes adoptar tu propia publicación.");
+        }
+        Usuario usuario = servicioUsuario.buscarPorId(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + idUsuario));
+        Habilidad habilidadBase = new Habilidad(UUID.randomUUID().toString(), pub.getNombreServicio());
+        if ("HABILIDAD".equalsIgnoreCase(pub.getTipoPublicacion())) {
+            NecesidadRegistrada necesidad = new NecesidadRegistrada(habilidadBase,
+                    "Estoy interesado en: " + pub.getNombreServicio() + " - " + pub.getDescripcion());
+            usuario.agregarNecesidad(necesidad);
+        } else if ("NECESIDAD".equalsIgnoreCase(pub.getTipoPublicacion())) {
+            HabilidadOfrecida habilidad = new HabilidadOfrecida(habilidadBase,
+                    pub.getPrecioCreditos() > 0 ? pub.getPrecioCreditos() : 10,
+                    "Ofrezco: " + pub.getNombreServicio() + " - " + pub.getDescripcion());
+            usuario.agregarHabilidadOfrecida(habilidad);
+        } else {
+            throw new IllegalArgumentException("Tipo de publicación no soportado: " + pub.getTipoPublicacion());
+        }
+        usuario.incrementarVersion();
+        servicioUsuario.guardar(usuario);
+        return obtenerRecomendadas(idUsuario);
+    }
+
+    public Transaccion reportarIncidencia(String idTransaccion, String descripcion, String urlEvidencia) {
+        Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
+                .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada: " + idTransaccion));
+        t.reportarIncidencia(descripcion, urlEvidencia);
+        repositorioTransaccion.guardar(t);
+        servicioNotificacion.enviarNotificacion("SISTEMA", t.getIdOfertante(),
+                "Se ha reportado una incidencia en la transacción \"" + t.getNombreServicio()
+                        + "\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+                TipoNotificacion.ALERTA_SISTEMA);
+        servicioNotificacion.enviarNotificacion("SISTEMA", t.getIdDemandante(),
+                "Se ha reportado una incidencia en la transacción \"" + t.getNombreServicio()
+                        + "\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+                TipoNotificacion.ALERTA_SISTEMA);
+        return t;
+    }
+
+    public Transaccion cancelarTransaccion(String idTransaccion, String idUsuario, String motivo) {
+        Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
+                .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada: " + idTransaccion));
+        if (t.getEstado() == EstadoTransaccion.FINALIZADA || t.getEstado() == EstadoTransaccion.EN_DISPUTA) {
+            throw new IllegalStateException("No se puede cancelar una transacción en estado " + t.getEstado() + ".");
+        }
+        if (motivo == null || motivo.trim().length() < 10) {
+            throw new IllegalArgumentException("Debe proporcionar un motivo de al menos 10 caracteres.");
+        }
+        if (t.getEstado() == EstadoTransaccion.INICIADA) {
+            Usuario demandante = servicioUsuario.buscarPorId(t.getIdDemandante())
+                    .orElseThrow(() -> new IllegalArgumentException("Demandante no encontrado."));
+            demandante.getMonedero().liberarRetencion();
+            demandante.incrementarVersion();
+            servicioUsuario.guardar(demandante);
+        }
+        t.setEstado(EstadoTransaccion.RECHAZADA);
+        repositorioTransaccion.guardar(t);
+        String contraparte = t.getIdOfertante().equals(idUsuario) ? t.getIdDemandante() : t.getIdOfertante();
+        servicioNotificacion.enviarNotificacion(idUsuario, contraparte,
+                "La transacción \"" + t.getNombreServicio() + "\" ha sido cancelada. Motivo: " + motivo
+                        + ". Si consideras que es injusto, puedes reportar una incidencia desde la sección de transacciones.",
+                TipoNotificacion.ALERTA_SISTEMA);
+        return t;
     }
 }
