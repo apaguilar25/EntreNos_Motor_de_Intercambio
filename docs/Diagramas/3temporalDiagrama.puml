@@ -1,0 +1,88 @@
+@startuml
+
+skinparam orthogonalLayoutStrategy none
+skinparam DefaultFontName Arial
+skinparam DefaultFontSize 12
+skinparam class {
+    BackgroundColor White
+    ArrowColor Black
+    BorderColor Black
+}
+
+skinparam title {
+    FontSize 16
+    FontColor #2C3E50
+}
+
+skinparam frame {
+    BorderColor #BDC3C7
+    FontColor #7F8C8D
+    BackgroundColor #FAFAFA
+}
+
+hide empty members
+hide methods
+hide circle
+
+title __Modelo de Dominio - EntreNós__
+frame "Modelo de Dominio EntreNós" {
+
+class Usuario
+class Monedero
+class CatalogoUsuario
+class Habilidad
+class HabilidadOfrecida
+class NecesidadRegistrada
+class Publicacion
+class Transaccion
+class Resena
+class Subasta
+class Propuesta
+class BienOfrecido
+class LogroDesbloqueado
+class Logro
+class PodioSemanal
+class Administrador
+class Solicitud
+class Incidencia
+
+' --- GOBERNANZA Y MODERACIÓN (HU 8) ---
+Administrador -up-|> Usuario : "es un"
+Administrador "1..*" -- "1..*" Habilidad : "administra >"
+Usuario "1" -- "0..*" Incidencia : "reporta >"
+Administrador "1" -- "0..*" Incidencia : "resuelve >"
+Incidencia "0..*" --> "0..1" Publicacion : "refiere a >"
+
+' --- IDENTIDAD Y CATÁLOGO (HU 1) ---
+Usuario "1" *-- "1" Monedero  : "posee >"
+Usuario "1" -- "1" CatalogoUsuario : "gestiona >"
+CatalogoUsuario "1" *-- "0..*" HabilidadOfrecida : "contiene >"
+CatalogoUsuario "1" *--  "0..*" NecesidadRegistrada : "contiene >"
+HabilidadOfrecida "0..*" --> "1" Habilidad : "se basa en >"
+NecesidadRegistrada "0..*" --> "1" Habilidad : "se basa en >"
+
+' --- RELACIONES DE PUBLICACIÓN (HU 2) ---
+HabilidadOfrecida "1" ---right "1" Publicacion : "genera >"
+NecesidadRegistrada "1" ---left "1" Publicacion : "genera >"
+
+' --- FLUJO DE SERVICIOS (HU 3) ---
+Usuario "1" -- "0..*" Solicitud : "realiza >"
+Solicitud "0..*" --- "1" Publicacion : "recibe <"
+Solicitud "1" -- "0..1" Transaccion : "genera >"
+Usuario "2" -- "0..*" Transaccion : "participa en >"
+Transaccion "1" -- "1" Resena : "genera >"
+
+' --- FLUJO DE SUBASTAS - VARIANTE 3 (HU 4 y HU 5) ---
+Usuario "1" -- "0..*" Subasta : "publica >"
+Subasta "1" *-- "0..*" Propuesta : "recibe >"
+Propuesta "0..*" -- "1" Usuario : "efectuada por >"
+Propuesta "1" *-- "1..*" BienOfrecido : "compromete >"
+
+' --- GAMIFICACIÓN Y RECONOCIMIENTO (HU 9 y HU 10) ---
+Usuario "1" -- "0..*" LogroDesbloqueado : "obtiene >"
+LogroDesbloqueado "0..*" --> "1" Logro : "refiere a >"
+Usuario "0..3" -- "1" PodioSemanal : "es destacado en >"
+
+}
+
+@enduml

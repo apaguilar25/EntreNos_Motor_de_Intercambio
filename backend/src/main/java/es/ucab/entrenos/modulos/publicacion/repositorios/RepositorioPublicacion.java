@@ -35,7 +35,8 @@ public class RepositorioPublicacion implements IRepositorioPublicacion {
             }
             if (!archivo.exists()) {
                 archivo.createNewFile();
-                try (Writer writer = new OutputStreamWriter(new FileOutputStream(RUTA_ARCHIVO), StandardCharsets.UTF_8)) {
+                try (Writer writer = new OutputStreamWriter(new FileOutputStream(RUTA_ARCHIVO),
+                        StandardCharsets.UTF_8)) {
                     writer.write("[]");
                 }
             }
