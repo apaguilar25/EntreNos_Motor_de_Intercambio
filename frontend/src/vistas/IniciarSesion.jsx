@@ -1,0 +1,117 @@
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../App';
+import { Image as ImageIcon } from 'lucide-react';
+
+const IniciarSesion = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  
+  // Campos
+  const [correoElectronico, setcorreoElectronico] = useState('');
+  const [nombre, setnombre] = useState('');
+  const [telefono, settelefono] = useState('');
+  const [descripcionPersonal, setdescripcionPersonal] = useState('');
+  
+  const [error, setError] = useState('');
+
+  // INYECCIÓN DE DEPENDENCIAS (Inyectado por el Contexto Global)
+  const { controladorAutenticacion } = useContext(AppContext);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      let rutaDestino;
+      
+      // La Vista DELEGA la lógica al Controlador. No sabe nada de HTTP ni JSON.
+      if (isLogin) {
+        rutaDestino = await controladorAutenticacion.iniciarSesion(correoElectronico);
+      } else {
+        rutaDestino = await controladorAutenticacion.registrarUsuario({
+          nombre, 
+          correoElectronico, 
+          telefono, 
+          descripcionPersonal
+        });
+      }
+      
+      // La Vista solo maneja navegación basada en la respuesta del Controlador
+      navigate(rutaDestino);
+
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      minHeight: '100vh', backgroundColor: 'var(--bg-primary)', padding: '1rem'
+    }}>
+      <div className="card animate-in" style={{ width: '100%', maxWidth: '400px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <h1 style={{ marginBottom: '0.5rem', color: 'var(--accent-primary)' }}>entreNos</h1>
+          <h2 style={{ fontSize: '1.25rem', color: 'var(--text-secondary)' }}>
+            {isLogin ? 'Inicia sesión en tu cuenta' : 'Crea tu cuenta'}
+          </h2>
+        </div>
+
+        {error && (
+          <div style={{ backgroundColor: 'var(--bg-warning-soft)', color: 'var(--text-on-warning-soft)', padding: '0.75rem', borderRadius: '0.5rem', marginBottom: '1rem', fontSize: '0.875rem' }}>
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {!isLogin && (
+            <>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Nombre Completo</label>
+                <input type="text" value={nombre} onChange={(e) => setnombre(e.target.value)} placeholder="Ej: María Pérez" style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Teléfono</label>
+                <input type="tel" value={telefono} onChange={(e) => settelefono(e.target.value)} placeholder="Ej: +58 412 1234567" style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Descripción Personal</label>
+                <textarea value={descripcionPersonal} onChange={(e) => setdescripcionPersonal(e.target.value)} placeholder="Cuenta un poco sobre ti..." rows={2} style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', resize: 'vertical' }} />
+              </div>
+            </>
+          )}
+
+          <div>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Correo Comunitario</label>
+            <input type="text" value={correoElectronico} onChange={(e) => setcorreoElectronico(e.target.value)} placeholder="usuario@alameda.com" style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }} />
+          </div>
+
+          {!isLogin && (
+            <div>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Foto de Perfil</label>
+              <div style={{ border: '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '1rem', textAlign: 'center', color: 'var(--text-tertiary)', cursor: 'pointer' }}>
+                <ImageIcon size={24} style={{ margin: '0 auto 0.5rem' }} />
+                <p style={{ fontSize: '0.875rem' }}>Subir foto</p>
+              </div>
+            </div>
+          )}
+
+          <button type="submit" className="btn-primary" style={{ marginTop: '1rem', padding: '0.75rem' }}>
+            {isLogin ? 'Ingresar' : 'Registrarse'}
+          </button>
+        </form>
+
+        <div style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+          {isLogin ? (
+            <>¿No tienes una cuenta? <button onClick={() => { setIsLogin(false); setError(''); }} style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', fontWeight: 'bold', cursor: 'pointer' }}>Regístrate aquí</button></>
+          ) : (
+            <>¿Ya tienes una cuenta? <button onClick={() => { setIsLogin(true); setError(''); }} style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', fontWeight: 'bold', cursor: 'pointer' }}>Inicia sesión</button></>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default IniciarSesion;
