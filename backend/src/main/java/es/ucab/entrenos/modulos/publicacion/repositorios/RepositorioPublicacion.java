@@ -1,7 +1,5 @@
 package es.ucab.entrenos.modulos.publicacion.repositorios;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -27,24 +25,8 @@ public class RepositorioPublicacion implements IRepositorioPublicacion {
     public RepositorioPublicacion() {
         this.gson = new GsonBuilder()
                 .setPrettyPrinting()
-                .addSerializationExclusionStrategy(excluirDerivados())
-                .addDeserializationExclusionStrategy(excluirDerivados())
                 .create();
         inicializarArchivo();
-    }
-
-    private static ExclusionStrategy excluirDerivados() {
-        return new ExclusionStrategy() {
-            @Override
-            public boolean shouldSkipField(FieldAttributes f) {
-                String name = f.getName();
-                return "nombreUsuario".equals(name) || "reputacionUsuario".equals(name);
-            }
-            @Override
-            public boolean shouldSkipClass(Class<?> clazz) {
-                return false;
-            }
-        };
     }
 
     private void inicializarArchivo() {

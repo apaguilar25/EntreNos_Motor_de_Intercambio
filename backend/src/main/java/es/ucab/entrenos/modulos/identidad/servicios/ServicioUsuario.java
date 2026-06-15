@@ -38,8 +38,10 @@ public class ServicioUsuario {
     }
 
     public void actualizarReputacion(String idReceptor, float calificacion) {
-        // TODO implementar funcion
-        return;
+        buscarPorId(idReceptor).ifPresent(u -> {
+            u.agregarCalificacion((int) calificacion);
+            guardar(u);
+        });
     }
 
     //  Registro inicial del usuario (Aún sin catálogo)

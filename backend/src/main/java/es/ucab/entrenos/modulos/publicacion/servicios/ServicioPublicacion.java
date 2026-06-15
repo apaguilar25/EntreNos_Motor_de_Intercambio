@@ -10,6 +10,8 @@ import es.ucab.entrenos.modulos.identidad.servicios.ServicioUsuario;
 import es.ucab.entrenos.modulos.notificacion.modelos.TipoNotificacion;
 import es.ucab.entrenos.modulos.notificacion.servicios.ServicioNotificacion;
 import es.ucab.entrenos.modulos.publicacion.dtos.ConfirmacionTransaccionResponseDTO;
+import es.ucab.entrenos.modulos.reputacion.servicios.ServicioReputacion;
+import es.ucab.entrenos.modulos.publicacion.dtos.PublicacionResponseDTO;
 import es.ucab.entrenos.modulos.publicacion.dto.RecomendacionDTO;
 import es.ucab.entrenos.modulos.publicacion.modelos.EstadoTransaccion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
@@ -27,6 +29,7 @@ public class ServicioPublicacion {
     private final ServicioUsuario servicioUsuario;
     private final ServicioNotificacion servicioNotificacion;
     private final ServicioGamificacion servicioGamificacion;
+    private final ServicioReputacion servicioReputacion;
     private static final Random RANDOM = new Random();
     private static final String[] COMENTARIOS_SIMULADOS = {
         "Excelente servicio, muy profesional.",
@@ -40,29 +43,28 @@ public class ServicioPublicacion {
                                IRepositorioTransaccion repositorioTransaccion,
                                ServicioUsuario servicioUsuario,
                                ServicioNotificacion servicioNotificacion,
-                               ServicioGamificacion servicioGamificacion) {
+                               ServicioGamificacion servicioGamificacion,
+                               ServicioReputacion servicioReputacion) {
         this.repositorioPublicacion = repositorioPublicacion;
         this.repositorioTransaccion = repositorioTransaccion;
         this.servicioUsuario = servicioUsuario;
         this.servicioNotificacion = servicioNotificacion;
         this.servicioGamificacion = servicioGamificacion;
+        this.servicioReputacion = servicioReputacion;
     }
 
     public List<Publicacion> obtenerTodasLasPublicaciones() {
-        List<Publicacion> pubs = repositorioPublicacion.obtenerTodas();
-        enriquecerPublicaciones(pubs);
-        return pubs;
+        return repositorioPublicacion.obtenerTodas();
     }
 
-    public List<Publicacion> obtenerPublicacionesFiltradas(String tipo, String servicio) {
-        List<Publicacion> pubs = repositorioPublicacion.obtenerTodas();
-        enriquecerPublicaciones(pubs);
-        return pubs.stream()
+    public List<PublicacionResponseDTO> obtenerPublicacionesFiltradas(String tipo, String servicio) {
+        return repositorioPublicacion.obtenerTodas().stream()
                 .filter(p -> tipo == null || tipo.isEmpty() || p.getTipoPublicacion().equalsIgnoreCase(tipo))
                 .filter(p -> servicio == null || servicio.isEmpty() ||
                         p.getNombreServicio().toLowerCase().contains(servicio.toLowerCase()) ||
                         p.getDescripcion().toLowerCase().contains(servicio.toLowerCase()))
-                .sorted(Comparator.comparingDouble(Publicacion::getReputacionUsuario).reversed())
+                .map(this::toResponseDTO)
+                .sorted(Comparator.comparingDouble(PublicacionResponseDTO::getReputacionUsuario).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -77,11 +79,10 @@ public class ServicioPublicacion {
         Set<String> catalogoCompleto = union(habilidades, necesidades);
 
         List<Publicacion> todasPubs = repositorioPublicacion.obtenerTodas();
-        enriquecerPublicaciones(todasPubs);
         List<RecomendacionDTO> recomendadas = todasPubs.stream()
                 .filter(p -> !p.getIdUsuario().equals(idUsuario))
                 .filter(p -> matchDireccional(p, habilidades, necesidades))
-                .map(p -> new RecomendacionDTO(p,
+                .map(p -> new RecomendacionDTO(toResponseDTO(p),
                         catalogoCompleto.contains(nombreServicioNormalizado(p)),
                         tipoCoincidencia(p, habilidades, necesidades)))
                 .collect(Collectors.toList());
@@ -139,20 +140,18 @@ public class ServicioPublicacion {
         };
     }
 
-    public Publicacion crearPublicacion(Publicacion publicacion) {
+    public PublicacionResponseDTO crearPublicacion(Publicacion publicacion) {
         if (publicacion.getIdPublicacion() == null || publicacion.getIdPublicacion().isEmpty()) {
             publicacion.setIdPublicacion("PUB-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         }
         publicacion.setDisponible(true);
         publicacion.setFechaCreacion(System.currentTimeMillis());
         repositorioPublicacion.guardar(publicacion);
-        return publicacion;
+        return toResponseDTO(publicacion);
     }
 
     public Optional<Publicacion> obtenerPublicacionPorId(String id) {
-        Optional<Publicacion> pub = repositorioPublicacion.obtenerPorId(id);
-        pub.ifPresent(p -> enriquecerPublicaciones(List.of(p)));
-        return pub;
+        return repositorioPublicacion.obtenerPorId(id);
     }
 
     public Optional<Publicacion> obtenerPublicacionPorInstanciaCatalogo(String idInstanciaCatalogo) {
@@ -312,6 +311,7 @@ public class ServicioPublicacion {
         t.setComentarioOfertante(comentario);
         repositorioTransaccion.guardar(t);
         servicioUsuario.actualizarReputacion(t.getIdOfertante(), calificacion);
+        servicioReputacion.crearResena(idTransaccion, idUsuario, t.getIdOfertante(), calificacion, comentario);
         return t;
     }
 
@@ -390,12 +390,23 @@ public class ServicioPublicacion {
         return t;
     }
 
-    private void enriquecerPublicaciones(List<Publicacion> publicaciones) {
-        for (Publicacion p : publicaciones) {
-            servicioUsuario.buscarPorId(p.getIdUsuario()).ifPresent(u -> {
-                p.setNombreUsuario(u.getNombre());
-                p.setReputacionUsuario(u.getPromedioCalificacion());
-            });
-        }
+    public PublicacionResponseDTO toResponseDTO(Publicacion p) {
+        PublicacionResponseDTO dto = new PublicacionResponseDTO();
+        dto.setIdPublicacion(p.getIdPublicacion());
+        dto.setIdUsuario(p.getIdUsuario());
+        dto.setTipoPublicacion(p.getTipoPublicacion());
+        dto.setNombreServicio(p.getNombreServicio());
+        dto.setDescripcion(p.getDescripcion());
+        dto.setPrecioCreditos(p.getPrecioCreditos());
+        dto.setDisponible(p.isDisponible());
+        dto.setFechaCreacion(p.getFechaCreacion());
+        dto.setEsVecinoDestacado(p.isEsVecinoDestacado());
+        dto.setIdInstanciaCatalogo(p.getIdInstanciaCatalogo());
+        dto.setVersion(p.getVersion());
+        servicioUsuario.buscarPorId(p.getIdUsuario()).ifPresent(u -> {
+            dto.setNombreUsuario(u.getNombre());
+            dto.setReputacionUsuario(u.getPromedioCalificacion());
+        });
+        return dto;
     }
 }
