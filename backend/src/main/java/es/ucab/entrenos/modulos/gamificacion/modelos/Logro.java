@@ -12,7 +12,8 @@ public class Logro {
 
     public Logro() {}
 
-    public Logro(String idLogro, String nombre, String descripcion, String tipoCriterio, int bonoCreditos, String icono) {
+    public Logro(String idLogro, String nombre, String descripcion, String tipoCriterio,
+                 int bonoCreditos, String icono) {
         this.idLogro = idLogro;
         this.nombre = nombre;
         this.descripcion = descripcion;

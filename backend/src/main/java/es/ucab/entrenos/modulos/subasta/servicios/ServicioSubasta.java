@@ -152,10 +152,12 @@ public class ServicioSubasta {
             if (propietario != null) {
                 propietario.aplicarSancionPorInactividadSubasta();
                 repositorioUsuario.guardar(propietario);
-                servicioNotificacion.enviarNotificacion(propietario.getId(), "Cuenta suspendida por abandonar subasta (5 días inactivo).", TipoNotificacion.SANCION_APLICADA);
+                servicioNotificacion.enviarNotificacion(propietario.getId(), "Cuenta suspendida por " +
+                        "abandonar subasta (5 días inactivo).", TipoNotificacion.SANCION_APLICADA);
             }
             for (Propuesta p : subasta.getPropuestas()) {
-                servicioNotificacion.enviarNotificacion(p.getIdPostor(), "Subasta cancelada por inactividad del dueño.", TipoNotificacion.SUBASTA_CANCELADA);
+                servicioNotificacion.enviarNotificacion(p.getIdPostor(), "Subasta cancelada por " +
+                        "inactividad del dueño.", TipoNotificacion.SUBASTA_CANCELADA);
             }
         }
     }

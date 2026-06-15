@@ -12,7 +12,8 @@ public class Resena {
 
     public Resena() {}
 
-    public Resena(String idResena, String idTransaccion, String idEmisor, String idReceptor, int calificacion, String comentario) {
+    public Resena(String idResena, String idTransaccion, String idEmisor, String idReceptor,
+                  int calificacion, String comentario) {
         this.idResena = idResena;
         this.idTransaccion = idTransaccion;
         this.idEmisor = idEmisor;

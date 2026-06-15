@@ -1,0 +1,47 @@
+@startuml
+!theme plain
+skinparam rectangle {
+  BackgroundColor #D5E8D4
+  BorderColor #82B366
+  FontColor #1B4D1B
+  FontSize 12
+}
+skinparam stereotype {
+  BackgroundColor #B3D9A0
+  BorderColor #82B366
+  FontColor #1B4D1B
+}
+skinparam arrow {
+  Color #444444
+  FontColor #444444
+  FontSize 10
+}
+skinparam linetype ortho
+left to right direction
+skinparam nodesep 60
+skinparam ranksep 70
+
+title Diagrama de Contenedores
+
+' ========== ACTORES (fuera del sistema, a la izquierda) ==========
+rectangle "Miembro de la\nComunidad" <<actor>> as Miembro
+rectangle "Administrador" <<actor>> as Admin
+
+' ========== LÍMITE DEL SISTEMA (contiene los contenedores) ==========
+rectangle "EntreNós\nSistema de Intercambio" <<system>> {
+  
+  ' Contenedores (dentro, a la derecha)
+  rectangle "Cliente Web" <<web application>> as Web
+  rectangle "API Backend" <<api>> as Api
+  rectangle "Almacenamiento\nJSON" <<database>> as Json
+
+  ' Relaciones internas entre contenedores
+  Web -up-> Api : "consume [REST/HTTPS]"
+  Api -down-> Json : "lee/escribe [síncrono]"
+}
+
+' ========== RELACIONES ACTORES → CONTENEDOR ==========
+Miembro -right-> Web : "usa [HTTPS]"
+Admin -down-> Web : "gestiona [HTTPS]"
+
+@enduml

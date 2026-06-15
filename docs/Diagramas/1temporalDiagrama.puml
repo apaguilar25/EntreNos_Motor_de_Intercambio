@@ -1,0 +1,48 @@
+@startuml
+skinparam style strictuml
+skinparam DefaultFontName Arial
+skinparam DefaultFontSize 12
+skinparam class {
+    BackgroundColor White
+    ArrowColor Black
+    BorderColor Black
+}
+
+hide empty members
+hide methods
+hide circle
+
+class Usuario
+class Monedero
+class CatalogoUsuario
+class Habilidad
+class HabilidadOfrecida
+class NecesidadRegistrada
+class Publicacion
+class Transaccion
+class Resena
+class Subasta
+class Propuesta
+class BienOfrecido
+
+Usuario "1" -- "1" Monedero : "posee >"
+Usuario "1" -- "1" CatalogoUsuario : "gestiona >"
+
+CatalogoUsuario "1" *-- "0..*" HabilidadOfrecida : "agrupa >"
+CatalogoUsuario "1" *-- "0..*" NecesidadRegistrada : "agrupa >"
+
+HabilidadOfrecida "0..*" --> "1" Habilidad : "se basa en >"
+NecesidadRegistrada "0..*" --> "1" Habilidad : "se basa en >"
+
+Usuario "1" -- "0..*" Publicacion : "difunde >"
+
+Usuario "1" -- "0..*" Transaccion : "participa en >"
+Transaccion "1" -- "1" Resena : "genera >"
+
+Usuario "1" -- "0..*" Subasta : "publica >"
+Subasta "1" *-- "0..*" Propuesta : "recibe >"
+Propuesta "0..*" -- "1" Usuario : "es efectuada por >"
+Propuesta "1" *-- "1..*" BienOfrecido : "compromete >"
+'Subasta "1" -- "0..2" Resena : "genera >"
+
+@enduml

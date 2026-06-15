@@ -1,0 +1,37 @@
+@startuml
+!theme plain
+
+skinparam rectangle {
+  BackgroundColor #DAE8FC
+  BorderColor #1E90FF
+  FontColor #0B3B60
+  FontSize 12
+}
+
+skinparam rectangleSystem {
+  BackgroundColor #DAE8FC
+  BorderColor #1E90FF
+  FontColor #0B3B60
+  FontSize 12
+}
+
+skinparam stereotype {
+  BackgroundColor #B0D0FF
+  BorderColor #1E90FF
+  FontColor #0B3B60
+}
+skinparam arrow {
+  Color #444444
+  FontColor #444444
+  FontSize 10
+}
+
+title Diagrama de Contexto
+
+rectangle "Miembro de la Comunidad" <<actor>> as Miembro
+rectangle "Administrador" <<actor>> as Admin
+rectangle "EntreNós\nPermite a miembros de la comunidad intercambiar \nservicios por créditos y activos físicos por bienes\nde consumo mediante subastas." <<Sistema>> as Sistema
+
+Miembro --> Sistema : "usa [HTTPS]"
+Admin --> Sistema : "gestiona [HTTPS]"
+@enduml
