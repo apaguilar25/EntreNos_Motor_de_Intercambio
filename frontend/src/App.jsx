@@ -10,6 +10,8 @@ import { ControladorAutenticacion } from './controladores/ControladorAutenticaci
 import { ControladorMuro } from './controladores/ControladorMuro';
 import { ControladorSubasta } from './controladores/ControladorSubasta';
 import { ControladorPerfil } from './controladores/ControladorPerfil';
+import { ServicioGamificacion } from './servicios_api/ServicioGamificacion';
+import { ControladorGamificacion } from './controladores/ControladorGamificacion';
 
 // Vistas
 import IniciarSesion from './vistas/IniciarSesion';
@@ -63,23 +65,25 @@ function App() {
   }, []);
 
   // --- ENSAMBLAJE DE DEPENDENCIAS (Dependency Injection Container) ---
-  const { controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil } = React.useMemo(() => {
+  const { controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil, controladorGamificacion } = React.useMemo(() => {
     const clienteHttp = new ClienteHttp('http://localhost:8080/api');
     const servicioUsuario = new ServicioUsuario(clienteHttp);
     const servicioPublicacion = new ServicioPublicacion(clienteHttp);
     const servicioSubasta = new ServicioSubasta(clienteHttp);
+    const servicioGamificacion = new ServicioGamificacion(clienteHttp);
 
     const controladorAutenticacion = new ControladorAutenticacion(servicioUsuario, setContextState);
     const controladorMuro = new ControladorMuro(servicioPublicacion);
     const controladorSubasta = new ControladorSubasta(servicioSubasta);
     const controladorPerfil = new ControladorPerfil(servicioUsuario, servicioPublicacion);
+    const controladorGamificacion = new ControladorGamificacion(servicioGamificacion);
 
-    return { controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil };
+    return { controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil, controladorGamificacion };
   }, [setContextState]);
 
   const contextValue = {
     theme, toggleTheme, user, balance, hasCatalog, setUser, setBalance, setHasCatalog,
-    controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil
+    controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil, controladorGamificacion
   };
 
   return (

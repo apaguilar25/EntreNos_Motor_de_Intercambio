@@ -11,4 +11,13 @@ export class ServicioPublicacion {
       throw error;
     }
   }
+
+  async obtenerRecomendadas(idUsuario) {
+    try {
+      return await this.clienteHttp.get(`/publicaciones/recomendadas/${idUsuario}`);
+    } catch (error) {
+      console.error('Error obteniendo publicaciones recomendadas:', error);
+      throw error;
+    }
+  }
 }

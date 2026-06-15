@@ -8,6 +8,7 @@ const IniciarSesion = () => {
   
   // Campos
   const [correoElectronico, setcorreoElectronico] = useState('');
+  const [contrasena, setcontrasena] = useState('');
   const [nombre, setnombre] = useState('');
   const [telefono, settelefono] = useState('');
   const [descripcionPersonal, setdescripcionPersonal] = useState('');
@@ -27,11 +28,12 @@ const IniciarSesion = () => {
       
       // La Vista DELEGA la lógica al Controlador. No sabe nada de HTTP ni JSON.
       if (isLogin) {
-        rutaDestino = await controladorAutenticacion.iniciarSesion(correoElectronico);
+        rutaDestino = await controladorAutenticacion.iniciarSesion(correoElectronico, contrasena);
       } else {
         rutaDestino = await controladorAutenticacion.registrarUsuario({
           nombre, 
           correoElectronico, 
+          contrasena,
           telefono, 
           descripcionPersonal
         });
@@ -85,6 +87,11 @@ const IniciarSesion = () => {
           <div>
             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Correo Comunitario</label>
             <input type="text" value={correoElectronico} onChange={(e) => setcorreoElectronico(e.target.value)} placeholder="usuario@alameda.com" style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }} />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Contraseña</label>
+            <input type="password" value={contrasena} onChange={(e) => setcontrasena(e.target.value)} placeholder="••••••••" style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }} />
           </div>
 
           {!isLogin && (

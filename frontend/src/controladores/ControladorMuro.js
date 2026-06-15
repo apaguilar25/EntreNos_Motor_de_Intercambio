@@ -23,4 +23,13 @@ export class ControladorMuro {
       return []; // Devolvemos array vacío en vez de lanzar error para no romper la UI
     }
   }
+
+  async obtenerRecomendadas(idUsuario) {
+    try {
+      return await this.servicioPublicacion.obtenerRecomendadas(idUsuario);
+    } catch (error) {
+      console.error('Error en ControladorMuro obteniendo recomendaciones:', error);
+      return [];
+    }
+  }
 }

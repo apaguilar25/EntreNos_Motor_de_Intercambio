@@ -3,8 +3,21 @@ export class ClienteHttp {
     this.baseUrl = baseUrl;
   }
 
+  _getHeaders() {
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    const token = localStorage.getItem('entreNosToken');
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+  }
+
   async get(endpoint) {
-    const response = await fetch(`${this.baseUrl}${endpoint}`);
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      headers: this._getHeaders(),
+    });
     if (!response.ok) {
       throw new Error(`Error GET ${endpoint}: ${response.statusText}`);
     }
@@ -14,9 +27,7 @@ export class ClienteHttp {
   async post(endpoint, data) {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: this._getHeaders(),
       body: JSON.stringify(data),
     });
     if (!response.ok) {

@@ -7,7 +7,14 @@ export class ServicioUsuario {
     try {
       return await this.clienteHttp.get(`/usuarios/${idUsuario}`);
     } catch (error) {
-      // No imprimimos error aquí porque un 404 es un escenario normal (usuario no registrado)
+      throw error;
+    }
+  }
+
+  async login(correo, contrasena) {
+    try {
+      return await this.clienteHttp.post('/auth/login', { correoElectronico: correo, contrasena });
+    } catch (error) {
       throw error;
     }
   }

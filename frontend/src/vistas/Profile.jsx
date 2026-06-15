@@ -4,13 +4,19 @@ import { AppContext } from '../App';
 import { Star, ShieldCheck, FileText } from 'lucide-react';
 
 const Profile = () => {
-  const { user, controladorPerfil, controladorSubasta } = useContext(AppContext);
+  const { user, controladorPerfil, controladorSubasta, controladorGamificacion } = useContext(AppContext);
   const navigate = useNavigate();
   
   const [userProfile, setUserProfile] = useState(null);
   const [sentRequests, setSentRequests] = useState([]);
   const [myAuctions, setMyAuctions] = useState([]);
+  const [logros, setLogros] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Modal Reporte
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [reportData, setReportData] = useState({ idPublicacion: '', idUsuarioInvolucrado: '', descripcionProblema: '', fotosEvidenciaBase64: [] });
+
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -26,6 +32,11 @@ const Profile = () => {
         const auctionsData = await controladorSubasta.obtenerSubastasActivas();
         const mine = auctionsData.filter(s => s.idSubastador === user.id);
         setMyAuctions(mine);
+
+        if (controladorGamificacion) {
+          const logrosData = await controladorGamificacion.obtenerLogros(user.id);
+          setLogros(logrosData || []);
+        }
       } catch (err) {
         console.error("Error cargando perfil", err);
       } finally {
@@ -84,6 +95,32 @@ const Profile = () => {
     }
   };
 
+  const handleReportarIncidencia = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`http://localhost:8080/api/publicaciones/${reportData.idPublicacion}/reportar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idUsuarioReporta: user.id,
+          idUsuarioInvolucrado: reportData.idUsuarioInvolucrado,
+          descripcionProblema: reportData.descripcionProblema,
+          fotosEvidenciaBase64: reportData.fotosEvidenciaBase64
+        })
+      });
+      if (res.ok) {
+        alert("Incidencia reportada con éxito. Nuestro equipo la revisará.");
+        setReportModalOpen(false);
+        setReportData({ idPublicacion: '', idUsuarioInvolucrado: '', descripcionProblema: '', fotosEvidenciaBase64: [] });
+      } else {
+        const errorData = await res.json();
+        alert(errorData.error || "Error al reportar");
+      }
+    } catch (err) {
+      alert("Error de conexión");
+    }
+  };
+
   return (
     <div className="animate-in">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -119,11 +156,24 @@ const Profile = () => {
             <ShieldCheck size={20} color="var(--accent-primary)" />
           </h3>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>{user?.email || 'correo@plazaalameda.com'}</p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-warning)', fontWeight: 'bold' }}>
               <Star size={16} fill="currentColor" /> {userProfile?.reputacionHistorica || 5.0}
             </span>
             <span style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>Reputación de Comunidad</span>
+          </div>
+
+          {/* Medallas/Logros */}
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            {logros.length === 0 ? (
+              <span style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)' }}>Aún no has desbloqueado medallas.</span>
+            ) : (
+              logros.map((l, i) => (
+                <div key={i} title={l.descripcionLogro} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', backgroundColor: 'var(--color-yellow-100)', color: 'var(--color-orange-600)', padding: '0.25rem 0.5rem', borderRadius: '1rem', fontSize: '0.75rem', fontWeight: 'bold' }}>
+                  <Star size={12} fill="currentColor" /> {l.nombre}
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -283,6 +333,17 @@ const Profile = () => {
                         Cancelar
                       </button>
                     )}
+                    {req.estado === 'ACEPTADA' && (
+                      <button 
+                        style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                        onClick={() => {
+                          setReportData({ ...reportData, idPublicacion: req.idPublicacion || 'PUB-1', idUsuarioInvolucrado: req.idReceptor });
+                          setReportModalOpen(true);
+                        }}
+                      >
+                        Reportar Problema
+                      </button>
+                    )}
                   </div>
                 </div>
               ))
@@ -290,6 +351,37 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      {reportModalOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
+            <h3 style={{ marginBottom: '1rem' }}>Reportar Incidencia</h3>
+            <form onSubmit={handleReportarIncidencia} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Descripción del problema</label>
+                <textarea 
+                  value={reportData.descripcionProblema}
+                  onChange={(e) => setReportData({ ...reportData, descripcionProblema: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', resize: 'vertical' }}
+                  rows={4}
+                  placeholder="Detalla lo ocurrido durante el intercambio..."
+                  required
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Evidencia visual (Opcional)</label>
+                <div style={{ border: '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '2rem', textAlign: 'center', color: 'var(--text-tertiary)' }}>
+                  <p>Sube fotos del problema aquí</p>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                <button type="button" onClick={() => setReportModalOpen(false)} style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}>Cancelar</button>
+                <button type="submit" className="btn-primary" style={{ flex: 1, padding: '0.75rem' }}>Enviar Reporte</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
