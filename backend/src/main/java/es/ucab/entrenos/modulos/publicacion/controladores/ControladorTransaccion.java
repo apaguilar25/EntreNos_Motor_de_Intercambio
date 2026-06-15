@@ -4,6 +4,7 @@ import es.ucab.entrenos.modulos.publicacion.dto.CalificarRequestDTO;
 import es.ucab.entrenos.modulos.publicacion.dtos.CancelarTransaccionRequestDTO;
 import es.ucab.entrenos.modulos.publicacion.dtos.ConfirmacionTransaccionResponseDTO;
 import es.ucab.entrenos.modulos.publicacion.dtos.ReportarIncidenciaRequestDTO;
+import es.ucab.entrenos.modulos.publicacion.modelos.Incidencia;
 import es.ucab.entrenos.modulos.publicacion.modelos.Transaccion;
 import es.ucab.entrenos.modulos.publicacion.servicios.ServicioPublicacion;
 import org.springframework.http.HttpStatus;
@@ -66,7 +67,7 @@ public class ControladorTransaccion {
                                         @RequestBody CalificarRequestDTO dto) {
         try {
             Transaccion t = servicioPublicacion.calificar(id, dto.getIdUsuario(),
-                    dto.getCalificacion(), dto.getComentario());
+                    dto.getCalificacion());
             return ResponseEntity.ok(t);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -79,9 +80,9 @@ public class ControladorTransaccion {
     public ResponseEntity<?> reportarIncidencia(@PathVariable String id,
                                                  @RequestBody ReportarIncidenciaRequestDTO dto) {
         try {
-            Transaccion t = servicioPublicacion.reportarIncidencia(id,
-                    dto.getDescripcion(), dto.getUrlEvidencia());
-            return ResponseEntity.ok(t);
+            Incidencia incidencia = servicioPublicacion.reportarIncidencia(id,
+                    dto.getIdUsuario(), dto.getDescripcion(), dto.getUrlEvidencia());
+            return ResponseEntity.ok(incidencia);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (IllegalStateException e) {

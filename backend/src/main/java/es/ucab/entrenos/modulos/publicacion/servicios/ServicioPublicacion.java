@@ -14,8 +14,10 @@ import es.ucab.entrenos.modulos.reputacion.servicios.ServicioReputacion;
 import es.ucab.entrenos.modulos.publicacion.dtos.PublicacionResponseDTO;
 import es.ucab.entrenos.modulos.publicacion.dto.RecomendacionDTO;
 import es.ucab.entrenos.modulos.publicacion.modelos.EstadoTransaccion;
+import es.ucab.entrenos.modulos.publicacion.modelos.Incidencia;
 import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Transaccion;
+import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioIncidencia;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioPublicacion;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioTransaccion;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 public class ServicioPublicacion {
     private final IRepositorioPublicacion repositorioPublicacion;
     private final IRepositorioTransaccion repositorioTransaccion;
+    private final IRepositorioIncidencia repositorioIncidencia;
     private final ServicioUsuario servicioUsuario;
     private final ServicioNotificacion servicioNotificacion;
     private final ServicioGamificacion servicioGamificacion;
@@ -41,12 +44,14 @@ public class ServicioPublicacion {
 
     public ServicioPublicacion(IRepositorioPublicacion repositorioPublicacion,
                                IRepositorioTransaccion repositorioTransaccion,
+                               IRepositorioIncidencia repositorioIncidencia,
                                ServicioUsuario servicioUsuario,
                                ServicioNotificacion servicioNotificacion,
                                ServicioGamificacion servicioGamificacion,
                                ServicioReputacion servicioReputacion) {
         this.repositorioPublicacion = repositorioPublicacion;
         this.repositorioTransaccion = repositorioTransaccion;
+        this.repositorioIncidencia = repositorioIncidencia;
         this.servicioUsuario = servicioUsuario;
         this.servicioNotificacion = servicioNotificacion;
         this.servicioGamificacion = servicioGamificacion;
@@ -145,7 +150,6 @@ public class ServicioPublicacion {
             publicacion.setIdPublicacion("PUB-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         }
         publicacion.setDisponible(true);
-        publicacion.setFechaCreacion(System.currentTimeMillis());
         repositorioPublicacion.guardar(publicacion);
         return toResponseDTO(publicacion);
     }
@@ -162,6 +166,13 @@ public class ServicioPublicacion {
 
     public void guardarPublicacion(Publicacion publicacion) {
         repositorioPublicacion.guardar(publicacion);
+    }
+
+    public List<PublicacionResponseDTO> obtenerPublicacionesPorUsuario(String idUsuario) {
+        return repositorioPublicacion.obtenerTodas().stream()
+                .filter(p -> p.getIdUsuario().equals(idUsuario))
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     public boolean eliminarPublicacion(String id) {
@@ -204,12 +215,14 @@ public class ServicioPublicacion {
     public ConfirmacionTransaccionResponseDTO confirmarOfertante(String idTransaccion) {
         Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
                 .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada: " + idTransaccion));
-        EstadoTransaccion estadoAnterior = t.getEstado();
+        Publicacion pub = obtenerPublicacionPorId(t.getIdPublicacion())
+                .orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada."));
+        EstadoTransaccion estadoAnteior = t.getEstado();
         t.confirmarEntregaOfertante();
         if (t.getEstado() == EstadoTransaccion.INICIADA || t.getEstado() == EstadoTransaccion.FINALIZADA) {
             simularDemandante(t);
         }
-        if (t.getEstado() == EstadoTransaccion.FINALIZADA && estadoAnterior != EstadoTransaccion.FINALIZADA) {
+        if (t.getEstado() == EstadoTransaccion.FINALIZADA && estadoAnteior != EstadoTransaccion.FINALIZADA) {
             procesarPago(t);
         }
         repositorioTransaccion.guardar(t);
@@ -219,7 +232,7 @@ public class ServicioPublicacion {
             nuevosLogros.addAll(servicioGamificacion.evaluarLogros(t.getIdDemandante()));
         }
         servicioNotificacion.enviarNotificacion(t.getIdOfertante(), t.getIdDemandante(),
-                "El ofertante confirmó la entrega del servicio: " + t.getNombreServicio(),
+                "El ofertante confirmó la entrega del servicio: " + pub.getNombreServicio(),
                 TipoNotificacion.TRANSACCION_ACTUALIZADA);
         return new ConfirmacionTransaccionResponseDTO(t, nuevosLogros);
     }
@@ -227,6 +240,8 @@ public class ServicioPublicacion {
     public ConfirmacionTransaccionResponseDTO confirmarDemandante(String idTransaccion) {
         Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
                 .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada: " + idTransaccion));
+        Publicacion pub = obtenerPublicacionPorId(t.getIdPublicacion())
+                .orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada."));
         EstadoTransaccion estadoAnterior = t.getEstado();
         t.confirmarRecepcionDemandante();
         if (t.getEstado() == EstadoTransaccion.INICIADA || t.getEstado() == EstadoTransaccion.FINALIZADA) {
@@ -242,7 +257,7 @@ public class ServicioPublicacion {
             nuevosLogros.addAll(servicioGamificacion.evaluarLogros(t.getIdDemandante()));
         }
         servicioNotificacion.enviarNotificacion(t.getIdDemandante(), t.getIdOfertante(),
-                "El demandante confirmó la recepción del servicio: " + t.getNombreServicio(),
+                "El demandante confirmó la recepción del servicio: " + pub.getNombreServicio(),
                 TipoNotificacion.TRANSACCION_ACTUALIZADA);
         return new ConfirmacionTransaccionResponseDTO(t, nuevosLogros);
     }
@@ -252,6 +267,8 @@ public class ServicioPublicacion {
                 .orElseThrow(() -> new IllegalArgumentException("Ofertante no encontrado."));
         Usuario demandante = servicioUsuario.buscarPorId(t.getIdDemandante())
                 .orElseThrow(() -> new IllegalArgumentException("Demandante no encontrado."));
+        Publicacion pub = obtenerPublicacionPorId(t.getIdPublicacion())
+                .orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada."));
         demandante.getMonedero().liberarRetencion();
         demandante.incrementarVersion();
         ofertante.getMonedero().acreditar(t.getCreditosRetenidos());
@@ -259,10 +276,10 @@ public class ServicioPublicacion {
         servicioUsuario.guardar(demandante);
         servicioUsuario.guardar(ofertante);
         servicioNotificacion.enviarNotificacion("SISTEMA", t.getIdOfertante(),
-                "Recibiste " + t.getCreditosRetenidos() + " créditos por el servicio: " + t.getNombreServicio(),
+                "Recibiste " + t.getCreditosRetenidos() + " créditos por el servicio: " + pub.getNombreServicio(),
                 TipoNotificacion.MOVIMIENTO_MONEDERO);
         servicioNotificacion.enviarNotificacion("SISTEMA", t.getIdDemandante(),
-                "Se liberaron " + t.getCreditosRetenidos() + " créditos retenidos por: " + t.getNombreServicio(),
+                "Se liberaron " + t.getCreditosRetenidos() + " créditos retenidos por: " + pub.getNombreServicio(),
                 TipoNotificacion.MOVIMIENTO_MONEDERO);
     }
 
@@ -271,7 +288,6 @@ public class ServicioPublicacion {
         boolean confirma = RANDOM.nextBoolean();
         if (confirma) {
             t.setConfirmacionDemandante(true);
-            t.setFechaConfirmacionDemandante(System.currentTimeMillis());
             t.setCalificacionOfertante(RANDOM.nextInt(5) + 1);
             t.setComentarioOfertante(COMENTARIOS_SIMULADOS[RANDOM.nextInt(COMENTARIOS_SIMULADOS.length)]);
         } else {
@@ -285,14 +301,13 @@ public class ServicioPublicacion {
         boolean confirma = RANDOM.nextBoolean();
         if (confirma) {
             t.setConfirmacionOfertante(true);
-            t.setFechaConfirmacionOfertante(System.currentTimeMillis());
         } else {
             t.setSancionado(true);
         }
         t.confirmarEntregaOfertante();
     }
 
-    public Transaccion calificar(String idTransaccion, String idUsuario, int calificacion, String comentario) {
+    public Transaccion calificar(String idTransaccion, String idUsuario, int calificacion) {
         Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
                 .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada: " + idTransaccion));
         if (t.getEstado() != EstadoTransaccion.FINALIZADA) {
@@ -308,10 +323,9 @@ public class ServicioPublicacion {
             throw new IllegalStateException("Ya calificaste esta transacción.");
         }
         t.setCalificacionOfertante(calificacion);
-        t.setComentarioOfertante(comentario);
         repositorioTransaccion.guardar(t);
         servicioUsuario.actualizarReputacion(t.getIdOfertante(), calificacion);
-        servicioReputacion.crearResena(idTransaccion, idUsuario, t.getIdOfertante(), calificacion, comentario);
+        servicioReputacion.crearResena(idTransaccion, idUsuario, t.getIdOfertante(), calificacion);
         return t;
     }
 
@@ -348,25 +362,34 @@ public class ServicioPublicacion {
         return obtenerRecomendadas(idUsuario);
     }
 
-    public Transaccion reportarIncidencia(String idTransaccion, String descripcion, String urlEvidencia) {
+    public Incidencia reportarIncidencia(String idTransaccion, String idUsuario, String descripcion, String urlEvidencia) {
         Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
                 .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada: " + idTransaccion));
-        t.reportarIncidencia(descripcion, urlEvidencia);
+        if (descripcion == null || descripcion.trim().length() < 20) {
+            throw new IllegalArgumentException("La descripción del incidente debe tener al menos 20 caracteres.");
+        }
+        Incidencia incidencia = new Incidencia(idTransaccion, idUsuario, descripcion, urlEvidencia);
+        repositorioIncidencia.guardar(incidencia);
+        t.asignarIncidencia(incidencia.getIdIncidencia());
         repositorioTransaccion.guardar(t);
+        Publicacion pub = obtenerPublicacionPorId(t.getIdPublicacion())
+                .orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada."));
         servicioNotificacion.enviarNotificacion("SISTEMA", t.getIdOfertante(),
-                "Se ha reportado una incidencia en la transacción \"" + t.getNombreServicio()
+                "Se ha reportado una incidencia en la transacción \"" + pub.getNombreServicio()
                         + "\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
                 TipoNotificacion.ALERTA_SISTEMA);
         servicioNotificacion.enviarNotificacion("SISTEMA", t.getIdDemandante(),
-                "Se ha reportado una incidencia en la transacción \"" + t.getNombreServicio()
+                "Se ha reportado una incidencia en la transacción \"" + pub.getNombreServicio()
                         + "\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
                 TipoNotificacion.ALERTA_SISTEMA);
-        return t;
+        return incidencia;
     }
 
     public Transaccion cancelarTransaccion(String idTransaccion, String idUsuario, String motivo) {
         Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
                 .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada: " + idTransaccion));
+        Publicacion pub = obtenerPublicacionPorId(t.getIdPublicacion())
+                .orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada."));
         if (t.getEstado() == EstadoTransaccion.FINALIZADA || t.getEstado() == EstadoTransaccion.EN_DISPUTA) {
             throw new IllegalStateException("No se puede cancelar una transacción en estado " + t.getEstado() + ".");
         }
@@ -384,7 +407,7 @@ public class ServicioPublicacion {
         repositorioTransaccion.guardar(t);
         String contraparte = t.getIdOfertante().equals(idUsuario) ? t.getIdDemandante() : t.getIdOfertante();
         servicioNotificacion.enviarNotificacion(idUsuario, contraparte,
-                "La transacción \"" + t.getNombreServicio() + "\" ha sido cancelada. Motivo: " + motivo
+                "La transacción \"" + pub.getNombreServicio() + "\" ha sido cancelada. Motivo: " + motivo
                         + ". Si consideras que es injusto, puedes reportar una incidencia desde la sección de transacciones.",
                 TipoNotificacion.ALERTA_SISTEMA);
         return t;
@@ -399,13 +422,12 @@ public class ServicioPublicacion {
         dto.setDescripcion(p.getDescripcion());
         dto.setPrecioCreditos(p.getPrecioCreditos());
         dto.setDisponible(p.isDisponible());
-        dto.setFechaCreacion(p.getFechaCreacion());
-        dto.setEsVecinoDestacado(p.isEsVecinoDestacado());
         dto.setIdInstanciaCatalogo(p.getIdInstanciaCatalogo());
         dto.setVersion(p.getVersion());
         servicioUsuario.buscarPorId(p.getIdUsuario()).ifPresent(u -> {
             dto.setNombreUsuario(u.getNombre());
             dto.setReputacionUsuario(u.getPromedioCalificacion());
+            dto.setEsVecinoDestacado(u.isEsVecinoDestacado());
         });
         return dto;
     }

@@ -54,7 +54,7 @@ public class ControladorLogro {
                     if (logro == null) return null;
                     return new LogroDesbloqueadoResponseDTO(
                             logro.getIdLogro(), logro.getNombre(), logro.getDescripcion(),
-                            logro.getBonoCreditos(), logro.getIcono(), ld.getFechaDesbloqueo());
+                            logro.getBonoCreditos(), ld.getFechaDesbloqueo());
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());

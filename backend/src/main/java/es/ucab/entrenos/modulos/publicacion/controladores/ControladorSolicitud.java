@@ -1,5 +1,6 @@
 package es.ucab.entrenos.modulos.publicacion.controladores;
 
+import es.ucab.entrenos.modulos.publicacion.dto.CancelarRequestDTO;
 import es.ucab.entrenos.modulos.publicacion.dto.RespuestaSolicitudDTO;
 import es.ucab.entrenos.modulos.publicacion.dto.SolicitudRequestDTO;
 import es.ucab.entrenos.modulos.publicacion.modelos.Solicitud;
@@ -61,5 +62,18 @@ public class ControladorSolicitud {
     @GetMapping("/solicitudes/usuario/{idUsuario}")
     public ResponseEntity<List<Solicitud>> obtenerPorSolicitante(@PathVariable String idUsuario) {
         return ResponseEntity.ok(servicioSolicitud.obtenerPorSolicitante(idUsuario));
+    }
+
+    @PostMapping("/solicitudes/{id}/cancelar")
+    public ResponseEntity<?> cancelar(@PathVariable String id,
+                                       @RequestBody CancelarRequestDTO dto) {
+        try {
+            Solicitud solicitud = servicioSolicitud.cancelar(id, dto.getIdUsuario());
+            return ResponseEntity.ok(solicitud);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

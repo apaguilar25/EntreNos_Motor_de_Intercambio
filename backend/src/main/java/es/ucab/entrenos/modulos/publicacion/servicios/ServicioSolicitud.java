@@ -50,6 +50,17 @@ public class ServicioSolicitud {
                 .collect(Collectors.toList());
     }
 
+    public Solicitud cancelar(String idSolicitud, String idUsuario) {
+        Solicitud solicitud = repositorioSolicitud.obtenerPorId(idSolicitud)
+                .orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada: " + idSolicitud));
+        if (!solicitud.getIdSolicitante().equals(idUsuario)) {
+            throw new IllegalArgumentException("Solo el solicitante puede cancelar la solicitud.");
+        }
+        solicitud.cancelar();
+        repositorioSolicitud.guardar(solicitud);
+        return solicitud;
+    }
+
     public List<Solicitud> obtenerPorSolicitante(String idSolicitante) {
         return repositorioSolicitud.obtenerTodas().stream()
                 .filter(s -> s.getIdSolicitante().equalsIgnoreCase(idSolicitante))
@@ -133,8 +144,6 @@ public class ServicioSolicitud {
                 pub.getIdPublicacion(),
                 pub.getIdUsuario(),
                 solicitud.getIdSolicitante(),
-                pub.getNombreServicio(),
-                pub.getDescripcion(),
                 pub.getPrecioCreditos()
             );
             repositorioTransaccion.guardar(tx);

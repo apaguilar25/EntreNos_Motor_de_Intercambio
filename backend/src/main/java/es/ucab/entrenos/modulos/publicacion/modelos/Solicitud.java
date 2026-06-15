@@ -52,6 +52,13 @@ public class Solicitud {
         this.estado = ESTADO_RECHAZADA;
     }
 
+    public void cancelar() {
+        if (!ESTADO_PENDIENTE.equals(this.estado)) {
+            throw new IllegalStateException("Solo se puede cancelar una solicitud en estado PENDIENTE.");
+        }
+        this.estado = ESTADO_RECHAZADA;
+    }
+
     public void expirar() {
         if (ESTADO_PENDIENTE.equals(this.estado)) {
             this.estado = ESTADO_EXPIRADA;

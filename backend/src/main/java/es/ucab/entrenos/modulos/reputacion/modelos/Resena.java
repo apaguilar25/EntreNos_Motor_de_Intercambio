@@ -6,20 +6,18 @@ public class Resena {
     private String idEmisor;
     private String idReceptor;
     private int calificacion;
-    private String comentario;
     private long fechaCreacion;
     private int version;
 
     public Resena() {}
 
     public Resena(String idResena, String idTransaccion, String idEmisor, String idReceptor,
-                  int calificacion, String comentario) {
+                  int calificacion) {
         this.idResena = idResena;
         this.idTransaccion = idTransaccion;
         this.idEmisor = idEmisor;
         this.idReceptor = idReceptor;
         setCalificacion(calificacion);
-        this.comentario = comentario;
         this.fechaCreacion = System.currentTimeMillis();
     }
 
@@ -28,7 +26,6 @@ public class Resena {
     public String getIdEmisor() { return idEmisor; }
     public String getIdReceptor() { return idReceptor; }
     public int getCalificacion() { return calificacion; }
-    public String getComentario() { return comentario; }
     public long getFechaCreacion() { return fechaCreacion; }
 
     public int getVersion() { return version; }
@@ -43,7 +40,6 @@ public class Resena {
             throw new IllegalArgumentException("La calificacion debe ser un entero entre 1 y 5.");
         this.calificacion = calificacion;
     }
-    public void setComentario(String comentario) { this.comentario = comentario; }
     public void setFechaCreacion(long fechaCreacion) { this.fechaCreacion = fechaCreacion; }
 }
 

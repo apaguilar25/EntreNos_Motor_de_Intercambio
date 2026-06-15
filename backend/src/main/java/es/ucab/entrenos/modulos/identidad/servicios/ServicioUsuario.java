@@ -33,6 +33,10 @@ public class ServicioUsuario {
         return repositorioUsuario.buscarPorId(id);
     }
 
+    public List<Usuario> obtenerTodos() {
+        return repositorioUsuario.listarUsuarios();
+    }
+
     public void guardar(Usuario usuario) {
         repositorioUsuario.guardar(usuario);
     }

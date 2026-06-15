@@ -1,297 +1,320 @@
 {
-  "info": {
-    "name": "EntreNos - Flujo Completo: Solicitar Servicio + Transaccion",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "variable": [
-    { "key": "baseUrl", "value": "http://localhost:8080" },
-    { "key": "token1", "value": "" },
-    { "key": "token2", "value": "" },
-    { "key": "usuario1Id", "value": "" },
-    { "key": "usuario2Id", "value": "" },
-    { "key": "idPublicacion", "value": "" },
-    { "key": "idSolicitud", "value": "" },
-    { "key": "idTransaccion", "value": "" }
-  ],
-  "item": [
-    {
-      "name": "1. Registro Usuario 1 (Ofertante)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "if (pm.response.code === 201) {",
-              "  var json = pm.response.json();",
-              "  pm.collectionVariables.set('usuario1Id', json.id);",
-              "}"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": {
-          "mode": "raw",
-          "raw": "{ \"nombre\": \"Carlos Ofertante\", \"correoElectronico\": \"carlos@alameda.com\", \"telefono\": \"1111111\", \"descripcionPersonal\": \"Vecino ofertante\", \"contrasena\": \"Pass1234\" }"
-        },
-        "url": { "raw": "{{baseUrl}}/api/usuarios/registro", "host": ["{{baseUrl}}"], "path": ["api", "usuarios", "registro"] }
-      }
-    },
-    {
-      "name": "2. Login Usuario 1",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "var json = pm.response.json();",
-              "pm.collectionVariables.set('token1', json.token);",
-              "if (json.usuario && json.usuario.id) pm.collectionVariables.set('usuario1Id', json.usuario.id);"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": {
-          "mode": "raw",
-          "raw": "{ \"correoElectronico\": \"carlos@alameda.com\", \"contrasena\": \"Pass1234\" }"
-        },
-        "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
-      }
-    },
-    {
-      "name": "3. Listar Habilidades (Catálogo Global)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "var json = pm.response.json();",
-              "if (json.length > 0) {",
-              "  console.log('Habilidades disponibles:');",
-              "  json.forEach(function(h) { console.log(' - ' + h.id + ': ' + h.categoria); });",
-              "}"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "GET",
-        "url": { "raw": "{{baseUrl}}/api/habilidades", "host": ["{{baseUrl}}"], "path": ["api", "habilidades"] }
-      }
-    },
-    {
-      "name": "4. Agregar Habilidad a Usuario 1 (gratis, 0 creditos) → crea Publicacion",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" },
-          { "key": "Authorization", "value": "Bearer {{token1}}" }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"idHabilidadCategoria\": \"HAB-001\",\n  \"precioCreditos\": 0,\n  \"descripcionServicio\": \"Ofrezco reparacion de tuberias (gratis para probar)\"\n}"
-        },
-        "url": { "raw": "{{baseUrl}}/api/usuarios/{{usuario1Id}}/habilidades", "host": ["{{baseUrl}}"], "path": ["api", "usuarios", "{{usuario1Id}}", "habilidades"] }
-      }
-    },
-    {
-      "name": "5. Registro Usuario 2 (Demandante)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "if (pm.response.code === 201) {",
-              "  var json = pm.response.json();",
-              "  pm.collectionVariables.set('usuario2Id', json.id);",
-              "}"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": {
-          "mode": "raw",
-          "raw": "{ \"nombre\": \"Maria Demandante\", \"correoElectronico\": \"maria@alameda.com\", \"telefono\": \"2222222\", \"descripcionPersonal\": \"Vecina demandante\", \"contrasena\": \"Pass5678\" }"
-        },
-        "url": { "raw": "{{baseUrl}}/api/usuarios/registro", "host": ["{{baseUrl}}"], "path": ["api", "usuarios", "registro"] }
-      }
-    },
-    {
-      "name": "6. Login Usuario 2",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "var json = pm.response.json();",
-              "pm.collectionVariables.set('token2', json.token);",
-              "if (json.usuario && json.usuario.id) pm.collectionVariables.set('usuario2Id', json.usuario.id);"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": {
-          "mode": "raw",
-          "raw": "{ \"correoElectronico\": \"maria@alameda.com\", \"contrasena\": \"Pass5678\" }"
-        },
-        "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
-      }
-    },
-    {
-      "name": "7. Listar Publicaciones (buscar la de Usuario 1)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "var json = pm.response.json();",
-              "var user1Id = pm.collectionVariables.get('usuario1Id');",
-              "var encontrada = json.find(function(p) { return p.idUsuario === user1Id; });",
-              "if (encontrada) {",
-              "  pm.collectionVariables.set('idPublicacion', encontrada.idPublicacion);",
-              "  console.log('Publicacion de User1 encontrada:', encontrada.idPublicacion, '-', encontrada.nombreServicio);",
-              "} else {",
-              "  console.log('No se encontro publicacion de User1. Publicaciones disponibles:', json.length);",
-              "  if (json.length > 0) {",
-              "    pm.collectionVariables.set('idPublicacion', json[0].idPublicacion);",
-              "  }",
-              "}"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "GET",
-        "header": [ { "key": "Authorization", "value": "Bearer {{token2}}" } ],
-        "url": { "raw": "{{baseUrl}}/api/publicaciones", "host": ["{{baseUrl}}"], "path": ["api", "publicaciones"] }
-      }
-    },
-    {
-      "name": "8. Solicitar Servicio (User2 → Publicacion de User1)",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "var json = pm.response.json();",
-              "if (json.idSolicitud) {",
-              "  pm.collectionVariables.set('idSolicitud', json.idSolicitud);",
-              "  console.log('Solicitud creada:', json.idSolicitud);",
-              "}"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" },
-          { "key": "Authorization", "value": "Bearer {{token2}}" }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{ \"idUsuario\": \"{{usuario2Id}}\" }"
-        },
-        "url": { "raw": "{{baseUrl}}/api/publicaciones/{{idPublicacion}}/solicitar", "host": ["{{baseUrl}}"], "path": ["api", "publicaciones", "{{idPublicacion}}", "solicitar"] }
-      }
-    },
-    {
-      "name": "9. Login Usuario 1 otra vez",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "var json = pm.response.json();",
-              "pm.collectionVariables.set('token1', json.token);"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": {
-          "mode": "raw",
-          "raw": "{ \"correoElectronico\": \"carlos@alameda.com\", \"contrasena\": \"Pass1234\" }"
-        },
-        "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
-      }
-    },
-    {
-      "name": "10. Aceptar Solicitud → Crea Transaccion",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "var baseUrl = pm.collectionVariables.get('baseUrl');",
-              "var token1 = pm.collectionVariables.get('token1');",
-              "console.log('Respuesta aceptar recibida, buscando transaccion...');",
-              "pm.sendRequest({",
-              "  url: baseUrl + '/api/transacciones',",
-              "  method: 'GET',",
-              "  header: { 'Authorization': 'Bearer ' + token1 }",
-              "}, function (err, res) {",
-              "  if (err) { console.log('Error al buscar transacciones:', err); return; }",
-              "  var txs = JSON.parse(res.text());",
-              "  console.log('Total transacciones:', txs.length);",
-              "  if (txs.length > 0) {",
-              "    var ultima = txs[txs.length - 1];",
-              "    pm.collectionVariables.set('idTransaccion', ultima.idTransaccion);",
-              "    console.log('Transaccion encontrada:', ultima.idTransaccion, '- Estado:', ultima.estado);",
-              "  }",
-              "});"
-            ]
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" },
-          { "key": "Authorization", "value": "Bearer {{token1}}" }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{ \"idUsuario\": \"{{usuario1Id}}\", \"aceptar\": true }"
-        },
-        "url": { "raw": "{{baseUrl}}/api/solicitudes/{{idSolicitud}}/responder", "host": ["{{baseUrl}}"], "path": ["api", "solicitudes", "{{idSolicitud}}", "responder"] }
-      }
-    },
-    {
-      "name": "11. Confirmar Ofertante",
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Authorization", "value": "Bearer {{token1}}" } ],
-        "url": { "raw": "{{baseUrl}}/api/transacciones/{{idTransaccion}}/confirmar-ofertante", "host": ["{{baseUrl}}"], "path": ["api", "transacciones", "{{idTransaccion}}", "confirmar-ofertante"] }
-      }
-    },
-    {
-      "name": "12. Reportar Incidencia (Fraude)",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" },
-          { "key": "Authorization", "value": "Bearer {{token1}}" }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"descripcion\": \"El demandante no recibio el servicio prometido a pesar de haberlo solicitado\",\n  \"urlEvidencia\": \"https://ejemplo.com/evidencia.png\"\n}"
-        },
-        "url": { "raw": "{{baseUrl}}/api/transacciones/{{idTransaccion}}/reportar-incidencia", "host": ["{{baseUrl}}"], "path": ["api", "transacciones", "{{idTransaccion}}", "reportar-incidencia"] }
-      }
-    }
-  ]
+	"info": {
+		"name": "EntreNos - Flujo Completo",
+		"description": "Colección para probar todos los cambios estructurales y funcionales (campos eliminados, Incidencia, Top 3 Podio, cancelar solicitud, etc.)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Usuarios",
+			"item": [
+				{
+					"name": "Registrar Usuario A (Vecino 1)",
+					"event": [{ "listen": "test", "script": { "exec": ["var jsonData = pm.response.json();", "pm.environment.set(\"idUsuarioA\", jsonData.idUsuario);", "pm.environment.set(\"nombreUsuarioA\", jsonData.nombre);"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Ana García\",\n  \"correoElectronico\": \"ana@example.com\",\n  \"telefono\": \"+58 412-111-2233\",\n  \"descripcionPersonal\": \"Diseñadora gráfica y community manager\",\n  \"contrasena\": \"clave123\"\n}"
+						},
+						"url": {"raw": "http://localhost:8080/api/usuarios/registro", "host": ["http://localhost:8080"], "path": ["api", "usuarios", "registro"]}
+					}
+				},
+				{
+					"name": "Registrar Usuario B (Vecino 2)",
+					"event": [{ "listen": "test", "script": { "exec": ["var jsonData = pm.response.json();", "pm.environment.set(\"idUsuarioB\", jsonData.idUsuario);", "pm.environment.set(\"nombreUsuarioB\", jsonData.nombre);"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Carlos López\",\n  \"correoElectronico\": \"carlos@example.com\",\n  \"telefono\": \"+58 414-222-3344\",\n  \"descripcionPersonal\": \"Electricista y técnico en reparaciones\",\n  \"contrasena\": \"clave456\"\n}"
+						},
+						"url": {"raw": "http://localhost:8080/api/usuarios/registro", "host": ["http://localhost:8080"], "path": ["api", "usuarios", "registro"]}
+					}
+				},
+				{
+					"name": "Obtener Perfil Usuario A",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "http://localhost:8080/api/usuarios/{{idUsuarioA}}", "host": ["http://localhost:8080"], "path": ["api", "usuarios", "{{idUsuarioA}}"]}
+					}
+				},
+				{
+					"name": "Obtener Saldo Usuario A",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "http://localhost:8080/api/usuarios/{{idUsuarioA}}/saldo", "host": ["http://localhost:8080"], "path": ["api", "usuarios", "{{idUsuarioA}}", "saldo"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Catálogo de Habilidades (bootstrap)",
+			"item": [
+				{
+					"name": "Listar Habilidades Base",
+					"event": [{ "listen": "test", "script": { "exec": ["var jsonData = pm.response.json();", "if(jsonData.length > 0) pm.environment.set(\"idHabilidadDisenio\", jsonData[0].id);"], "type": "text/javascript" } }],
+					"request": {
+						"method": "GET",
+						"url": {"raw": "http://localhost:8080/api/habilidades", "host": ["http://localhost:8080"], "path": ["api", "habilidades"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Publicaciones",
+			"item": [
+				{
+					"name": "Crear Publicacion (Oferta - HABILIDAD) de A",
+					"event": [{ "listen": "test", "script": { "exec": ["var jsonData = pm.response.json();", "pm.environment.set(\"idPublicacionA\", jsonData.idPublicacion);"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsuario\": \"{{idUsuarioA}}\",\n  \"tipoPublicacion\": \"HABILIDAD\",\n  \"nombreServicio\": \"Diseño Gráfico\",\n  \"descripcion\": \"Diseño de logos y material publicitario\",\n  \"precioCreditos\": 30\n}"
+						},
+						"url": {"raw": "http://localhost:8080/api/publicaciones", "host": ["http://localhost:8080"], "path": ["api", "publicaciones"]}
+					}
+				},
+				{
+					"name": "Crear Publicacion (Necesidad) de B",
+					"event": [{ "listen": "test", "script": { "exec": ["var jsonData = pm.response.json();", "pm.environment.set(\"idPublicacionB\", jsonData.idPublicacion);"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsuario\": \"{{idUsuarioB}}\",\n  \"tipoPublicacion\": \"NECESIDAD\",\n  \"nombreServicio\": \"Diseño Gráfico\",\n  \"descripcion\": \"Necesito un logo para mi negocio\",\n  \"precioCreditos\": 0\n}"
+						},
+						"url": {"raw": "http://localhost:8080/api/publicaciones", "host": ["http://localhost:8080"], "path": ["api", "publicaciones"]}
+					}
+				},
+				{
+					"name": "Listar Publicaciones (filtradas y DTO con nombreUsuario reputacion)",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "http://localhost:8080/api/publicaciones?tipo=HABILIDAD&servicio=diseño", "host": ["http://localhost:8080"], "path": ["api", "publicaciones"], "query": [{"key": "tipo", "value": "HABILIDAD"}, {"key": "servicio", "value": "diseño"}]}
+					}
+				},
+				{
+					"name": "Publicaciones del Usuario A (nuevo endpoint)",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "http://localhost:8080/api/publicaciones/usuario/{{idUsuarioA}}", "host": ["http://localhost:8080"], "path": ["api", "publicaciones", "usuario", "{{idUsuarioA}}"]}
+					}
+				},
+				{
+					"name": "Verificar DTO: sin fechaCreacion, esVecinoDestacado desde Usuario",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "http://localhost:8080/api/publicaciones/{{idPublicacionA}}", "host": ["http://localhost:8080"], "path": ["api", "publicaciones", "{{idPublicacionA}}"]}
+					}
+				},
+				{
+					"name": "Recomendaciones para Usuario B",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "http://localhost:8080/api/publicaciones/recomendadas/{{idUsuarioB}}", "host": ["http://localhost:8080"], "path": ["api", "publicaciones", "recomendadas", "{{idUsuarioB}}"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Solicitudes",
+			"item": [
+				{
+					"name": "Solicitar Servicio (B solicita a A)",
+					"event": [{ "listen": "test", "script": { "exec": ["var jsonData = pm.response.json();", "pm.environment.set(\"idSolicitud\", jsonData.idSolicitud);"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsuario\": \"{{idUsuarioB}}\"\n}"
+						},
+						"url": {"raw": "http://localhost:8080/api/publicaciones/{{idPublicacionA}}/solicitar", "host": ["http://localhost:8080"], "path": ["api", "publicaciones", "{{idPublicacionA}}", "solicitar"]}
+					}
+				},
+				{
+					"name": "Cancelar Solicitud (solo PENDIENTE) - nuevo endpoint",
+					"event": [{ "listen": "test", "script": { "exec": ["var jsonData = pm.response.json();", "console.log(\"Solicitud cancelada:\", jsonData.estado);"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsuario\": \"{{idUsuarioB}}\"\n}"
+						},
+						"url": {"raw": "http://localhost:8080/api/solicitudes/{{idSolicitud}}/cancelar", "host": ["http://localhost:8080"], "path": ["api", "solicitudes", "{{idSolicitud}}", "cancelar"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "5. Flujo Transacción Completo",
+			"item": [
+				{
+					"name": "Solicitar Servicio (B solicita a A) - segunda intento",
+					"event": [{ "listen": "test", "script": { "exec": ["var jsonData = pm.response.json();", "pm.environment.set(\"idSolicitud2\", jsonData.idSolicitud);"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsuario\": \"{{idUsuarioB}}\"\n}"
+						},
+						"url": {"raw": "http://localhost:8080/api/publicaciones/{{idPublicacionA}}/solicitar", "host": ["http://localhost:8080"], "path": ["api", "publicaciones", "{{idPublicacionA}}", "solicitar"]}
+					}
+				},
+				{
+					"name": "Aceptar Solicitud (A responde OK)",
+					"event": [{ "listen": "test", "script": { "exec": ["var jsonData = pm.response.json();", "if(jsonData.estado === 'ACEPTADA') {", "  console.log('Solicitud ACEPTADA, transacción creada automáticamente');", "}", "var transacciones = pm.sendRequest({ url: 'http://localhost:8080/api/transacciones', method: 'GET' });", "var txList = JSON.parse(transacciones);", "if(txList.length > 0) {", "  var ultimaTx = txList[txList.length - 1];", "  pm.environment.set('idTransaccion', ultimaTx.idTransaccion);", "  pm.environment.set('idOfertanteTx', ultimaTx.idOfertante);", "  pm.environment.set('idDemandanteTx', ultimaTx.idDemandante);", "}"], "type": "text/javascript" } }],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsuario\": \"{{idUsuarioA}}\",\n  \"aceptar\": true\n}"
+						},
+						"url": {"raw": "http://localhost:8080/api/solicitudes/{{idSolicitud2}}/responder", "host": ["http://localhost:8080"], "path": ["api", "solicitudes", "{{idSolicitud2}}", "responder"]}
+					}
+				},
+				{
+					"name": "Ver Transaccion (sin nombreServicio / descripcion / fechaLimiteAceptacion)",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "http://localhost:8080/api/transacciones/{{idTransaccion}}", "host": ["http://localhost:8080"], "path": ["api", "transacciones", "{{idTransaccion}}"]}
+					}
+				},
+				{
+					"name": "Confirmar Ofertante (A confirma entrega)",
+					"request": {
+						"method": "POST",
+						"url": {"raw": "http://localhost:8080/api/transacciones/{{idTransaccion}}/confirmar-ofertante", "host": ["http://localhost:8080"], "path": ["api", "transacciones", "{{idTransaccion}}", "confirmar-ofertante"]}
+					}
+				},
+				{
+					"name": "Confirmar Demandante (B confirma recepción)",
+					"request": {
+						"method": "POST",
+						"url": {"raw": "http://localhost:8080/api/transacciones/{{idTransaccion}}/confirmar-demandante", "host": ["http://localhost:8080"], "path": ["api", "transacciones", "{{idTransaccion}}", "confirmar-demandante"]}
+					}
+				},
+				{
+					"name": "Calificar Transacción (sin comentario)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsuario\": \"{{idDemandanteTx}}\",\n  \"calificacion\": 5\n}"
+						},
+						"url": {"raw": "http://localhost:8080/api/transacciones/{{idTransaccion}}/calificar", "host": ["http://localhost:8080"], "path": ["api", "transacciones", "{{idTransaccion}}", "calificar"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "6. Incidencias (nuevo modelo)",
+			"item": [
+				{
+					"name": "Crear y finalizar otra transacción para probar incidencia",
+					"event": [{ "listen": "test", "script": { "exec": ["// This will only work if there's a transaction in INICIADA state", "console.log('Para probar incidencia, primero inicia una transacción y confirma solo un lado');"], "type": "text/javascript" } }],
+					"request": {
+						"method": "GET",
+						"url": {"raw": "http://localhost:8080/api/publicaciones", "host": ["http://localhost:8080"], "path": ["api", "publicaciones"]}
+					}
+				},
+				{
+					"name": "Reportar Incidencia (requiere transacción INICIADA + descripción >= 20 chars)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsuario\": \"{{idDemandanteTx}}\",\n  \"descripcion\": \"El servicio entregado no coincide con lo acordado en la publicación original. Solucionar por favor.\",\n  \"urlEvidencia\": \"https://ejemplo.com/evidencia.jpg\"\n}"
+						},
+						"url": {"raw": "http://localhost:8080/api/transacciones/{{idTransaccion}}/reportar-incidencia", "host": ["http://localhost:8080"], "path": ["api", "transacciones", "{{idTransaccion}}", "reportar-incidencia"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "7. Reputación",
+			"item": [
+				{
+					"name": "Historial de Calificaciones de A (resenas por usuario)",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "http://localhost:8080/api/reputacion/usuario/{{idUsuarioA}}", "host": ["http://localhost:8080"], "path": ["api", "reputacion", "usuario", "{{idUsuarioA}}"]}
+					}
+				},
+				{
+					"name": "Todas las Resenas (sin campo comentario)",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "http://localhost:8080/api/reputacion", "host": ["http://localhost:8080"], "path": ["api", "reputacion"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "8. Gamificación",
+			"item": [
+				{
+					"name": "Logros de Usuario A",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "http://localhost:8080/api/logros/usuario/{{idUsuarioA}}", "host": ["http://localhost:8080"], "path": ["api", "logros", "usuario", "{{idUsuarioA}}"]}
+					}
+				},
+				{
+					"name": "Logros Desbloqueados de A (sin icono)",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "http://localhost:8080/api/logros/usuario/{{idUsuarioA}}/desbloqueados", "host": ["http://localhost:8080"], "path": ["api", "logros", "usuario", "{{idUsuarioA}}", "desbloqueados"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "9. Podio Semanal (Top 3)",
+			"item": [
+				{
+					"name": "Ver Top 3 del Podio (nuevo formato con listas)",
+					"request": {
+						"method": "GET",
+						"url": {"raw": "http://localhost:8080/api/podio", "host": ["http://localhost:8080"], "path": ["api", "podio"]}
+					}
+				},
+				{
+					"name": "Calcular Podio Semanal Manualmente",
+					"request": {
+						"method": "POST",
+						"url": {"raw": "http://localhost:8080/api/podio/calcular", "host": ["http://localhost:8080"], "path": ["api", "podio", "calcular"]}
+					}
+				}
+			]
+		},
+		{
+			"name": "10. Admin - Sanción de Fraude",
+			"item": [
+				{
+					"name": "Reportar Fraude Validado (suspende tras 2 reportes)",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idUsuarioReportado\": \"{{idUsuarioB}}\",\n  \"idUsuarioReportante\": \"{{idUsuarioA}}\"\n}"
+						},
+						"url": {"raw": "http://localhost:8080/api/admin/sanciones/fraude", "host": ["http://localhost:8080"], "path": ["api", "admin", "sanciones", "fraude"]}
+					}
+				}
+			]
+		}
+	]
 }

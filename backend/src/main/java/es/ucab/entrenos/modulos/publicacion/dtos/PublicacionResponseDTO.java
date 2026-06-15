@@ -10,7 +10,6 @@ public class PublicacionResponseDTO {
     private String descripcion;
     private int precioCreditos;
     private boolean disponible;
-    private long fechaCreacion;
     private boolean esVecinoDestacado;
     private String idInstanciaCatalogo;
     private int version;
@@ -26,7 +25,6 @@ public class PublicacionResponseDTO {
     public String getDescripcion() { return descripcion; }
     public int getPrecioCreditos() { return precioCreditos; }
     public boolean isDisponible() { return disponible; }
-    public long getFechaCreacion() { return fechaCreacion; }
     public boolean isEsVecinoDestacado() { return esVecinoDestacado; }
     public String getIdInstanciaCatalogo() { return idInstanciaCatalogo; }
     public int getVersion() { return version; }
@@ -40,7 +38,6 @@ public class PublicacionResponseDTO {
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
     public void setPrecioCreditos(int precioCreditos) { this.precioCreditos = precioCreditos; }
     public void setDisponible(boolean disponible) { this.disponible = disponible; }
-    public void setFechaCreacion(long fechaCreacion) { this.fechaCreacion = fechaCreacion; }
     public void setEsVecinoDestacado(boolean esVecinoDestacado) { this.esVecinoDestacado = esVecinoDestacado; }
     public void setIdInstanciaCatalogo(String idInstanciaCatalogo) { this.idInstanciaCatalogo = idInstanciaCatalogo; }
     public void setVersion(int version) { this.version = version; }

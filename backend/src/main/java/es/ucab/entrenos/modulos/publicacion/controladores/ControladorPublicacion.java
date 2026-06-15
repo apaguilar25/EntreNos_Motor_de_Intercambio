@@ -47,6 +47,11 @@ public class ControladorPublicacion {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<List<PublicacionResponseDTO>> obtenerPorUsuario(@PathVariable String idUsuario) {
+        return ResponseEntity.ok(servicioPublicacion.obtenerPublicacionesPorUsuario(idUsuario));
+    }
+
     // --- HU6: Endpoint de Recomendadas ---
     @GetMapping("/recomendadas/{idUsuario}")
     public ResponseEntity<List<RecomendacionDTO>> recomendadas(

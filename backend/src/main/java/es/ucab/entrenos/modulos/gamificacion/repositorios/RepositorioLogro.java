@@ -37,13 +37,13 @@ public class RepositorioLogro implements IRepositorioLogro {
                 List<Logro> semilla = new ArrayList<>();
                 semilla.add(new Logro("INICIADOR_RED", "Iniciador de Red",
                         "Por completar el primer intercambio. ¡Rompe la inercia y da el primer paso!",
-                        "PRIMERA_TRANSACCION", 10, "star"));
+                        "PRIMERA_TRANSACCION", 10));
                 semilla.add(new Logro("MAESTRO_CONFIANZA", "Maestro de Confianza",
                         "Por mantener 5 estrellas en 5 tratos con usuarios distintos. La calidad es tu sello.",
-                        "MAESTRO_CONFIANZA", 25, "shield"));
+                        "MAESTRO_CONFIANZA", 25));
                 semilla.add(new Logro("POLIMATA", "Polímata Comunitario",
                         "Por registrar y prestar servicios en 5 categorías de habilidades diferentes. ¡Todo un experto multidisciplinario!",
-                        "POLIMATA", 50, "award"));
+                        "POLIMATA", 50));
                 try (Writer writer = new OutputStreamWriter(new FileOutputStream(RUTA_ARCHIVO), StandardCharsets.UTF_8)) {
                     gson.toJson(semilla, writer);
                 }
