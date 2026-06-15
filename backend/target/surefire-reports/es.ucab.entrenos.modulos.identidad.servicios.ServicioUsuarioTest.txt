@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: es.ucab.entrenos.modulos.identidad.servicios.ServicioUsuarioTest
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.677 s -- in es.ucab.entrenos.modulos.identidad.servicios.ServicioUsuarioTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.110 s -- in es.ucab.entrenos.modulos.identidad.servicios.ServicioUsuarioTest

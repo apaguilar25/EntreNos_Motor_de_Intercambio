@@ -1,0 +1,551 @@
+{
+	"info": {
+		"name": "EntreNos - Catálogo y Capital Semilla",
+		"description": "Flujo para probar que al llenar el catálogo (solo ofertas, solo necesidades, o ambas) el monedero sube sus créditos disponibles gracias al Capital Semilla de 50 créditos.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "0. Obtener Habilidades Base",
+			"item": [
+				{
+					"name": "Listar Habilidades (seed data)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.length >= 2) {",
+									"    pm.environment.set(\"idHab1\", jsonData[0].id);",
+									"    pm.environment.set(\"idHab2\", jsonData[1].id);",
+									"    pm.environment.set(\"idHab3\", jsonData[2].id);",
+									"    pm.test(\"Habilidades base cargadas\", () => pm.expect(jsonData.length).to.be.at.least(3));",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/habilidades",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "habilidades"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "1. Usuario A — Solo Ofertas",
+			"item": [
+				{
+					"name": "Registrar Usuario A",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"idUsuarioA\", jsonData.id);",
+									"pm.test(\"Usuario A registrado con ID\", () => pm.expect(jsonData.id).to.not.be.empty);",
+									"pm.test(\"Saldo inicial es 0\", () => pm.expect(jsonData.creditosDisponibles).to.equal(0));",
+									"pm.test(\"Catálogo no completado\", () => pm.expect(jsonData.catalogoCompletado).to.be.false);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Ana García\",\n  \"correoElectronico\": \"ana.catalogo@alameda.com\",\n  \"telefono\": \"+58 412-100-0001\",\n  \"descripcionPersonal\": \"Usuario A: solo ofertas en el catálogo\",\n  \"contrasena\": \"clave123\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/registro",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "registro"]
+						}
+					}
+				},
+				{
+					"name": "Ver Saldo Inicial de A (debe ser 0)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.test(\"Saldo disponible es 0\", () => pm.expect(jsonData.saldoDisponible).to.equal(0));",
+									"pm.test(\"Créditos disponibles es 0\", () => pm.expect(jsonData.creditosDisponibles).to.equal(0));",
+									"pm.test(\"Créditos retenidos es 0\", () => pm.expect(jsonData.creditosRetenidos).to.equal(0));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/{{idUsuarioA}}/saldo",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "{{idUsuarioA}}", "saldo"]
+						}
+					}
+				},
+				{
+					"name": "Configurar Catálogo de A (solo ofertas)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Catálogo configurado exitosamente\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Mensaje de capital semilla\", () => {",
+									"    pm.expect(pm.response.text()).to.include(\"Capital Semilla\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"ofertas\": [\n    {\n      \"idHabilidadCategoria\": \"{{idHab1}}\",\n      \"precioCreditos\": 15,\n      \"descripcionServicio\": \"Reparación de tuberías y instalación de grifería\"\n    },\n    {\n      \"idHabilidadCategoria\": \"{{idHab2}}\",\n      \"precioCreditos\": 20,\n      \"descripcionServicio\": \"Instalaciones eléctricas residenciales\"\n    }\n  ],\n  \"necesidades\": []\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/{{idUsuarioA}}/catalogo",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "{{idUsuarioA}}", "catalogo"]
+						}
+					}
+				},
+				{
+					"name": "Ver Saldo de A después del catálogo (debe ser 50)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.test(\"Créditos disponibles ahora es 50 (Capital Semilla)\", () => pm.expect(jsonData.creditosDisponibles).to.equal(50));",
+									"pm.test(\"Saldo disponible es 50\", () => pm.expect(jsonData.saldoDisponible).to.equal(50));",
+									"pm.test(\"No hay retenciones\", () => pm.expect(jsonData.creditosRetenidos).to.equal(0));",
+									"console.log(\"Usuario A — Saldo después del catálogo:\", JSON.stringify(jsonData));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/{{idUsuarioA}}/saldo",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "{{idUsuarioA}}", "saldo"]
+						}
+					}
+				},
+				{
+					"name": "Ver Perfil de A (verificar catálogo completado y ofertas)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.test(\"Catálogo marcado como completado\", () => pm.expect(jsonData.catalogoCompletado).to.be.true);",
+									"pm.test(\"Tiene 2 ofertas\", () => pm.expect(jsonData.ofertas.length).to.equal(2));",
+									"pm.test(\"No tiene necesidades\", () => pm.expect(jsonData.necesidades.length).to.equal(0));",
+									"pm.test(\"Créditos disponibles es 50\", () => pm.expect(jsonData.creditosDisponibles).to.equal(50));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/{{idUsuarioA}}",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "{{idUsuarioA}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Usuario B — Solo Necesidades",
+			"item": [
+				{
+					"name": "Registrar Usuario B",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"idUsuarioB\", jsonData.id);",
+									"pm.test(\"Usuario B registrado con ID\", () => pm.expect(jsonData.id).to.not.be.empty);",
+									"pm.test(\"Saldo inicial es 0\", () => pm.expect(jsonData.creditosDisponibles).to.equal(0));",
+									"pm.test(\"Catálogo no completado\", () => pm.expect(jsonData.catalogoCompletado).to.be.false);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Carlos López\",\n  \"correoElectronico\": \"carlos.catalogo@alameda.com\",\n  \"telefono\": \"+58 414-200-0002\",\n  \"descripcionPersonal\": \"Usuario B: solo necesidades en el catálogo\",\n  \"contrasena\": \"clave456\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/registro",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "registro"]
+						}
+					}
+				},
+				{
+					"name": "Ver Saldo Inicial de B (debe ser 0)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.test(\"Saldo disponible es 0\", () => pm.expect(jsonData.saldoDisponible).to.equal(0));",
+									"pm.test(\"Créditos disponibles es 0\", () => pm.expect(jsonData.creditosDisponibles).to.equal(0));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/{{idUsuarioB}}/saldo",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "{{idUsuarioB}}", "saldo"]
+						}
+					}
+				},
+				{
+					"name": "Configurar Catálogo de B (solo necesidades)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Catálogo configurado exitosamente\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Mensaje de capital semilla\", () => {",
+									"    pm.expect(pm.response.text()).to.include(\"Capital Semilla\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"ofertas\": [],\n  \"necesidades\": [\n    {\n      \"idHabilidadCategoria\": \"{{idHab3}}\",\n      \"descripcionCondiciones\": \"Busco carpintero para muebles a medida\"\n    },\n    {\n      \"idHabilidadCategoria\": \"{{idHab1}}\",\n      \"descripcionCondiciones\": \"Necesito plomero para reparación de baño\"\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/{{idUsuarioB}}/catalogo",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "{{idUsuarioB}}", "catalogo"]
+						}
+					}
+				},
+				{
+					"name": "Ver Saldo de B después del catálogo (debe ser 50)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.test(\"Créditos disponibles ahora es 50 (Capital Semilla)\", () => pm.expect(jsonData.creditosDisponibles).to.equal(50));",
+									"pm.test(\"Saldo disponible es 50\", () => pm.expect(jsonData.saldoDisponible).to.equal(50));",
+									"console.log(\"Usuario B — Saldo después del catálogo:\", JSON.stringify(jsonData));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/{{idUsuarioB}}/saldo",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "{{idUsuarioB}}", "saldo"]
+						}
+					}
+				},
+				{
+					"name": "Ver Perfil de B (verificar catálogo completado y necesidades)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.test(\"Catálogo marcado como completado\", () => pm.expect(jsonData.catalogoCompletado).to.be.true);",
+									"pm.test(\"No tiene ofertas\", () => pm.expect(jsonData.ofertas.length).to.equal(0));",
+									"pm.test(\"Tiene 2 necesidades\", () => pm.expect(jsonData.necesidades.length).to.equal(2));",
+									"pm.test(\"Créditos disponibles es 50\", () => pm.expect(jsonData.creditosDisponibles).to.equal(50));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/{{idUsuarioB}}",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "{{idUsuarioB}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Usuario C — Ofertas y Necesidades",
+			"item": [
+				{
+					"name": "Registrar Usuario C",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"idUsuarioC\", jsonData.id);",
+									"pm.test(\"Usuario C registrado con ID\", () => pm.expect(jsonData.id).to.not.be.empty);",
+									"pm.test(\"Saldo inicial es 0\", () => pm.expect(jsonData.creditosDisponibles).to.equal(0));",
+									"pm.test(\"Catálogo no completado\", () => pm.expect(jsonData.catalogoCompletado).to.be.false);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"María Rodríguez\",\n  \"correoElectronico\": \"maria.catalogo@alameda.com\",\n  \"telefono\": \"+58 416-300-0003\",\n  \"descripcionPersonal\": \"Usuario C: ofertas y necesidades en el catálogo\",\n  \"contrasena\": \"clave789\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/registro",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "registro"]
+						}
+					}
+				},
+				{
+					"name": "Ver Saldo Inicial de C (debe ser 0)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.test(\"Saldo disponible es 0\", () => pm.expect(jsonData.saldoDisponible).to.equal(0));",
+									"pm.test(\"Créditos disponibles es 0\", () => pm.expect(jsonData.creditosDisponibles).to.equal(0));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/{{idUsuarioC}}/saldo",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "{{idUsuarioC}}", "saldo"]
+						}
+					}
+				},
+				{
+					"name": "Configurar Catálogo de C (ofertas + necesidades)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Catálogo configurado exitosamente\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Mensaje de capital semilla\", () => {",
+									"    pm.expect(pm.response.text()).to.include(\"Capital Semilla\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"ofertas\": [\n    {\n      \"idHabilidadCategoria\": \"{{idHab3}}\",\n      \"precioCreditos\": 25,\n      \"descripcionServicio\": \"Fabricación y reparación de muebles de madera\"\n    }\n  ],\n  \"necesidades\": [\n    {\n      \"idHabilidadCategoria\": \"{{idHab5}}\",\n      \"descripcionCondiciones\": \"Necesito soporte técnico para configurar mi red\"\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/{{idUsuarioC}}/catalogo",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "{{idUsuarioC}}", "catalogo"]
+						}
+					}
+				},
+				{
+					"name": "Ver Saldo de C después del catálogo (debe ser 50)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.test(\"Créditos disponibles ahora es 50 (Capital Semilla)\", () => pm.expect(jsonData.creditosDisponibles).to.equal(50));",
+									"pm.test(\"Saldo disponible es 50\", () => pm.expect(jsonData.saldoDisponible).to.equal(50));",
+									"console.log(\"Usuario C — Saldo después del catálogo:\", JSON.stringify(jsonData));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/{{idUsuarioC}}/saldo",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "{{idUsuarioC}}", "saldo"]
+						}
+					}
+				},
+				{
+					"name": "Ver Perfil de C (verificar ofertas y necesidades)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.test(\"Catálogo marcado como completado\", () => pm.expect(jsonData.catalogoCompletado).to.be.true);",
+									"pm.test(\"Tiene 1 oferta\", () => pm.expect(jsonData.ofertas.length).to.equal(1));",
+									"pm.test(\"Tiene 1 necesidad\", () => pm.expect(jsonData.necesidades.length).to.equal(1));",
+									"pm.test(\"Créditos disponibles es 50\", () => pm.expect(jsonData.creditosDisponibles).to.equal(50));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/{{idUsuarioC}}",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "{{idUsuarioC}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Verificación: intentar configurar catálogo otra vez (debe fallar)",
+			"item": [
+				{
+					"name": "Intentar configurar catálogo de A nuevamente (debe rechazar)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Estatus 400 (Bad Request)\", () => pm.response.to.have.status(400));",
+									"pm.test(\"Mensaje de error: catálogo ya completado\", () => {",
+									"    pm.expect(pm.response.text()).to.include(\"ya fue completado\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"ofertas\": [\n    {\n      \"idHabilidadCategoria\": \"{{idHab1}}\",\n      \"precioCreditos\": 10,\n      \"descripcionServicio\": \"Intento duplicado\"\n    }\n  ],\n  \"necesidades\": []\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/{{idUsuarioA}}/catalogo",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "{{idUsuarioA}}", "catalogo"]
+						}
+					}
+				},
+				{
+					"name": "Verificar que saldo de A sigue siendo 50 (no se acreditó doble)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.test(\"Créditos disponibles sigue siendo 50\", () => pm.expect(jsonData.creditosDisponibles).to.equal(50));",
+									"pm.test(\"Saldo disponible sigue siendo 50\", () => pm.expect(jsonData.saldoDisponible).to.equal(50));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/usuarios/{{idUsuarioA}}/saldo",
+							"host": ["http://localhost:8080"],
+							"path": ["api", "usuarios", "{{idUsuarioA}}", "saldo"]
+						}
+					}
+				}
+			]
+		}
+	]
+}

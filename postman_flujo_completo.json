@@ -16,7 +16,7 @@
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"nombre\": \"Ana García\",\n  \"correoElectronico\": \"ana@example.com\",\n  \"telefono\": \"+58 412-111-2233\",\n  \"descripcionPersonal\": \"Diseñadora gráfica y community manager\",\n  \"contrasena\": \"clave123\"\n}"
+							"raw": "{\n  \"nombre\": \"Ana García\",\n  \"correoElectronico\": \"ana@alameda.com\",\n  \"telefono\": \"+58 412-111-2233\",\n  \"descripcionPersonal\": \"Diseñadora gráfica y community manager\",\n  \"contrasena\": \"clave123\"\n}"
 						},
 						"url": {"raw": "http://localhost:8080/api/usuarios/registro", "host": ["http://localhost:8080"], "path": ["api", "usuarios", "registro"]}
 					}
@@ -29,7 +29,7 @@
 						"header": [{"key": "Content-Type", "value": "application/json"}],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"nombre\": \"Carlos López\",\n  \"correoElectronico\": \"carlos@example.com\",\n  \"telefono\": \"+58 414-222-3344\",\n  \"descripcionPersonal\": \"Electricista y técnico en reparaciones\",\n  \"contrasena\": \"clave456\"\n}"
+							"raw": "{\n  \"nombre\": \"Carlos López\",\n  \"correoElectronico\": \"carlos@alameda.com\",\n  \"telefono\": \"+58 414-222-3344\",\n  \"descripcionPersonal\": \"Electricista y técnico en reparaciones\",\n  \"contrasena\": \"clave456\"\n}"
 						},
 						"url": {"raw": "http://localhost:8080/api/usuarios/registro", "host": ["http://localhost:8080"], "path": ["api", "usuarios", "registro"]}
 					}
