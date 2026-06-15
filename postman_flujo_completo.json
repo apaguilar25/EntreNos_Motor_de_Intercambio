@@ -21,8 +21,10 @@
           "listen": "test",
           "script": {
             "exec": [
-              "var json = pm.response.json();",
-              "pm.collectionVariables.set('usuario1Id', json.id);"
+              "if (pm.response.code === 201) {",
+              "  var json = pm.response.json();",
+              "  pm.collectionVariables.set('usuario1Id', json.id);",
+              "}"
             ]
           }
         }
@@ -70,8 +72,8 @@
             "exec": [
               "var json = pm.response.json();",
               "if (json.length > 0) {",
-              "  pm.collectionVariables.set('idHabilidad', json[0].id);",
-              "  console.log('Usando habilidad:', json[0].categoria, 'ID:', json[0].id);",
+              "  console.log('Habilidades disponibles:');",
+              "  json.forEach(function(h) { console.log(' - ' + h.id + ': ' + h.categoria); });",
               "}"
             ]
           }
@@ -83,7 +85,7 @@
       }
     },
     {
-      "name": "4. Agregar Habilidad a Usuario 1 → crea Publicacion",
+      "name": "4. Agregar Habilidad a Usuario 1 (gratis, 0 creditos) → crea Publicacion",
       "request": {
         "method": "POST",
         "header": [
@@ -92,7 +94,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"idHabilidadCategoria\": \"HAB-001\",\n  \"precioCreditos\": 30,\n  \"descripcionServicio\": \"Ofrezco reparacion de tuberias\"\n}"
+          "raw": "{\n  \"idHabilidadCategoria\": \"HAB-001\",\n  \"precioCreditos\": 0,\n  \"descripcionServicio\": \"Ofrezco reparacion de tuberias (gratis para probar)\"\n}"
         },
         "url": { "raw": "{{baseUrl}}/api/usuarios/{{usuario1Id}}/habilidades", "host": ["{{baseUrl}}"], "path": ["api", "usuarios", "{{usuario1Id}}", "habilidades"] }
       }
@@ -104,8 +106,10 @@
           "listen": "test",
           "script": {
             "exec": [
-              "var json = pm.response.json();",
-              "pm.collectionVariables.set('usuario2Id', json.id);"
+              "if (pm.response.code === 201) {",
+              "  var json = pm.response.json();",
+              "  pm.collectionVariables.set('usuario2Id', json.id);",
+              "}"
             ]
           }
         }
@@ -145,17 +149,23 @@
       }
     },
     {
-      "name": "7. Listar Publicaciones (buscar la creada en paso 4)",
+      "name": "7. Listar Publicaciones (buscar la de Usuario 1)",
       "event": [
         {
           "listen": "test",
           "script": {
             "exec": [
               "var json = pm.response.json();",
-              "if (json.length > 0) {",
-              "  var pub = json[0];",
-              "  pm.collectionVariables.set('idPublicacion', pub.idPublicacion);",
-              "  console.log('Publicacion encontrada:', pub.idPublicacion);",
+              "var user1Id = pm.collectionVariables.get('usuario1Id');",
+              "var encontrada = json.find(function(p) { return p.idUsuario === user1Id; });",
+              "if (encontrada) {",
+              "  pm.collectionVariables.set('idPublicacion', encontrada.idPublicacion);",
+              "  console.log('Publicacion de User1 encontrada:', encontrada.idPublicacion, '-', encontrada.nombreServicio);",
+              "} else {",
+              "  console.log('No se encontro publicacion de User1. Publicaciones disponibles:', json.length);",
+              "  if (json.length > 0) {",
+              "    pm.collectionVariables.set('idPublicacion', json[0].idPublicacion);",
+              "  }",
               "}"
             ]
           }
@@ -175,8 +185,10 @@
           "script": {
             "exec": [
               "var json = pm.response.json();",
-              "if (json.idSolicitud) pm.collectionVariables.set('idSolicitud', json.idSolicitud);",
-              "console.log('Solicitud creada:', json.idSolicitud);"
+              "if (json.idSolicitud) {",
+              "  pm.collectionVariables.set('idSolicitud', json.idSolicitud);",
+              "  console.log('Solicitud creada:', json.idSolicitud);",
+              "}"
             ]
           }
         }
@@ -195,7 +207,7 @@
       }
     },
     {
-      "name": "9. Login User1 otra vez (para aceptar solicitud)",
+      "name": "9. Login Usuario 1 otra vez",
       "event": [
         {
           "listen": "test",
@@ -224,21 +236,21 @@
           "listen": "test",
           "script": {
             "exec": [
-              "var json = pm.response.json();",
-              "console.log('Respuesta aceptar:', JSON.stringify(json));",
-              "// Buscar transaccion creada listando todas",
+              "var baseUrl = pm.collectionVariables.get('baseUrl');",
+              "var token1 = pm.collectionVariables.get('token1');",
+              "console.log('Respuesta aceptar recibida, buscando transaccion...');",
               "pm.sendRequest({",
-              "  url: pm.collectionVariables.get('baseUrl') + '/api/transacciones',",
+              "  url: baseUrl + '/api/transacciones',",
               "  method: 'GET',",
-              "  header: { 'Authorization': 'Bearer ' + pm.collectionVariables.get('token1') }",
+              "  header: { 'Authorization': 'Bearer ' + token1 }",
               "}, function (err, res) {",
-              "  if (!err) {",
-              "    var txs = JSON.parse(res.text());",
-              "    if (txs.length > 0) {",
-              "      var ultima = txs[txs.length - 1];",
-              "      pm.collectionVariables.set('idTransaccion', ultima.idTransaccion);",
-              "      console.log('Transaccion encontrada:', ultima.idTransaccion);",
-              "    }",
+              "  if (err) { console.log('Error al buscar transacciones:', err); return; }",
+              "  var txs = JSON.parse(res.text());",
+              "  console.log('Total transacciones:', txs.length);",
+              "  if (txs.length > 0) {",
+              "    var ultima = txs[txs.length - 1];",
+              "    pm.collectionVariables.set('idTransaccion', ultima.idTransaccion);",
+              "    console.log('Transaccion encontrada:', ultima.idTransaccion, '- Estado:', ultima.estado);",
               "  }",
               "});"
             ]
@@ -263,7 +275,6 @@
       "request": {
         "method": "POST",
         "header": [ { "key": "Authorization", "value": "Bearer {{token1}}" } ],
-        "body": { "mode": "raw", "raw": "" },
         "url": { "raw": "{{baseUrl}}/api/transacciones/{{idTransaccion}}/confirmar-ofertante", "host": ["{{baseUrl}}"], "path": ["api", "transacciones", "{{idTransaccion}}", "confirmar-ofertante"] }
       }
     },
@@ -277,7 +288,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"descripcion\": \"El demandante no recibio el servicio prometido y no responde los mensajes\",\n  \"urlEvidencia\": \"https://ejemplo.com/evidencia.png\"\n}"
+          "raw": "{\n  \"descripcion\": \"El demandante no recibio el servicio prometido a pesar de haberlo solicitado\",\n  \"urlEvidencia\": \"https://ejemplo.com/evidencia.png\"\n}"
         },
         "url": { "raw": "{{baseUrl}}/api/transacciones/{{idTransaccion}}/reportar-incidencia", "host": ["{{baseUrl}}"], "path": ["api", "transacciones", "{{idTransaccion}}", "reportar-incidencia"] }
       }
