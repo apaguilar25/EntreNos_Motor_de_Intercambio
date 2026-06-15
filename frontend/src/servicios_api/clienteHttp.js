@@ -21,6 +21,9 @@ export class ClienteHttp {
     if (!response.ok) {
       throw new Error(`Error GET ${endpoint}: ${response.statusText}`);
     }
+    if (response.status === 204) {
+      return null;
+    }
     return response.json();
   }
 
@@ -32,6 +35,9 @@ export class ClienteHttp {
     });
     if (!response.ok) {
       throw new Error(`Error POST ${endpoint}: ${response.statusText}`);
+    }
+    if (response.status === 204) {
+      return null;
     }
     return response.json();
   }

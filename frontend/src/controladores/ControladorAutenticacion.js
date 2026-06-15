@@ -26,7 +26,7 @@ export class ControladorAutenticacion {
       
       this.setContextState('user', userInfo);
 
-      const hasCat = (usuario.catalogo && ((usuario.catalogo.habilidadesOfrecidas && usuario.catalogo.habilidadesOfrecidas.length > 0) || (usuario.catalogo.necesidadesRegistradas && usuario.catalogo.necesidadesRegistradas.length > 0)));
+      const hasCat = Boolean(usuario.catalogo && ((usuario.catalogo.habilidadesOfrecidas && usuario.catalogo.habilidadesOfrecidas.length > 0) || (usuario.catalogo.necesidadesRegistradas && usuario.catalogo.necesidadesRegistradas.length > 0)));
       
       this.setContextState('hasCatalog', hasCat);
       if (usuario.monedero) {
@@ -62,7 +62,7 @@ export class ControladorAutenticacion {
 
     try {
       const data = await this.servicioUsuario.obtenerUsuario(assignedId);
-      const hasCat = (data.habilidades && data.habilidades.length > 0) || (data.necesidades && data.necesidades.length > 0);
+      const hasCat = Boolean((data.habilidades && data.habilidades.length > 0) || (data.necesidades && data.necesidades.length > 0));
       
       this.setContextState('hasCatalog', hasCat);
       if (data.monedero) {

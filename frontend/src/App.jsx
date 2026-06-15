@@ -35,15 +35,15 @@ function App() {
   const [theme, setTheme] = useState('light');
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('entreNosUser');
-    return savedUser ? JSON.parse(savedUser) : null;
+    return savedUser && savedUser !== 'undefined' ? JSON.parse(savedUser) : null;
   });
   const [balance, setBalance] = useState(() => {
     const savedBalance = localStorage.getItem('entreNosBalance');
-    return savedBalance ? JSON.parse(savedBalance) : 0;
+    return savedBalance && savedBalance !== 'undefined' ? JSON.parse(savedBalance) : 0;
   });
   const [hasCatalog, setHasCatalog] = useState(() => {
     const savedCatalog = localStorage.getItem('entreNosCatalog');
-    return savedCatalog ? JSON.parse(savedCatalog) : false;
+    return savedCatalog && savedCatalog !== 'undefined' ? JSON.parse(savedCatalog) : false;
   });
 
   // Efectos de Persistencia

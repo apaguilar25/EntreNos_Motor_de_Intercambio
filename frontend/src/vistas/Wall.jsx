@@ -266,8 +266,7 @@ const Wall = () => {
         </div>
 
         {/* Podio Widget Lateral */}
-        {podio && podio.length > 0 && (
-          <div style={{ width: '300px', flexShrink: 0, position: 'sticky', top: '1rem' }}>
+        <div style={{ width: '300px', flexShrink: 0, position: 'sticky', top: '1rem' }}>
             <div className="card" style={{ padding: '0' }}>
               <div 
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderBottom: showPodio ? '1px solid var(--border-color)' : 'none', cursor: 'pointer', backgroundColor: 'var(--bg-secondary)', borderTopLeftRadius: '0.5rem', borderTopRightRadius: '0.5rem', borderBottomLeftRadius: showPodio ? '0' : '0.5rem', borderBottomRightRadius: showPodio ? '0' : '0.5rem' }}
@@ -284,27 +283,32 @@ const Wall = () => {
                 <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', margin: 0 }}>Usuarios destacados por sus aportes a la comunidad.</p>
                   
-                  {podio.map((usr, index) => (
-                    <div key={usr.idUsuario} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: index === 0 ? 'var(--color-yellow-100)' : index === 1 ? 'var(--bg-tertiary)' : 'var(--color-orange-100)', color: index === 0 ? 'var(--color-orange-600)' : index === 1 ? 'var(--text-secondary)' : '#b45309', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 'bold' }}>
-                        {index + 1}
-                      </div>
-                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1rem' }}>
-                        {usr.nombreUsuario?.charAt(0)}
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '0.875rem', fontWeight: '600' }}>{usr.nombreUsuario}</div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--accent-warning)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                          <Star size={10} fill="currentColor" /> {usr.reputacion}
+                  {podio && podio.length > 0 ? (
+                    podio.map((usr, index) => (
+                      <div key={usr.idUsuario} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: index === 0 ? 'var(--color-yellow-100)' : index === 1 ? 'var(--bg-tertiary)' : 'var(--color-orange-100)', color: index === 0 ? 'var(--color-orange-600)' : index === 1 ? 'var(--text-secondary)' : '#b45309', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 'bold' }}>
+                          {index + 1}
+                        </div>
+                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1rem' }}>
+                          {usr.nombreUsuario?.charAt(0)}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: '0.875rem', fontWeight: '600' }}>{usr.nombreUsuario}</div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--accent-warning)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                            <Star size={10} fill="currentColor" /> {usr.reputacion}
+                          </div>
                         </div>
                       </div>
+                    ))
+                  ) : (
+                    <div style={{ textAlign: 'center', padding: '1rem 0', color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>
+                      Aún no hay usuarios en el podio esta semana.
                     </div>
-                  ))}
+                  )}
                 </div>
               )}
             </div>
           </div>
-        )}
       </div>
     </div>
   );
