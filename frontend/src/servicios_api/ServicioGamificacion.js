@@ -5,7 +5,7 @@ export class ServicioGamificacion {
 
   async obtenerLogros(idUsuario) {
     try {
-      return await this.clienteHttp.get(`/gamificacion/logros/${idUsuario}`);
+      return await this.clienteHttp.get(`/logros/usuario/${idUsuario}/desbloqueados`);
     } catch (error) {
       console.error('Error obteniendo logros:', error);
       throw error;
@@ -14,7 +14,7 @@ export class ServicioGamificacion {
 
   async obtenerPodio() {
     try {
-      return await this.clienteHttp.get('/gamificacion/podio');
+      return await this.clienteHttp.get('/podio');
     } catch (error) {
       console.error('Error obteniendo podio:', error);
       throw error;
