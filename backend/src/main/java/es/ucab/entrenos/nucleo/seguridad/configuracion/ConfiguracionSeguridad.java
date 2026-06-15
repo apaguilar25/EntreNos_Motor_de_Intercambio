@@ -23,12 +23,14 @@ public class ConfiguracionSeguridad {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors(org.springframework.security.config.Customizer.withDefaults()) // ¡VITAL! Permite que Spring Security respete los CORS de EntreNosApplication
                 .csrf(AbstractHttpConfigurer::disable) // Desactivamos CSRF porque somos una API REST sin estado
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // No usamos Cookies ni Sesiones de Tomcat
                 .authorizeHttpRequests(auth -> auth
                         // Rutas públicas que no requieren token
                         .requestMatchers("/api/auth/login", "/api/auth/registro").permitAll()
                         .requestMatchers("/api/habilidades").permitAll() // Ver catálogo global es público
+                        .requestMatchers("/api/**").permitAll() // Temporalmente permitido para el MOCK de frontend
                         // Todas las demás rutas exigen token válido
                         .anyRequest().authenticated()
                 )

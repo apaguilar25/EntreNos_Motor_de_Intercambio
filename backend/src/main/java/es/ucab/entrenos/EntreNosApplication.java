@@ -29,7 +29,7 @@ public class EntreNosApplication {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**") // Aplica a todos nuestros Endpoints
-                        .allowedOrigins("http://localhost:3000") // Puerto comun de React.
+                        .allowedOrigins("http://localhost:3000", "http://localhost:5173") // Permitimos Vite (5173) y viejo React (3000)
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Métodos HTTP permitidos
                         .allowedHeaders("*")
                         .allowCredentials(true);
