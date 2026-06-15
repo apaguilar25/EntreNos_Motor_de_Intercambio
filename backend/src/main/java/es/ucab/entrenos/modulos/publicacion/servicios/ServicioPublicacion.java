@@ -49,11 +49,15 @@ public class ServicioPublicacion {
     }
 
     public List<Publicacion> obtenerTodasLasPublicaciones() {
-        return repositorioPublicacion.obtenerTodas();
+        List<Publicacion> pubs = repositorioPublicacion.obtenerTodas();
+        enriquecerPublicaciones(pubs);
+        return pubs;
     }
 
     public List<Publicacion> obtenerPublicacionesFiltradas(String tipo, String servicio) {
-        return repositorioPublicacion.obtenerTodas().stream()
+        List<Publicacion> pubs = repositorioPublicacion.obtenerTodas();
+        enriquecerPublicaciones(pubs);
+        return pubs.stream()
                 .filter(p -> tipo == null || tipo.isEmpty() || p.getTipoPublicacion().equalsIgnoreCase(tipo))
                 .filter(p -> servicio == null || servicio.isEmpty() ||
                         p.getNombreServicio().toLowerCase().contains(servicio.toLowerCase()) ||
@@ -72,7 +76,9 @@ public class ServicioPublicacion {
                 .map(n -> n.getNecesidadBase().getCategoria()).collect(Collectors.toList()));
         Set<String> catalogoCompleto = union(habilidades, necesidades);
 
-        List<RecomendacionDTO> recomendadas = repositorioPublicacion.obtenerTodas().stream()
+        List<Publicacion> todasPubs = repositorioPublicacion.obtenerTodas();
+        enriquecerPublicaciones(todasPubs);
+        List<RecomendacionDTO> recomendadas = todasPubs.stream()
                 .filter(p -> !p.getIdUsuario().equals(idUsuario))
                 .filter(p -> matchDireccional(p, habilidades, necesidades))
                 .map(p -> new RecomendacionDTO(p,
@@ -144,7 +150,19 @@ public class ServicioPublicacion {
     }
 
     public Optional<Publicacion> obtenerPublicacionPorId(String id) {
-        return repositorioPublicacion.obtenerPorId(id);
+        Optional<Publicacion> pub = repositorioPublicacion.obtenerPorId(id);
+        pub.ifPresent(p -> enriquecerPublicaciones(List.of(p)));
+        return pub;
+    }
+
+    public Optional<Publicacion> obtenerPublicacionPorInstanciaCatalogo(String idInstanciaCatalogo) {
+        return repositorioPublicacion.obtenerTodas().stream()
+                .filter(p -> idInstanciaCatalogo.equals(p.getIdInstanciaCatalogo()))
+                .findFirst();
+    }
+
+    public void guardarPublicacion(Publicacion publicacion) {
+        repositorioPublicacion.guardar(publicacion);
     }
 
     public boolean eliminarPublicacion(String id) {
@@ -156,72 +174,16 @@ public class ServicioPublicacion {
         return removido;
     }
 
-    public Publicacion solicitarPublicacion(String idPublicacion, String idSolicitante, String nombreSolicitante) {
-        Publicacion pub = repositorioPublicacion.obtenerPorId(idPublicacion)
-                .orElseThrow(() -> new IllegalArgumentException("Publicación no encontrada: " + idPublicacion));
-        if (pub.haExpiradoPlazoRespuesta()) {
-            pub.setEstadoSolicitud(Publicacion.ESTADO_SOLICITUD_EXPIRADA);
-            repositorioPublicacion.guardar(pub);
-            servicioNotificacion.enviarNotificacion("SISTEMA", pub.getIdUsuario(),
-                    "La solicitud de " + nombreSolicitante + " para " + pub.getNombreServicio()
-                            + " ha expirado automáticamente.", TipoNotificacion.ALERTA_SISTEMA);
-            servicioNotificacion.enviarNotificacion("SISTEMA", idSolicitante,
-                    "Tu solicitud para " + pub.getNombreServicio() + " ha expirado (sin respuesta del dueño).",
-                    TipoNotificacion.ALERTA_SISTEMA);
-            throw new IllegalStateException("El plazo de respuesta ha expirado.");
+    public boolean eliminarPublicacionPorInstancia(String idInstanciaCatalogo) {
+        List<Publicacion> todas = repositorioPublicacion.obtenerTodas();
+        boolean removido = todas.removeIf(p -> idInstanciaCatalogo.equals(p.getIdInstanciaCatalogo()));
+        if (removido) {
+            repositorioPublicacion.guardarTodas(todas);
         }
-        if (pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
-            Usuario solicitante = servicioUsuario.buscarPorId(idSolicitante)
-                    .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
-            if (solicitante.getMonedero().getSaldoDisponible() < pub.getPrecioCreditos()) {
-                throw new IllegalStateException("Saldo insuficiente. Necesitas " + pub.getPrecioCreditos()
-                        + " créditos, pero tienes " + solicitante.getMonedero().getSaldoDisponible() + " disponibles.");
-            }
-        }
-        pub.solicitar(idSolicitante, nombreSolicitante);
-        repositorioPublicacion.guardar(pub);
-        servicioNotificacion.enviarNotificacion(idSolicitante, pub.getIdUsuario(),
-                nombreSolicitante + " quiere contratar tu servicio: " + pub.getNombreServicio(),
-                TipoNotificacion.NUEVA_SOLICITUD_ENTRANTE);
-        return pub;
+        return removido;
     }
 
-    public Publicacion responderSolicitud(String idPublicacion, String idUsuario, boolean aceptar) {
-        Publicacion pub = repositorioPublicacion.obtenerPorId(idPublicacion)
-                .orElseThrow(() -> new IllegalArgumentException("Publicación no encontrada: " + idPublicacion));
-        if (!pub.getIdUsuario().equals(idUsuario)) {
-            throw new IllegalArgumentException("Solo el dueño de la publicación puede responder la solicitud.");
-        }
-        String solicitanteId = pub.getIdSolicitante();
-        String solicitanteNombre = pub.getNombreSolicitante();
-        pub.responderSolicitud(aceptar);
-        if (aceptar) {
-            Usuario demandante = servicioUsuario.buscarPorId(solicitanteId)
-                    .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
-            demandante.getMonedero().retener(pub.getPrecioCreditos());
-            demandante.incrementarVersion();
-            servicioUsuario.guardar(demandante);
-            Transaccion tx = new Transaccion(
-                pub.getIdPublicacion(),
-                pub.getIdUsuario(),
-                pub.getIdSolicitante(),
-                pub.getNombreServicio(),
-                pub.getDescripcion(),
-                pub.getPrecioCreditos()
-            );
-            repositorioTransaccion.guardar(tx);
-            servicioNotificacion.enviarNotificacion(pub.getIdUsuario(), solicitanteId,
-                    "Tu solicitud para " + pub.getNombreServicio() + " fue ACEPTADA. Se retuvieron "
-                            + pub.getPrecioCreditos() + " créditos.",
-                    TipoNotificacion.ESTADO_SOLICITUD_CAMBIADO);
-        } else {
-            servicioNotificacion.enviarNotificacion(pub.getIdUsuario(), solicitanteId,
-                    "Tu solicitud para " + pub.getNombreServicio() + " fue RECHAZADA.",
-                    TipoNotificacion.ESTADO_SOLICITUD_CAMBIADO);
-        }
-        repositorioPublicacion.guardar(pub);
-        return pub;
-    }
+
 
     public List<Transaccion> obtenerTodasLasTransacciones() {
         return repositorioTransaccion.obtenerTodas();
@@ -350,22 +312,7 @@ public class ServicioPublicacion {
         t.setComentarioOfertante(comentario);
         repositorioTransaccion.guardar(t);
         servicioUsuario.actualizarReputacion(t.getIdOfertante(), calificacion);
-        actualizarReputacionEnPublicaciones(t.getIdOfertante());
         return t;
-    }
-
-    private void actualizarReputacionEnPublicaciones(String idUsuario) {
-        Usuario usuario = servicioUsuario.buscarPorId(idUsuario)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + idUsuario));
-        double nuevaReputacion = usuario.getPromedioCalificacion();
-        List<Publicacion> todas = repositorioPublicacion.obtenerTodas();
-        for (int i = 0; i < todas.size(); i++) {
-            Publicacion p = todas.get(i);
-            if (p.getIdUsuario().equals(idUsuario)) {
-                p.setReputacionUsuario(nuevaReputacion);
-            }
-        }
-        repositorioPublicacion.guardarTodas(todas);
     }
 
     public List<Transaccion> obtenerCalificacionesPorPublicacion(String idPublicacion) {
@@ -441,5 +388,14 @@ public class ServicioPublicacion {
                         + ". Si consideras que es injusto, puedes reportar una incidencia desde la sección de transacciones.",
                 TipoNotificacion.ALERTA_SISTEMA);
         return t;
+    }
+
+    private void enriquecerPublicaciones(List<Publicacion> publicaciones) {
+        for (Publicacion p : publicaciones) {
+            servicioUsuario.buscarPorId(p.getIdUsuario()).ifPresent(u -> {
+                p.setNombreUsuario(u.getNombre());
+                p.setReputacionUsuario(u.getPromedioCalificacion());
+            });
+        }
     }
 }

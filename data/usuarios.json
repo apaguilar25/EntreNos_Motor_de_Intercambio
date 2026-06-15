@@ -1,0 +1,86 @@
+[
+  {
+    "id": "e0357c49-d6c1-4e86-bf2e-cbe9d52dc806",
+    "nombre": "Carlos Ofertante",
+    "correoElectronico": "carlos@alameda.com",
+    "telefono": "1111111",
+    "descripcionPersonal": "Vecino ofertante",
+    "contrasenaHash": "$2a$10$fcNyEavZbqehscSHEBnJnepOky4jI6oowUMDk1Qo6K8sC1qWSITIK",
+    "version": 0,
+    "monedero": {
+      "creditosDisponibles": 0.0,
+      "creditosRetenidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": false,
+      "habilidadesOfrecidas": [],
+      "necesidadesRegistradas": []
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "MIEMBRO_COMUNIDAD"
+  },
+  {
+    "id": "f56e0612-913e-4b49-91e2-113b0e9d8dfc",
+    "nombre": "Super Administrador",
+    "correoElectronico": "admin@alameda.com",
+    "telefono": "0000000000",
+    "descripcionPersonal": "Administrador general de la comunidad",
+    "contrasenaHash": "$2a$10$WLUPwTXjUmT.YNuMDKOMa.vEj/itMzSFZbzxj91mP1OW/NZQfqDfW",
+    "version": 0,
+    "monedero": {
+      "creditosDisponibles": 0.0,
+      "creditosRetenidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": false,
+      "habilidadesOfrecidas": [],
+      "necesidadesRegistradas": []
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "ADMINISTRADOR"
+  },
+  {
+    "id": "84a06ab6-2d7e-4232-8dd6-0dc929152ec3",
+    "nombre": "TestUser",
+    "correoElectronico": "test@alameda.com",
+    "telefono": "1234567",
+    "descripcionPersonal": "Test",
+    "contrasenaHash": "$2a$10$77p.gyf3ct11JRBjv471cundL4jrJexnO5ZT5Dxm/WYk2QTZxLGPS",
+    "version": 0,
+    "monedero": {
+      "creditosDisponibles": 0.0,
+      "creditosRetenidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": false,
+      "habilidadesOfrecidas": [],
+      "necesidadesRegistradas": []
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "MIEMBRO_COMUNIDAD"
+  }
+]

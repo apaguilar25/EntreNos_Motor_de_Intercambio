@@ -6,6 +6,8 @@ import es.ucab.entrenos.modulos.identidad.excepciones.TelefonoDuplicadoException
 import es.ucab.entrenos.modulos.identidad.modelos.*;
 import es.ucab.entrenos.modulos.identidad.servicios.ServicioHabilidad;
 import es.ucab.entrenos.modulos.identidad.servicios.ServicioUsuario;
+import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
+import es.ucab.entrenos.modulos.publicacion.servicios.ServicioPublicacion;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +22,13 @@ public class ControladorUsuario {
 
     private final ServicioUsuario servicioUsuario;
     private final ServicioHabilidad servicioHabilidad;
+    private final ServicioPublicacion servicioPublicacion;
 
-    public ControladorUsuario(ServicioUsuario servicioUsuario, ServicioHabilidad servicioHabilidad) {
+    public ControladorUsuario(ServicioUsuario servicioUsuario, ServicioHabilidad servicioHabilidad,
+                              ServicioPublicacion servicioPublicacion) {
         this.servicioUsuario = servicioUsuario;
         this.servicioHabilidad = servicioHabilidad;
+        this.servicioPublicacion = servicioPublicacion;
     }
 
     @PostMapping("/registro")
@@ -69,6 +74,23 @@ public class ControladorUsuario {
             }
 
             servicioUsuario.configurarCatalogo(id, ofertas, necesidades);
+
+            Usuario usuario = servicioUsuario.buscarPorId(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+
+            for (HabilidadOfrecida o : ofertas) {
+                Publicacion pub = new Publicacion(id,
+                        "HABILIDAD", o.getHabilidadBase().getCategoria(), o.getDescripcionServicio(), o.getPrecioCreditos());
+                pub.setIdInstanciaCatalogo(o.getIdInstancia());
+                servicioPublicacion.crearPublicacion(pub);
+            }
+            for (NecesidadRegistrada n : necesidades) {
+                Publicacion pub = new Publicacion(id,
+                        "NECESIDAD", n.getNecesidadBase().getCategoria(), n.getDescripcionCondiciones(), 0);
+                pub.setIdInstanciaCatalogo(n.getIdInstancia());
+                servicioPublicacion.crearPublicacion(pub);
+            }
+
             return ResponseEntity.ok().body("Catálogo configurado y Capital Semilla asignado con éxito.");
 
         } catch (IllegalArgumentException | IllegalStateException e) {
@@ -76,21 +98,21 @@ public class ControladorUsuario {
         }
     }
 
-    /**
-     * Endpoint 3: Editar una habilidad ofrecida existente
-     */
     @PutMapping("/{id}/habilidades")
     public ResponseEntity<?> editarHabilidadOfrecida(
             @PathVariable String id,
             @RequestBody EdicionOfertaDTO request) {
         try {
-            // Ya no buscamos la categoría, delegamos la edición directamente usando el idInstancia
             servicioUsuario.editarHabilidadOfrecida(
-                    id,
-                    request.getIdInstancia(),
-                    request.getPrecioCreditos(),
-                    request.getDescripcionServicio()
-            );
+                    id, request.getIdInstancia(),
+                    request.getPrecioCreditos(), request.getDescripcionServicio());
+
+            servicioPublicacion.obtenerPublicacionPorInstanciaCatalogo(request.getIdInstancia())
+                    .ifPresent(pub -> {
+                        pub.setDescripcion(request.getDescripcionServicio());
+                        pub.setPrecioCreditos(request.getPrecioCreditos());
+                        servicioPublicacion.guardarPublicacion(pub);
+                    });
 
             return ResponseEntity.ok().body("Oferta específica editada con éxito.");
         } catch (IllegalArgumentException | IllegalStateException e) {
@@ -98,20 +120,19 @@ public class ControladorUsuario {
         }
     }
 
-    /**
-     * Endpoint 4: Editar una necesidad registrada existente
-     */
     @PutMapping("/{id}/necesidades")
     public ResponseEntity<?> editarNecesidadRegistrada(
             @PathVariable String id,
             @RequestBody EdicionNecesidadDTO request) {
         try {
-            // Al igual que las ofertas, delegamos la edición usando el idInstancia
             servicioUsuario.editarNecesidadRegistrada(
-                    id,
-                    request.getIdInstancia(),
-                    request.getDescripcionCondiciones()
-            );
+                    id, request.getIdInstancia(), request.getDescripcionCondiciones());
+
+            servicioPublicacion.obtenerPublicacionPorInstanciaCatalogo(request.getIdInstancia())
+                    .ifPresent(pub -> {
+                        pub.setDescripcion(request.getDescripcionCondiciones());
+                        servicioPublicacion.guardarPublicacion(pub);
+                    });
 
             return ResponseEntity.ok().body("Necesidad específica editada con éxito.");
         } catch (IllegalArgumentException | IllegalStateException e) {
@@ -119,26 +140,26 @@ public class ControladorUsuario {
         }
     }
 
-    // Eliminar habilidad ofrecida
     @DeleteMapping("/{id}/habilidades/{idInstancia}")
     public ResponseEntity<?> eliminarHabilidadOfrecida(
             @PathVariable String id,
             @PathVariable String idInstancia) {
         try {
             servicioUsuario.eliminarHabilidadOfrecida(id, idInstancia);
+            servicioPublicacion.eliminarPublicacionPorInstancia(idInstancia);
             return ResponseEntity.ok().body("Oferta eliminada del catálogo con éxito.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    // Eliminar necesidad registrada
     @DeleteMapping("/{id}/necesidades/{idInstancia}")
     public ResponseEntity<?> eliminarNecesidadRegistrada(
             @PathVariable String id,
             @PathVariable String idInstancia) {
         try {
             servicioUsuario.eliminarNecesidadRegistrada(id, idInstancia);
+            servicioPublicacion.eliminarPublicacionPorInstancia(idInstancia);
             return ResponseEntity.ok().body("Necesidad eliminada del catálogo con éxito.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -188,12 +209,19 @@ public class ControladorUsuario {
             @PathVariable String id,
             @RequestBody NuevaOfertaIndividualDTO request) {
         try {
-            // 1. Validamos que la categoría maestra exista
             Habilidad habilidadBase = servicioHabilidad.buscarPorId(request.getIdHabilidadCategoria())
                     .orElseThrow(() -> new IllegalArgumentException("La categoría de habilidad maestra no existe en el sistema."));
 
-            // 2. Agregamos al usuario
-            servicioUsuario.agregarHabilidadIndividual(id, habilidadBase, request.getPrecioCreditos(), request.getDescripcionServicio());
+            HabilidadOfrecida nuevaOferta = servicioUsuario.agregarHabilidadIndividual(id, habilidadBase,
+                    request.getPrecioCreditos(), request.getDescripcionServicio());
+
+            Usuario usuario = servicioUsuario.buscarPorId(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+            Publicacion pub = new Publicacion(id,
+                    "HABILIDAD", nuevaOferta.getHabilidadBase().getCategoria(),
+                    nuevaOferta.getDescripcionServicio(), nuevaOferta.getPrecioCreditos());
+            pub.setIdInstanciaCatalogo(nuevaOferta.getIdInstancia());
+            servicioPublicacion.crearPublicacion(pub);
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Habilidad agregada al catálogo del usuario con éxito.");
         } catch (IllegalArgumentException | IllegalStateException e) {
@@ -207,12 +235,19 @@ public class ControladorUsuario {
             @PathVariable String id,
             @RequestBody NuevaNecesidadIndividualDTO request) {
         try {
-            // 1. Validamos que la categoría maestra exista
             Habilidad necesidadBase = servicioHabilidad.buscarPorId(request.getIdHabilidadCategoria())
                     .orElseThrow(() -> new IllegalArgumentException("La categoría de habilidad maestra no existe en el sistema."));
 
-            // 2. Agregamos al usuario
-            servicioUsuario.agregarNecesidadIndividual(id, necesidadBase, request.getDescripcionCondiciones());
+            NecesidadRegistrada nuevaNecesidad = servicioUsuario.agregarNecesidadIndividual(id, necesidadBase,
+                    request.getDescripcionCondiciones());
+
+            Usuario usuario = servicioUsuario.buscarPorId(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+            Publicacion pub = new Publicacion(id,
+                    "NECESIDAD", nuevaNecesidad.getNecesidadBase().getCategoria(),
+                    nuevaNecesidad.getDescripcionCondiciones(), 0);
+            pub.setIdInstanciaCatalogo(nuevaNecesidad.getIdInstancia());
+            servicioPublicacion.crearPublicacion(pub);
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Necesidad agregada al catálogo del usuario con éxito.");
         } catch (IllegalArgumentException | IllegalStateException e) {

@@ -1,0 +1,157 @@
+package es.ucab.entrenos.modulos.publicacion.servicios;
+
+import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
+import es.ucab.entrenos.modulos.identidad.servicios.ServicioUsuario;
+import es.ucab.entrenos.modulos.notificacion.modelos.TipoNotificacion;
+import es.ucab.entrenos.modulos.notificacion.servicios.ServicioNotificacion;
+import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
+import es.ucab.entrenos.modulos.publicacion.modelos.Solicitud;
+import es.ucab.entrenos.modulos.publicacion.modelos.Transaccion;
+import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioSolicitud;
+import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioTransaccion;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+public class ServicioSolicitud {
+
+    private final IRepositorioSolicitud repositorioSolicitud;
+    private final ServicioPublicacion servicioPublicacion;
+    private final ServicioUsuario servicioUsuario;
+    private final ServicioNotificacion servicioNotificacion;
+    private final IRepositorioTransaccion repositorioTransaccion;
+
+    public ServicioSolicitud(IRepositorioSolicitud repositorioSolicitud,
+                             ServicioPublicacion servicioPublicacion,
+                             ServicioUsuario servicioUsuario,
+                             ServicioNotificacion servicioNotificacion,
+                             IRepositorioTransaccion repositorioTransaccion) {
+        this.repositorioSolicitud = repositorioSolicitud;
+        this.servicioPublicacion = servicioPublicacion;
+        this.servicioUsuario = servicioUsuario;
+        this.servicioNotificacion = servicioNotificacion;
+        this.repositorioTransaccion = repositorioTransaccion;
+    }
+
+    public List<Solicitud> obtenerTodas() {
+        return repositorioSolicitud.obtenerTodas();
+    }
+
+    public Optional<Solicitud> obtenerPorId(String id) {
+        return repositorioSolicitud.obtenerPorId(id);
+    }
+
+    public List<Solicitud> obtenerPorPublicacion(String idPublicacion) {
+        return repositorioSolicitud.obtenerTodas().stream()
+                .filter(s -> s.getIdPublicacion().equalsIgnoreCase(idPublicacion))
+                .collect(Collectors.toList());
+    }
+
+    public List<Solicitud> obtenerPorSolicitante(String idSolicitante) {
+        return repositorioSolicitud.obtenerTodas().stream()
+                .filter(s -> s.getIdSolicitante().equalsIgnoreCase(idSolicitante))
+                .collect(Collectors.toList());
+    }
+
+    public Solicitud solicitar(String idPublicacion, String idSolicitante) {
+        Publicacion pub = servicioPublicacion.obtenerPublicacionPorId(idPublicacion)
+                .orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada: " + idPublicacion));
+
+        if (pub.getIdUsuario().equals(idSolicitante)) {
+            throw new IllegalArgumentException("No puedes solicitar tu propia publicacion.");
+        }
+        if (!pub.isDisponible()) {
+            throw new IllegalStateException("La publicacion no esta disponible.");
+        }
+
+        long solicitudesPendientes = obtenerPorPublicacion(idPublicacion).stream()
+                .filter(s -> Solicitud.ESTADO_PENDIENTE.equals(s.getEstado()))
+                .count();
+        if (solicitudesPendientes > 0) {
+            throw new IllegalStateException("Ya existe una solicitud pendiente para esta publicacion.");
+        }
+
+        if (pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
+            Usuario solicitante = servicioUsuario.buscarPorId(idSolicitante)
+                    .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
+            if (solicitante.getMonedero().getSaldoDisponible() < pub.getPrecioCreditos()) {
+                throw new IllegalStateException("Saldo insuficiente. Necesitas " + pub.getPrecioCreditos()
+                        + " creditos, pero tienes " + solicitante.getMonedero().getSaldoDisponible() + " disponibles.");
+            }
+        }
+
+        Solicitud solicitud = new Solicitud(idPublicacion, idSolicitante);
+        repositorioSolicitud.guardar(solicitud);
+
+        String nombreSolicitante = servicioUsuario.buscarPorId(idSolicitante)
+                .map(Usuario::getNombre).orElse("Un usuario");
+        servicioNotificacion.enviarNotificacion(idSolicitante, pub.getIdUsuario(),
+                nombreSolicitante + " quiere contratar tu servicio: " + pub.getNombreServicio(),
+                TipoNotificacion.NUEVA_SOLICITUD_ENTRANTE);
+
+        return solicitud;
+    }
+
+    public Solicitud responder(String idSolicitud, String idUsuario, boolean aceptar) {
+        Solicitud solicitud = repositorioSolicitud.obtenerPorId(idSolicitud)
+                .orElseThrow(() -> new IllegalArgumentException("Solicitud no encontrada: " + idSolicitud));
+
+        Publicacion pub = servicioPublicacion.obtenerPublicacionPorId(solicitud.getIdPublicacion())
+                .orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada."));
+
+        if (!pub.getIdUsuario().equals(idUsuario)) {
+            throw new IllegalArgumentException("Solo el dueno de la publicacion puede responder la solicitud.");
+        }
+
+        if (solicitud.haExpirado()) {
+            solicitud.expirar();
+            repositorioSolicitud.guardar(solicitud);
+            String nombreSolicitante = servicioUsuario.buscarPorId(solicitud.getIdSolicitante())
+                    .map(Usuario::getNombre).orElse("Un usuario");
+            servicioNotificacion.enviarNotificacion("SISTEMA", pub.getIdUsuario(),
+                    "La solicitud de " + nombreSolicitante + " para " + pub.getNombreServicio()
+                            + " ha expirado automaticamente.", TipoNotificacion.ALERTA_SISTEMA);
+            servicioNotificacion.enviarNotificacion("SISTEMA", solicitud.getIdSolicitante(),
+                    "Tu solicitud para " + pub.getNombreServicio() + " ha expirado (sin respuesta del dueno).",
+                    TipoNotificacion.ALERTA_SISTEMA);
+            throw new IllegalStateException("El plazo de respuesta ha expirado.");
+        }
+
+        if (aceptar) {
+            solicitud.aceptar();
+
+            Usuario demandante = servicioUsuario.buscarPorId(solicitud.getIdSolicitante())
+                    .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
+            demandante.getMonedero().retener(pub.getPrecioCreditos());
+            demandante.incrementarVersion();
+            servicioUsuario.guardar(demandante);
+
+            Transaccion tx = new Transaccion(
+                pub.getIdPublicacion(),
+                pub.getIdUsuario(),
+                solicitud.getIdSolicitante(),
+                pub.getNombreServicio(),
+                pub.getDescripcion(),
+                pub.getPrecioCreditos()
+            );
+            repositorioTransaccion.guardar(tx);
+
+            servicioNotificacion.enviarNotificacion(pub.getIdUsuario(), solicitud.getIdSolicitante(),
+                    "Tu solicitud para " + pub.getNombreServicio() + " fue ACEPTADA. Se retuvieron "
+                            + pub.getPrecioCreditos() + " creditos.",
+                    TipoNotificacion.ESTADO_SOLICITUD_CAMBIADO);
+        } else {
+            solicitud.rechazar();
+
+            servicioNotificacion.enviarNotificacion(pub.getIdUsuario(), solicitud.getIdSolicitante(),
+                    "Tu solicitud para " + pub.getNombreServicio() + " fue RECHAZADA.",
+                    TipoNotificacion.ESTADO_SOLICITUD_CAMBIADO);
+        }
+
+        repositorioSolicitud.guardar(solicitud);
+        return solicitud;
+    }
+}
