@@ -85,7 +85,7 @@ public class ServicioGamificacion {
         Set<String> usuariosDistintos = repositorioTransaccion.obtenerTodas().stream()
                 .filter(t -> t.getEstado() == EstadoTransaccion.FINALIZADA)
                 .filter(t -> t.getIdOfertante().equals(idUsuario))
-                .filter(t -> t.getCalificacionOfertante() != null && t.getCalificacionOfertante() == 5)
+                .filter(t -> t.getCalificacion() != null && t.getCalificacion() == 5)
                 .map(Transaccion::getIdDemandante)
                 .collect(Collectors.toSet());
         return usuariosDistintos.size() >= 5;

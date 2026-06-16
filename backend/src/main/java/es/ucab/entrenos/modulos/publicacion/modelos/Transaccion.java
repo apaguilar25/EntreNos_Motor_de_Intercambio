@@ -1,5 +1,6 @@
 package es.ucab.entrenos.modulos.publicacion.modelos;
 
+import es.ucab.entrenos.modulos.reputacion.modelos.Resena;
 import java.util.UUID;
 
 public class Transaccion {
@@ -14,8 +15,7 @@ public class Transaccion {
     private boolean confirmacionDemandante;
     private long fechaCreacion;
     private String idIncidencia;
-    private Integer calificacionOfertante;
-    private boolean sancionado;
+    private Resena resena;
     private String idSolicitanteCancelacion;
     private String motivoCancelacion;
     private boolean cancelacionAceptada;
@@ -43,6 +43,9 @@ public class Transaccion {
             throw new IllegalStateException("No se puede confirmar mientras exista una incidencia activa.");
         }
         this.confirmacionOfertante = true;
+        if (this.estado == EstadoTransaccion.PENDIENTE) {
+            this.estado = EstadoTransaccion.INICIADA;
+        }
         verificarCompletitud();
     }
 
@@ -54,6 +57,9 @@ public class Transaccion {
             throw new IllegalStateException("No se puede confirmar mientras exista una incidencia activa.");
         }
         this.confirmacionDemandante = true;
+        if (this.estado == EstadoTransaccion.PENDIENTE) {
+            this.estado = EstadoTransaccion.INICIADA;
+        }
         verificarCompletitud();
     }
 
@@ -93,6 +99,8 @@ public class Transaccion {
         }
         this.idIncidencia = idIncidencia;
         this.estado = EstadoTransaccion.EN_DISPUTA;
+        this.idSolicitanteCancelacion = null;
+        this.motivoCancelacion = null;
     }
 
     public String getIdTransaccion() { return idTransaccion; }
@@ -105,8 +113,8 @@ public class Transaccion {
     public boolean isConfirmacionDemandante() { return confirmacionDemandante; }
     public long getFechaCreacion() { return fechaCreacion; }
     public String getIdIncidencia() { return idIncidencia; }
-    public Integer getCalificacionOfertante() { return calificacionOfertante; }
-    public boolean isSancionado() { return sancionado; }
+    public Integer getCalificacion() { return resena != null ? resena.getCalificacion() : null; }
+    public Resena getResena() { return resena; }
     public String getIdSolicitanteCancelacion() { return idSolicitanteCancelacion; }
     public String getMotivoCancelacion() { return motivoCancelacion; }
     public boolean isCancelacionAceptada() { return cancelacionAceptada; }
@@ -124,8 +132,7 @@ public class Transaccion {
     public void setConfirmacionDemandante(boolean confirmacionDemandante) { this.confirmacionDemandante = confirmacionDemandante; }
     public void setFechaCreacion(long fechaCreacion) { this.fechaCreacion = fechaCreacion; }
     public void setIdIncidencia(String idIncidencia) { this.idIncidencia = idIncidencia; }
-    public void setCalificacionOfertante(Integer calificacionOfertante) { this.calificacionOfertante = calificacionOfertante; }
-    public void setSancionado(boolean sancionado) { this.sancionado = sancionado; }
+    public void setResena(Resena resena) { this.resena = resena; }
     public void setIdSolicitanteCancelacion(String idSolicitanteCancelacion) { this.idSolicitanteCancelacion = idSolicitanteCancelacion; }
     public void setMotivoCancelacion(String motivoCancelacion) { this.motivoCancelacion = motivoCancelacion; }
     public void setCancelacionAceptada(boolean cancelacionAceptada) { this.cancelacionAceptada = cancelacionAceptada; }

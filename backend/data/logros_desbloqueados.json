@@ -1,0 +1,26 @@
+[
+  {
+    "id": "354ab7ce-5594-486b-ae50-352eeea89c72",
+    "idUsuario": "4bfb4e9b-37bf-4134-8790-0fc790a2fb2f",
+    "idLogro": "INICIADOR_RED",
+    "fechaDesbloqueo": 1781565977103
+  },
+  {
+    "id": "35a48081-3333-4742-8eb3-4b876501c3e1",
+    "idUsuario": "e46e66ab-5e9b-480a-bd09-6be30e60b244",
+    "idLogro": "INICIADOR_RED",
+    "fechaDesbloqueo": 1781565977155
+  },
+  {
+    "id": "f45bf477-50fa-458b-b5d8-32aeec7380f9",
+    "idUsuario": "84e724bf-624b-4141-9357-df7da92e61eb",
+    "idLogro": "INICIADOR_RED",
+    "fechaDesbloqueo": 1781567022796
+  },
+  {
+    "id": "d0629184-c9cb-42ef-bd4b-089666cffec6",
+    "idUsuario": "2f0c416a-2948-4d3c-9390-6242b700a711",
+    "idLogro": "INICIADOR_RED",
+    "fechaDesbloqueo": 1781567022814
+  }
+]

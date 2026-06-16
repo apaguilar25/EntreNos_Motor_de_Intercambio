@@ -26,6 +26,13 @@ public class ControladorAdministrador {
         return ResponseEntity.ok(incidencias);
     }
 
+    @GetMapping("/incidencias/{id}")
+    public ResponseEntity<Incidencia> obtenerIncidencia(@PathVariable String id) {
+        return servicioAdministrador.obtenerIncidenciaPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
     @PostMapping("/sanciones/fraude")
     public ResponseEntity<?> validarReporteFraude(
             @AuthenticationPrincipal Object principal,

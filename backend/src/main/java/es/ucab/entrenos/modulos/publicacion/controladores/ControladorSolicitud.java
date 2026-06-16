@@ -60,8 +60,17 @@ public class ControladorSolicitud {
     }
 
     @GetMapping("/solicitudes/usuario/{idUsuario}")
-    public ResponseEntity<List<Solicitud>> obtenerPorSolicitante(@PathVariable String idUsuario) {
-        return ResponseEntity.ok(servicioSolicitud.obtenerPorSolicitante(idUsuario));
+    public ResponseEntity<List<Solicitud>> obtenerPorSolicitante(
+            @PathVariable String idUsuario,
+            @RequestParam(required = false) String tipo) {
+        return ResponseEntity.ok(servicioSolicitud.obtenerPorSolicitante(idUsuario, tipo));
+    }
+
+    @GetMapping("/solicitudes/recibidas/{idPropietario}")
+    public ResponseEntity<List<Solicitud>> obtenerRecibidas(
+            @PathVariable String idPropietario,
+            @RequestParam(required = false) String tipo) {
+        return ResponseEntity.ok(servicioSolicitud.obtenerRecibidas(idPropietario, tipo));
     }
 
     @PostMapping("/solicitudes/{id}/cancelar")

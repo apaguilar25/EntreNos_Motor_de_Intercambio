@@ -106,10 +106,10 @@ public class ServicioPodio {
 
     private void asignarEmbajadorCalidad(PodioSemanal podio, List<Transaccion> semanales) {
         Map<String, Double> promedios = semanales.stream()
-                .filter(t -> t.getCalificacionOfertante() != null)
+                .filter(t -> t.getCalificacion() != null)
                 .collect(Collectors.groupingBy(
                         Transaccion::getIdOfertante,
-                        Collectors.averagingInt(t -> t.getCalificacionOfertante())
+                        Collectors.averagingInt(t -> t.getCalificacion())
                 ));
 
         Map<String, Long> conteoOfertante = semanales.stream()
@@ -208,10 +208,10 @@ public class ServicioPodio {
         dto.setMotorEconomia(topN(demandantes, 3));
 
         Map<String, Double> promedios = semanales.stream()
-                .filter(t -> t.getCalificacionOfertante() != null)
+                .filter(t -> t.getCalificacion() != null)
                 .collect(Collectors.groupingBy(
                         Transaccion::getIdOfertante,
-                        Collectors.averagingInt(t -> t.getCalificacionOfertante())));
+                        Collectors.averagingInt(t -> t.getCalificacion())));
         Map<String, Long> conteoOfertante = semanales.stream()
                 .collect(Collectors.groupingBy(Transaccion::getIdOfertante, Collectors.counting()));
         dto.setEmbajadorCalidad(promedios.entrySet().stream()

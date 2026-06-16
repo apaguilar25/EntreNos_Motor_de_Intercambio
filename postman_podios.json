@@ -1,0 +1,993 @@
+{
+  "info": {
+    "name": "EntreNos - Podios",
+    "description": "Colección para probar las 3 categorías del podio: Proveedor Elite, Motor Economía y Embajador Calidad",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "01 - Setup: Registro de 4 usuarios",
+      "item": [
+        {
+          "name": "1.1 Registrar Ana (oferta multiples servicios)",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var resp = pm.response.json();",
+                "pm.collectionVariables.set('idAna', resp.id);"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ana Proveedora\",\n  \"correoElectronico\": \"ana.podio@test.com\",\n  \"telefono\": \"+58414000101\",\n  \"descripcionPersonal\": \"Proveedora estrella\",\n  \"contrasena\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/registro",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "registro"]
+            }
+          }
+        },
+        {
+          "name": "1.2 Registrar Bob (oferta multiples servicios)",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var resp = pm.response.json();",
+                "pm.collectionVariables.set('idBob', resp.id);"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Bob Proveedor\",\n  \"correoElectronico\": \"bob.podio@test.com\",\n  \"telefono\": \"+58414000102\",\n  \"descripcionPersonal\": \"Segundo mejor proveedor\",\n  \"contrasena\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/registro",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "registro"]
+            }
+          }
+        },
+        {
+          "name": "1.3 Registrar Carlos (oferta servicios)",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var resp = pm.response.json();",
+                "pm.collectionVariables.set('idCarlos', resp.id);"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Carlos Ocasional\",\n  \"correoElectronico\": \"carlos.podio@test.com\",\n  \"telefono\": \"+58414000103\",\n  \"descripcionPersonal\": \"Proveedor ocasional\",\n  \"contrasena\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/registro",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "registro"]
+            }
+          }
+        },
+        {
+          "name": "1.4 Registrar Diana (demandante frecuente)",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var resp = pm.response.json();",
+                "pm.collectionVariables.set('idDiana', resp.id);"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Diana Demandante\",\n  \"correoElectronico\": \"diana.podio@test.com\",\n  \"telefono\": \"+58414000104\",\n  \"descripcionPersonal\": \"Demandante frecuente\",\n  \"contrasena\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/registro",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "registro"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Obtener habilidades",
+      "item": [
+        {
+          "name": "2.1 Obtener catálogo global de habilidades",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var h = pm.response.json();",
+                "pm.collectionVariables.set('catLimpieza', h[0].id);",
+                "pm.collectionVariables.set('catPlomeria', h[1].id);",
+                "pm.collectionVariables.set('catElectricidad', h[2].id);",
+                "pm.collectionVariables.set('catCarpinteria', h[3].id);",
+                "console.log('Habilidades OK:', h.length);"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/habilidades",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "habilidades"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Configurar catálogos",
+      "item": [
+        {
+          "name": "3.1 Catálogo Ana (3 ofertas a distintos precios)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ofertas\": [\n    { \"idHabilidadCategoria\": \"HAB-004\", \"precioCreditos\": 5, \"descripcionServicio\": \"Limpieza profunda\" },\n    { \"idHabilidadCategoria\": \"HAB-001\", \"precioCreditos\": 10, \"descripcionServicio\": \"Plomeria avanzada\" },\n    { \"idHabilidadCategoria\": \"HAB-003\", \"precioCreditos\": 15, \"descripcionServicio\": \"Muebles a medida\" }\n  ],\n  \"necesidades\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{idAna}}/catalogo",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "{{idAna}}", "catalogo"]
+            }
+          }
+        },
+        {
+          "name": "3.2 Catálogo Bob (2 ofertas a precio medio)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ofertas\": [\n    { \"idHabilidadCategoria\": \"HAB-002\", \"precioCreditos\": 8, \"descripcionServicio\": \"Electricidad residencial\" },\n    { \"idHabilidadCategoria\": \"HAB-005\", \"precioCreditos\": 12, \"descripcionServicio\": \"Soporte tecnico\" }\n  ],\n  \"necesidades\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{idBob}}/catalogo",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "{{idBob}}", "catalogo"]
+            }
+          }
+        },
+        {
+          "name": "3.3 Catálogo Carlos (1 oferta barata)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ofertas\": [\n    { \"idHabilidadCategoria\": \"HAB-004\", \"precioCreditos\": 3, \"descripcionServicio\": \"Limpieza ligera\" }\n  ],\n  \"necesidades\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{idCarlos}}/catalogo",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "{{idCarlos}}", "catalogo"]
+            }
+          }
+        },
+        {
+          "name": "3.4 Catálogo Diana (necesidades, para poder demandar)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ofertas\": [],\n  \"necesidades\": [\n    { \"idHabilidadCategoria\": \"HAB-004\", \"descripcionCondiciones\": \"Necesito limpieza\" },\n    { \"idHabilidadCategoria\": \"HAB-001\", \"descripcionCondiciones\": \"Necesito plomero\" },\n    { \"idHabilidadCategoria\": \"HAB-003\", \"descripcionCondiciones\": \"Necesito carpintero\" },\n    { \"idHabilidadCategoria\": \"HAB-002\", \"descripcionCondiciones\": \"Necesito electricista\" },\n    { \"idHabilidadCategoria\": \"HAB-005\", \"descripcionCondiciones\": \"Necesito soporte\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{idDiana}}/catalogo",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "{{idDiana}}", "catalogo"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Ver publicaciones creadas automaticamente",
+      "item": [
+        {
+          "name": "4.1 Publicaciones de Ana (deben ser 3: limpieza, plomeria, carpinteria)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones/usuario/{{idAna}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones", "usuario", "{{idAna}}"]
+            }
+          }
+        },
+        {
+          "name": "4.2 Publicaciones de Bob (deben ser 2: electricidad, soporte)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones/usuario/{{idBob}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones", "usuario", "{{idBob}}"]
+            }
+          }
+        },
+        {
+          "name": "4.3 Publicaciones de Carlos (1: limpieza ligera)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones/usuario/{{idCarlos}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones", "usuario", "{{idCarlos}}"]
+            }
+          }
+        },
+        {
+          "name": "4.4 Guardar IDs de publicaciones para solicitar",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var pubs = pm.response.json();",
+                "pm.collectionVariables.set('pubDiana1', pubs[0].idPublicacion);",
+                "pm.collectionVariables.set('pubDiana2', pubs[1].idPublicacion);",
+                "pm.collectionVariables.set('pubDiana3', pubs[2].idPublicacion);",
+                "console.log('Publicaciones de Ana guardadas');"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones/usuario/{{idAna}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones", "usuario", "{{idAna}}"]
+            }
+          }
+        },
+        {
+          "name": "4.5 Guardar IDs de publicaciones de Bob",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var pubs = pm.response.json();",
+                "pm.collectionVariables.set('pubBob1', pubs[0].idPublicacion);",
+                "pm.collectionVariables.set('pubBob2', pubs[1].idPublicacion);",
+                "console.log('Publicaciones de Bob guardadas');"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones/usuario/{{idBob}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones", "usuario", "{{idBob}}"]
+            }
+          }
+        },
+        {
+          "name": "4.6 Guardar ID de publicacion de Carlos",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var pubs = pm.response.json();",
+                "pm.collectionVariables.set('pubCarlos1', pubs[0].idPublicacion);",
+                "console.log('Publicacion de Carlos guardada');"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones/usuario/{{idCarlos}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones", "usuario", "{{idCarlos}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 - Crear transacciones (Diana demanda servicios)",
+      "item": [
+        {
+          "name": "5.1 Diana solicita pub de Ana (limpieza, 5 cred)",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var r = pm.response.json();",
+                "pm.collectionVariables.set('sol1', r.idSolicitud);"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idDiana}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones/{{pubDiana1}}/solicitar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones", "{{pubDiana1}}", "solicitar"]
+            }
+          }
+        },
+        {
+          "name": "5.2 Ana acepta (crea TX1 limpieza 5 cred)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idAna}}\",\n  \"aceptar\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes/{{sol1}}/responder",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "solicitudes", "{{sol1}}", "responder"]
+            }
+          }
+        },
+        {
+          "name": "5.3 Diana solicita pub de Ana (plomeria, 10 cred)",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var r = pm.response.json();",
+                "pm.collectionVariables.set('sol2', r.idSolicitud);"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idDiana}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones/{{pubDiana2}}/solicitar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones", "{{pubDiana2}}", "solicitar"]
+            }
+          }
+        },
+        {
+          "name": "5.4 Ana acepta (crea TX2 plomeria 10 cred)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idAna}}\",\n  \"aceptar\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes/{{sol2}}/responder",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "solicitudes", "{{sol2}}", "responder"]
+            }
+          }
+        },
+        {
+          "name": "5.5 Diana solicita pub de Ana (carpinteria, 15 cred)",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var r = pm.response.json();",
+                "pm.collectionVariables.set('sol3', r.idSolicitud);"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idDiana}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones/{{pubDiana3}}/solicitar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones", "{{pubDiana3}}", "solicitar"]
+            }
+          }
+        },
+        {
+          "name": "5.6 Ana acepta (crea TX3 carpinteria 15 cred)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idAna}}\",\n  \"aceptar\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes/{{sol3}}/responder",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "solicitudes", "{{sol3}}", "responder"]
+            }
+          }
+        },
+        {
+          "name": "5.7 Diana solicita pub de Bob (electricidad, 8 cred)",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var r = pm.response.json();",
+                "pm.collectionVariables.set('sol4', r.idSolicitud);"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idDiana}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones/{{pubBob1}}/solicitar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones", "{{pubBob1}}", "solicitar"]
+            }
+          }
+        },
+        {
+          "name": "5.8 Bob acepta (crea TX4 electricidad 8 cred)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idBob}}\",\n  \"aceptar\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes/{{sol4}}/responder",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "solicitudes", "{{sol4}}", "responder"]
+            }
+          }
+        },
+        {
+          "name": "5.9 Diana solicita pub de Bob (soporte, 12 cred)",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var r = pm.response.json();",
+                "pm.collectionVariables.set('sol5', r.idSolicitud);"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idDiana}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones/{{pubBob2}}/solicitar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones", "{{pubBob2}}", "solicitar"]
+            }
+          }
+        },
+        {
+          "name": "5.10 Bob acepta (crea TX5 soporte 12 cred)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idBob}}\",\n  \"aceptar\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes/{{sol5}}/responder",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "solicitudes", "{{sol5}}", "responder"]
+            }
+          }
+        },
+        {
+          "name": "5.11 Diana solicita pub de Carlos (limpieza, 3 cred)",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var r = pm.response.json();",
+                "pm.collectionVariables.set('sol6', r.idSolicitud);"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idDiana}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones/{{pubCarlos1}}/solicitar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones", "{{pubCarlos1}}", "solicitar"]
+            }
+          }
+        },
+        {
+          "name": "5.12 Carlos acepta (crea TX6 limpieza 3 cred)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idCarlos}}\",\n  \"aceptar\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes/{{sol6}}/responder",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "solicitudes", "{{sol6}}", "responder"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 - Confirmar transacciones (completar intercambios)",
+      "item": [
+        {
+          "name": "6.1 Obtener IDs de transacciones",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var txs = pm.response.json();",
+                "var ultima = txs.length - 1;",
+                "pm.collectionVariables.set('tx1', txs[ultima-5].idTransaccion);",
+                "pm.collectionVariables.set('tx2', txs[ultima-4].idTransaccion);",
+                "pm.collectionVariables.set('tx3', txs[ultima-3].idTransaccion);",
+                "pm.collectionVariables.set('tx4', txs[ultima-2].idTransaccion);",
+                "pm.collectionVariables.set('tx5', txs[ultima-1].idTransaccion);",
+                "pm.collectionVariables.set('tx6', txs[ultima].idTransaccion);",
+                "console.log('TXs guardadas:', txs.length);"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones"]
+            }
+          }
+        },
+        {
+          "name": "6.2 Completar TX1 (Ana confirma → Diana confirma + califica 5)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx1}}/confirmar-ofertante",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx1}}", "confirmar-ofertante"]
+            }
+          }
+        },
+        {
+          "name": "6.3 Diana confirma TX1",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx1}}/confirmar-demandante",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx1}}", "confirmar-demandante"]
+            }
+          }
+        },
+        {
+          "name": "6.4 Diana califica TX1 (5 estrellas)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idDiana}}\",\n  \"calificacion\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx1}}/calificar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx1}}", "calificar"]
+            }
+          }
+        },
+        {
+          "name": "6.5 Completar TX2 (Ana confirma → Diana confirma + califica 4)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx2}}/confirmar-ofertante",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx2}}", "confirmar-ofertante"]
+            }
+          }
+        },
+        {
+          "name": "6.6 Diana confirma TX2",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx2}}/confirmar-demandante",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx2}}", "confirmar-demandante"]
+            }
+          }
+        },
+        {
+          "name": "6.7 Diana califica TX2 (4 estrellas)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idDiana}}\",\n  \"calificacion\": 4\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx2}}/calificar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx2}}", "calificar"]
+            }
+          }
+        },
+        {
+          "name": "6.8 Completar TX3 (Ana confirma → Diana confirma + califica 3)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx3}}/confirmar-ofertante",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx3}}", "confirmar-ofertante"]
+            }
+          }
+        },
+        {
+          "name": "6.9 Diana confirma TX3",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx3}}/confirmar-demandante",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx3}}", "confirmar-demandante"]
+            }
+          }
+        },
+        {
+          "name": "6.10 Diana califica TX3 (3 estrellas - calidad media)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idDiana}}\",\n  \"calificacion\": 3\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx3}}/calificar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx3}}", "calificar"]
+            }
+          }
+        },
+        {
+          "name": "6.11 Completar TX4 (Bob confirma → Diana confirma + califica 5)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx4}}/confirmar-ofertante",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx4}}", "confirmar-ofertante"]
+            }
+          }
+        },
+        {
+          "name": "6.12 Diana confirma TX4",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx4}}/confirmar-demandante",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx4}}", "confirmar-demandante"]
+            }
+          }
+        },
+        {
+          "name": "6.13 Diana califica TX4 (5 estrellas)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idDiana}}\",\n  \"calificacion\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx4}}/calificar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx4}}", "calificar"]
+            }
+          }
+        },
+        {
+          "name": "6.14 Completar TX5 (Bob confirma → Diana confirma + califica 4)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx5}}/confirmar-ofertante",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx5}}", "confirmar-ofertante"]
+            }
+          }
+        },
+        {
+          "name": "6.15 Diana confirma TX5",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx5}}/confirmar-demandante",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx5}}", "confirmar-demandante"]
+            }
+          }
+        },
+        {
+          "name": "6.16 Diana califica TX5 (4 estrellas)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idDiana}}\",\n  \"calificacion\": 4\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx5}}/calificar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx5}}", "calificar"]
+            }
+          }
+        },
+        {
+          "name": "6.17 Completar TX6 (Carlos confirma → Diana confirma + califica 5)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx6}}/confirmar-ofertante",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx6}}", "confirmar-ofertante"]
+            }
+          }
+        },
+        {
+          "name": "6.18 Diana confirma TX6",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "" },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx6}}/confirmar-demandante",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx6}}", "confirmar-demandante"]
+            }
+          }
+        },
+        {
+          "name": "6.19 Diana califica TX6 (5 estrellas)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idDiana}}\",\n  \"calificacion\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{tx6}}/calificar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{tx6}}", "calificar"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 - Podio",
+      "item": [
+        {
+          "name": "7.1 Calcular Podio Semanal",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var r = pm.response.json();",
+                "console.log('Podio calculado:', r.idPodio);",
+                "pm.test('Podio debe tener proveedorElite (Ana con 3 TXs)', function() {",
+                "  pm.expect(r.proveedorElite).to.not.be.empty;",
+                "  pm.expect(r.proveedorElite.length).to.eql(3);",
+                "});",
+                "pm.test('Motor Economia debe tener 3', function() {",
+                "  pm.expect(r.motorEconomia.length).to.eql(3);",
+                "});",
+                "pm.test('Embajador Calidad debe tener 3', function() {",
+                "  pm.expect(r.embajadorCalidad.length).to.eql(3);",
+                "});",
+                "// Imprimir resumen del podio",
+                "console.log('--- PROVEEDOR ELITE ---');",
+                "r.proveedorElite.forEach(function(e, i) {",
+                "  console.log((i+1) + '. ' + e.nombreUsuario + ' - ' + e.valor + ' TXs');",
+                "});",
+                "console.log('--- MOTOR ECONOMIA ---');",
+                "r.motorEconomia.forEach(function(e, i) {",
+                "  console.log((i+1) + '. ' + e.nombreUsuario + ' - ' + e.valor + ' creditos');",
+                "});",
+                "console.log('--- EMBAJADOR CALIDAD ---');",
+                "r.embajadorCalidad.forEach(function(e, i) {",
+                "  console.log((i+1) + '. ' + e.nombreUsuario + ' - ' + e.valor + ' estrellas');",
+                "});"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/podio/calcular",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "podio", "calcular"]
+            }
+          }
+        },
+        {
+          "name": "7.2 Ver Podio (GET)",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var r = pm.response.json();",
+                "console.log('Podio:', r.idPodio);",
+                "pm.test('Podio obtenido correctamente', function() {",
+                "  pm.expect(r.proveedorElite).to.not.be.empty;",
+                "});",
+                "console.log('--- PROVEEDOR ELITE ---');",
+                "r.proveedorElite.forEach(function(e, i) {",
+                "  console.log((i+1) + '. ' + e.nombreUsuario + ' - ' + e.valor);",
+                "});",
+                "console.log('--- MOTOR ECONOMIA ---');",
+                "r.motorEconomia.forEach(function(e, i) {",
+                "  console.log((i+1) + '. ' + e.nombreUsuario + ' - ' + e.valor);",
+                "});",
+                "console.log('--- EMBAJADOR CALIDAD ---');",
+                "r.embajadorCalidad.forEach(function(e, i) {",
+                "  console.log((i+1) + '. ' + e.nombreUsuario + ' - ' + e.valor);",
+                "});"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/podio",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "podio"]
+            }
+          }
+        },
+        {
+          "name": "7.3 Recalcular y verificar que se actualiza",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "var r = pm.response.json();",
+                "console.log('Podio recalculado:', r.idPodio);",
+                "pm.test('Sigue teniendo 3 por categoria', function() {",
+                "  pm.expect(r.proveedorElite.length).to.eql(3);",
+                "  pm.expect(r.motorEconomia.length).to.eql(3);",
+                "  pm.expect(r.embajadorCalidad.length).to.eql(3);",
+                "});"
+              ],
+              "type": "text/javascript"
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/podio/calcular",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "podio", "calcular"]
+            }
+          }
+        },
+        {
+          "name": "7.4 Resultados esperados",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/podio",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "podio"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

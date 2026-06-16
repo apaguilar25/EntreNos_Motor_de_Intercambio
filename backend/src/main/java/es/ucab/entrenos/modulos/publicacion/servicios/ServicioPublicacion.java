@@ -16,6 +16,7 @@ import es.ucab.entrenos.modulos.publicacion.dto.RecomendacionDTO;
 import es.ucab.entrenos.modulos.publicacion.modelos.EstadoTransaccion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Incidencia;
 import es.ucab.entrenos.modulos.publicacion.modelos.MotivoCancelacion;
+import es.ucab.entrenos.modulos.reputacion.modelos.Resena;
 import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Transaccion;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioIncidencia;
@@ -216,9 +217,6 @@ public class ServicioPublicacion {
                 .orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada."));
         EstadoTransaccion estadoAnteior = t.getEstado();
         t.confirmarEntregaOfertante();
-        if (t.getEstado() == EstadoTransaccion.INICIADA || t.getEstado() == EstadoTransaccion.FINALIZADA) {
-            simularDemandante(t);
-        }
         if (t.getEstado() == EstadoTransaccion.FINALIZADA && estadoAnteior != EstadoTransaccion.FINALIZADA) {
             procesarPago(t);
         }
@@ -241,9 +239,6 @@ public class ServicioPublicacion {
                 .orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada."));
         EstadoTransaccion estadoAnterior = t.getEstado();
         t.confirmarRecepcionDemandante();
-        if (t.getEstado() == EstadoTransaccion.INICIADA || t.getEstado() == EstadoTransaccion.FINALIZADA) {
-            simularOfertante(t);
-        }
         if (t.getEstado() == EstadoTransaccion.FINALIZADA && estadoAnterior != EstadoTransaccion.FINALIZADA) {
             procesarPago(t);
         }
@@ -280,28 +275,27 @@ public class ServicioPublicacion {
                 TipoNotificacion.MOVIMIENTO_MONEDERO);
     }
 
-    private void simularDemandante(Transaccion t) {
-        if (t.isConfirmacionDemandante()) return;
-        boolean confirma = RANDOM.nextBoolean();
-        if (confirma) {
-            t.setConfirmacionDemandante(true);
-            t.setCalificacionOfertante(RANDOM.nextInt(5) + 1);
-        } else {
-            t.setSancionado(true);
-        }
-        t.confirmarRecepcionDemandante();
-    }
+    // private void simularDemandante(Transaccion t) {
+    //     if (t.isConfirmacionDemandante()) return;
+    //     boolean confirma = RANDOM.nextBoolean();
+    //     if (confirma) {
+    //         t.setConfirmacionDemandante(true);
+    //         Resena resena = servicioReputacion.crearResena(
+    //                 t.getIdTransaccion(), t.getIdDemandante(), t.getIdOfertante(),
+    //                 RANDOM.nextInt(5) + 1);
+    //         t.setResena(resena);
+    //         t.confirmarRecepcionDemandante();
+    //     }
+    // }
 
-    private void simularOfertante(Transaccion t) {
-        if (t.isConfirmacionOfertante()) return;
-        boolean confirma = RANDOM.nextBoolean();
-        if (confirma) {
-            t.setConfirmacionOfertante(true);
-        } else {
-            t.setSancionado(true);
-        }
-        t.confirmarEntregaOfertante();
-    }
+    // private void simularOfertante(Transaccion t) {
+    //     if (t.isConfirmacionOfertante()) return;
+    //     boolean confirma = RANDOM.nextBoolean();
+    //     if (confirma) {
+    //         t.setConfirmacionOfertante(true);
+    //         t.confirmarEntregaOfertante();
+    //     }
+    // }
 
     public Transaccion calificar(String idTransaccion, String idUsuario, int calificacion) {
         Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
@@ -315,13 +309,12 @@ public class ServicioPublicacion {
         if (!t.getIdDemandante().equals(idUsuario)) {
             throw new IllegalArgumentException("Solo el demandante puede calificar el servicio.");
         }
-        if (t.getCalificacionOfertante() != null) {
+        if (!servicioReputacion.obtenerResenasPorTransaccion(idTransaccion).isEmpty()) {
             throw new IllegalStateException("Ya calificaste esta transacción.");
         }
-        t.setCalificacionOfertante(calificacion);
+        Resena resena = servicioReputacion.crearResena(idTransaccion, idUsuario, t.getIdOfertante(), calificacion);
+        t.setResena(resena);
         repositorioTransaccion.guardar(t);
-        servicioUsuario.actualizarReputacion(t.getIdOfertante(), calificacion);
-        servicioReputacion.crearResena(idTransaccion, idUsuario, t.getIdOfertante(), calificacion);
         return t;
     }
 
@@ -377,6 +370,38 @@ public class ServicioPublicacion {
         servicioNotificacion.enviarNotificacion("SISTEMA", t.getIdDemandante(),
                 "Se ha reportado una incidencia en la transacción \"" + pub.getNombreServicio()
                         + "\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+                TipoNotificacion.ALERTA_SISTEMA);
+        return incidencia;
+    }
+
+    public Incidencia defenderIncidencia(String idTransaccion, String idUsuario, String descripcion, String urlEvidencia) {
+        Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
+                .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada: " + idTransaccion));
+        if (!t.getIdOfertante().equals(idUsuario) && !t.getIdDemandante().equals(idUsuario)) {
+            throw new IllegalArgumentException("No eres parte de esta transacción.");
+        }
+        if (t.getIdIncidencia() == null) {
+            throw new IllegalStateException("No hay una incidencia activa en esta transacción.");
+        }
+        Incidencia incidencia = repositorioIncidencia.obtenerPorId(t.getIdIncidencia())
+                .orElseThrow(() -> new IllegalStateException("La incidencia asociada no existe."));
+        if (incidencia.getIdUsuarioReportante().equals(idUsuario)) {
+            throw new IllegalArgumentException("No puedes defenderte de tu propio reporte.");
+        }
+        if (incidencia.getIdUsuarioDefensor() != null) {
+            throw new IllegalStateException("Ya has presentado tu defensa para esta incidencia.");
+        }
+        if (descripcion == null || descripcion.trim().length() < 20) {
+            throw new IllegalArgumentException("La descripción de la defensa debe tener al menos 20 caracteres.");
+        }
+        incidencia.setIdUsuarioDefensor(idUsuario);
+        incidencia.setDescripcionDefensa(descripcion);
+        incidencia.setUrlEvidenciaDefensa(urlEvidencia);
+        repositorioIncidencia.guardar(incidencia);
+        Publicacion pub = obtenerPublicacionPorId(t.getIdPublicacion())
+                .orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada."));
+        servicioNotificacion.enviarNotificacion(idUsuario, incidencia.getIdUsuarioReportante(),
+                "El usuario implicado ha presentado su defensa para la incidencia en: " + pub.getNombreServicio(),
                 TipoNotificacion.ALERTA_SISTEMA);
         return incidencia;
     }

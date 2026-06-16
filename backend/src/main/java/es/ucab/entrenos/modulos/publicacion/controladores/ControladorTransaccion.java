@@ -124,4 +124,18 @@ public class ControladorTransaccion {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    @PostMapping("/{id}/defender-incidencia")
+    public ResponseEntity<?> defenderIncidencia(@PathVariable String id,
+                                                 @RequestBody ReportarIncidenciaRequestDTO dto) {
+        try {
+            Incidencia incidencia = servicioPublicacion.defenderIncidencia(id,
+                    dto.getIdUsuario(), dto.getDescripcion(), dto.getUrlEvidencia());
+            return ResponseEntity.ok(incidencia);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }

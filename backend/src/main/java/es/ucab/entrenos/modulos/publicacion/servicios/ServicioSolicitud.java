@@ -4,6 +4,7 @@ import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
 import es.ucab.entrenos.modulos.identidad.servicios.ServicioUsuario;
 import es.ucab.entrenos.modulos.notificacion.modelos.TipoNotificacion;
 import es.ucab.entrenos.modulos.notificacion.servicios.ServicioNotificacion;
+import es.ucab.entrenos.modulos.publicacion.modelos.EstadoTransaccion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Solicitud;
 import es.ucab.entrenos.modulos.publicacion.modelos.Transaccion;
@@ -61,9 +62,23 @@ public class ServicioSolicitud {
         return solicitud;
     }
 
-    public List<Solicitud> obtenerPorSolicitante(String idSolicitante) {
+    public List<Solicitud> obtenerPorSolicitante(String idSolicitante, String tipo) {
         return repositorioSolicitud.obtenerTodas().stream()
                 .filter(s -> s.getIdSolicitante().equalsIgnoreCase(idSolicitante))
+                .filter(s -> tipo == null || tipo.isEmpty() ||
+                        servicioPublicacion.obtenerPublicacionPorId(s.getIdPublicacion())
+                                .map(p -> p.getTipoPublicacion().equalsIgnoreCase(tipo))
+                                .orElse(false))
+                .collect(Collectors.toList());
+    }
+
+    public List<Solicitud> obtenerRecibidas(String idPropietario, String tipo) {
+        List<Publicacion> pubs = servicioPublicacion.obtenerTodasLasPublicaciones().stream()
+                .filter(p -> p.getIdUsuario().equals(idPropietario))
+                .filter(p -> tipo == null || tipo.isEmpty() || p.getTipoPublicacion().equalsIgnoreCase(tipo))
+                .collect(Collectors.toList());
+        return repositorioSolicitud.obtenerTodas().stream()
+                .filter(s -> pubs.stream().anyMatch(p -> p.getIdPublicacion().equals(s.getIdPublicacion())))
                 .collect(Collectors.toList());
     }
 
@@ -76,13 +91,6 @@ public class ServicioSolicitud {
         }
         if (!pub.isDisponible()) {
             throw new IllegalStateException("La publicacion no esta disponible.");
-        }
-
-        long solicitudesPendientes = obtenerPorPublicacion(idPublicacion).stream()
-                .filter(s -> Solicitud.ESTADO_PENDIENTE.equals(s.getEstado()))
-                .count();
-        if (solicitudesPendientes > 0) {
-            throw new IllegalStateException("Ya existe una solicitud pendiente para esta publicacion.");
         }
 
         if (pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
@@ -132,6 +140,12 @@ public class ServicioSolicitud {
         }
 
         if (aceptar) {
+            boolean yaTieneTransaccionActiva = repositorioTransaccion.obtenerTodas().stream()
+                    .anyMatch(t -> t.getIdPublicacion().equals(solicitud.getIdPublicacion())
+                            && (t.getEstado() == EstadoTransaccion.PENDIENTE || t.getEstado() == EstadoTransaccion.INICIADA || t.getEstado() == EstadoTransaccion.EN_DISPUTA));
+            if (yaTieneTransaccionActiva) {
+                throw new IllegalStateException("Esta publicación ya tiene una transacción activa.");
+            }
             solicitud.aceptar();
 
             Usuario demandante = servicioUsuario.buscarPorId(solicitud.getIdSolicitante())

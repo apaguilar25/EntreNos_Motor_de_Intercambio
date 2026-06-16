@@ -2,6 +2,7 @@ package es.ucab.entrenos.modulos.identidad.servicios;
 
 import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
 import es.ucab.entrenos.modulos.identidad.repositorios.IRepositorioUsuario;
+import es.ucab.entrenos.modulos.publicacion.modelos.EstadoTransaccion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Incidencia;
 import es.ucab.entrenos.modulos.publicacion.modelos.Transaccion;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioIncidencia;
@@ -9,6 +10,7 @@ import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioTransaccion
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ServicioAdministrador {
@@ -34,6 +36,10 @@ public class ServicioAdministrador {
         return repositorioIncidencia.obtenerTodas();
     }
 
+    public Optional<Incidencia> obtenerIncidenciaPorId(String idIncidencia) {
+        return repositorioIncidencia.obtenerPorId(idIncidencia);
+    }
+
     /**
      * Requisito ERS: Validar reporte de fraude y aplicar sanción.
      */
@@ -48,7 +54,7 @@ public class ServicioAdministrador {
 
         if (idTransaccion != null && !idTransaccion.isBlank()) {
             repositorioTransaccion.obtenerPorId(idTransaccion).ifPresent(t -> {
-                t.setSancionado(true);
+                t.setEstado(EstadoTransaccion.FINALIZADA);
                 repositorioTransaccion.guardar(t);
             });
         }
