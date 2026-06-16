@@ -294,10 +294,38 @@
     "primerIntentoFallidoMillis": 0,
     "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 0.0,
-    "cantidadCalificaciones": 0,
+    "promedioCalificacion": 4.0,
+    "cantidadCalificaciones": 2,
     "rol": "MIEMBRO_COMUNIDAD",
     "esVecinoDestacado": false
+  },
+  {
+    "id": "8e1baf4c-a128-497e-a1c4-ed7d4e742465",
+    "nombre": "Super Administrador",
+    "correoElectronico": "admin@alameda.com",
+    "telefono": "0000000000",
+    "descripcionPersonal": "Administrador general de la comunidad",
+    "contrasenaHash": "$2a$10$QWRLH1VJ8KphSh4b/Ucy..jtmvKPCSAOErYT7fGP0KDMFPAE9ZDNy",
+    "version": 6,
+    "monedero": {
+      "creditosDisponibles": 0.0,
+      "creditosComprometidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": false,
+      "habilidadesOfrecidas": [],
+      "necesidadesRegistradas": []
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "ADMINISTRADOR"
   },
   {
     "id": "d95b9f31-322b-48e0-b331-e1d5a003992c",
@@ -458,5 +486,6 @@
     "cantidadCalificaciones": 0,
     "rol": "ADMINISTRADOR",
     "esVecinoDestacado": false
+
   }
 ]
