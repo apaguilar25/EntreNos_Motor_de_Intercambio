@@ -29,6 +29,7 @@ public class ConfiguracionSeguridad {
                 .authorizeHttpRequests(auth -> auth
                         // Rutas públicas que no requieren token
                         .requestMatchers("/api/auth/login", "/api/auth/registro").permitAll()
+                        .requestMatchers("/api/usuarios/registro").permitAll()
                         .requestMatchers("/api/habilidades").permitAll() // Ver catálogo global es público
                         .requestMatchers("/api/**").permitAll() // Temporalmente permitido para el MOCK de frontend
                         // Todas las demás rutas exigen token válido

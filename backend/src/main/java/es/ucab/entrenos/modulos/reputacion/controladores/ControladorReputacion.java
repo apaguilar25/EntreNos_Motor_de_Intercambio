@@ -24,8 +24,7 @@ public class ControladorReputacion {
                     resena.getIdTransaccion(),
                     resena.getIdEmisor(),
                     resena.getIdReceptor(),
-                    resena.getCalificacion(),
-                    resena.getComentario()
+                    resena.getCalificacion()
             );
             return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
         } catch (IllegalArgumentException e) {

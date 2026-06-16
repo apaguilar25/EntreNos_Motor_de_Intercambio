@@ -1,9 +1,12 @@
 package es.ucab.entrenos.modulos.publicacion.servicios;
 
+import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
+import es.ucab.entrenos.modulos.identidad.servicios.ServicioUsuario;
 import es.ucab.entrenos.modulos.notificacion.modelos.TipoNotificacion;
 import es.ucab.entrenos.modulos.notificacion.servicios.ServicioNotificacion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
-import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioPublicacion;
+import es.ucab.entrenos.modulos.publicacion.modelos.Solicitud;
+import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioSolicitud;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -11,39 +14,45 @@ import java.util.List;
 @Service
 public class ServicioExpiracion {
 
-    private final IRepositorioPublicacion repositorioPublicacion;
+    private final IRepositorioSolicitud repositorioSolicitud;
+    private final ServicioPublicacion servicioPublicacion;
+    private final ServicioUsuario servicioUsuario;
     private final ServicioNotificacion servicioNotificacion;
 
-    public ServicioExpiracion(IRepositorioPublicacion repositorioPublicacion,
+    public ServicioExpiracion(IRepositorioSolicitud repositorioSolicitud,
+                              ServicioPublicacion servicioPublicacion,
+                              ServicioUsuario servicioUsuario,
                               ServicioNotificacion servicioNotificacion) {
-        this.repositorioPublicacion = repositorioPublicacion;
+        this.repositorioSolicitud = repositorioSolicitud;
+        this.servicioPublicacion = servicioPublicacion;
+        this.servicioUsuario = servicioUsuario;
         this.servicioNotificacion = servicioNotificacion;
     }
 
     @Scheduled(fixedRate = 60000)
     public void expirarSolicitudesVencidas() {
-        List<Publicacion> publicaciones = repositorioPublicacion.obtenerTodas();
+        List<Solicitud> solicitudes = repositorioSolicitud.obtenerTodas();
         boolean huboCambios = false;
-        for (Publicacion pub : publicaciones) {
-            if (pub.haExpiradoPlazoRespuesta()) {
-                String solicitanteId = pub.getIdSolicitante();
-                String solicitanteNombre = pub.getNombreSolicitante();
-                pub.setEstadoSolicitud(Publicacion.ESTADO_SOLICITUD_EXPIRADA);
-                pub.limpiarSolicitud();
-                servicioNotificacion.enviarNotificacion("SISTEMA", pub.getIdUsuario(),
-                        "La solicitud de " + (solicitanteNombre != null ? solicitanteNombre : "un usuario")
-                                + " para " + pub.getNombreServicio() + " ha expirado automáticamente.",
-                        TipoNotificacion.ALERTA_SISTEMA);
-                if (solicitanteId != null) {
-                    servicioNotificacion.enviarNotificacion("SISTEMA", solicitanteId,
-                            "Tu solicitud para " + pub.getNombreServicio() + " ha expirado (sin respuesta).",
-                            TipoNotificacion.ALERTA_SISTEMA);
-                }
+        for (Solicitud sol : solicitudes) {
+            if (sol.haExpirado()) {
+                sol.expirar();
+                servicioPublicacion.obtenerPublicacionPorId(sol.getIdPublicacion())
+                        .ifPresent(pub -> {
+                            String nombreSolicitante = servicioUsuario.buscarPorId(sol.getIdSolicitante())
+                                    .map(Usuario::getNombre).orElse("Un usuario");
+                            servicioNotificacion.enviarNotificacion("SISTEMA", pub.getIdUsuario(),
+                                    "La solicitud de " + nombreSolicitante + " para " + pub.getNombreServicio()
+                                            + " ha expirado automáticamente.",
+                                    TipoNotificacion.ALERTA_SISTEMA);
+                            servicioNotificacion.enviarNotificacion("SISTEMA", sol.getIdSolicitante(),
+                                    "Tu solicitud para " + pub.getNombreServicio() + " ha expirado (sin respuesta).",
+                                    TipoNotificacion.ALERTA_SISTEMA);
+                        });
                 huboCambios = true;
             }
         }
         if (huboCambios) {
-            repositorioPublicacion.guardarTodas(publicaciones);
+            repositorioSolicitud.guardarTodas(solicitudes);
         }
     }
 }

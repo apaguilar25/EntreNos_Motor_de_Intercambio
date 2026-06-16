@@ -33,13 +33,19 @@ public class ServicioUsuario {
         return repositorioUsuario.buscarPorId(id);
     }
 
+    public List<Usuario> obtenerTodos() {
+        return repositorioUsuario.listarUsuarios();
+    }
+
     public void guardar(Usuario usuario) {
         repositorioUsuario.guardar(usuario);
     }
 
     public void actualizarReputacion(String idReceptor, float calificacion) {
-        // TODO implementar funcion
-        return;
+        buscarPorId(idReceptor).ifPresent(u -> {
+            u.agregarCalificacion((int) calificacion);
+            guardar(u);
+        });
     }
 
     //  Registro inicial del usuario (Aún sin catálogo)
@@ -122,7 +128,7 @@ public class ServicioUsuario {
         Usuario usuario = repositorioUsuario.buscarPorId(idUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
 
-        verificarUsuarioActivo(usuario); // Defensa en profundidad
+        verificarUsuarioActivo(usuario);
 
         HabilidadOfrecida nuevaOferta = new HabilidadOfrecida(habilidadBase, precioCreditos, descripcionServicio);
         usuario.agregarHabilidadOfrecida(nuevaOferta);
@@ -135,7 +141,7 @@ public class ServicioUsuario {
         Usuario usuario = repositorioUsuario.buscarPorId(idUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
 
-        verificarUsuarioActivo(usuario); // Defensa en profundidad
+        verificarUsuarioActivo(usuario);
 
         NecesidadRegistrada nuevaNecesidad = new NecesidadRegistrada(necesidadBase, descripcionCondiciones);
         usuario.agregarNecesidad(nuevaNecesidad);

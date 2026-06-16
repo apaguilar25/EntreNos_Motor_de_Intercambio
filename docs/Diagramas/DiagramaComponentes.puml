@@ -1,0 +1,107 @@
+@startuml
+!theme plain
+skinparam rectangle {
+  BackgroundColor #FFF2CC
+  BorderColor #D6A000
+  FontColor #7A5A00
+  FontSize 12
+}
+skinparam stereotype {
+  BackgroundColor #FFE599
+  BorderColor #D6A000
+  FontColor #7A5A00
+}
+skinparam arrow {
+  Color #444444
+  FontColor #444444
+  FontSize 10
+}
+skinparam linetype ortho
+left to right direction
+skinparam nodesep 50
+skinparam ranksep 60
+
+title Nivel 3: Componentes - API Backend (Spring Boot)
+
+' ==================== MÓDULO IDENTIDAD ====================
+rectangle "Módulo Identidad" <<module>> {
+  
+  rectangle "ControladorUsuario" <<REST>> as CtrlUsr
+  rectangle "ControladorAutenticacion" <<REST>> as CtrlAuth
+  rectangle "ServicioUsuario" <<Service>> as SrvUsr
+  rectangle "ServicioAutenticacion" <<Service>> as SrvAuth
+  rectangle "RepositorioUsuario" <<Repository>> as RepoUsr
+  rectangle "RepositorioHabilidad" <<Repository>> as RepoHab
+
+  CtrlUsr -down-> SrvUsr
+  CtrlAuth -down-> SrvAuth
+  SrvUsr -down-> RepoUsr
+  SrvAuth -down-> RepoUsr
+}
+
+' ==================== MÓDULO PUBLICACIONES ====================
+rectangle "Módulo Publicaciones" <<module>> {
+  
+  rectangle "ControladorPublicacion" <<REST>> as CtrlPub
+  rectangle "ServicioPublicacion" <<Service>> as SrvPub
+  rectangle "RepositorioPublicacion" <<Repository>> as RepoPub
+  rectangle "RepositorioTransaccion" <<Repository>> as RepoTx
+
+  CtrlPub -down-> SrvPub
+  SrvPub -down-> RepoPub
+  SrvPub -down-> RepoTx
+}
+
+' ==================== MÓDULO SUBASTAS ====================
+rectangle "Módulo Subastas" <<module>> {
+  
+  rectangle "ControladorSubasta" <<REST>> as CtrlSub
+  rectangle "ControladorPropuesta" <<REST>> as CtrlProp
+  rectangle "ServicioSubasta" <<Service>> as SrvSub
+  rectangle "ServicioPropuesta" <<Service>> as SrvProp
+  rectangle "RepositorioSubasta" <<Repository>> as RepoSub
+
+  CtrlSub -down-> SrvSub
+  CtrlProp -down-> SrvProp
+  SrvSub -down-> RepoSub
+  SrvProp -down-> RepoSub
+}
+
+' ==================== MÓDULO GAMIFICACIÓN ====================
+rectangle "Módulo Gamificación" <<module>> {
+  
+  rectangle "ControladorLogro" <<REST>> as CtrlLog
+  rectangle "ControladorPodio" <<REST>> as CtrlPod
+  rectangle "ServicioGamificacion" <<Service>> as SrvGam
+  rectangle "ServicioPodio" <<Service>> as SrvPod
+  rectangle "RepositorioLogro" <<Repository>> as RepoLog
+
+  CtrlLog -down-> SrvGam
+  CtrlPod -down-> SrvPod
+  SrvGam -down-> RepoLog
+  SrvPod -down-> RepoLog
+}
+
+' ==================== MÓDULO REPUTACIÓN ====================
+rectangle "Módulo Reputación" <<module>> {
+  
+  rectangle "ControladorReputacion" <<REST>> as CtrlRep
+  rectangle "ServicioReputacion" <<Service>> as SrvRep
+  rectangle "RepositorioReputacion" <<Repository>> as RepoRep
+
+  CtrlRep -down-> SrvRep
+  SrvRep -down-> RepoRep
+}
+
+' ==================== MÓDULO NOTIFICACIONES ====================
+rectangle "Módulo Notificaciones" <<module>> {
+  
+  rectangle "ControladorNotificacion" <<REST>> as CtrlNot
+  rectangle "ServicioNotificacion" <<Service>> as SrvNot
+  rectangle "RepositorioNotificacion" <<Repository>> as RepoNot
+
+  CtrlNot -down-> SrvNot
+  SrvNot -down-> RepoNot
+}
+
+@enduml

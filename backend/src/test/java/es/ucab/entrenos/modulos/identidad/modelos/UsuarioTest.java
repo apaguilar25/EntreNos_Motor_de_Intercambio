@@ -34,7 +34,7 @@ class UsuarioTest {
             usuario.agregarHabilidadOfrecida(oferta2);
         }, "❌ Error: El sistema permitió agregar una habilidad duplicada.");
 
-        assertTrue(excepcion.getMessage().contains("ya ofreces esta habilidad"), "❌ Error: El mensaje de excepción no es el esperado.");
+        assertTrue(excepcion.getMessage().contains("Ya tienes una oferta para esta habilidad"), "❌ Error: El mensaje de excepción no es el esperado.");
 
         System.out.println("✅ Éxito: El sistema bloqueó correctamente la habilidad duplicada.");
     }

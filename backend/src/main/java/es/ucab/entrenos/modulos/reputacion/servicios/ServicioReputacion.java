@@ -18,12 +18,12 @@ public class ServicioReputacion {
         this.servicioUsuario = servicioUsuario;
     }
 
-    public Resena crearResena(String idTransaccion, String idEmisor, String idReceptor, int calificacion, String comentario) {
+    public Resena crearResena(String idTransaccion, String idEmisor, String idReceptor, int calificacion) {
         if (calificacion < 1 || calificacion > 5)
             throw new IllegalArgumentException("La calificacion debe ser un entero entre 1 y 5.");
 
         String idResena = "RES-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-        Resena resena = new Resena(idResena, idTransaccion, idEmisor, idReceptor, calificacion, comentario);
+        Resena resena = new Resena(idResena, idTransaccion, idEmisor, idReceptor, calificacion);
         repositorioReputacion.guardar(resena);
 
         servicioUsuario.actualizarReputacion(idReceptor, calificacion);

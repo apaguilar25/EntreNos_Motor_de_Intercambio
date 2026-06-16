@@ -1,0 +1,1476 @@
+{
+  "info": {
+    "name": "EntreNos - Flujo Completo",
+    "description": "Colección que cubre registro, catálogo, monedero, publicaciones, solicitudes, transacciones (confirmar, cancelar, reportar), reseñas, notificaciones, logros, podio, subastas y propuestas.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "01 - Setup: Registro y Login",
+      "item": [
+        {
+          "name": "1.1 Registrar Usuario A (Ana Ofertante)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('idA', resp.id);",
+                  "pm.collectionVariables.set('nombreA', 'Ana Ofertante');",
+                  "pm.collectionVariables.set('emailA', 'ana.ofertante@alameda.com');",
+                  "console.log('Usuario A registrado:', resp.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ana Ofertante\",\n  \"correoElectronico\": \"ana.ofertante@alameda.com\",\n  \"telefono\": \"+58414000001\",\n  \"descripcionPersonal\": \"Profesora de yoga y masajes\",\n  \"contrasena\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/registro",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "registro"]
+            }
+          }
+        },
+        {
+          "name": "1.2 Registrar Usuario B (Bob Demandante)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('idB', resp.id);",
+                  "pm.collectionVariables.set('nombreB', 'Bob Demandante');",
+                  "pm.collectionVariables.set('emailB', 'bob.demandante@alameda.com');",
+                  "console.log('Usuario B registrado:', resp.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Bob Demandante\",\n  \"correoElectronico\": \"bob.demandante@alameda.com\",\n  \"telefono\": \"+58414000002\",\n  \"descripcionPersonal\": \"Vecino que busca servicios\",\n  \"contrasena\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/registro",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "registro"]
+            }
+          }
+        },
+        {
+          "name": "1.3 Login como Ana (Usuario A)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('tokenA', resp.token);",
+                  "console.log('Token A obtenido');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correoElectronico\": \"ana.ofertante@alameda.com\",\n  \"contrasena\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "1.4 Login como Bob (Usuario B)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('tokenB', resp.token);",
+                  "console.log('Token B obtenido');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correoElectronico\": \"bob.demandante@alameda.com\",\n  \"contrasena\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "1.5 Obtener Habilidades (catálogo global)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var habilidades = pm.response.json();",
+                  "pm.collectionVariables.set('catPlomeria', habilidades[0].id);",
+                  "pm.collectionVariables.set('catElectricidad', habilidades[1].id);",
+                  "pm.collectionVariables.set('catCarpinteria', habilidades[2].id);",
+                  "pm.collectionVariables.set('catLimpieza', habilidades[3].id);",
+                  "pm.collectionVariables.set('catSoporte', habilidades[4].id);",
+                  "console.log('Habilidades cargadas:', habilidades.length);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/habilidades",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "habilidades"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Catálogo y Monedero",
+      "item": [
+        {
+          "name": "2.1 Configurar Catálogo de Ana (Ofertas) + Capital Semilla",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "console.log('Catálogo de Ana configurado con éxito');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ofertas\": [\n    {\n      \"idHabilidadCategoria\": \"HAB-004\",\n      \"precioCreditos\": 1,\n      \"descripcionServicio\": \"Limpieza general del hogar\"\n    },\n    {\n      \"idHabilidadCategoria\": \"HAB-001\",\n      \"precioCreditos\": 2,\n      \"descripcionServicio\": \"Reparaciones de plomería básicas\"\n    }\n  ],\n  \"necesidades\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{idA}}/catalogo",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "{{idA}}", "catalogo"]
+            }
+          }
+        },
+        {
+          "name": "2.2 Configurar Catálogo de Bob (Necesidades) + Capital Semilla",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "console.log('Catálogo de Bob configurado con éxito');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenB}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ofertas\": [],\n  \"necesidades\": [\n    {\n      \"idHabilidadCategoria\": \"HAB-004\",\n      \"descripcionCondiciones\": \"Necesito limpieza semanal\"\n    },\n    {\n      \"idHabilidadCategoria\": \"HAB-005\",\n      \"descripcionCondiciones\": \"Soporte técnico para mi PC\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{idB}}/catalogo",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "{{idB}}", "catalogo"]
+            }
+          }
+        },
+        {
+          "name": "2.3 Ver Saldo de Ana (debe tener 50 créditos)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{idA}}/saldo",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "{{idA}}", "saldo"]
+            }
+          }
+        },
+        {
+          "name": "2.4 Ver Saldo de Bob (debe tener 50 créditos)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenB}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{idB}}/saldo",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "{{idB}}", "saldo"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Publicaciones y Solicitudes",
+      "item": [
+        {
+          "name": "3.1 Ana crea publicación (Servicio de Limpieza)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('idPub', resp.idPublicacion);",
+                  "console.log('Publicación creada:', resp.idPublicacion);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idA}}\",\n  \"tipoPublicacion\": \"HABILIDAD\",\n  \"nombreServicio\": \"Limpieza del Hogar\",\n  \"descripcion\": \"Limpieza general de casas y apartamentos\",\n  \"precioCreditos\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones"]
+            }
+          }
+        },
+        {
+          "name": "3.2 Bob solicita la publicación",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('idSol', resp.idSolicitud);",
+                  "console.log('Solicitud creada:', resp.idSolicitud);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenB}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idB}}\",\n  \"nombreUsuario\": \"{{nombreB}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones/{{idPub}}/solicitar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones", "{{idPub}}", "solicitar"]
+            }
+          }
+        },
+        {
+          "name": "3.3 Ver solicitudes de la publicación",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes/publicacion/{{idPub}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "solicitudes", "publicacion", "{{idPub}}"]
+            }
+          }
+        },
+        {
+          "name": "3.4 Ver solicitudes recibidas (filtradas por HABILIDAD)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes/recibidas/{{idA}}?tipo=HABILIDAD",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "solicitudes", "recibidas", "{{idA}}"],
+              "query": [
+                { "key": "tipo", "value": "HABILIDAD" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.5 Ana acepta la solicitud de Bob (crea transacción)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "console.log('Solicitud aceptada. Transacción creada.');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idA}}\",\n  \"aceptar\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes/{{idSol}}/responder",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "solicitudes", "{{idSol}}", "responder"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Transacciones (Confirmar)",
+      "item": [
+        {
+          "name": "4.1 Ver todas las transacciones",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var transacciones = pm.response.json();",
+                  "if (transacciones.length > 0) {",
+                  "  pm.collectionVariables.set('idTx', transacciones[transacciones.length-1].idTransaccion);",
+                  "  console.log('TX ID:', transacciones[transacciones.length-1].idTransaccion);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones"]
+            }
+          }
+        },
+        {
+          "name": "4.2 Ana confirma entrega (PENDIENTE → INICIADA)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "var estado = resp.transaccion.estado;",
+                  "console.log('Estado:', estado);",
+                  "pm.test('Estado debe ser INICIADA (primera confirmacion)', function() {",
+                  "  pm.expect(estado).to.eql('INICIADA');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{idTx}}/confirmar-ofertante",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{idTx}}", "confirmar-ofertante"]
+            }
+          }
+        },
+        {
+          "name": "4.3 Bob confirma recepción (INICIADA → FINALIZADA)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "var estado = resp.transaccion.estado;",
+                  "console.log('Estado final:', estado);",
+                  "pm.test('Estado debe ser FINALIZADA (ambos confirmaron)', function() {",
+                  "  pm.expect(estado).to.eql('FINALIZADA');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenB}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{idTx}}/confirmar-demandante",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{idTx}}", "confirmar-demandante"]
+            }
+          }
+        },
+        {
+          "name": "4.4 Bob califica la transacción (1-5)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenB}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idB}}\",\n  \"calificacion\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{idTx}}/calificar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{idTx}}", "calificar"]
+            }
+          }
+        },
+        {
+          "name": "4.5 Ver reseñas de la transacción",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reputacion/transaccion/{{idTx}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reputacion", "transaccion", "{{idTx}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 - Transacciones (Cancelar)",
+      "item": [
+        {
+          "name": "5.1 Ana crea 2da publicación (para flujo de cancelación)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('idPub2', resp.idPublicacion);",
+                  "console.log('Publicación 2 creada:', resp.idPublicacion);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idA}}\",\n  \"tipoPublicacion\": \"HABILIDAD\",\n  \"nombreServicio\": \"Clases de Yoga\",\n  \"descripcion\": \"Clases particulares de yoga relajante\",\n  \"precioCreditos\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones"]
+            }
+          }
+        },
+        {
+          "name": "5.2 Bob solicita la 2da publicación",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('idSol2', resp.idSolicitud);",
+                  "console.log('Solicitud 2:', resp.idSolicitud);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenB}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idB}}\",\n  \"nombreUsuario\": \"{{nombreB}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones/{{idPub2}}/solicitar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones", "{{idPub2}}", "solicitar"]
+            }
+          }
+        },
+        {
+          "name": "5.3 Ana acepta la 2da solicitud",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "console.log('Solicitud 2 aceptada');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idA}}\",\n  \"aceptar\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes/{{idSol2}}/responder",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "solicitudes", "{{idSol2}}", "responder"]
+            }
+          }
+        },
+        {
+          "name": "5.4 Obtener ID de la 2da transacción",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var tx = pm.response.json();",
+                  "var tx2 = tx[tx.length-1];",
+                  "pm.collectionVariables.set('idTx2', tx2.idTransaccion);",
+                  "console.log('TX 2:', tx2.idTransaccion, '- Estado:', tx2.estado);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones"]
+            }
+          }
+        },
+        {
+          "name": "5.5 Ana confirma entrega (TX2 → INICIADA)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "var estado = resp.transaccion.estado;",
+                  "console.log('Estado TX2:', estado);",
+                  "pm.test('Estado debe ser INICIADA (solo Ana confirmo)', function() {",
+                  "  pm.expect(estado).to.eql('INICIADA');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{idTx2}}/confirmar-ofertante",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{idTx2}}", "confirmar-ofertante"]
+            }
+          }
+        },
+        {
+          "name": "5.6 Motivos de cancelación disponibles",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var motivos = pm.response.json();",
+                  "pm.collectionVariables.set('idMotivoCancel', motivos[0].id);",
+                  "console.log('Motivo cancel ID:', motivos[0].id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenB}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/motivos-cancelacion",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "motivos-cancelacion"]
+            }
+          }
+        },
+        {
+          "name": "5.7 Bob solicita cancelación",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenB}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idB}}\",\n  \"idMotivoCancelacion\": \"{{idMotivoCancel}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{idTx2}}/solicitar-cancelacion",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{idTx2}}", "solicitar-cancelacion"]
+            }
+          }
+        },
+        {
+          "name": "5.8 Ana rechaza la cancelación",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idA}}\",\n  \"aceptar\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{idTx2}}/responder-cancelacion",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{idTx2}}", "responder-cancelacion"]
+            }
+          }
+        },
+        {
+          "name": "5.9 Bob vuelve a solicitar cancelación",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenB}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idB}}\",\n  \"idMotivoCancelacion\": \"{{idMotivoCancel}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{idTx2}}/solicitar-cancelacion",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{idTx2}}", "solicitar-cancelacion"]
+            }
+          }
+        },
+        {
+          "name": "5.10 Ana acepta cancelación (transacción → RECHAZADA)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idA}}\",\n  \"aceptar\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{idTx2}}/responder-cancelacion",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{idTx2}}", "responder-cancelacion"]
+            }
+          }
+        },
+        {
+          "name": "5.11 Verificar estado RECHAZADA",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{idTx2}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{idTx2}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 - Transacciones (Reportar Incidencia)",
+      "item": [
+        {
+          "name": "6.1 Ana crea 3ra publicación (para incidencia)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('idPub3', resp.idPublicacion);",
+                  "console.log('Publicación 3 creada:', resp.idPublicacion);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idA}}\",\n  \"tipoPublicacion\": \"HABILIDAD\",\n  \"nombreServicio\": \"Masajes relajantes\",\n  \"descripcion\": \"Masajes corporales completos\",\n  \"precioCreditos\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones"]
+            }
+          }
+        },
+        {
+          "name": "6.2 Bob solicita la 3ra publicación",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('idSol3', resp.idSolicitud);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenB}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idB}}\",\n  \"nombreUsuario\": \"{{nombreB}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones/{{idPub3}}/solicitar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones", "{{idPub3}}", "solicitar"]
+            }
+          }
+        },
+        {
+          "name": "6.3 Ana acepta la 3ra solicitud",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "console.log('Solicitud 3 aceptada');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idA}}\",\n  \"aceptar\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/solicitudes/{{idSol3}}/responder",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "solicitudes", "{{idSol3}}", "responder"]
+            }
+          }
+        },
+        {
+          "name": "6.4 Obtener ID de 3ra transacción",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var tx = pm.response.json();",
+                  "var tx3 = tx[tx.length-1];",
+                  "pm.collectionVariables.set('idTx3', tx3.idTransaccion);",
+                  "console.log('TX 3:', tx3.idTransaccion);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones"]
+            }
+          }
+        },
+        {
+          "name": "6.5 Ana confirma entrega (TX3 → INICIADA)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "var estado = resp.transaccion.estado;",
+                  "console.log('Estado TX3:', estado);",
+                  "pm.test('Estado debe ser INICIADA (solo Ana confirmo)', function() {",
+                  "  pm.expect(estado).to.eql('INICIADA');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{idTx3}}/confirmar-ofertante",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{idTx3}}", "confirmar-ofertante"]
+            }
+          }
+        },
+        {
+          "name": "6.6 Bob reporta incidencia (transacción → EN_DISPUTA)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "var estado = resp.estado;",
+                  "console.log('Estado tras incidencia:', estado);",
+                  "pm.collectionVariables.set('idIncidencia', resp.idIncidencia);",
+                  "pm.test('Estado debe ser EN_DISPUTA tras reportar incidencia', function() {",
+                  "  pm.expect(estado).to.eql('EN_DISPUTA');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenB}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idB}}\",\n  \"descripcion\": \"El servicio no fue entregado correctamente, faltaron areas por limpiar y se niega a repetirlo.\",\n  \"urlEvidencia\": \"https://ejemplo.com/foto_sucia.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{idTx3}}/reportar-incidencia",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{idTx3}}", "reportar-incidencia"]
+            }
+          }
+        },
+        {
+          "name": "6.7 Ana presenta su defensa ante la incidencia",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "console.log('Defensora:', resp.idUsuarioDefensor);",
+                  "pm.test('Ana debe quedar registrada como defensora', function() {",
+                  "  pm.expect(resp.idUsuarioDefensor).to.eql(pm.collectionVariables.get('idA'));",
+                  "});",
+                  "pm.test('Descripcion de defensa guardada correctamente', function() {",
+                  "  pm.expect(resp.descripcionDefensa).to.not.be.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idA}}\",\n  \"descripcion\": \"Si realice la limpieza completa, el cliente esta mintiendo para no pagar. Tengo fotos del antes y despues.\",\n  \"urlEvidencia\": \"https://ejemplo.com/fotos_limpieza_completa.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{idTx3}}/defender-incidencia",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{idTx3}}", "defender-incidencia"]
+            }
+          }
+        },
+        {
+          "name": "6.8 Admin lista todas las incidencias",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/incidencias",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "incidencias"]
+            }
+          }
+        },
+        {
+          "name": "6.9 Admin revisa la incidencia en detalle (con ambas versiones)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var inc = pm.response.json();",
+                  "console.log('--- REPORTE DE BOB ---');",
+                  "console.log('Descripcion:', inc.descripcion);",
+                  "console.log('Evidencia:', inc.urlEvidencia);",
+                  "console.log('--- DEFENSA DE ANA ---');",
+                  "console.log('Descripcion:', inc.descripcionDefensa);",
+                  "console.log('Evidencia:', inc.urlEvidenciaDefensa);",
+                  "pm.test('Incidencia debe tener reporte y defensa', function() {",
+                  "  pm.expect(inc.idUsuarioReportante).to.eql(pm.collectionVariables.get('idB'));",
+                  "  pm.expect(inc.idUsuarioDefensor).to.eql(pm.collectionVariables.get('idA'));",
+                  "  pm.expect(inc.descripcion).to.not.be.empty;",
+                  "  pm.expect(inc.descripcionDefensa).to.not.be.empty;",
+                  "});",
+                  "console.log('--- Admin decide que Bob (reportante) es el infractor ---');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/incidencias/{{idIncidencia}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "incidencias", "{{idIncidencia}}"]
+            }
+          }
+        },
+        {
+          "name": "6.10 Admin sanciona a Bob (marca fraude + finaliza transacción)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "console.log('Respuesta sancion:', typeof resp === 'string' ? resp : resp.estado);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuarioInfractor\": \"{{idB}}\",\n  \"idTransaccion\": \"{{idTx3}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/sanciones/fraude",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "sanciones", "fraude"]
+            }
+          }
+        },
+        {
+          "name": "6.11 Ver TX3 finalizada por admin",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/transacciones/{{idTx3}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transacciones", "{{idTx3}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 - Notificaciones",
+      "item": [
+        {
+          "name": "7.1 Notificaciones de Ana",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones/{{idA}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notificaciones", "{{idA}}"]
+            }
+          }
+        },
+        {
+          "name": "7.2 Notificaciones no leídas de Ana",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones/{{idA}}/no-leidas",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notificaciones", "{{idA}}", "no-leidas"]
+            }
+          }
+        },
+        {
+          "name": "7.3 Contar notificaciones de Ana",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones/{{idA}}/contar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notificaciones", "{{idA}}", "contar"]
+            }
+          }
+        },
+        {
+          "name": "7.4 Notificaciones de Bob",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenB}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones/{{idB}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notificaciones", "{{idB}}"]
+            }
+          }
+        },
+        {
+          "name": "7.5 Notificaciones no leídas de Bob",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenB}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones/{{idB}}/no-leidas",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notificaciones", "{{idB}}", "no-leidas"]
+            }
+          }
+        },
+        {
+          "name": "7.6 Marcar todas como leídas (Ana)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notificaciones/{{idA}}/leer-todas",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notificaciones", "{{idA}}", "leer-todas"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 - Logros y Podio",
+      "item": [
+        {
+          "name": "8.1 Todos los logros disponibles",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/logros",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "logros"]
+            }
+          }
+        },
+        {
+          "name": "8.2 Logros de Ana (con estado desbloqueado)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/logros/usuario/{{idA}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "logros", "usuario", "{{idA}}"]
+            }
+          }
+        },
+        {
+          "name": "8.3 Logros desbloqueados de Ana",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/logros/usuario/{{idA}}/desbloqueados",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "logros", "usuario", "{{idA}}", "desbloqueados"]
+            }
+          }
+        },
+        {
+          "name": "8.4 Logros de Bob",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/logros/usuario/{{idB}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "logros", "usuario", "{{idB}}"]
+            }
+          }
+        },
+        {
+          "name": "8.5 Podio / Ranking (3 categorías)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/podio",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "podio"]
+            }
+          }
+        },
+        {
+          "name": "8.6 Recalcular Podio",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/podio/calcular",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "podio", "calcular"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 - Subastas y Propuestas",
+      "item": [
+        {
+          "name": "9.1 Ana crea una subasta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('idSubasta', resp.id);",
+                  "console.log('Subasta creada:', resp.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreActivo\": \"Bicicleta Montaña Rodada 29\",\n  \"descripcion\": \"Bicicleta en buen estado, ideal para rutas de montaña\",\n  \"estadoFisico\": \"USADO\",\n  \"imagenesUrls\": [\"https://ejemplo.com/bici1.jpg\"],\n  \"diasDuracion\": 7\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/subastas",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "subastas"]
+            }
+          }
+        },
+        {
+          "name": "9.2 Ver subastas activas",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/subastas/activas",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "subastas", "activas"]
+            }
+          }
+        },
+        {
+          "name": "9.3 Bob hace una propuesta a la subasta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('idPropuesta', resp.idPropuesta);",
+                  "console.log('Propuesta creada:', resp.idPropuesta);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenB}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bienesOfrecidos\": [\n    {\n      \"nombre\": \"Libros de programación\",\n      \"cantidad\": 3\n    },\n    {\n      \"nombre\": \"Curso online de Java\",\n      \"cantidad\": 1\n    }\n  ],\n  \"descripcion\": \"Ofrezco libros de programación y un curso online\",\n  \"estadoFisico\": \"NUEVO\",\n  \"imagenesUrls\": [\"https://ejemplo.com/libros.jpg\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/subastas/{{idSubasta}}/propuestas",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "subastas", "{{idSubasta}}", "propuestas"]
+            }
+          }
+        },
+        {
+          "name": "9.4 Ver competencia de la subasta",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/subastas/{{idSubasta}}/competencia",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "subastas", "{{idSubasta}}", "competencia"]
+            }
+          }
+        },
+        {
+          "name": "9.5 Ana adjudica ganador (Bob)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/subastas/{{idSubasta}}/ganador/{{idPropuesta}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "subastas", "{{idSubasta}}", "ganador", "{{idPropuesta}}"]
+            }
+          }
+        },
+        {
+          "name": "9.6 Historial de propuestas de Bob",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenB}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/propuestas/historial",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "propuestas", "historial"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 - Reseñas y Cierre",
+      "item": [
+        {
+          "name": "10.1 Reseñas recibidas por Ana",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/reputacion/usuario/{{idA}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reputacion", "usuario", "{{idA}}"]
+            }
+          }
+        },
+        {
+          "name": "10.2 Reseñas recibidas por Bob",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/reputacion/usuario/{{idB}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reputacion", "usuario", "{{idB}}"]
+            }
+          }
+        },
+        {
+          "name": "10.3 Perfil completo de Ana",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{idA}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "{{idA}}"]
+            }
+          }
+        },
+        {
+          "name": "10.4 Saldo final de Ana (capital semilla + pago recibido)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{idA}}/saldo",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "{{idA}}", "saldo"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

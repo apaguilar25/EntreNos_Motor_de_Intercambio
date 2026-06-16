@@ -26,6 +26,7 @@ public class Usuario {
     private float promedioCalificacion;
     private int cantidadCalificaciones;
     private RolUsuario rol;
+    private boolean esVecinoDestacado;
 
     public Usuario() {
         this.estado = EstadoCuenta.ACTIVO;
@@ -259,6 +260,8 @@ public class Usuario {
     public String getUrlFotoPerfil() { return urlFotoPerfil; }
     public float getPromedioCalificacion() { return promedioCalificacion; }
     public int getCantidadCalificaciones() { return cantidadCalificaciones; }
+    public boolean isEsVecinoDestacado() { return esVecinoDestacado; }
+    public void setEsVecinoDestacado(boolean esVecinoDestacado) { this.esVecinoDestacado = esVecinoDestacado; }
 
 
     // Setters

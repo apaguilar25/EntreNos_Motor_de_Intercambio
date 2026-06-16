@@ -1,0 +1,42 @@
+[
+  {
+    "id": "SUB-5A909735",
+    "idPropietario": "84e724bf-624b-4141-9357-df7da92e61eb",
+    "nombreActivo": "Bicicleta Montaña Rodada 29",
+    "descripcion": "Bicicleta en buen estado, ideal para rutas de montaña",
+    "estadoFisico": "USADO",
+    "imagenesUrls": [
+      "https://ejemplo.com/bici1.jpg"
+    ],
+    "fechaInicio": "2026-06-15T20:25:11.6801178",
+    "fechaFinalizacionLicitacion": "2026-06-22T20:25:11.6791139",
+    "estado": "ACTIVA",
+    "propuestas": [
+      {
+        "idPropuesta": "PROP-055172",
+        "idSubasta": "SUB-5A909735",
+        "idPostor": "2f0c416a-2948-4d3c-9390-6242b700a711",
+        "bienesOfrecidos": [
+          {
+            "nombre": "Libros de programación",
+            "cantidad": 3
+          },
+          {
+            "nombre": "Curso online de Java",
+            "cantidad": 1
+          }
+        ],
+        "descripcion": "Ofrezco libros de programación y un curso online",
+        "estadoPropuesta": "EN_EVALUACION",
+        "estadoFisico": "NUEVO",
+        "imagenesUrls": [
+          "https://ejemplo.com/libros.jpg"
+        ],
+        "fechaPropuesta": "2026-06-15T20:26:38.2641723"
+      }
+    ],
+    "propietarioConfirmoEntrega": false,
+    "ganadorConfirmoEntrega": false,
+    "version": 1
+  }
+]

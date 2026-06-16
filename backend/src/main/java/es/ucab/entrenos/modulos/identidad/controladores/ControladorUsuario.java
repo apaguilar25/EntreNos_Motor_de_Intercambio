@@ -6,6 +6,8 @@ import es.ucab.entrenos.modulos.identidad.excepciones.TelefonoDuplicadoException
 import es.ucab.entrenos.modulos.identidad.modelos.*;
 import es.ucab.entrenos.modulos.identidad.servicios.ServicioHabilidad;
 import es.ucab.entrenos.modulos.identidad.servicios.ServicioUsuario;
+import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
+import es.ucab.entrenos.modulos.publicacion.servicios.ServicioPublicacion;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -104,21 +106,21 @@ public class ControladorUsuario {
         }
     }
 
-    /**
-     * Endpoint 3: Editar una habilidad ofrecida existente
-     */
     @PutMapping("/{id}/habilidades")
     public ResponseEntity<?> editarHabilidadOfrecida(
             @PathVariable String id,
             @RequestBody EdicionOfertaDTO request) {
         try {
-            // Ya no buscamos la categoría, delegamos la edición directamente usando el idInstancia
             servicioUsuario.editarHabilidadOfrecida(
-                    id,
-                    request.getIdInstancia(),
-                    request.getPrecioCreditos(),
-                    request.getDescripcionServicio()
-            );
+                    id, request.getIdInstancia(),
+                    request.getPrecioCreditos(), request.getDescripcionServicio());
+
+            servicioPublicacion.obtenerPublicacionPorInstanciaCatalogo(request.getIdInstancia())
+                    .ifPresent(pub -> {
+                        pub.setDescripcion(request.getDescripcionServicio());
+                        pub.setPrecioCreditos(request.getPrecioCreditos());
+                        servicioPublicacion.guardarPublicacion(pub);
+                    });
 
             try {
                 servicioPublicacion.actualizarPublicacion(request.getIdInstancia(), request.getPrecioCreditos(), request.getDescripcionServicio());
@@ -132,20 +134,19 @@ public class ControladorUsuario {
         }
     }
 
-    /**
-     * Endpoint 4: Editar una necesidad registrada existente
-     */
     @PutMapping("/{id}/necesidades")
     public ResponseEntity<?> editarNecesidadRegistrada(
             @PathVariable String id,
             @RequestBody EdicionNecesidadDTO request) {
         try {
-            // Al igual que las ofertas, delegamos la edición usando el idInstancia
             servicioUsuario.editarNecesidadRegistrada(
-                    id,
-                    request.getIdInstancia(),
-                    request.getDescripcionCondiciones()
-            );
+                    id, request.getIdInstancia(), request.getDescripcionCondiciones());
+
+            servicioPublicacion.obtenerPublicacionPorInstanciaCatalogo(request.getIdInstancia())
+                    .ifPresent(pub -> {
+                        pub.setDescripcion(request.getDescripcionCondiciones());
+                        servicioPublicacion.guardarPublicacion(pub);
+                    });
 
             try {
                 servicioPublicacion.actualizarPublicacion(request.getIdInstancia(), 0, request.getDescripcionCondiciones());
@@ -159,7 +160,6 @@ public class ControladorUsuario {
         }
     }
 
-    // Eliminar habilidad ofrecida
     @DeleteMapping("/{id}/habilidades/{idInstancia}")
     public ResponseEntity<?> eliminarHabilidadOfrecida(
             @PathVariable String id,
@@ -173,7 +173,6 @@ public class ControladorUsuario {
         }
     }
 
-    // Eliminar necesidad registrada
     @DeleteMapping("/{id}/necesidades/{idInstancia}")
     public ResponseEntity<?> eliminarNecesidadRegistrada(
             @PathVariable String id,
@@ -230,7 +229,6 @@ public class ControladorUsuario {
             @PathVariable String id,
             @RequestBody NuevaOfertaIndividualDTO request) {
         try {
-            // 1. Validamos que la categoría maestra exista
             Habilidad habilidadBase = servicioHabilidad.buscarPorId(request.getIdHabilidadCategoria())
                     .orElseThrow(() -> new IllegalArgumentException("La categoría de habilidad maestra no existe en el sistema."));
 
@@ -253,7 +251,6 @@ public class ControladorUsuario {
             @PathVariable String id,
             @RequestBody NuevaNecesidadIndividualDTO request) {
         try {
-            // 1. Validamos que la categoría maestra exista
             Habilidad necesidadBase = servicioHabilidad.buscarPorId(request.getIdHabilidadCategoria())
                     .orElseThrow(() -> new IllegalArgumentException("La categoría de habilidad maestra no existe en el sistema."));
 

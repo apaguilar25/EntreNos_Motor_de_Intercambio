@@ -1,0 +1,229 @@
+[
+  {
+    "idPublicacion": "PUB-0E24DE8B",
+    "idUsuario": "4bfb4e9b-37bf-4134-8790-0fc790a2fb2f",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Limpieza del Hogar",
+    "descripcion": "Limpieza",
+    "precioCreditos": 30,
+    "disponible": true,
+    "idInstanciaCatalogo": "5e27fbde-91b7-4992-ba3f-4c87ad5fe57d",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-0AF043FC",
+    "idUsuario": "e46e66ab-5e9b-480a-bd09-6be30e60b244",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Limpieza del Hogar",
+    "descripcion": "Limpieza semanal",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "2a828634-527b-4c9e-bafc-2d4af9c87de9",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-2DE5EF04",
+    "idUsuario": "4bfb4e9b-37bf-4134-8790-0fc790a2fb2f",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Limpieza",
+    "descripcion": "Limpieza gral",
+    "precioCreditos": 30,
+    "disponible": true,
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-6E66B0CC",
+    "idUsuario": "84e724bf-624b-4141-9357-df7da92e61eb",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Limpieza del Hogar",
+    "descripcion": "Limpieza general del hogar",
+    "precioCreditos": 30,
+    "disponible": true,
+    "idInstanciaCatalogo": "5015d9d8-b14c-4bc5-a07c-c0161112b248",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-A36AD88E",
+    "idUsuario": "84e724bf-624b-4141-9357-df7da92e61eb",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Plomería",
+    "descripcion": "Reparaciones de plomería básicas",
+    "precioCreditos": 50,
+    "disponible": true,
+    "idInstanciaCatalogo": "61619220-0aff-4322-b11a-f2aa9ed0f000",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-9A587170",
+    "idUsuario": "2f0c416a-2948-4d3c-9390-6242b700a711",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Limpieza del Hogar",
+    "descripcion": "Necesito limpieza semanal",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "53560dec-5eb0-49ce-9b16-10c2485bdf02",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-11BF07EA",
+    "idUsuario": "2f0c416a-2948-4d3c-9390-6242b700a711",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Soporte Técnico / Computación",
+    "descripcion": "Soporte técnico para mi PC",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "e2b7955c-3cd7-4b22-b7d0-224dc510f368",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-EC768606",
+    "idUsuario": "84e724bf-624b-4141-9357-df7da92e61eb",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Limpieza del Hogar",
+    "descripcion": "Limpieza general de casas y apartamentos",
+    "precioCreditos": 30,
+    "disponible": true,
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-3FE9E092",
+    "idUsuario": "84e724bf-624b-4141-9357-df7da92e61eb",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Clases de Yoga",
+    "descripcion": "Clases particulares de yoga relajante",
+    "precioCreditos": 25,
+    "disponible": true,
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-71087492",
+    "idUsuario": "84e724bf-624b-4141-9357-df7da92e61eb",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Masajes relajantes",
+    "descripcion": "Masajes corporales completos",
+    "precioCreditos": 40,
+    "disponible": true,
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-D9EBD342",
+    "idUsuario": "b05fdf5f-1c32-4d44-89f6-b0ba8e4ce2c8",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Limpieza del Hogar",
+    "descripcion": "Limpieza profunda",
+    "precioCreditos": 5,
+    "disponible": true,
+    "idInstanciaCatalogo": "27011c54-f3c2-45b0-a969-8de8b6140148",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-5106870E",
+    "idUsuario": "b05fdf5f-1c32-4d44-89f6-b0ba8e4ce2c8",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Plomería",
+    "descripcion": "Plomeria avanzada",
+    "precioCreditos": 10,
+    "disponible": true,
+    "idInstanciaCatalogo": "ba7328e4-21d3-46ff-ac9e-182cb09fce20",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-713DF49F",
+    "idUsuario": "b05fdf5f-1c32-4d44-89f6-b0ba8e4ce2c8",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Carpintería",
+    "descripcion": "Muebles a medida",
+    "precioCreditos": 15,
+    "disponible": true,
+    "idInstanciaCatalogo": "c5c845a5-41a2-4356-a4c4-f61f4b2a343b",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-12AC94F9",
+    "idUsuario": "8c37ad61-3a22-483b-aae7-bb47d25d6cae",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Electricidad",
+    "descripcion": "Electricidad residencial",
+    "precioCreditos": 8,
+    "disponible": true,
+    "idInstanciaCatalogo": "34c2044d-55e2-4d38-b096-8ddb404f02db",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-54526B22",
+    "idUsuario": "8c37ad61-3a22-483b-aae7-bb47d25d6cae",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Soporte Técnico / Computación",
+    "descripcion": "Soporte tecnico",
+    "precioCreditos": 12,
+    "disponible": true,
+    "idInstanciaCatalogo": "0bc1286c-6979-4c47-b334-0d4d944e92bf",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-8EA5390B",
+    "idUsuario": "7f65a0dd-eaaf-49cb-a00b-6fc3e4b08273",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Limpieza del Hogar",
+    "descripcion": "Limpieza ligera",
+    "precioCreditos": 3,
+    "disponible": true,
+    "idInstanciaCatalogo": "4caa3b17-d8af-4dda-932b-bfa1ba7cbd8f",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-FBA4B923",
+    "idUsuario": "09a6d17d-542a-409e-ba65-d061b28e9e07",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Limpieza del Hogar",
+    "descripcion": "Necesito limpieza",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "bcdfed66-d47c-4675-a255-eb6fe96b6bdf",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-0367FAF4",
+    "idUsuario": "09a6d17d-542a-409e-ba65-d061b28e9e07",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Plomería",
+    "descripcion": "Necesito plomero",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "74e9e956-cbeb-4483-887e-7a4c8d51f37e",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-54DE9EC8",
+    "idUsuario": "09a6d17d-542a-409e-ba65-d061b28e9e07",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Carpintería",
+    "descripcion": "Necesito carpintero",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "cc7cf81d-ea7f-41a5-8c74-24c46ebb0e1e",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-E2D6A91E",
+    "idUsuario": "09a6d17d-542a-409e-ba65-d061b28e9e07",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Electricidad",
+    "descripcion": "Necesito electricista",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "7854c11e-420a-4b5c-a407-176621d5d048",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-BC2F97F4",
+    "idUsuario": "09a6d17d-542a-409e-ba65-d061b28e9e07",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Soporte Técnico / Computación",
+    "descripcion": "Necesito soporte",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "db6ce203-a9d9-4b08-957b-d9a834089f74",
+    "version": 0
+  }
+]

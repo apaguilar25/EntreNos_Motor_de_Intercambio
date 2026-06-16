@@ -23,7 +23,9 @@ public class RepositorioPublicacion implements IRepositorioPublicacion {
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     public RepositorioPublicacion() {
-        this.gson = new GsonBuilder().setPrettyPrinting().create();
+        this.gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .create();
         inicializarArchivo();
     }
 
@@ -35,7 +37,8 @@ public class RepositorioPublicacion implements IRepositorioPublicacion {
             }
             if (!archivo.exists()) {
                 archivo.createNewFile();
-                try (Writer writer = new OutputStreamWriter(new FileOutputStream(RUTA_ARCHIVO), StandardCharsets.UTF_8)) {
+                try (Writer writer = new OutputStreamWriter(new FileOutputStream(RUTA_ARCHIVO),
+                        StandardCharsets.UTF_8)) {
                     writer.write("[]");
                 }
             }

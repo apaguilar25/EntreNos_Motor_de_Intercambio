@@ -1,9 +1,12 @@
 package es.ucab.entrenos.modulos.publicacion.controladores;
 
 import es.ucab.entrenos.modulos.publicacion.dto.CalificarRequestDTO;
-import es.ucab.entrenos.modulos.publicacion.dtos.CancelarTransaccionRequestDTO;
 import es.ucab.entrenos.modulos.publicacion.dtos.ConfirmacionTransaccionResponseDTO;
 import es.ucab.entrenos.modulos.publicacion.dtos.ReportarIncidenciaRequestDTO;
+import es.ucab.entrenos.modulos.publicacion.dtos.SolicitarCancelacionRequestDTO;
+import es.ucab.entrenos.modulos.publicacion.dtos.ResponderCancelacionRequestDTO;
+import es.ucab.entrenos.modulos.publicacion.modelos.Incidencia;
+import es.ucab.entrenos.modulos.publicacion.modelos.MotivoCancelacion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Transaccion;
 import es.ucab.entrenos.modulos.publicacion.servicios.ServicioPublicacion;
 import org.springframework.http.HttpStatus;
@@ -61,12 +64,45 @@ public class ControladorTransaccion {
         }
     }
 
+    @GetMapping("/motivos-cancelacion")
+    public ResponseEntity<List<MotivoCancelacion>> listarMotivosCancelacion() {
+        return ResponseEntity.ok(servicioPublicacion.listarMotivosCancelacion());
+    }
+
+    @PostMapping("/{id}/solicitar-cancelacion")
+    public ResponseEntity<?> solicitarCancelacion(@PathVariable String id,
+                                                   @RequestBody SolicitarCancelacionRequestDTO dto) {
+        try {
+            Transaccion t = servicioPublicacion.solicitarCancelacion(id,
+                    dto.getIdUsuario(), dto.getIdMotivoCancelacion());
+            return ResponseEntity.ok(t);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/{id}/responder-cancelacion")
+    public ResponseEntity<?> responderCancelacion(@PathVariable String id,
+                                                   @RequestBody ResponderCancelacionRequestDTO dto) {
+        try {
+            Transaccion t = servicioPublicacion.responderCancelacion(id,
+                    dto.getIdUsuario(), dto.isAceptar());
+            return ResponseEntity.ok(t);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     @PostMapping("/{id}/calificar")
     public ResponseEntity<?> calificar(@PathVariable String id,
                                         @RequestBody CalificarRequestDTO dto) {
         try {
             Transaccion t = servicioPublicacion.calificar(id, dto.getIdUsuario(),
-                    dto.getCalificacion(), dto.getComentario());
+                    dto.getCalificacion());
             return ResponseEntity.ok(t);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -79,9 +115,9 @@ public class ControladorTransaccion {
     public ResponseEntity<?> reportarIncidencia(@PathVariable String id,
                                                  @RequestBody ReportarIncidenciaRequestDTO dto) {
         try {
-            Transaccion t = servicioPublicacion.reportarIncidencia(id,
-                    dto.getDescripcion(), dto.getUrlEvidencia());
-            return ResponseEntity.ok(t);
+            Incidencia incidencia = servicioPublicacion.reportarIncidencia(id,
+                    dto.getIdUsuario(), dto.getDescripcion(), dto.getUrlEvidencia());
+            return ResponseEntity.ok(incidencia);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (IllegalStateException e) {
@@ -89,13 +125,13 @@ public class ControladorTransaccion {
         }
     }
 
-    @PostMapping("/{id}/cancelar")
-    public ResponseEntity<?> cancelar(@PathVariable String id,
-                                       @RequestBody CancelarTransaccionRequestDTO dto) {
+    @PostMapping("/{id}/defender-incidencia")
+    public ResponseEntity<?> defenderIncidencia(@PathVariable String id,
+                                                 @RequestBody ReportarIncidenciaRequestDTO dto) {
         try {
-            Transaccion t = servicioPublicacion.cancelarTransaccion(id,
-                    dto.getIdUsuario(), dto.getMotivo());
-            return ResponseEntity.ok(t);
+            Incidencia incidencia = servicioPublicacion.defenderIncidencia(id,
+                    dto.getIdUsuario(), dto.getDescripcion(), dto.getUrlEvidencia());
+            return ResponseEntity.ok(incidencia);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (IllegalStateException e) {

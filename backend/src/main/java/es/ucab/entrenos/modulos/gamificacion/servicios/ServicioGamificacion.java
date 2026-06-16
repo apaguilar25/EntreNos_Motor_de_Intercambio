@@ -62,13 +62,13 @@ public class ServicioGamificacion {
         return nuevos;
     }
 
-    private boolean cumpleCriterio(String idUsuario, String tipoCriterio) {
+    private boolean cumpleCriterio(String idUsuario, TipoCriterioLogro tipoCriterio) {
         switch (tipoCriterio) {
-            case TipoCriterioLogro.PRIMERA_TRANSACCION:
+            case PRIMERA_TRANSACCION:
                 return cumplePrimeraTransaccion(idUsuario);
-            case TipoCriterioLogro.MAESTRO_CONFIANZA:
+            case MAESTRO_CONFIANZA:
                 return cumpleMaestroConfianza(idUsuario);
-            case TipoCriterioLogro.POLIMATA:
+            case POLIMATA:
                 return cumplePolimata(idUsuario);
             default:
                 return false;
@@ -85,7 +85,7 @@ public class ServicioGamificacion {
         Set<String> usuariosDistintos = repositorioTransaccion.obtenerTodas().stream()
                 .filter(t -> t.getEstado() == EstadoTransaccion.FINALIZADA)
                 .filter(t -> t.getIdOfertante().equals(idUsuario))
-                .filter(t -> t.getCalificacionOfertante() != null && t.getCalificacionOfertante() == 5)
+                .filter(t -> t.getCalificacion() != null && t.getCalificacion() == 5)
                 .map(Transaccion::getIdDemandante)
                 .collect(Collectors.toSet());
         return usuariosDistintos.size() >= 5;

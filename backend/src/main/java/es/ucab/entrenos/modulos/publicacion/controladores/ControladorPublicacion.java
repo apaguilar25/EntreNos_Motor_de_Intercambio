@@ -1,10 +1,8 @@
 package es.ucab.entrenos.modulos.publicacion.controladores;
 
 import es.ucab.entrenos.modulos.publicacion.dtos.ConfirmacionTransaccionResponseDTO;
+import es.ucab.entrenos.modulos.publicacion.dtos.PublicacionResponseDTO;
 import es.ucab.entrenos.modulos.publicacion.dto.RecomendacionDTO;
-import es.ucab.entrenos.modulos.publicacion.dto.RespuestaSolicitudDTO;
-import es.ucab.entrenos.modulos.publicacion.dto.SolicitudRequestDTO;
-import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Transaccion;
 import es.ucab.entrenos.modulos.publicacion.servicios.ServicioPublicacion;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,21 +21,22 @@ public class ControladorPublicacion {
     }
     // --- Endpoints de Publicación ---
     @GetMapping
-    public ResponseEntity<List<Publicacion>> obtenerPublicaciones(
+    public ResponseEntity<List<PublicacionResponseDTO>> obtenerPublicaciones(
             @RequestParam(required = false) String tipo,
             @RequestParam(required = false) String servicio) {
-        List<Publicacion> filtradas = servicioPublicacion.obtenerPublicacionesFiltradas(tipo, servicio);
-        return ResponseEntity.ok(filtradas);
+        return ResponseEntity.ok(
+                servicioPublicacion.obtenerPublicacionesFiltradas(tipo, servicio));
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Publicacion> obtenerPorId(@PathVariable String id) {
+    public ResponseEntity<PublicacionResponseDTO> obtenerPorId(@PathVariable String id) {
         return servicioPublicacion.obtenerPublicacionPorId(id)
+                .map(servicioPublicacion::toResponseDTO)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
     @PostMapping
-    public ResponseEntity<Publicacion> crear(@RequestBody Publicacion publicacion) {
-        Publicacion nueva = servicioPublicacion.crearPublicacion(publicacion);
+    public ResponseEntity<PublicacionResponseDTO> crear(@RequestBody es.ucab.entrenos.modulos.publicacion.modelos.Publicacion publicacion) {
+        PublicacionResponseDTO nueva = servicioPublicacion.crearPublicacion(publicacion);
         return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
     }
     @DeleteMapping("/{id}")
@@ -48,33 +47,9 @@ public class ControladorPublicacion {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    // --- HU2: Endpoints de Solicitud ---
-    @PostMapping("/{id}/solicitar")
-    public ResponseEntity<?> solicitar(@PathVariable String id,
-                                       @RequestBody SolicitudRequestDTO dto) {
-        try {
-            Publicacion pub = servicioPublicacion.solicitarPublicacion(
-                    id, dto.getIdUsuario(), dto.getNombreUsuario());
-            return ResponseEntity.ok(pub);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-
-    @PostMapping("/{id}/responder")
-    public ResponseEntity<?> responder(@PathVariable String id,
-                                       @RequestBody RespuestaSolicitudDTO dto) {
-        try {
-            Publicacion pub = servicioPublicacion.responderSolicitud(
-                    id, dto.getIdUsuario(), dto.isAceptar());
-            return ResponseEntity.ok(pub);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<List<PublicacionResponseDTO>> obtenerPorUsuario(@PathVariable String idUsuario) {
+        return ResponseEntity.ok(servicioPublicacion.obtenerPublicacionesPorUsuario(idUsuario));
     }
 
     // --- HU6: Endpoint de Recomendadas ---

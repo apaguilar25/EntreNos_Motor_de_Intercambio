@@ -39,9 +39,11 @@ public class ServicioHabilidad {
                 .filter(h -> h != null && h.getCategoria() != null) // <-- ¡El escudo protector!
                 .anyMatch(h -> UtilidadTexto.sonIgualesEstrictos(h.getCategoria(), categoriaLimpia));
         if (existe) {
-            throw new IllegalStateException("Error: Ya existe una habilidad en el catálogo maestro con la categoría '" + categoriaLimpia + "'.");
+            throw new IllegalStateException("Error: Ya existe una habilidad en el catálogo maestro " +
+                    "con la categoría '" + categoriaLimpia + "'.");
         }
 
+        // Todo
         String nuevoId = "HAB-" + UUID.randomUUID().toString().substring(0, 4).toUpperCase();
         Habilidad nuevaHabilidad = new Habilidad(nuevoId, categoriaLimpia);
         repositorioHabilidad.guardar(nuevaHabilidad);

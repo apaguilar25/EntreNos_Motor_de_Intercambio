@@ -1,11 +1,13 @@
 package es.ucab.entrenos.modulos.identidad.controladores;
 
 import es.ucab.entrenos.modulos.identidad.servicios.ServicioAdministrador;
+import es.ucab.entrenos.modulos.publicacion.modelos.Incidencia;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -18,32 +20,38 @@ public class ControladorAdministrador {
         this.servicioAdministrador = servicioAdministrador;
     }
 
-    /**
-     * Endpoint para que el Admin valide un reporte de fraude.
-     * POST /api/admin/sanciones/fraude
-     */
+    @GetMapping("/incidencias")
+    public ResponseEntity<?> listarIncidencias() {
+        List<Incidencia> incidencias = servicioAdministrador.listarIncidencias();
+        return ResponseEntity.ok(incidencias);
+    }
+
+    @GetMapping("/incidencias/{id}")
+    public ResponseEntity<Incidencia> obtenerIncidencia(@PathVariable String id) {
+        return servicioAdministrador.obtenerIncidenciaPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
     @PostMapping("/sanciones/fraude")
     public ResponseEntity<?> validarReporteFraude(
-            @AuthenticationPrincipal Object principal, // <-- Spring inyecta automáticamente el ID extraído del Token
+            @AuthenticationPrincipal Object principal,
             @RequestBody Map<String, String> request) {
         try {
-            // Validación defensiva para evitar la advertencia de IntelliJ
             if (principal == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Acceso denegado: Token ausente o inválido.");
             }
 
             String idAdministrador = (String) principal;
             String idInfractor = request.get("idUsuarioInfractor");
+            String idTransaccion = request.get("idTransaccion");
 
-            // Ejecutamos la lógica de negocio
-            servicioAdministrador.validarReporteDeFraude(idAdministrador, idInfractor);
+            servicioAdministrador.validarReporteDeFraude(idAdministrador, idInfractor, idTransaccion);
             return ResponseEntity.ok("Sanción aplicada exitosamente.");
 
         } catch (SecurityException e) {
-            // Si el usuario autenticado no posee el rol de ADMINISTRADOR
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         } catch (IllegalArgumentException e) {
-            // Si los IDs están vacíos, nulos o el infractor no existe
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

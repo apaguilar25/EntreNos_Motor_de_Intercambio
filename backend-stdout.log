@@ -1,0 +1,77 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< com.backend:backend >-------------------------
+[INFO] Building  0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:4.0.6:run (default-cli) > test-compile @ backend >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ backend ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ backend ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 111 source files with javac [debug parameters release 21] to target\classes
+[INFO] /C:/Users/PC/IdeaProjects/EntreNos_Motor_de_Intercambio/backend/src/main/java/es/ucab/entrenos/nucleo/seguridad/jwt/ServicioJWT.java: C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\nucleo\seguridad\jwt\ServicioJWT.java uses or overrides a deprecated API.
+[INFO] /C:/Users/PC/IdeaProjects/EntreNos_Motor_de_Intercambio/backend/src/main/java/es/ucab/entrenos/nucleo/seguridad/jwt/ServicioJWT.java: Recompile with -Xlint:deprecation for details.
+[INFO] /C:/Users/PC/IdeaProjects/EntreNos_Motor_de_Intercambio/backend/src/main/java/es/ucab/entrenos/modulos/subasta/controladores/ControladorSubasta.java: C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\subasta\controladores\ControladorSubasta.java uses unchecked or unsafe operations.
+[INFO] /C:/Users/PC/IdeaProjects/EntreNos_Motor_de_Intercambio/backend/src/main/java/es/ucab/entrenos/modulos/subasta/controladores/ControladorSubasta.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ backend ---
+[INFO] skip non existing resourceDirectory C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ backend ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 4 source files with javac [debug parameters release 21] to target\test-classes
+[INFO] 
+[INFO] <<< spring-boot:4.0.6:run (default-cli) < test-compile @ backend <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:4.0.6:run (default-cli) @ backend ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.6)
+
+2026-06-13T21:49:35.217-04:00  INFO 21140 --- [pruebaEntrenos] [           main] es.ucab.entrenos.EntreNosApplication     : Starting EntreNosApplication using Java 25.0.1 with PID 21140 (C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\target\classes started by PC in C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend)
+2026-06-13T21:49:35.239-04:00  INFO 21140 --- [pruebaEntrenos] [           main] es.ucab.entrenos.EntreNosApplication     : No active profile set, falling back to 1 default profile: "default"
+2026-06-13T21:49:42.565-04:00  INFO 21140 --- [pruebaEntrenos] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-06-13T21:49:42.622-04:00  INFO 21140 --- [pruebaEntrenos] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-06-13T21:49:42.624-04:00  INFO 21140 --- [pruebaEntrenos] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-06-13T21:49:42.951-04:00  INFO 21140 --- [pruebaEntrenos] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 7349 ms
+2026-06-13T21:49:46.845-04:00  WARN 21140 --- [pruebaEntrenos] [           main] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: ef08e1ff-6216-46b2-b9ae-9adfe5dde454
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-06-13T21:49:46.880-04:00  INFO 21140 --- [pruebaEntrenos] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-06-13T21:49:48.673-04:00  INFO 21140 --- [pruebaEntrenos] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-06-13T21:49:48.706-04:00  INFO 21140 --- [pruebaEntrenos] [           main] es.ucab.entrenos.EntreNosApplication     : Started EntreNosApplication in 15.168 seconds (process running for 16.625)
+=====================================================
+? ¡Servidor Backend 'EntreNos' iniciado con éxito! ?
+=====================================================
+2026-06-13T21:49:49.367-04:00  INFO 21140 --- [pruebaEntrenos] [nio-8080-exec-3] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-13T21:49:49.369-04:00  INFO 21140 --- [pruebaEntrenos] [nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-06-13T21:49:49.376-04:00  INFO 21140 --- [pruebaEntrenos] [nio-8080-exec-3] o.s.web.servlet.DispatcherServlet        : Completed initialization in 5 ms
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  06:46 min
+[INFO] Finished at: 2026-06-13T21:55:53-04:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:4.0.6:run (default-cli) on project backend: Process terminated with exit code: -1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
