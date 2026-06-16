@@ -12,6 +12,7 @@ es\ucab\entrenos\modulos\identidad\controladores\ControladorAutenticacion.class
 es\ucab\entrenos\nucleo\seguridad\JsonIntegrityChecker.class
 es\ucab\entrenos\modulos\publicacion\repositorios\RepositorioTransaccion$1.class
 es\ucab\entrenos\modulos\publicacion\dtos\ConfirmacionTransaccionResponseDTO.class
+es\ucab\entrenos\modulos\gamificacion\servicios\ServicioGamificacion$1.class
 es\ucab\entrenos\nucleo\seguridad\jwt\FiltroAutenticacionJwt.class
 es\ucab\entrenos\modulos\gamificacion\modelos\Logro.class
 es\ucab\entrenos\modulos\publicacion\dto\SolicitudRequestDTO.class
