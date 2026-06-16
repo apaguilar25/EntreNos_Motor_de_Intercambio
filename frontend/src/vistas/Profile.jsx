@@ -106,7 +106,6 @@ const Profile = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           idUsuario: user.id,
-          idUsuarioInvolucrado: reportData.idUsuarioInvolucrado,
           descripcion: reportData.descripcionProblema,
           urlEvidencia: "N/A"
         })

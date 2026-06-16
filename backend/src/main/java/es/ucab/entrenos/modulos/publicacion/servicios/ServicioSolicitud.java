@@ -57,6 +57,18 @@ public class ServicioSolicitud {
         if (!solicitud.getIdSolicitante().equals(idUsuario)) {
             throw new IllegalArgumentException("Solo el solicitante puede cancelar la solicitud.");
         }
+
+        Publicacion pub = servicioPublicacion.obtenerPublicacionPorId(solicitud.getIdPublicacion())
+                .orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada."));
+
+        if (solicitud.getEstado() == EstadoSolicitud.PENDIENTE && pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
+            Usuario solicitante = servicioUsuario.buscarPorId(idUsuario)
+                    .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
+            solicitante.getMonedero().liberar(pub.getPrecioCreditos());
+            solicitante.incrementarVersion();
+            servicioUsuario.guardar(solicitante);
+        }
+
         solicitud.cancelar();
         repositorioSolicitud.guardar(solicitud);
         return solicitud;
@@ -100,6 +112,9 @@ public class ServicioSolicitud {
                 throw new IllegalStateException("Saldo insuficiente. Necesitas " + pub.getPrecioCreditos()
                         + " creditos, pero tienes " + solicitante.getMonedero().getSaldoDisponible() + " disponibles.");
             }
+            solicitante.getMonedero().comprometer(pub.getPrecioCreditos());
+            solicitante.incrementarVersion();
+            servicioUsuario.guardar(solicitante);
         }
 
         Solicitud solicitud = new Solicitud(idPublicacion, idSolicitante);
@@ -130,6 +145,13 @@ public class ServicioSolicitud {
         }
 
         if (solicitud.haExpirado()) {
+            if (solicitud.getEstado() == EstadoSolicitud.PENDIENTE && pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
+                Usuario solicitante = servicioUsuario.buscarPorId(solicitud.getIdSolicitante())
+                        .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
+                solicitante.getMonedero().liberar(pub.getPrecioCreditos());
+                solicitante.incrementarVersion();
+                servicioUsuario.guardar(solicitante);
+            }
             solicitud.expirar();
             repositorioSolicitud.guardar(solicitud);
             String nombreSolicitante = servicioUsuario.buscarPorId(solicitud.getIdSolicitante())
@@ -152,12 +174,6 @@ public class ServicioSolicitud {
             }
             solicitud.aceptar();
 
-            Usuario demandante = servicioUsuario.buscarPorId(solicitud.getIdSolicitante())
-                    .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
-            demandante.getMonedero().comprometer(pub.getPrecioCreditos());
-            demandante.incrementarVersion();
-            servicioUsuario.guardar(demandante);
-
             Transaccion tx = new Transaccion(
                 pub.getIdPublicacion(),
                 pub.getIdUsuario(),
@@ -171,6 +187,13 @@ public class ServicioSolicitud {
                             + pub.getPrecioCreditos() + " creditos.",
                     TipoNotificacion.ESTADO_SOLICITUD_CAMBIADO);
         } else {
+            if (solicitud.getEstado() == EstadoSolicitud.PENDIENTE && pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
+                Usuario solicitante = servicioUsuario.buscarPorId(solicitud.getIdSolicitante())
+                        .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
+                solicitante.getMonedero().liberar(pub.getPrecioCreditos());
+                solicitante.incrementarVersion();
+                servicioUsuario.guardar(solicitante);
+            }
             solicitud.rechazar();
 
             servicioNotificacion.enviarNotificacion(pub.getIdUsuario(), solicitud.getIdSolicitante(),
