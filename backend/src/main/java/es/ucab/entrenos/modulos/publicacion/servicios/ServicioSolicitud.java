@@ -7,6 +7,7 @@ import es.ucab.entrenos.modulos.notificacion.servicios.ServicioNotificacion;
 import es.ucab.entrenos.modulos.publicacion.modelos.EstadoTransaccion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Solicitud;
+import es.ucab.entrenos.modulos.publicacion.modelos.EstadoSolicitud;
 import es.ucab.entrenos.modulos.publicacion.modelos.Transaccion;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioSolicitud;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioTransaccion;
@@ -64,7 +65,7 @@ public class ServicioSolicitud {
         if (solicitud.getEstado() == EstadoSolicitud.PENDIENTE && pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
             Usuario solicitante = servicioUsuario.buscarPorId(idUsuario)
                     .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
-            solicitante.getMonedero().liberar(pub.getPrecioCreditos());
+            solicitante.getMonedero().devolverCompromiso();
             solicitante.incrementarVersion();
             servicioUsuario.guardar(solicitante);
         }
@@ -148,7 +149,7 @@ public class ServicioSolicitud {
             if (solicitud.getEstado() == EstadoSolicitud.PENDIENTE && pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
                 Usuario solicitante = servicioUsuario.buscarPorId(solicitud.getIdSolicitante())
                         .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
-                solicitante.getMonedero().liberar(pub.getPrecioCreditos());
+                solicitante.getMonedero().devolverCompromiso();
                 solicitante.incrementarVersion();
                 servicioUsuario.guardar(solicitante);
             }
@@ -190,7 +191,7 @@ public class ServicioSolicitud {
             if (solicitud.getEstado() == EstadoSolicitud.PENDIENTE && pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
                 Usuario solicitante = servicioUsuario.buscarPorId(solicitud.getIdSolicitante())
                         .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
-                solicitante.getMonedero().liberar(pub.getPrecioCreditos());
+                solicitante.getMonedero().devolverCompromiso();
                 solicitante.incrementarVersion();
                 servicioUsuario.guardar(solicitante);
             }
