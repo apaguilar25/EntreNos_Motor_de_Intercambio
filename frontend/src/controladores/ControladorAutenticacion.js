@@ -43,38 +43,41 @@ export class ControladorAutenticacion {
   }
 
   async registrarUsuario(datosUsuario) {
-    const { nombre, correoElectronico, telefono, descripcionPersonal } = datosUsuario;
+    const { nombre, correoElectronico, telefono, descripcionPersonal, contrasena } = datosUsuario;
     
-    if (!nombre || !correoElectronico || !telefono || !descripcionPersonal) {
+    if (!nombre || !correoElectronico || !telefono || !descripcionPersonal || !contrasena) {
       throw new Error('Por favor, completa todos los campos obligatorios.');
     }
 
-    const domain = correoElectronico.split('@')[1];
-    if (domain !== 'alameda.com') {
-      throw new Error('El correo debe pertenecer al dominio oficial de la comunidad (alameda.com).');
-    }
-
-    const prefix = correoElectronico.split('@')[0].toLowerCase();
-    let assignedId = 'USR-1001';
-    if (prefix === 'carlos') assignedId = 'USR-1002';
-    else if (prefix === 'luis') assignedId = 'USR-1003';
-
-    // Mock registro
-    const userInfo = { id: assignedId, nombre, correoElectronico, telefono, descripcionPersonal };
-    this.setContextState('user', userInfo);
-
     try {
-      const data = await this.servicioUsuario.obtenerUsuario(assignedId);
-      const hasCat = Boolean((data.habilidades && data.habilidades.length > 0) || (data.necesidades && data.necesidades.length > 0));
+      const response = await this.servicioUsuario.registrarUsuario(datosUsuario);
       
-      this.setContextState('hasCatalog', hasCat);
-      if (data.monedero) {
-        this.setContextState('balance', data.monedero.creditosDisponibles);
+      const usuario = response.usuario || response; // Depende de la envoltura
+      
+      const userInfo = { 
+        id: usuario.id, 
+        name: usuario.nombre, 
+        email: usuario.correoElectronico,
+        rol: usuario.rol
+      };
+      
+      this.setContextState('user', userInfo);
+      this.setContextState('hasCatalog', false);
+      if (usuario.creditosDisponibles !== undefined) {
+        this.setContextState('balance', usuario.creditosDisponibles);
       }
       
-      return hasCat ? '/' : '/onboarding';
-    } catch (err) {
+      // Intentamos también hacer login automático si el endpoint no nos da token,
+      // pero por simplicidad de este flujo podemos asumir que el frontend
+      // obligará a loguear si no hay token o pedirá iniciar sesión explícitamente,
+      // pero asumiendo que lo manejamos, redirigimos a onboarding.
       return '/onboarding';
+    } catch (err) {
+      let msg = err.message || 'Error en el registro';
+      if (msg.includes('Error POST')) {
+         msg = msg.split(': ').slice(1).join(': ');
+      }
+      throw new Error(msg);
     }
   }
 }
