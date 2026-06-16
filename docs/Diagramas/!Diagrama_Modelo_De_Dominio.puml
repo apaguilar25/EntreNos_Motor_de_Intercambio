@@ -47,19 +47,19 @@ class Solicitud
 class Incidencia
 
 ' --- GOBERNANZA Y MODERACIÓN (HU 8) ---
-Administrador --|> Usuario : "es un"
-Administrador "1..*" -- "1..*" Habilidad : "administra >"
+Administrador --|> Usuario
+Administrador "1" -- "1..*" Habilidad : "administra >"
 Usuario "1" -up- "0..*" Incidencia : "reporta >"
 Administrador "1" -- "0..*" Incidencia : "resuelve >"
-Incidencia "0..*" --> "0..1" Transaccion : "refiere a >"
+Incidencia "0..1" --> "1 " Transaccion
 
 ' --- IDENTIDAD Y CATÁLOGO (HU 1) ---
-Usuario "1" *--- "1" Monedero  : "posee >"
-Usuario "1" --- "1" CatalogoUsuario : "gestiona >"
-CatalogoUsuario "1" *-- "0..*" HabilidadOfrecida : "contiene >"
-CatalogoUsuario "1" *---  "0..*" NecesidadRegistrada : "contiene >"
-HabilidadOfrecida "0..*" --> "1" Habilidad : "se basa en >"
-NecesidadRegistrada "0..*" --> "1" Habilidad : "se basa en >"
+Usuario "1" *--- "1" Monedero
+Usuario "1" --- "1" CatalogoUsuario
+CatalogoUsuario "1" *-- "0..*" HabilidadOfrecida
+CatalogoUsuario "1" *---  "0..*" NecesidadRegistrada
+HabilidadOfrecida "0..*" --> "1" Habilidad
+NecesidadRegistrada "0..*" --> "1" Habilidad
 
 ' --- RELACIONES DE PUBLICACIÓN (HU 2) ---
 HabilidadOfrecida "1" --right "1" Publicacion : "genera >"
@@ -67,20 +67,20 @@ NecesidadRegistrada "1" --right "1" Publicacion : "genera >"
 
 ' --- FLUJO DE SERVICIOS (HU 3) ---
 Usuario "1" -- "0..*" Solicitud : "realiza >"
-Solicitud "0..*" --- "1" Publicacion : "recibe <"
+Solicitud "0..*" --- "1" Publicacion : "genera <"
 Solicitud "1" -- "0..1" Transaccion : "genera >"
 Usuario "2" -- "0..*" Transaccion : "participa en >"
 Transaccion "1" -- "1" Resena : "genera >"
 
 ' --- FLUJO DE SUBASTAS - VARIANTE 3 (HU 4 y HU 5) ---
 Usuario "1" -- "0..*" Subasta : "publica >"
-Subasta "1" *-- "0..*" Propuesta : "recibe >"
+Subasta "1" *-- "0..*" Propuesta
 Propuesta "0..*" -- "1" Usuario : "efectuada por >"
-Propuesta "1" *-- "1..*" BienOfrecido : "compromete >"
+Propuesta "1" *-- "1..*" BienOfrecido
 
 ' --- GAMIFICACIÓN Y RECONOCIMIENTO (HU 9 y HU 10) ---
 Usuario "1" -- "0..*" LogroDesbloqueado : "obtiene >"
-LogroDesbloqueado "0..*" --> "1" Logro : "refiere a >"
+LogroDesbloqueado "0..*" --> "1" Logro
 Usuario "0..3" -- "1" PodioSemanal : "es destacado en >"
 
 }
