@@ -20,4 +20,11 @@ export class ServicioUsuario {
   }
 
   // Agrega aquí métodos como registrarUsuario, actualizarPerfil, etc.
+  async actualizarCatalogo(idUsuario, catalogo) {
+    try {
+      return await this.clienteHttp.post(`/usuarios/${idUsuario}/catalogo`, catalogo);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

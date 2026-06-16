@@ -10,6 +10,8 @@ public class Notificacion {
     private TipoNotificacion tipo;
     private boolean estadoLectura;
     private long fechaCreacion;
+    private String idReferencia;
+    private String idReferenciaAuxiliar;
 
     public Notificacion() {}
 
@@ -21,6 +23,12 @@ public class Notificacion {
         this.tipo = tipo;
         this.estadoLectura = false;
         this.fechaCreacion = System.currentTimeMillis();
+    }
+
+    public Notificacion(String idRemitente, String idDestinatario, String mensaje, TipoNotificacion tipo, String idReferencia, String idReferenciaAuxiliar) {
+        this(idRemitente, idDestinatario, mensaje, tipo);
+        this.idReferencia = idReferencia;
+        this.idReferenciaAuxiliar = idReferenciaAuxiliar;
     }
 
     public String getIdNotificacion() { return idNotificacion; }
@@ -43,4 +51,10 @@ public class Notificacion {
 
     public long getFechaCreacion() { return fechaCreacion; }
     public void setFechaCreacion(long fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+
+    public String getIdReferencia() { return idReferencia; }
+    public void setIdReferencia(String idReferencia) { this.idReferencia = idReferencia; }
+
+    public String getIdReferenciaAuxiliar() { return idReferenciaAuxiliar; }
+    public void setIdReferenciaAuxiliar(String idReferenciaAuxiliar) { this.idReferenciaAuxiliar = idReferenciaAuxiliar; }
 }

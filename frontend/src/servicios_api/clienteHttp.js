@@ -7,7 +7,7 @@ export class ClienteHttp {
     const headers = {
       'Content-Type': 'application/json',
     };
-    const token = localStorage.getItem('entreNosToken');
+    const token = sessionStorage.getItem('entreNosToken');
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
@@ -19,12 +19,12 @@ export class ClienteHttp {
       headers: this._getHeaders(),
     });
     if (!response.ok) {
-      throw new Error(`Error GET ${endpoint}: ${response.statusText}`);
+      const errorText = await response.text();
+      throw new Error(`Error GET ${endpoint}: ${errorText || response.statusText}`);
     }
-    if (response.status === 204) {
-      return null;
-    }
-    return response.json();
+    if (response.status === 204) return null;
+    const text = await response.text();
+    try { return JSON.parse(text); } catch { return text; }
   }
 
   async post(endpoint, data) {
@@ -34,11 +34,40 @@ export class ClienteHttp {
       body: JSON.stringify(data),
     });
     if (!response.ok) {
-      throw new Error(`Error POST ${endpoint}: ${response.statusText}`);
+      const errorText = await response.text();
+      throw new Error(`Error POST ${endpoint}: ${errorText || response.statusText}`);
     }
-    if (response.status === 204) {
-      return null;
+    if (response.status === 204) return null;
+    const text = await response.text();
+    try { return JSON.parse(text); } catch { return text; }
+  }
+
+  async put(endpoint, data) {
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: 'PUT',
+      headers: this._getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Error PUT ${endpoint}: ${errorText || response.statusText}`);
     }
-    return response.json();
+    if (response.status === 204) return null;
+    const text = await response.text();
+    try { return JSON.parse(text); } catch { return text; }
+  }
+
+  async delete(endpoint) {
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: 'DELETE',
+      headers: this._getHeaders(),
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Error DELETE ${endpoint}: ${errorText || response.statusText}`);
+    }
+    if (response.status === 204) return null;
+    const text = await response.text();
+    try { return JSON.parse(text); } catch { return text; }
   }
 }

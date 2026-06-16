@@ -174,6 +174,11 @@ public class Subasta {
     public String getId() { return id; }
     public String getIdPropietario() { return idPropietario; }
     public String getNombreActivo() { return nombreActivo; }
+    
+    public void setDescripcion(String descripcion) {
+        if (descripcion == null || descripcion.trim().isEmpty()) throw new IllegalArgumentException("La descripcin es obligatoria.");
+        this.descripcion = descripcion;
+    }
     public EstadoFisico getEstadoFisico() { return estadoFisico; }
     public String getDescripcion() { return descripcion; }
     public List<String> getImagenesUrls() { return new ArrayList<>(imagenesUrls); }

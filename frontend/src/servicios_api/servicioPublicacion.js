@@ -20,4 +20,16 @@ export class ServicioPublicacion {
       throw error;
     }
   }
+
+  async responderSolicitud(idPublicacion, idUsuario, aceptar) {
+    try {
+      return await this.clienteHttp.post(`/publicaciones/${idPublicacion}/responder`, {
+        idUsuario,
+        aceptar
+      });
+    } catch (error) {
+      console.error('Error respondiendo solicitud:', error);
+      throw error;
+    }
+  }
 }

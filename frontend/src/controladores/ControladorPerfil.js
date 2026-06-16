@@ -40,4 +40,13 @@ export class ControladorPerfil {
       return [];
     }
   }
+
+  async actualizarCatalogo(idUsuario, catalogo) {
+    try {
+      return await this.servicioUsuario.actualizarCatalogo(idUsuario, catalogo);
+    } catch (error) {
+      console.error('Error actualizando catálogo:', error);
+      throw error;
+    }
+  }
 }

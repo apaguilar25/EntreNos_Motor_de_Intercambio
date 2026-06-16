@@ -6,10 +6,12 @@ import { ClienteHttp } from './servicios_api/clienteHttp';
 import { ServicioUsuario } from './servicios_api/ServicioUsuario';
 import { ServicioPublicacion } from './servicios_api/ServicioPublicacion';
 import { ServicioSubasta } from './servicios_api/ServicioSubasta';
+import { ServicioNotificacion } from './servicios_api/servicioNotificacion';
 import { ControladorAutenticacion } from './controladores/ControladorAutenticacion';
 import { ControladorMuro } from './controladores/ControladorMuro';
 import { ControladorSubasta } from './controladores/ControladorSubasta';
 import { ControladorPerfil } from './controladores/ControladorPerfil';
+import { ControladorNotificacion } from './controladores/ControladorNotificacion';
 import { ServicioGamificacion } from './servicios_api/ServicioGamificacion';
 import { ControladorGamificacion } from './controladores/ControladorGamificacion';
 
@@ -34,23 +36,23 @@ export const AppContext = createContext();
 function App() {
   const [theme, setTheme] = useState('light');
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('entreNosUser');
+    const savedUser = sessionStorage.getItem('entreNosUser');
     return savedUser && savedUser !== 'undefined' ? JSON.parse(savedUser) : null;
   });
   const [balance, setBalance] = useState(() => {
-    const savedBalance = localStorage.getItem('entreNosBalance');
+    const savedBalance = sessionStorage.getItem('entreNosBalance');
     return savedBalance && savedBalance !== 'undefined' ? JSON.parse(savedBalance) : 0;
   });
   const [hasCatalog, setHasCatalog] = useState(() => {
-    const savedCatalog = localStorage.getItem('entreNosCatalog');
+    const savedCatalog = sessionStorage.getItem('entreNosCatalog');
     return savedCatalog && savedCatalog !== 'undefined' ? JSON.parse(savedCatalog) : false;
   });
 
   // Efectos de Persistencia
   useEffect(() => { document.documentElement.setAttribute('data-theme', theme); }, [theme]);
-  useEffect(() => { user ? localStorage.setItem('entreNosUser', JSON.stringify(user)) : localStorage.removeItem('entreNosUser'); }, [user]);
-  useEffect(() => { localStorage.setItem('entreNosBalance', JSON.stringify(balance)); }, [balance]);
-  useEffect(() => { localStorage.setItem('entreNosCatalog', JSON.stringify(hasCatalog)); }, [hasCatalog]);
+  useEffect(() => { user ? sessionStorage.setItem('entreNosUser', JSON.stringify(user)) : sessionStorage.removeItem('entreNosUser'); }, [user]);
+  useEffect(() => { sessionStorage.setItem('entreNosBalance', JSON.stringify(balance)); }, [balance]);
+  useEffect(() => { sessionStorage.setItem('entreNosCatalog', JSON.stringify(hasCatalog)); }, [hasCatalog]);
 
   const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
 
@@ -65,25 +67,27 @@ function App() {
   }, []);
 
   // --- ENSAMBLAJE DE DEPENDENCIAS (Dependency Injection Container) ---
-  const { controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil, controladorGamificacion } = React.useMemo(() => {
+  const { controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil, controladorGamificacion, controladorNotificacion } = React.useMemo(() => {
     const clienteHttp = new ClienteHttp('http://localhost:8080/api');
     const servicioUsuario = new ServicioUsuario(clienteHttp);
     const servicioPublicacion = new ServicioPublicacion(clienteHttp);
     const servicioSubasta = new ServicioSubasta(clienteHttp);
     const servicioGamificacion = new ServicioGamificacion(clienteHttp);
+    const servicioNotificacion = new ServicioNotificacion(clienteHttp);
 
     const controladorAutenticacion = new ControladorAutenticacion(servicioUsuario, setContextState);
     const controladorMuro = new ControladorMuro(servicioPublicacion);
     const controladorSubasta = new ControladorSubasta(servicioSubasta);
     const controladorPerfil = new ControladorPerfil(servicioUsuario, servicioPublicacion);
     const controladorGamificacion = new ControladorGamificacion(servicioGamificacion);
+    const controladorNotificacion = new ControladorNotificacion(servicioNotificacion, servicioPublicacion, servicioSubasta);
 
-    return { controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil, controladorGamificacion };
+    return { controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil, controladorGamificacion, controladorNotificacion };
   }, [setContextState]);
 
   const contextValue = {
     theme, toggleTheme, user, balance, hasCatalog, setUser, setBalance, setHasCatalog,
-    controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil, controladorGamificacion
+    controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil, controladorGamificacion, controladorNotificacion
   };
 
   return (

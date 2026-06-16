@@ -152,6 +152,16 @@ public class ServicioPublicacion {
         return toResponseDTO(publicacion);
     }
 
+    public Publicacion actualizarPublicacion(String idPublicacion, int precioCreditos, String descripcion) {
+        Publicacion pub = repositorioPublicacion.obtenerPorId(idPublicacion)
+                .orElseThrow(() -> new IllegalArgumentException("Publicación no encontrada en el muro: " + idPublicacion));
+        
+        pub.setPrecioCreditos(precioCreditos);
+        pub.setDescripcion(descripcion);
+        repositorioPublicacion.guardar(pub);
+        return pub;
+    }
+
     public Optional<Publicacion> obtenerPublicacionPorId(String id) {
         return repositorioPublicacion.obtenerPorId(id);
     }
@@ -188,10 +198,58 @@ public class ServicioPublicacion {
         if (removido) {
             repositorioPublicacion.guardarTodas(todas);
         }
-        return removido;
+        if (pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
+            Usuario solicitante = servicioUsuario.buscarPorId(idSolicitante)
+                    .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
+            if (solicitante.getMonedero().getSaldoDisponible() < pub.getPrecioCreditos()) {
+                throw new IllegalStateException("Saldo insuficiente. Necesitas " + pub.getPrecioCreditos()
+                        + " créditos, pero tienes " + solicitante.getMonedero().getSaldoDisponible() + " disponibles.");
+            }
+        }
+        pub.solicitar(idSolicitante, nombreSolicitante);
+        repositorioPublicacion.guardar(pub);
+        servicioNotificacion.enviarNotificacion(idSolicitante, pub.getIdUsuario(),
+                nombreSolicitante + " quiere contratar tu servicio: " + pub.getNombreServicio(),
+                TipoNotificacion.NUEVA_SOLICITUD_ENTRANTE, pub.getIdPublicacion(), idSolicitante);
+        return pub;
     }
 
-
+    public Publicacion responderSolicitud(String idPublicacion, String idUsuario, boolean aceptar) {
+        Publicacion pub = repositorioPublicacion.obtenerPorId(idPublicacion)
+                .orElseThrow(() -> new IllegalArgumentException("Publicación no encontrada: " + idPublicacion));
+        if (!pub.getIdUsuario().equals(idUsuario)) {
+            throw new IllegalArgumentException("Solo el dueño de la publicación puede responder la solicitud.");
+        }
+        String solicitanteId = pub.getIdSolicitante();
+        String solicitanteNombre = pub.getNombreSolicitante();
+        pub.responderSolicitud(aceptar);
+        if (aceptar) {
+            Usuario demandante = servicioUsuario.buscarPorId(solicitanteId)
+                    .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
+            demandante.getMonedero().retener(pub.getPrecioCreditos());
+            demandante.incrementarVersion();
+            servicioUsuario.guardar(demandante);
+            Transaccion tx = new Transaccion(
+                pub.getIdPublicacion(),
+                pub.getIdUsuario(),
+                pub.getIdSolicitante(),
+                pub.getNombreServicio(),
+                pub.getDescripcion(),
+                pub.getPrecioCreditos()
+            );
+            repositorioTransaccion.guardar(tx);
+            servicioNotificacion.enviarNotificacion(pub.getIdUsuario(), solicitanteId,
+                    "Tu solicitud para " + pub.getNombreServicio() + " fue ACEPTADA. Se retuvieron "
+                            + pub.getPrecioCreditos() + " créditos.",
+                    TipoNotificacion.ESTADO_SOLICITUD_CAMBIADO, pub.getIdPublicacion(), null);
+        } else {
+            servicioNotificacion.enviarNotificacion(pub.getIdUsuario(), solicitanteId,
+                    "Tu solicitud para " + pub.getNombreServicio() + " fue RECHAZADA.",
+                    TipoNotificacion.ESTADO_SOLICITUD_CAMBIADO, pub.getIdPublicacion(), null);
+        }
+        repositorioPublicacion.guardar(pub);
+        return pub;
+    }
 
     public List<Transaccion> obtenerTodasLasTransacciones() {
         return repositorioTransaccion.obtenerTodas();

@@ -1,5 +1,6 @@
 ﻿[
   {
+<<<<<<< HEAD
     "id": "e46e66ab-5e9b-480a-bd09-6be30e60b244",
     "nombre": "Test B",
     "correoElectronico": "testb.flow@alameda.com",
@@ -45,6 +46,15 @@
     "descripcionPersonal": "Proveedor ocasional",
     "contrasenaHash": "$2a$10$yjOmmM0oqHAR.2APuyqCde0qz7N9pbOckY4Gq.HcSd9rGDHn2RqKS",
     "version": 2,
+=======
+    "id": "6ae72435-d88f-433e-9617-6b26d547d913",
+    "nombre": "Jose Panadero",
+    "correoElectronico": "jose@alameda.com",
+    "telefono": "+584249876543",
+    "descripcionPersonal": "Soy un panadero experto con mas de 15 años de experiencia en el negocio.",
+    "contrasenaHash": "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
+    "version": 17,
+>>>>>>> 936e57e1805a58fe09f9fb146fcec624c89da2f2
     "monedero": {
       "creditosDisponibles": 50.0,
       "creditosComprometidos": 0.0,
@@ -54,6 +64,7 @@
       "completado": true,
       "habilidadesOfrecidas": [
         {
+<<<<<<< HEAD
           "idInstancia": "4caa3b17-d8af-4dda-932b-bfa1ba7cbd8f",
           "habilidadBase": {
             "id": "HAB-004",
@@ -230,10 +241,14 @@
         },
         {
           "idInstancia": "0bc1286c-6979-4c47-b334-0d4d944e92bf",
+=======
+          "idInstancia": "7970bbf6-342e-4e35-90c0-bb7dfc7e8939",
+>>>>>>> 936e57e1805a58fe09f9fb146fcec624c89da2f2
           "habilidadBase": {
             "id": "HAB-005",
             "categoria": "Soporte TÃ©cnico / ComputaciÃ³n"
           },
+<<<<<<< HEAD
           "precioCreditos": 12,
           "descripcionServicio": "Soporte tecnico"
         }
@@ -284,6 +299,112 @@
           },
           "precioCreditos": 50,
           "descripcionServicio": "Reparaciones de plomerÃ­a bÃ¡sicas"
+=======
+          "precioCreditos": 50,
+          "descripcionServicio": "dbfdbbb"
+        }
+      ],
+      "necesidadesRegistradas": [
+        {
+          "idInstancia": "34ae40c7-f145-40b0-8b46-9b62c4d04370",
+          "necesidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "descripcionCondiciones": "vsdvsvsd"
+        }
+      ]
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "MIEMBRO_COMUNIDAD"
+  },
+  {
+    "id": "8dde084f-a5cc-4bec-a63d-7cff8590595d",
+    "nombre": "Carlos Fontanero",
+    "correoElectronico": "carlos3222@alameda.com",
+    "telefono": "+584141234757",
+    "descripcionPersonal": "Hola, soy nuevo en la comunidad y estoy dispuesto a ayudar.",
+    "contrasenaHash": "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
+    "version": 16,
+    "monedero": {
+      "creditosDisponibles": 50.0,
+      "creditosRetenidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": true,
+      "habilidadesOfrecidas": [
+        {
+          "idInstancia": "1922fbc9-78f5-4048-a455-76a12f54aea7",
+          "habilidadBase": {
+            "id": "HAB-001",
+            "categoria": "Plomería"
+          },
+          "precioCreditos": 150,
+          "descripcionServicio": "Reparación de tuberías y filtraciones en baños."
+        }
+      ],
+      "necesidadesRegistradas": [
+        {
+          "idInstancia": "08a1652c-7ced-473a-9587-4cec47c38c51",
+          "necesidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "descripcionCondiciones": "Necesito alguien que repare mi computadora portátil, no enciende."
+        },
+        {
+          "idInstancia": "06da7860-c344-41d2-a587-6426a61e8744",
+          "necesidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "descripcionCondiciones": "Busco profesor particular para nivelación de cálculo integral los fines de semana."
+        }
+      ]
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "MIEMBRO_COMUNIDAD"
+  },
+  {
+    "id": "75908a5b-6887-48ac-a4fa-1588b1729414",
+    "nombre": "Carlos Fontanero",
+    "correoElectronico": "carlos8@alameda.com",
+    "telefono": "+584141234750",
+    "descripcionPersonal": "Hola, soy nuevo en la comunidad y estoy dispuesto a ayudar.",
+    "contrasenaHash": "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
+    "version": 2,
+    "monedero": {
+      "creditosDisponibles": 0.0,
+      "creditosRetenidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": false,
+      "habilidadesOfrecidas": [
+        {
+          "idInstancia": "fd571b0b-42dc-4da7-b431-fde80c839b11",
+          "habilidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "precioCreditos": 150,
+          "descripcionServicio": "Pan canilla de excelente calidad"
+>>>>>>> 936e57e1805a58fe09f9fb146fcec624c89da2f2
         }
       ],
       "necesidadesRegistradas": []
@@ -294,19 +415,18 @@
     "primerIntentoFallidoMillis": 0,
     "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 4.0,
-    "cantidadCalificaciones": 2,
-    "rol": "MIEMBRO_COMUNIDAD",
-    "esVecinoDestacado": false
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "MIEMBRO_COMUNIDAD"
   },
   {
-    "id": "8e1baf4c-a128-497e-a1c4-ed7d4e742465",
+    "id": "d6ed5d51-8d8f-4c91-846f-c56c8a0f1d96",
     "nombre": "Super Administrador",
     "correoElectronico": "admin@alameda.com",
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
-    "contrasenaHash": "$2a$10$QWRLH1VJ8KphSh4b/Ucy..jtmvKPCSAOErYT7fGP0KDMFPAE9ZDNy",
-    "version": 6,
+    "contrasenaHash": "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
+    "version": 4,
     "monedero": {
       "creditosDisponibles": 0.0,
       "creditosComprometidos": 0.0,
@@ -325,6 +445,7 @@
     "urlFotoPerfil": "default.png",
     "promedioCalificacion": 0.0,
     "cantidadCalificaciones": 0,
+<<<<<<< HEAD
     "rol": "ADMINISTRADOR",
     "esVecinoDestacado": false
   },
@@ -439,5 +560,8 @@
     "cantidadCalificaciones": 1,
     "rol": "MIEMBRO_COMUNIDAD",
     "esVecinoDestacado": false
+=======
+    "rol": "ADMINISTRADOR"
+>>>>>>> 936e57e1805a58fe09f9fb146fcec624c89da2f2
   }
 ]

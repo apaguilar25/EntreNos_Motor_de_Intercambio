@@ -40,6 +40,17 @@ public class ControladorSubasta {
         return ResponseEntity.ok(servicioSubasta.listarSubastasActivas());
     }
 
+    @GetMapping("/mis-subastas")
+    public ResponseEntity<List<Subasta>> listarMisSubastas(@AuthenticationPrincipal String idPropietario) {
+        return ResponseEntity.ok(servicioSubasta.listarSubastasPorPropietario(idPropietario));
+    }
+
+    @PostMapping("/{idSubasta}/ofertar")
+    public ResponseEntity<Subasta> hacerOferta(@PathVariable String idSubasta, @RequestBody es.ucab.entrenos.modulos.subasta.modelos.Propuesta propuesta) {
+        Subasta subasta = servicioSubasta.hacerOferta(idSubasta, propuesta);
+        return ResponseEntity.status(HttpStatus.CREATED).body(subasta);
+    }
+
     @PostMapping("/{idSubasta}/ganador/{idPropuesta}")
     public ResponseEntity<?> adjudicarGanador(@AuthenticationPrincipal String idPropietario, @PathVariable String idSubasta, @PathVariable String idPropuesta) {
         return ResponseEntity.ok(servicioSubasta.adjudicarGanador(idPropietario, idSubasta, idPropuesta));
@@ -49,5 +60,18 @@ public class ControladorSubasta {
     public ResponseEntity<?> cancelarSubasta(@AuthenticationPrincipal String idPropietario, @PathVariable String idSubasta) {
         servicioSubasta.cancelarSubastaManual(idPropietario, idSubasta);
         return ResponseEntity.ok(Map.of("mensaje", "La subasta ha sido cancelada exitosamente."));
+    }
+
+    @PutMapping("/{idSubasta}")
+    public ResponseEntity<?> modificarSubasta(@AuthenticationPrincipal String idPropietario, @PathVariable String idSubasta, @RequestBody Map<String, String> payload) {
+        String nuevaDescripcion = payload.get("descripcion");
+        servicioSubasta.modificarSubasta(idPropietario, idSubasta, nuevaDescripcion);
+        return ResponseEntity.ok(Map.of("mensaje", "La subasta ha sido modificada exitosamente."));
+    }
+
+    @DeleteMapping("/{idSubasta}")
+    public ResponseEntity<?> eliminarSubasta(@AuthenticationPrincipal String idPropietario, @PathVariable String idSubasta) {
+        servicioSubasta.cancelarSubastaManual(idPropietario, idSubasta);
+        return ResponseEntity.ok(Map.of("mensaje", "La subasta ha sido eliminada exitosamente."));
     }
 }
