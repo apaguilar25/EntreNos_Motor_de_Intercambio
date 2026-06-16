@@ -7,7 +7,6 @@ import es.ucab.entrenos.modulos.notificacion.servicios.ServicioNotificacion;
 import es.ucab.entrenos.modulos.publicacion.modelos.EstadoTransaccion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Solicitud;
-import es.ucab.entrenos.modulos.publicacion.modelos.EstadoSolicitud;
 import es.ucab.entrenos.modulos.publicacion.modelos.Transaccion;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioSolicitud;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioTransaccion;
@@ -62,7 +61,7 @@ public class ServicioSolicitud {
         Publicacion pub = servicioPublicacion.obtenerPublicacionPorId(solicitud.getIdPublicacion())
                 .orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada."));
 
-        if (solicitud.getEstado() == EstadoSolicitud.PENDIENTE && pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
+        if (Solicitud.ESTADO_PENDIENTE.equals(solicitud.getEstado()) && pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
             Usuario solicitante = servicioUsuario.buscarPorId(idUsuario)
                     .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
             solicitante.getMonedero().devolverCompromiso();
@@ -146,7 +145,7 @@ public class ServicioSolicitud {
         }
 
         if (solicitud.haExpirado()) {
-            if (solicitud.getEstado() == EstadoSolicitud.PENDIENTE && pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
+            if (Solicitud.ESTADO_PENDIENTE.equals(solicitud.getEstado()) && pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
                 Usuario solicitante = servicioUsuario.buscarPorId(solicitud.getIdSolicitante())
                         .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
                 solicitante.getMonedero().devolverCompromiso();
@@ -188,7 +187,7 @@ public class ServicioSolicitud {
                             + pub.getPrecioCreditos() + " creditos.",
                     TipoNotificacion.ESTADO_SOLICITUD_CAMBIADO);
         } else {
-            if (solicitud.getEstado() == EstadoSolicitud.PENDIENTE && pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
+            if (Solicitud.ESTADO_PENDIENTE.equals(solicitud.getEstado()) && pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
                 Usuario solicitante = servicioUsuario.buscarPorId(solicitud.getIdSolicitante())
                         .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
                 solicitante.getMonedero().devolverCompromiso();
