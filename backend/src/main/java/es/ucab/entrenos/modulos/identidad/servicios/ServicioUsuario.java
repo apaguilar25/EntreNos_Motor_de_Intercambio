@@ -118,7 +118,7 @@ public class ServicioUsuario {
     }
 
     // --- AGREGAR OFERTA INDIVIDUAL ---
-    public void agregarHabilidadIndividual(String idUsuario, Habilidad habilidadBase, int precioCreditos, String descripcionServicio) {
+    public HabilidadOfrecida agregarHabilidadIndividual(String idUsuario, Habilidad habilidadBase, int precioCreditos, String descripcionServicio) {
         Usuario usuario = repositorioUsuario.buscarPorId(idUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
 
@@ -127,10 +127,11 @@ public class ServicioUsuario {
         HabilidadOfrecida nuevaOferta = new HabilidadOfrecida(habilidadBase, precioCreditos, descripcionServicio);
         usuario.agregarHabilidadOfrecida(nuevaOferta);
         guardar(usuario);
+        return nuevaOferta;
     }
 
     // --- AGREGAR NECESIDAD INDIVIDUAL ---
-    public void agregarNecesidadIndividual(String idUsuario, Habilidad necesidadBase, String descripcionCondiciones) {
+    public NecesidadRegistrada agregarNecesidadIndividual(String idUsuario, Habilidad necesidadBase, String descripcionCondiciones) {
         Usuario usuario = repositorioUsuario.buscarPorId(idUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
 
@@ -139,6 +140,7 @@ public class ServicioUsuario {
         NecesidadRegistrada nuevaNecesidad = new NecesidadRegistrada(necesidadBase, descripcionCondiciones);
         usuario.agregarNecesidad(nuevaNecesidad);
         guardar(usuario);
+        return nuevaNecesidad;
     }
 
     // Carga/Actualización de la Foto de Perfil

@@ -9,6 +9,8 @@ import es.ucab.entrenos.modulos.identidad.servicios.ServicioUsuario;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import es.ucab.entrenos.modulos.publicacion.servicios.ServicioPublicacion;
+import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +22,26 @@ public class ControladorUsuario {
 
     private final ServicioUsuario servicioUsuario;
     private final ServicioHabilidad servicioHabilidad;
+    private final ServicioPublicacion servicioPublicacion;
 
-    public ControladorUsuario(ServicioUsuario servicioUsuario, ServicioHabilidad servicioHabilidad) {
+    public ControladorUsuario(ServicioUsuario servicioUsuario, ServicioHabilidad servicioHabilidad, ServicioPublicacion servicioPublicacion) {
         this.servicioUsuario = servicioUsuario;
         this.servicioHabilidad = servicioHabilidad;
+        this.servicioPublicacion = servicioPublicacion;
+    }
+
+    private void generarPublicacionDesdeCatalogo(Usuario usuario, String idInstancia, String tipo, Habilidad habilidadBase, String descripcion, int precio) {
+        Publicacion pub = new Publicacion(
+                usuario.getId(),
+                usuario.getNombre(),
+                usuario.getPromedioCalificacion(),
+                tipo,
+                habilidadBase.getCategoria(),
+                descripcion,
+                precio
+        );
+        pub.setIdPublicacion(idInstancia);
+        servicioPublicacion.crearPublicacion(pub);
     }
 
     @PostMapping("/registro")
@@ -69,6 +87,16 @@ public class ControladorUsuario {
             }
 
             servicioUsuario.configurarCatalogo(id, ofertas, necesidades);
+
+            // --- Sincronización con el Muro ---
+            Usuario usuarioOpt = servicioUsuario.buscarPorId(id).orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado tras configurar catálogo"));
+            for (HabilidadOfrecida o : ofertas) {
+                generarPublicacionDesdeCatalogo(usuarioOpt, o.getIdInstancia(), "HABILIDAD", o.getHabilidadBase(), o.getDescripcionServicio(), o.getPrecioCreditos());
+            }
+            for (NecesidadRegistrada n : necesidades) {
+                generarPublicacionDesdeCatalogo(usuarioOpt, n.getIdInstancia(), "NECESIDAD", n.getNecesidadBase(), n.getDescripcionCondiciones(), 0);
+            }
+
             return ResponseEntity.ok().body("Catálogo configurado y Capital Semilla asignado con éxito.");
 
         } catch (IllegalArgumentException | IllegalStateException e) {
@@ -92,6 +120,12 @@ public class ControladorUsuario {
                     request.getDescripcionServicio()
             );
 
+            try {
+                servicioPublicacion.actualizarPublicacion(request.getIdInstancia(), request.getPrecioCreditos(), request.getDescripcionServicio());
+            } catch (Exception e) {
+                System.out.println("Aviso: No se encontró la publicación en el muro para actualizar: " + request.getIdInstancia());
+            }
+
             return ResponseEntity.ok().body("Oferta específica editada con éxito.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -113,6 +147,12 @@ public class ControladorUsuario {
                     request.getDescripcionCondiciones()
             );
 
+            try {
+                servicioPublicacion.actualizarPublicacion(request.getIdInstancia(), 0, request.getDescripcionCondiciones());
+            } catch (Exception e) {
+                System.out.println("Aviso: No se encontró la publicación en el muro para actualizar: " + request.getIdInstancia());
+            }
+
             return ResponseEntity.ok().body("Necesidad específica editada con éxito.");
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -126,6 +166,7 @@ public class ControladorUsuario {
             @PathVariable String idInstancia) {
         try {
             servicioUsuario.eliminarHabilidadOfrecida(id, idInstancia);
+            servicioPublicacion.eliminarPublicacion(idInstancia);
             return ResponseEntity.ok().body("Oferta eliminada del catálogo con éxito.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -139,6 +180,7 @@ public class ControladorUsuario {
             @PathVariable String idInstancia) {
         try {
             servicioUsuario.eliminarNecesidadRegistrada(id, idInstancia);
+            servicioPublicacion.eliminarPublicacion(idInstancia);
             return ResponseEntity.ok().body("Necesidad eliminada del catálogo con éxito.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -193,7 +235,11 @@ public class ControladorUsuario {
                     .orElseThrow(() -> new IllegalArgumentException("La categoría de habilidad maestra no existe en el sistema."));
 
             // 2. Agregamos al usuario
-            servicioUsuario.agregarHabilidadIndividual(id, habilidadBase, request.getPrecioCreditos(), request.getDescripcionServicio());
+            HabilidadOfrecida nueva = servicioUsuario.agregarHabilidadIndividual(id, habilidadBase, request.getPrecioCreditos(), request.getDescripcionServicio());
+
+            // 3. Sincronizamos con el muro
+            Usuario usuarioOpt = servicioUsuario.buscarPorId(id).orElseThrow();
+            generarPublicacionDesdeCatalogo(usuarioOpt, nueva.getIdInstancia(), "HABILIDAD", habilidadBase, request.getDescripcionServicio(), request.getPrecioCreditos());
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Habilidad agregada al catálogo del usuario con éxito.");
         } catch (IllegalArgumentException | IllegalStateException e) {
@@ -212,7 +258,11 @@ public class ControladorUsuario {
                     .orElseThrow(() -> new IllegalArgumentException("La categoría de habilidad maestra no existe en el sistema."));
 
             // 2. Agregamos al usuario
-            servicioUsuario.agregarNecesidadIndividual(id, necesidadBase, request.getDescripcionCondiciones());
+            NecesidadRegistrada nueva = servicioUsuario.agregarNecesidadIndividual(id, necesidadBase, request.getDescripcionCondiciones());
+
+            // 3. Sincronizamos con el muro
+            Usuario usuarioOpt = servicioUsuario.buscarPorId(id).orElseThrow();
+            generarPublicacionDesdeCatalogo(usuarioOpt, nueva.getIdInstancia(), "NECESIDAD", necesidadBase, request.getDescripcionCondiciones(), 0);
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Necesidad agregada al catálogo del usuario con éxito.");
         } catch (IllegalArgumentException | IllegalStateException e) {

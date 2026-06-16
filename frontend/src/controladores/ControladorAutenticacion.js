@@ -13,7 +13,7 @@ export class ControladorAutenticacion {
       const response = await this.servicioUsuario.login(correoElectronico, contrasena);
       // Asumiendo que el backend devuelve un JWT y datos del usuario
       if (response.token) {
-        localStorage.setItem('entreNosToken', response.token);
+        sessionStorage.setItem('entreNosToken', response.token);
       }
       
       const usuario = response.usuario || response; // Depende del formato del DTO devuelto
@@ -26,11 +26,13 @@ export class ControladorAutenticacion {
       
       this.setContextState('user', userInfo);
 
-      const hasCat = Boolean(usuario.catalogo && ((usuario.catalogo.habilidadesOfrecidas && usuario.catalogo.habilidadesOfrecidas.length > 0) || (usuario.catalogo.necesidadesRegistradas && usuario.catalogo.necesidadesRegistradas.length > 0)));
+      const hasCat = Boolean(usuario.catalogoCompletado);
       
       this.setContextState('hasCatalog', hasCat);
       if (usuario.monedero) {
         this.setContextState('balance', usuario.monedero.creditosDisponibles);
+      } else if (usuario.creditosDisponibles !== undefined) {
+        this.setContextState('balance', usuario.creditosDisponibles);
       }
       
       return hasCat ? '/' : '/onboarding';

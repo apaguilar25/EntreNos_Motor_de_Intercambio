@@ -102,4 +102,33 @@ public class RepositorioNotificacion implements IRepositorioNotificacion {
             return new ArrayList<>();
         }
     }
+
+    @Override
+    public void eliminar(String idNotificacion) {
+        lock.writeLock().lock();
+        try {
+            List<Notificacion> todas = leerArchivo();
+            boolean removido = todas.removeIf(n -> n.getIdNotificacion().equals(idNotificacion));
+            if (removido) {
+                guardarTodas(todas);
+            }
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public void eliminarPorReferencia(String idDestinatario, String idReferencia) {
+        lock.writeLock().lock();
+        try {
+            List<Notificacion> todas = leerArchivo();
+            boolean removido = todas.removeIf(n -> n.getIdDestinatario().equals(idDestinatario) 
+                && idReferencia.equals(n.getIdReferencia()));
+            if (removido) {
+                guardarTodas(todas);
+            }
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
 }

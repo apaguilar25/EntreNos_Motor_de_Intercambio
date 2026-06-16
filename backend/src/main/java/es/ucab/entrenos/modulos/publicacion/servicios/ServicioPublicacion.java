@@ -143,6 +143,16 @@ public class ServicioPublicacion {
         return publicacion;
     }
 
+    public Publicacion actualizarPublicacion(String idPublicacion, int precioCreditos, String descripcion) {
+        Publicacion pub = repositorioPublicacion.obtenerPorId(idPublicacion)
+                .orElseThrow(() -> new IllegalArgumentException("Publicación no encontrada en el muro: " + idPublicacion));
+        
+        pub.setPrecioCreditos(precioCreditos);
+        pub.setDescripcion(descripcion);
+        repositorioPublicacion.guardar(pub);
+        return pub;
+    }
+
     public Optional<Publicacion> obtenerPublicacionPorId(String id) {
         return repositorioPublicacion.obtenerPorId(id);
     }
@@ -182,7 +192,7 @@ public class ServicioPublicacion {
         repositorioPublicacion.guardar(pub);
         servicioNotificacion.enviarNotificacion(idSolicitante, pub.getIdUsuario(),
                 nombreSolicitante + " quiere contratar tu servicio: " + pub.getNombreServicio(),
-                TipoNotificacion.NUEVA_SOLICITUD_ENTRANTE);
+                TipoNotificacion.NUEVA_SOLICITUD_ENTRANTE, pub.getIdPublicacion(), idSolicitante);
         return pub;
     }
 
@@ -213,11 +223,11 @@ public class ServicioPublicacion {
             servicioNotificacion.enviarNotificacion(pub.getIdUsuario(), solicitanteId,
                     "Tu solicitud para " + pub.getNombreServicio() + " fue ACEPTADA. Se retuvieron "
                             + pub.getPrecioCreditos() + " créditos.",
-                    TipoNotificacion.ESTADO_SOLICITUD_CAMBIADO);
+                    TipoNotificacion.ESTADO_SOLICITUD_CAMBIADO, pub.getIdPublicacion(), null);
         } else {
             servicioNotificacion.enviarNotificacion(pub.getIdUsuario(), solicitanteId,
                     "Tu solicitud para " + pub.getNombreServicio() + " fue RECHAZADA.",
-                    TipoNotificacion.ESTADO_SOLICITUD_CAMBIADO);
+                    TipoNotificacion.ESTADO_SOLICITUD_CAMBIADO, pub.getIdPublicacion(), null);
         }
         repositorioPublicacion.guardar(pub);
         return pub;

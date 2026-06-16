@@ -49,9 +49,46 @@ public class ServicioSubasta {
         return subasta;
     }
 
+    public Subasta hacerOferta(String idSubasta, Propuesta propuesta) {
+        Lock candadoEscritura = ManejadorCandados.obtenerCandado(idSubasta).writeLock();
+        candadoEscritura.lock();
+        try {
+            Subasta subasta = repositorioSubasta.buscarPorId(idSubasta)
+                    .orElseThrow(() -> new IllegalArgumentException("Subasta no encontrada."));
+
+            asegurarUsuarioHabilitado(propuesta.getIdPostor());
+            
+            subasta.registrarPropuesta(propuesta);
+            subasta.incrementarVersion();
+            repositorioSubasta.guardar(subasta);
+
+            Usuario postor = repositorioUsuario.buscarPorId(propuesta.getIdPostor()).orElse(null);
+            String nombrePostor = postor != null ? postor.getNombre() : "Un usuario";
+
+            servicioNotificacion.enviarNotificacion(
+                    propuesta.getIdPostor(),
+                    subasta.getIdPropietario(),
+                    nombrePostor + " ha hecho una oferta en tu subasta: " + subasta.getNombreActivo(),
+                    TipoNotificacion.NUEVA_OFERTA_SUBASTA,
+                    subasta.getId(),
+                    propuesta.getIdPropuesta()
+            );
+
+            return subasta;
+        } finally {
+            candadoEscritura.unlock();
+        }
+    }
+
     public List<Subasta> listarSubastasActivas() {
         return repositorioSubasta.listarTodas().stream()
                 .filter(s -> s.getEstado() == EstadoSubasta.ACTIVA)
+                .collect(Collectors.toList());
+    }
+
+    public List<Subasta> listarSubastasPorPropietario(String idPropietario) {
+        return repositorioSubasta.listarTodas().stream()
+                .filter(s -> s.getIdPropietario().equals(idPropietario))
                 .collect(Collectors.toList());
     }
 
@@ -74,7 +111,15 @@ public class ServicioSubasta {
             Propuesta ganadora = subasta.getPropuestas().stream()
                     .filter(p -> p.getIdPropuesta().equals(idPropuesta)).findFirst().get();
 
-            servicioNotificacion.enviarNotificacion(ganadora.getIdPostor(), "¡Felicidades! Tu propuesta ha sido elegida como ganadora.", TipoNotificacion.SUBASTA_GANADA);
+            servicioNotificacion.enviarNotificacion(subasta.getIdPropietario(), ganadora.getIdPostor(), "¡Felicidades! Tu propuesta ha sido elegida como ganadora.", TipoNotificacion.SUBASTA_GANADA, subasta.getId(), null);
+
+            for (Propuesta p : subasta.getPropuestas()) {
+                if (!p.getIdPropuesta().equals(idPropuesta)) {
+                    servicioNotificacion.enviarNotificacion(subasta.getIdPropietario(), p.getIdPostor(), "Tu propuesta no ha sido elegida. La subasta ha finalizado.", TipoNotificacion.SUBASTA_CANCELADA, subasta.getId(), null);
+                }
+            }
+            
+            servicioNotificacion.eliminarNotificacionesPorReferencia(idPropietario, idSubasta);
 
             Usuario usuarioGanador = repositorioUsuario.buscarPorId(ganadora.getIdPostor()).get();
             ContactoUsuarioDTO contacto = new ContactoUsuarioDTO(usuarioGanador.getNombre(), usuarioGanador.getCorreoElectronico(), usuarioGanador.getTelefono());
@@ -85,6 +130,22 @@ public class ServicioSubasta {
         }
     }
 
+
+    public void modificarSubasta(String idPropietario, String idSubasta, String nuevaDescripcion) {
+        Lock candadoEscritura = ManejadorCandados.obtenerCandado(idSubasta).writeLock();
+        candadoEscritura.lock();
+        try {
+            Subasta subasta = repositorioSubasta.buscarPorId(idSubasta).orElseThrow(() -> new IllegalArgumentException("Subasta no encontrada."));
+            if (!subasta.getIdPropietario().equals(idPropietario)) throw new SecurityException("Solo el creador puede modificar la subasta.");
+            if (subasta.getEstado() != EstadoSubasta.ACTIVA) throw new IllegalStateException("Solo puedes modificar una subasta que est ACTIVA.");
+            
+            subasta.setDescripcion(nuevaDescripcion);
+            subasta.incrementarVersion();
+            repositorioSubasta.guardar(subasta);
+        } finally {
+            candadoEscritura.unlock();
+        }
+    }
 
     public void cancelarSubastaManual(String idPropietario, String idSubasta) {
         Lock candadoEscritura = ManejadorCandados.obtenerCandado(idSubasta).writeLock();
@@ -98,8 +159,9 @@ public class ServicioSubasta {
             repositorioSubasta.guardar(subasta);
 
             for (Propuesta p : subasta.getPropuestas()) {
-                servicioNotificacion.enviarNotificacion(p.getIdPostor(), "La subasta en la que participabas ha sido cancelada.", TipoNotificacion.SUBASTA_CANCELADA);
+                servicioNotificacion.enviarNotificacion("SISTEMA", p.getIdPostor(), "La subasta en la que participabas ha sido cancelada y no hubo ganador.", TipoNotificacion.SUBASTA_CANCELADA);
             }
+            servicioNotificacion.eliminarNotificacionesPorReferencia(idPropietario, idSubasta);
         } finally {
             candadoEscritura.unlock();
         }
@@ -152,11 +214,12 @@ public class ServicioSubasta {
             if (propietario != null) {
                 propietario.aplicarSancionPorInactividadSubasta();
                 repositorioUsuario.guardar(propietario);
-                servicioNotificacion.enviarNotificacion(propietario.getId(), "Cuenta suspendida por abandonar subasta (5 días inactivo).", TipoNotificacion.SANCION_APLICADA);
+                servicioNotificacion.enviarNotificacion("SISTEMA", propietario.getId(), "Cuenta suspendida por abandonar subasta (5 días inactivo).", TipoNotificacion.SANCION_APLICADA);
             }
             for (Propuesta p : subasta.getPropuestas()) {
-                servicioNotificacion.enviarNotificacion(p.getIdPostor(), "Subasta cancelada por inactividad del dueño.", TipoNotificacion.SUBASTA_CANCELADA);
+                servicioNotificacion.enviarNotificacion("SISTEMA", p.getIdPostor(), "Subasta cancelada por inactividad del dueño. No hubo ganador.", TipoNotificacion.SUBASTA_CANCELADA);
             }
+            servicioNotificacion.eliminarNotificacionesPorReferencia(subasta.getIdPropietario(), subasta.getId());
         }
     }
 }

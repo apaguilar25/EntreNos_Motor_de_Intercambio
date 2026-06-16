@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
-import { Star, ShieldCheck, FileText } from 'lucide-react';
+import { Star, ShieldCheck, Edit2, Trash2 } from 'lucide-react';
 
 const Profile = () => {
   const { user, controladorPerfil, controladorSubasta, controladorGamificacion } = useContext(AppContext);
@@ -17,6 +17,11 @@ const Profile = () => {
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportData, setReportData] = useState({ idPublicacion: '', idUsuarioInvolucrado: '', descripcionProblema: '', fotosEvidenciaBase64: [] });
 
+  // Modal Edición
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editType, setEditType] = useState(''); // 'oferta', 'necesidad', 'subasta'
+  const [editData, setEditData] = useState({ idInstancia: '', descripcion: '', precio: 0, titulo: '' });
+
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -29,9 +34,8 @@ const Profile = () => {
         const sentData = await controladorPerfil.obtenerSolicitudesEnviadas(user.id);
         setSentRequests(sentData);
         
-        const auctionsData = await controladorSubasta.obtenerSubastasActivas();
-        const mine = auctionsData.filter(s => s.idSubastador === user.id);
-        setMyAuctions(mine);
+        const auctionsData = await controladorSubasta.obtenerMisSubastas();
+        setMyAuctions(auctionsData);
 
         if (controladorGamificacion) {
           const logrosData = await controladorGamificacion.obtenerLogros(user.id);
@@ -72,23 +76,14 @@ const Profile = () => {
   const handleAdjudicar = async (oferta) => {
     if (!window.confirm("¿Confirmas adjudicar este postor como el ganador? Esta acción no se puede deshacer.")) return;
     try {
-      const res = await fetch(`http://localhost:8080/api/subastas/adjudicar`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(oferta)
-      });
-      if (res.ok) {
+      const res = await controladorSubasta.adjudicarGanador(oferta.idSubasta, oferta.idPropuesta);
+      if (res) {
         alert("Ganador adjudicado con éxito. Subasta concluida.");
         // Refetch
-        const auctionsResponse = await fetch(`http://localhost:8080/api/subastas`);
-        if (auctionsResponse.ok) {
-          const auctionsData = await auctionsResponse.json();
-          const mine = auctionsData.filter(s => s.idSubastador === user.id);
-          setMyAuctions(mine);
-        }
+        const auctionsData = await controladorSubasta.obtenerMisSubastas();
+        setMyAuctions(auctionsData);
       } else {
-        const errorData = await res.json();
-        alert(errorData.error || "Error al adjudicar la subasta");
+        alert("Error al adjudicar la subasta");
       }
     } catch (err) {
       alert("Error de conexión");
@@ -115,6 +110,85 @@ const Profile = () => {
       } else {
         const errorData = await res.json();
         alert(errorData.error || "Error al reportar");
+      }
+    } catch (err) {
+      alert("Error de conexión");
+    }
+  };
+
+  const handleEditClick = (type, item) => {
+    setEditType(type);
+    if (type === 'oferta') {
+      setEditData({ idInstancia: item.idInstancia, descripcion: item.descripcionServicio, precio: item.precioCreditos, titulo: item.habilidadBase?.categoria });
+    } else if (type === 'necesidad') {
+      setEditData({ idInstancia: item.idInstancia, descripcion: item.descripcionCondiciones, precio: 0, titulo: item.necesidadBase?.categoria });
+    } else if (type === 'subasta') {
+      setEditData({ idInstancia: item.id, descripcion: item.descripcion, precio: 0, titulo: item.nombreActivo });
+    }
+    setEditModalOpen(true);
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      let res;
+      if (editType === 'oferta') {
+        res = await fetch(`http://localhost:8080/api/usuarios/${user.id}/habilidades`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idInstancia: editData.idInstancia, precioCreditos: editData.precio, descripcionServicio: editData.descripcion })
+        });
+      } else if (editType === 'necesidad') {
+        res = await fetch(`http://localhost:8080/api/usuarios/${user.id}/necesidades`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idInstancia: editData.idInstancia, descripcionCondiciones: editData.descripcion })
+        });
+      } else if (editType === 'subasta') {
+        res = await fetch(`http://localhost:8080/api/subastas/${editData.idInstancia}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ descripcion: editData.descripcion })
+        });
+      }
+
+      if (res.ok) {
+        alert("Publicación modificada con éxito.");
+        setEditModalOpen(false);
+        const data = await controladorPerfil.obtenerDatosPerfil(user.id);
+        setUserProfile(data);
+        const auctionsData = await controladorSubasta.obtenerMisSubastas();
+        setMyAuctions(auctionsData);
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        alert(errorData.error || errorData.message || "Error al modificar");
+      }
+    } catch (err) {
+      alert("Error de conexión");
+    }
+  };
+
+  const handleDelete = async (type, idInstancia) => {
+    if (!window.confirm("¿Estás seguro que deseas eliminar esta publicación? Esta acción no se puede deshacer.")) return;
+    try {
+      let res;
+      if (type === 'oferta') {
+        res = await fetch(`http://localhost:8080/api/usuarios/${user.id}/habilidades/${idInstancia}`, { method: 'DELETE' });
+      } else if (type === 'necesidad') {
+        res = await fetch(`http://localhost:8080/api/usuarios/${user.id}/necesidades/${idInstancia}`, { method: 'DELETE' });
+      } else if (type === 'subasta') {
+        res = await fetch(`http://localhost:8080/api/subastas/${idInstancia}`, { method: 'DELETE' });
+      }
+
+      if (res.ok) {
+        alert("Publicación eliminada.");
+        const data = await controladorPerfil.obtenerDatosPerfil(user.id);
+        setUserProfile(data);
+        const auctionsData = await controladorSubasta.obtenerMisSubastas();
+        setMyAuctions(auctionsData);
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        alert(errorData.error || errorData.message || "Error al eliminar");
       }
     } catch (err) {
       alert("Error de conexión");
@@ -187,19 +261,23 @@ const Profile = () => {
           <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {loading ? (
               <p style={{ textAlign: 'center', color: 'var(--text-tertiary)' }}>Cargando...</p>
-            ) : (!userProfile?.habilidades || userProfile.habilidades.length === 0) ? (
+            ) : (!userProfile?.ofertas || userProfile.ofertas.length === 0) ? (
               <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
                 No has registrado habilidades.
               </div>
             ) : (
-              userProfile.habilidades.map((hab, idx) => (
+              userProfile.ofertas.map((hab, idx) => (
                 <div 
                   key={idx}
                   className="interactive-card" 
-                  style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}
+                  style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', position: 'relative' }}
                 >
-                  <div style={{ fontWeight: '600' }}>{hab.nombre}</div>
-                  <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{hab.descripcionHabilidad}</div>
+                  <div style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', display: 'flex', gap: '0.5rem' }}>
+                    <button onClick={() => handleEditClick('oferta', hab)} style={{ background: 'transparent', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer' }}><Edit2 size={16} /></button>
+                    <button onClick={() => handleDelete('oferta', hab.idInstancia)} style={{ background: 'transparent', border: 'none', color: 'var(--color-red-600)', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                  </div>
+                  <div style={{ fontWeight: '600', paddingRight: '3rem' }}>{hab.habilidadBase?.categoria || 'Servicio'}</div>
+                  <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{hab.descripcionServicio}</div>
                   <div style={{ color: 'var(--accent-primary)', fontWeight: 'bold', fontSize: '0.875rem', marginTop: '0.25rem' }}>{hab.precioCreditos} cr</div>
                 </div>
               ))
@@ -224,10 +302,14 @@ const Profile = () => {
                 <div 
                   key={idx}
                   className="interactive-card" 
-                  style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}
+                  style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', position: 'relative' }}
                 >
-                  <div style={{ fontWeight: '600' }}>{nec.nombre}</div>
-                  <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{nec.descripcionNecesidad}</div>
+                  <div style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', display: 'flex', gap: '0.5rem' }}>
+                    <button onClick={() => handleEditClick('necesidad', nec)} style={{ background: 'transparent', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer' }}><Edit2 size={16} /></button>
+                    <button onClick={() => handleDelete('necesidad', nec.idInstancia)} style={{ background: 'transparent', border: 'none', color: 'var(--color-red-600)', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                  </div>
+                  <div style={{ fontWeight: '600', paddingRight: '3rem' }}>{nec.necesidadBase?.categoria || 'Necesidad'}</div>
+                  <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{nec.descripcionCondiciones}</div>
                 </div>
               ))
             )}
@@ -248,9 +330,15 @@ const Profile = () => {
               </div>
             ) : (
               myAuctions.map((auction, idx) => (
-                <div key={idx} className="interactive-card" style={{ padding: '1rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                    <h4 style={{ margin: 0 }}>{auction.activoFisico?.nombreActivo}</h4>
+                <div key={idx} className="interactive-card" style={{ padding: '1rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', position: 'relative' }}>
+                  <div style={{ position: 'absolute', top: '1rem', right: '1rem', display: 'flex', gap: '0.5rem' }}>
+                    {auction.estado !== 'CERRADA' && (
+                      <button onClick={() => handleEditClick('subasta', auction)} style={{ background: 'transparent', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer' }}><Edit2 size={16} /></button>
+                    )}
+                    <button onClick={() => handleDelete('subasta', auction.id)} style={{ background: 'transparent', border: 'none', color: 'var(--color-red-600)', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', paddingRight: '4rem' }}>
+                    <h4 style={{ margin: 0 }}>{auction.nombreActivo}</h4>
                     <span style={{ 
                       padding: '0.25rem 0.5rem', 
                       borderRadius: '1rem', 
@@ -264,22 +352,22 @@ const Profile = () => {
                   </div>
                   <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{auction.descripcion}</p>
                   
-                  {auction.ofertas && auction.ofertas.length > 0 && (
+                  {auction.propuestas && auction.propuestas.length > 0 && (
                     <div style={{ marginTop: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '0.5rem' }}>
                       <h5 style={{ fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Pujas Recibidas:</h5>
-                      {auction.ofertas.map((of, i) => (
+                      {auction.propuestas.map((of, i) => (
                         <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem', backgroundColor: 'var(--bg-secondary)', borderRadius: '0.25rem', marginBottom: '0.5rem' }}>
                           <div>
-                            <span style={{ fontWeight: 'bold', fontSize: '0.875rem' }}>De: {of.idOfertante}</span>
+                            <span style={{ fontWeight: 'bold', fontSize: '0.875rem' }}>De: {of.idPostor}</span>
                             <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                              Bienes: {of.lineas?.map(l => `${l.cantidad}x ${l.bienConsumo?.nombreBienConsumo}`).join(', ')}
+                              Bienes: {of.bienesOfrecidos?.map(b => `${b.cantidad}x ${b.nombre}`).join(', ')}
                             </div>
                           </div>
-                          {auction.estado === 'ACTIVA' && (
+                          {(auction.estado === 'ACTIVA' || auction.estado === 'ESPERANDO_DECISION') && (
                             <button 
                               className="btn-primary" 
                               style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--color-green-700)', color: '#fff' }}
-                              onClick={() => handleAdjudicar(of)}
+                              onClick={() => handleAdjudicar({ idSubasta: auction.id, idPropuesta: of.idPropuesta })}
                             >
                               Adjudicar
                             </button>
@@ -377,6 +465,46 @@ const Profile = () => {
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <button type="button" onClick={() => setReportModalOpen(false)} style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}>Cancelar</button>
                 <button type="submit" className="btn-primary" style={{ flex: 1, padding: '0.75rem' }}>Enviar Reporte</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {editModalOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
+            <h3 style={{ marginBottom: '1rem' }}>Modificar Publicación</h3>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem', fontSize: '0.875rem' }}>
+              <strong>Título/Servicio:</strong> {editData.titulo}
+            </p>
+            <form onSubmit={handleEditSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Descripción</label>
+                <textarea 
+                  value={editData.descripcion}
+                  onChange={(e) => setEditData({ ...editData, descripcion: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', resize: 'vertical' }}
+                  rows={4}
+                  required
+                />
+              </div>
+              {editType === 'oferta' && (
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Precio (Créditos)</label>
+                  <input 
+                    type="number"
+                    min="1"
+                    value={editData.precio}
+                    onChange={(e) => setEditData({ ...editData, precio: Number(e.target.value) })}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}
+                    required
+                  />
+                </div>
+              )}
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                <button type="button" onClick={() => setEditModalOpen(false)} style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}>Cancelar</button>
+                <button type="submit" className="btn-primary" style={{ flex: 1, padding: '0.75rem' }}>Guardar Cambios</button>
               </div>
             </form>
           </div>

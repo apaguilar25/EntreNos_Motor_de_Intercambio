@@ -1,130 +1,170 @@
 [
-    {
-        "id":  "f777bca7-91cc-4ba3-96cd-c92d155f17fc",
-        "nombre":  "Super Administrador",
-        "correoElectronico":  "admin@alameda.com",
-        "telefono":  "0000000000",
-        "descripcionPersonal":  "Administrador general de la comunidad",
-        "contrasenaHash":  "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
-        "version":  0,
-        "monedero":  {
-                         "creditosDisponibles":  0.0,
-                         "creditosRetenidos":  0.0,
-                         "creditosPorLogros":  0.0
-                     },
-        "catalogo":  {
-                         "completado":  false,
-                         "habilidadesOfrecidas":  [
-
-                                                  ],
-                         "necesidadesRegistradas":  [
-
-                                                    ]
-                     },
-        "estado":  "ACTIVO",
-        "intentosFallidos":  0,
-        "tiempoDesbloqueoMillis":  0,
-        "primerIntentoFallidoMillis":  0,
-        "reportesFraudeValidados":  0,
-        "urlFotoPerfil":  "default.png",
-        "promedioCalificacion":  0.0,
-        "cantidadCalificaciones":  0,
-        "rol":  "ADMINISTRADOR"
+  {
+    "id": "6ae72435-d88f-433e-9617-6b26d547d913",
+    "nombre": "Jose Panadero",
+    "correoElectronico": "jose@alameda.com",
+    "telefono": "+584249876543",
+    "descripcionPersonal": "Soy un panadero experto con mas de 15 años de experiencia en el negocio.",
+    "contrasenaHash": "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
+    "version": 17,
+    "monedero": {
+      "creditosDisponibles": 50.0,
+      "creditosRetenidos": 0.0,
+      "creditosPorLogros": 0.0
     },
-    {
-        "id":  "USR-1001",
-        "nombre":  "Usuario Generico",
-        "correoElectronico":  "usuario@alameda.com",
-        "telefono":  "0000000001",
-        "descripcionPersonal":  "Usuario de prueba",
-        "contrasenaHash":  "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
-        "version":  0,
-        "monedero":  {
-                         "creditosDisponibles":  100.0,
-                         "creditosRetenidos":  0.0,
-                         "creditosPorLogros":  0.0
-                     },
-        "catalogo":  {
-                         "completado":  true,
-                         "habilidadesOfrecidas":  [
-
-                                                  ],
-                         "necesidadesRegistradas":  [
-
-                                                    ]
-                     },
-        "estado":  "ACTIVO",
-        "intentosFallidos":  0,
-        "tiempoDesbloqueoMillis":  0,
-        "primerIntentoFallidoMillis":  0,
-        "reportesFraudeValidados":  0,
-        "urlFotoPerfil":  "default.png",
-        "promedioCalificacion":  5.0,
-        "cantidadCalificaciones":  1,
-        "rol":  "MIEMBRO_COMUNIDAD"
+    "catalogo": {
+      "completado": true,
+      "habilidadesOfrecidas": [
+        {
+          "idInstancia": "7970bbf6-342e-4e35-90c0-bb7dfc7e8939",
+          "habilidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "precioCreditos": 50,
+          "descripcionServicio": "dbfdbbb"
+        }
+      ],
+      "necesidadesRegistradas": [
+        {
+          "idInstancia": "34ae40c7-f145-40b0-8b46-9b62c4d04370",
+          "necesidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "descripcionCondiciones": "vsdvsvsd"
+        }
+      ]
     },
-    {
-        "id":  "USR-1002",
-        "nombre":  "Carlos",
-        "correoElectronico":  "carlos@alameda.com",
-        "telefono":  "0000000002",
-        "descripcionPersonal":  "Usuario Carlos",
-        "contrasenaHash":  "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
-        "version":  0,
-        "monedero":  {
-                         "creditosDisponibles":  150.0,
-                         "creditosRetenidos":  0.0,
-                         "creditosPorLogros":  0.0
-                     },
-        "catalogo":  {
-                         "completado":  true,
-                         "habilidadesOfrecidas":  [
-
-                                                  ],
-                         "necesidadesRegistradas":  [
-
-                                                    ]
-                     },
-        "estado":  "ACTIVO",
-        "intentosFallidos":  0,
-        "tiempoDesbloqueoMillis":  0,
-        "primerIntentoFallidoMillis":  0,
-        "reportesFraudeValidados":  0,
-        "urlFotoPerfil":  "default.png",
-        "promedioCalificacion":  5.0,
-        "cantidadCalificaciones":  1,
-        "rol":  "MIEMBRO_COMUNIDAD"
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "MIEMBRO_COMUNIDAD"
+  },
+  {
+    "id": "8dde084f-a5cc-4bec-a63d-7cff8590595d",
+    "nombre": "Carlos Fontanero",
+    "correoElectronico": "carlos3222@alameda.com",
+    "telefono": "+584141234757",
+    "descripcionPersonal": "Hola, soy nuevo en la comunidad y estoy dispuesto a ayudar.",
+    "contrasenaHash": "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
+    "version": 16,
+    "monedero": {
+      "creditosDisponibles": 50.0,
+      "creditosRetenidos": 0.0,
+      "creditosPorLogros": 0.0
     },
-    {
-        "id":  "USR-1003",
-        "nombre":  "Luis",
-        "correoElectronico":  "luis@alameda.com",
-        "telefono":  "0000000003",
-        "descripcionPersonal":  "Usuario Luis",
-        "contrasenaHash":  "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
-        "version":  0,
-        "monedero":  {
-                         "creditosDisponibles":  200.0,
-                         "creditosRetenidos":  0.0,
-                         "creditosPorLogros":  0.0
-                     },
-        "catalogo":  {
-                         "completado":  true,
-                         "habilidadesOfrecidas":  [
-
-                                                  ],
-                         "necesidadesRegistradas":  [
-
-                                                    ]
-                     },
-        "estado":  "ACTIVO",
-        "intentosFallidos":  0,
-        "tiempoDesbloqueoMillis":  0,
-        "primerIntentoFallidoMillis":  0,
-        "reportesFraudeValidados":  0,
-        "urlFotoPerfil":  "default.png",
-        "promedioCalificacion":  5.0,
-        "cantidadCalificaciones":  1,
-        "rol":  "MIEMBRO_COMUNIDAD"
-    }
+    "catalogo": {
+      "completado": true,
+      "habilidadesOfrecidas": [
+        {
+          "idInstancia": "1922fbc9-78f5-4048-a455-76a12f54aea7",
+          "habilidadBase": {
+            "id": "HAB-001",
+            "categoria": "Plomería"
+          },
+          "precioCreditos": 150,
+          "descripcionServicio": "Reparación de tuberías y filtraciones en baños."
+        }
+      ],
+      "necesidadesRegistradas": [
+        {
+          "idInstancia": "08a1652c-7ced-473a-9587-4cec47c38c51",
+          "necesidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "descripcionCondiciones": "Necesito alguien que repare mi computadora portátil, no enciende."
+        },
+        {
+          "idInstancia": "06da7860-c344-41d2-a587-6426a61e8744",
+          "necesidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "descripcionCondiciones": "Busco profesor particular para nivelación de cálculo integral los fines de semana."
+        }
+      ]
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "MIEMBRO_COMUNIDAD"
+  },
+  {
+    "id": "75908a5b-6887-48ac-a4fa-1588b1729414",
+    "nombre": "Carlos Fontanero",
+    "correoElectronico": "carlos8@alameda.com",
+    "telefono": "+584141234750",
+    "descripcionPersonal": "Hola, soy nuevo en la comunidad y estoy dispuesto a ayudar.",
+    "contrasenaHash": "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
+    "version": 2,
+    "monedero": {
+      "creditosDisponibles": 0.0,
+      "creditosRetenidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": false,
+      "habilidadesOfrecidas": [
+        {
+          "idInstancia": "fd571b0b-42dc-4da7-b431-fde80c839b11",
+          "habilidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "precioCreditos": 150,
+          "descripcionServicio": "Pan canilla de excelente calidad"
+        }
+      ],
+      "necesidadesRegistradas": []
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "MIEMBRO_COMUNIDAD"
+  },
+  {
+    "id": "d6ed5d51-8d8f-4c91-846f-c56c8a0f1d96",
+    "nombre": "Super Administrador",
+    "correoElectronico": "admin@alameda.com",
+    "telefono": "0000000000",
+    "descripcionPersonal": "Administrador general de la comunidad",
+    "contrasenaHash": "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
+    "version": 4,
+    "monedero": {
+      "creditosDisponibles": 0.0,
+      "creditosRetenidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": false,
+      "habilidadesOfrecidas": [],
+      "necesidadesRegistradas": []
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "ADMINISTRADOR"
+  }
 ]
