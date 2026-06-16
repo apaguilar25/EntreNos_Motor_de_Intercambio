@@ -173,6 +173,14 @@ public class Usuario {
         }
     }
 
+    public void perdonarFaltas() {
+        incrementarVersion();
+        this.reportesFraudeValidados = 0;
+        if (this.estado == EstadoCuenta.SUSPENDIDO_FRAUDE) {
+            this.estado = EstadoCuenta.ACTIVO;
+        }
+    }
+
     public void incrementarVersion(){
         this.version++;
     }
@@ -239,6 +247,7 @@ public class Usuario {
     public long getPrimerIntentoFallidoMillis() { return primerIntentoFallidoMillis; }
     public long getTiempoDesbloqueoMillis() { return tiempoDesbloqueoMillis; }
     public RolUsuario getRol() { return rol; }
+    public int getReportesFraudeValidados() { return reportesFraudeValidados; }
     public int getVersion() {return version;}
     public String getUrlFotoPerfil() { return urlFotoPerfil; }
     public float getPromedioCalificacion() { return promedioCalificacion; }

@@ -8,6 +8,7 @@ import es.ucab.entrenos.modulos.identidad.modelos.HabilidadOfrecida;
 import es.ucab.entrenos.modulos.identidad.modelos.NecesidadRegistrada;
 import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
 import es.ucab.entrenos.modulos.identidad.repositorios.IRepositorioUsuario;
+import es.ucab.entrenos.modulos.identidad.repositorios.IRepositorioCorreoPermitido;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +20,15 @@ import java.util.UUID;
 public class ServicioUsuario {
 
     private final IRepositorioUsuario repositorioUsuario;
+    private final IRepositorioCorreoPermitido repositorioCorreoPermitido;
     private final BCryptPasswordEncoder encriptador;
 
     // El capital semilla definido en el ERS
     private static final float CAPITAL_SEMILLA_INICIAL = 50.0f;
 
-    public ServicioUsuario(IRepositorioUsuario repositorioUsuario) {
+    public ServicioUsuario(IRepositorioUsuario repositorioUsuario, IRepositorioCorreoPermitido repositorioCorreoPermitido) {
         this.repositorioUsuario = repositorioUsuario;
+        this.repositorioCorreoPermitido = repositorioCorreoPermitido;
         this.encriptador = new BCryptPasswordEncoder();
     }
 
@@ -63,6 +66,11 @@ public class ServicioUsuario {
         if (!correoElectronico.matches(regexDominio)) {
             throw new IllegalArgumentException("Error: El correo electrónico debe pertenecer exclusivamente " +
                     "al dominio oficial de la comunidad (@alameda.com).");
+        }
+
+        // 2.5 Validación de lista blanca (Whitelist) de correos permitidos
+        if (repositorioCorreoPermitido.obtenerPorCorreo(correoElectronico).isEmpty()) {
+            throw new IllegalArgumentException("Error: El correo electrónico no ha sido autorizado por un administrador para registrarse en la plataforma.");
         }
 
         // 3. Validar que el correo no esté registrado previamente

@@ -21,7 +21,8 @@ export class ControladorAutenticacion {
       const userInfo = { 
         id: usuario.id, 
         name: usuario.nombre, 
-        email: usuario.correoElectronico 
+        email: usuario.correoElectronico,
+        rol: usuario.rol
       };
       
       this.setContextState('user', userInfo);

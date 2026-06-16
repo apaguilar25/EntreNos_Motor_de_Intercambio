@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
-import { Home, Gavel, User, Wallet, LogOut, Sun, Moon, Bell } from 'lucide-react';
+import { Home, Gavel, User, Wallet, LogOut, Sun, Moon, Bell, Shield } from 'lucide-react';
 
 const PlantillaPrincipal = () => {
-  const { theme, toggleTheme, controladorAutenticacion, balance } = useContext(AppContext);
+  const { theme, toggleTheme, controladorAutenticacion, balance, user } = useContext(AppContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -21,6 +21,10 @@ const PlantillaPrincipal = () => {
     { to: "/wallet", icon: <Wallet size={20} />, label: `Billetera (${balance})` },
     { to: "/notifications", icon: <Bell size={20} />, label: "Notificaciones" }
   ];
+
+  if (user && user.rol === 'ADMINISTRADOR') {
+    navItems.push({ to: "/admin", icon: <Shield size={20} />, label: "Panel Admin" });
+  }
 
   return (
     <div className="app-container">
