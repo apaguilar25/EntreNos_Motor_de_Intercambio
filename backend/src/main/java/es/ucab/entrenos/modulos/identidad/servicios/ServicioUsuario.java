@@ -115,19 +115,25 @@ public class ServicioUsuario {
 
         verificarUsuarioActivo(usuario); // Defensa en profundidad
 
-        if (usuario.isCatalogoCompletado()) {
-            throw new IllegalStateException("El catálogo ya fue completado anteriormente.");
-        }
+        boolean eraCompletado = usuario.isCatalogoCompletado();
 
         for (HabilidadOfrecida oferta : ofertas) {
-            usuario.agregarHabilidadOfrecida(oferta);
+            boolean yaExiste = usuario.getHabilidadesOfrecidas().stream()
+                .anyMatch(h -> h.getHabilidadBase().getId().equals(oferta.getHabilidadBase().getId()));
+            if (!yaExiste) usuario.agregarHabilidadOfrecida(oferta);
         }
 
         for (NecesidadRegistrada necesidad : necesidades) {
-            usuario.agregarNecesidad(necesidad);
+            boolean yaExiste = usuario.getNecesidadesRegistradas().stream()
+                .anyMatch(n -> n.getNecesidadBase().getId().equals(necesidad.getNecesidadBase().getId()));
+            if (!yaExiste) usuario.agregarNecesidad(necesidad);
         }
 
-        usuario.finalizarConfiguracionCatalogo(CAPITAL_SEMILLA_INICIAL);
+        if (!eraCompletado) {
+            usuario.finalizarConfiguracionCatalogo(CAPITAL_SEMILLA_INICIAL);
+        } else {
+            usuario.incrementarVersion();
+        }
         guardar(usuario);
     }
 

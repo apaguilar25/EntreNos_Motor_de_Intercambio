@@ -1,4 +1,4 @@
-﻿[
+[
   {
     "idTransaccion": "TX-10ABAE8D",
     "idPublicacion": "PUB-TEST",
@@ -90,5 +90,31 @@
     },
     "cancelacionAceptada": false,
     "version": 1
+  },
+  {
+    "idTransaccion": "TX-BE135583",
+    "idPublicacion": "PUB-A25B2B5C",
+    "idOfertante": "d6ed5d51-8d8f-4c91-846f-c56c8a0f1d96",
+    "idDemandante": "8c37ad61-3a22-483b-aae7-bb47d25d6cae",
+    "estado": "PENDIENTE",
+    "creditosComprometidos": 51,
+    "confirmacionOfertante": false,
+    "confirmacionDemandante": false,
+    "fechaCreacion": 1781618946712,
+    "cancelacionAceptada": false,
+    "version": 0
+  },
+  {
+    "idTransaccion": "TX-6701985A",
+    "idPublicacion": "PUB-627C5DA5",
+    "idOfertante": "d6ed5d51-8d8f-4c91-846f-c56c8a0f1d96",
+    "idDemandante": "8c37ad61-3a22-483b-aae7-bb47d25d6cae",
+    "estado": "PENDIENTE",
+    "creditosComprometidos": 50,
+    "confirmacionOfertante": false,
+    "confirmacionDemandante": false,
+    "fechaCreacion": 1781621447539,
+    "cancelacionAceptada": false,
+    "version": 0
   }
 ]

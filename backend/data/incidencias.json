@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "idIncidencia": "INC-DDC4AD0E",
+    "idTransaccion": "TX-6701985A",
+    "idUsuarioReportante": "8c37ad61-3a22-483b-aae7-bb47d25d6cae",
+    "descripcion": "feefefefefoeijrgneorgbipubouyfboufyoiure",
+    "urlEvidencia": "N/A",
+    "estado": "ABIERTA",
+    "fechaCreacion": 1781621768648
+  }
+]

@@ -41,7 +41,10 @@ const Profile = () => {
         const transResponse = await fetch(`http://localhost:8080/api/transacciones`);
         if (transResponse.ok) {
           const transData = await transResponse.json();
-          const userTrans = transData.filter(t => t.idDemandante === user.id || t.idOfertante === user.id);
+          const userTrans = transData.filter(t => 
+            (t.idDemandante === user.id || t.idOfertante === user.id) &&
+            t.estado !== 'RECHAZADA' && t.estado !== 'CANCELADA'
+          );
           setTransacciones(userTrans);
         }
 
@@ -61,17 +64,16 @@ const Profile = () => {
   const handleCancelRequest = async (idSolicitud) => {
     if (!window.confirm("¿Estás seguro que deseas cancelar esta solicitud? Los créditos serán devueltos a tu monedero.")) return;
     try {
-      const res = await fetch(`http://localhost:8080/api/solicitudes/cancelar/${idSolicitud}`, {
-        method: 'PUT'
+      const res = await fetch(`http://localhost:8080/api/solicitudes/${idSolicitud}/cancelar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idUsuario: user.id })
       });
       if (res.ok) {
         alert("Solicitud cancelada con éxito.");
         // Refetch sent requests to update UI
-        const sentResponse = await fetch(`http://localhost:8080/api/solicitudes/enviadas/${user.id}`);
-        if (sentResponse.ok) {
-          const sentData = await sentResponse.json();
-          setSentRequests(sentData);
-        }
+        const sentData = await controladorPerfil.obtenerSolicitudesEnviadas(user.id);
+        setSentRequests(sentData);
       } else {
         const errorData = await res.json();
         alert(errorData.error || "Error al cancelar la solicitud");
@@ -100,6 +102,11 @@ const Profile = () => {
 
   const handleReportarIncidencia = async (e) => {
     e.preventDefault();
+    if (reportData.descripcionProblema.length < 20) {
+      alert("La descripción del incidente debe tener al menos 20 caracteres.");
+      return;
+    }
+
     try {
       const res = await fetch(`http://localhost:8080/api/transacciones/${reportData.idPublicacion}/reportar-incidencia`, {
         method: 'POST',

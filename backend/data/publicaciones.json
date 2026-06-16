@@ -225,5 +225,27 @@
     "disponible": true,
     "idInstanciaCatalogo": "db6ce203-a9d9-4b08-957b-d9a834089f74",
     "version": 0
+  },
+  {
+    "idPublicacion": "PUB-A25B2B5C",
+    "idUsuario": "d6ed5d51-8d8f-4c91-846f-c56c8a0f1d96",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Plomería",
+    "descripcion": "edededededed",
+    "precioCreditos": 51,
+    "disponible": true,
+    "idInstanciaCatalogo": "7cc90549-9af9-4f5f-8849-ab3397204782",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-627C5DA5",
+    "idUsuario": "d6ed5d51-8d8f-4c91-846f-c56c8a0f1d96",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Carpintería",
+    "descripcion": "ddededd",
+    "precioCreditos": 50,
+    "disponible": true,
+    "idInstanciaCatalogo": "e5e7bc1d-3b3c-4a27-8229-cbfdf3ef9253",
+    "version": 0
   }
 ]

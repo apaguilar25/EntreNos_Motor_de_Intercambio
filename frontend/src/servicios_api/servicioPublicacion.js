@@ -21,14 +21,45 @@ export class ServicioPublicacion {
     }
   }
 
-  async responderSolicitud(idPublicacion, idUsuario, aceptar) {
+  async solicitar(idPublicacion, idUsuario) {
     try {
-      return await this.clienteHttp.post(`/publicaciones/${idPublicacion}/responder`, {
+      return await this.clienteHttp.post(`/publicaciones/${idPublicacion}/solicitar`, {
+        idUsuario
+      });
+    } catch (error) {
+      console.error('Error enviando solicitud:', error);
+      throw error;
+    }
+  }
+
+  async responderSolicitud(idSolicitud, idUsuario, aceptar) {
+    try {
+      return await this.clienteHttp.post(`/solicitudes/${idSolicitud}/responder`, {
         idUsuario,
         aceptar
       });
     } catch (error) {
       console.error('Error respondiendo solicitud:', error);
+      throw error;
+    }
+  }
+
+  async obtenerSolicitudesEnviadas(idUsuario) {
+    try {
+      return await this.clienteHttp.get(`/solicitudes/usuario/${idUsuario}`);
+    } catch (error) {
+      console.error('Error obteniendo solicitudes enviadas:', error);
+      throw error;
+    }
+  }
+
+  async cancelarSolicitud(idSolicitud, idUsuario) {
+    try {
+      return await this.clienteHttp.post(`/solicitudes/${idSolicitud}/cancelar`, {
+        idUsuario
+      });
+    } catch (error) {
+      console.error('Error cancelando solicitud:', error);
       throw error;
     }
   }

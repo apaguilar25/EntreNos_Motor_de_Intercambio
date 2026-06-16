@@ -34,9 +34,7 @@ export class ControladorPerfil {
 
   async obtenerSolicitudesEnviadas(idUsuario) {
     try {
-      const publicaciones = await this.servicioPublicacion.obtenerPublicaciones();
-      // Filtramos aquellas publicaciones donde el usuario actual es el solicitante
-      return publicaciones.filter(pub => pub.idSolicitante === idUsuario);
+      return await this.servicioPublicacion.obtenerSolicitudesEnviadas(idUsuario);
     } catch (error) {
       return [];
     }
