@@ -24,8 +24,8 @@ export class ControladorPerfil {
     try {
       const usuario = await this.servicioUsuario.obtenerUsuario(idUsuario);
       return { 
-        creditosDisponibles: usuario.creditosDisponibles !== undefined ? usuario.creditosDisponibles : 0, 
-        creditosRetenidos: 0 // El DTO base no expone los retenidos actualmente
+        creditosDisponibles: usuario.saldoDisponible !== undefined ? usuario.saldoDisponible : (usuario.creditosDisponibles || 0), 
+        creditosRetenidos: usuario.creditosComprometidos || 0 
       };
     } catch (error) {
       return { creditosDisponibles: 0, creditosRetenidos: 0 };

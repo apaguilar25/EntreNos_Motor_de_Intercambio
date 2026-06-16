@@ -31,7 +31,9 @@ export class ControladorAutenticacion {
       
       this.setContextState('hasCatalog', hasCat);
       if (usuario.monedero) {
-        this.setContextState('balance', usuario.monedero.creditosDisponibles);
+        this.setContextState('balance', usuario.monedero.saldoDisponible !== undefined ? usuario.monedero.saldoDisponible : usuario.monedero.creditosDisponibles);
+      } else if (usuario.saldoDisponible !== undefined) {
+        this.setContextState('balance', usuario.saldoDisponible);
       } else if (usuario.creditosDisponibles !== undefined) {
         this.setContextState('balance', usuario.creditosDisponibles);
       }
@@ -63,7 +65,9 @@ export class ControladorAutenticacion {
       
       this.setContextState('user', userInfo);
       this.setContextState('hasCatalog', false);
-      if (usuario.creditosDisponibles !== undefined) {
+      if (usuario.saldoDisponible !== undefined) {
+        this.setContextState('balance', usuario.saldoDisponible);
+      } else if (usuario.creditosDisponibles !== undefined) {
         this.setContextState('balance', usuario.creditosDisponibles);
       }
       
