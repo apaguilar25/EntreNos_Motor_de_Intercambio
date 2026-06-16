@@ -238,4 +238,44 @@
   "fechaCreacion" : 1781621447541,
   "idReferencia" : null,
   "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "6b2b8f23-34e2-480a-bb57-2fd140eeccbc",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "8c37ad61-3a22-483b-aae7-bb47d25d6cae",
+  "mensaje" : "Has ofertado exitosamente por: Soporte Técnico / Computación. Esperando respuesta del proveedor.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1781622490816,
+  "idReferencia" : "SOL-6EDBCFCD",
+  "idReferenciaAuxiliar" : "PUB-9255E059"
+}, {
+  "idNotificacion" : "ab96b878-723b-494c-843b-f3e6060eb297",
+  "idRemitente" : "d6ed5d51-8d8f-4c91-846f-c56c8a0f1d96",
+  "idDestinatario" : "8c37ad61-3a22-483b-aae7-bb47d25d6cae",
+  "mensaje" : "Tu solicitud para Soporte Técnico / Computación fue ACEPTADA. Se retuvieron 10 creditos.",
+  "tipo" : "ESTADO_SOLICITUD_CAMBIADO",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1781622499491,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "15974e05-d86f-4136-8335-eb1160dab98b",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "d6ed5d51-8d8f-4c91-846f-c56c8a0f1d96",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Soporte Técnico / Computación\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1781622684452,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "6fc9180c-88ca-46c5-bfd8-b7ad070db7fc",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "8c37ad61-3a22-483b-aae7-bb47d25d6cae",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Soporte Técnico / Computación\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1781622684477,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
 } ]

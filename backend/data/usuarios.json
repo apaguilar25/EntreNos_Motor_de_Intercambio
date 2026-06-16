@@ -210,10 +210,10 @@
     "telefono": "+58414000102",
     "descripcionPersonal": "Segundo mejor proveedor",
     "contrasenaHash": "$2a$10$IBj1Zoex6ld3BX7VbZpUoOEDpP.D7OYEPbMgIykvfOs7tocnXjJge",
-    "version": 22,
+    "version": 26,
     "monedero": {
-      "creditosDisponibles": 101.0,
-      "creditosComprometidos": 101.0,
+      "creditosDisponibles": 300.0,
+      "creditosComprometidos": 111.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -418,7 +418,7 @@
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
     "contrasenaHash": "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
-    "version": 27,
+    "version": 31,
     "monedero": {
       "creditosDisponibles": 50.0,
       "creditosComprometidos": 0.0,
@@ -435,6 +435,15 @@
           },
           "precioCreditos": 50,
           "descripcionServicio": "ddededd"
+        },
+        {
+          "idInstancia": "9bfb193c-5b33-459c-a289-97fedc762ab3",
+          "habilidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "precioCreditos": 10,
+          "descripcionServicio": "deeee"
         }
       ],
       "necesidadesRegistradas": []

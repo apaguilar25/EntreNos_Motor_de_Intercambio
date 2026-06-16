@@ -247,5 +247,16 @@
     "disponible": true,
     "idInstanciaCatalogo": "e5e7bc1d-3b3c-4a27-8229-cbfdf3ef9253",
     "version": 0
+  },
+  {
+    "idPublicacion": "PUB-9255E059",
+    "idUsuario": "d6ed5d51-8d8f-4c91-846f-c56c8a0f1d96",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Soporte Técnico / Computación",
+    "descripcion": "deeee",
+    "precioCreditos": 10,
+    "disponible": true,
+    "idInstanciaCatalogo": "9bfb193c-5b33-459c-a289-97fedc762ab3",
+    "version": 0
   }
 ]
