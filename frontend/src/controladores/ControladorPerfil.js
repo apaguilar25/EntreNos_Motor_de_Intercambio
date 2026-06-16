@@ -22,10 +22,11 @@ export class ControladorPerfil {
 
   async obtenerSaldo(idUsuario) {
     try {
-      // Intentamos usar el endpoint del controlador /usuarios/{id}/saldo si existe en el servicio
-      // Como no lo hemos agregado en ServicioUsuario, vamos a llamar a obtenerUsuario y extraerlo
       const usuario = await this.servicioUsuario.obtenerUsuario(idUsuario);
-      return usuario.monedero || { creditosDisponibles: 0, creditosRetenidos: 0 };
+      return { 
+        creditosDisponibles: usuario.creditosDisponibles !== undefined ? usuario.creditosDisponibles : 0, 
+        creditosRetenidos: 0 // El DTO base no expone los retenidos actualmente
+      };
     } catch (error) {
       return { creditosDisponibles: 0, creditosRetenidos: 0 };
     }
