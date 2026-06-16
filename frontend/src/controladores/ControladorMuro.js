@@ -32,4 +32,13 @@ export class ControladorMuro {
       return [];
     }
   }
+
+  async solicitarServicio(idPublicacion, idUsuario) {
+    try {
+      return await this.servicioPublicacion.solicitar(idPublicacion, idUsuario);
+    } catch (error) {
+      console.error('Error en ControladorMuro al solicitar servicio:', error);
+      throw error;
+    }
+  }
 }
