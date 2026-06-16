@@ -3,7 +3,7 @@ package es.ucab.entrenos.modulos.identidad.modelos;
 public class Monedero {
 
     private float creditosDisponibles;
-    private float creditosRetenidos;
+    private float creditosComprometidos;
     private float creditosPorLogros;
 
     public Monedero() {
@@ -35,36 +35,36 @@ public class Monedero {
         this.creditosDisponibles -= montoCreditos;
     }
 
-    public void retener(float montoCreditos) {
+    public void comprometer(float montoCreditos) {
         if (montoCreditos <= 0) {
-            throw new IllegalArgumentException("El monto a retener debe ser positivo.");
+            throw new IllegalArgumentException("El monto a comprometer debe ser positivo.");
         }
         if (getSaldoDisponible() < montoCreditos) {
-            throw new IllegalStateException("Saldo disponible insuficiente para retener. Disponible: "
+            throw new IllegalStateException("Saldo disponible insuficiente para comprometer. Disponible: "
                     + getSaldoDisponible() + ", solicitado: " + montoCreditos);
         }
-        this.creditosRetenidos += montoCreditos;
+        this.creditosComprometidos += montoCreditos;
     }
 
-    public void liberarRetencion() {
-        this.creditosDisponibles -= this.creditosRetenidos;
-        this.creditosRetenidos = 0;
+    public void liberarCompromiso() {
+        this.creditosDisponibles -= this.creditosComprometidos;
+        this.creditosComprometidos = 0;
     }
 
-    public void devolverRetencion() {
-        this.creditosRetenidos = 0;
+    public void devolverCompromiso() {
+        this.creditosComprometidos = 0;
     }
 
     public float getSaldoDisponible() {
-        return this.creditosDisponibles - this.creditosRetenidos;
+        return this.creditosDisponibles - this.creditosComprometidos;
     }
 
     public float getCreditosDisponibles() {
         return creditosDisponibles;
     }
 
-    public float getCreditosRetenidos() {
-        return creditosRetenidos;
+    public float getCreditosComprometidos() {
+        return creditosComprometidos;
     }
     public float getCreditosPorLogros() {
         return creditosPorLogros;

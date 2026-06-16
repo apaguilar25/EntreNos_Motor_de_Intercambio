@@ -261,17 +261,17 @@ public class ServicioPublicacion {
                 .orElseThrow(() -> new IllegalArgumentException("Demandante no encontrado."));
         Publicacion pub = obtenerPublicacionPorId(t.getIdPublicacion())
                 .orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada."));
-        demandante.getMonedero().liberarRetencion();
+        demandante.getMonedero().liberarCompromiso();
         demandante.incrementarVersion();
-        ofertante.getMonedero().acreditar(t.getCreditosRetenidos());
+        ofertante.getMonedero().acreditar(t.getCreditosComprometidos());
         ofertante.incrementarVersion();
         servicioUsuario.guardar(demandante);
         servicioUsuario.guardar(ofertante);
         servicioNotificacion.enviarNotificacion("SISTEMA", t.getIdOfertante(),
-                "Recibiste " + t.getCreditosRetenidos() + " créditos por el servicio: " + pub.getNombreServicio(),
+                "Recibiste " + t.getCreditosComprometidos() + " créditos por el servicio: " + pub.getNombreServicio(),
                 TipoNotificacion.MOVIMIENTO_MONEDERO);
         servicioNotificacion.enviarNotificacion("SISTEMA", t.getIdDemandante(),
-                "Se liberaron " + t.getCreditosRetenidos() + " créditos retenidos por: " + pub.getNombreServicio(),
+                "Se liberaron " + t.getCreditosComprometidos() + " créditos comprometidos por: " + pub.getNombreServicio(),
                 TipoNotificacion.MOVIMIENTO_MONEDERO);
     }
 
@@ -448,7 +448,7 @@ public class ServicioPublicacion {
             if (t.getEstado() == EstadoTransaccion.INICIADA) {
                 Usuario demandante = servicioUsuario.buscarPorId(t.getIdDemandante())
                         .orElseThrow(() -> new IllegalArgumentException("Demandante no encontrado."));
-                demandante.getMonedero().liberarRetencion();
+        demandante.getMonedero().liberarCompromiso();
                 demandante.incrementarVersion();
                 servicioUsuario.guardar(demandante);
             }

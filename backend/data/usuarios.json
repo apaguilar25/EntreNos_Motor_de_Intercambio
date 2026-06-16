@@ -1,4 +1,4 @@
-[
+﻿[
   {
     "id": "e46e66ab-5e9b-480a-bd09-6be30e60b244",
     "nombre": "Test B",
@@ -9,7 +9,7 @@
     "version": 6,
     "monedero": {
       "creditosDisponibles": 30.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 10.0
     },
     "catalogo": {
@@ -47,7 +47,7 @@
     "version": 2,
     "monedero": {
       "creditosDisponibles": 50.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -86,7 +86,7 @@
     "version": 6,
     "monedero": {
       "creditosDisponibles": 50.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -105,7 +105,7 @@
           "idInstancia": "74e9e956-cbeb-4483-887e-7a4c8d51f37e",
           "necesidadBase": {
             "id": "HAB-001",
-            "categoria": "Plomería"
+            "categoria": "PlomerÃ­a"
           },
           "descripcionCondiciones": "Necesito plomero"
         },
@@ -113,7 +113,7 @@
           "idInstancia": "cc7cf81d-ea7f-41a5-8c74-24c46ebb0e1e",
           "necesidadBase": {
             "id": "HAB-003",
-            "categoria": "Carpintería"
+            "categoria": "CarpinterÃ­a"
           },
           "descripcionCondiciones": "Necesito carpintero"
         },
@@ -129,7 +129,7 @@
           "idInstancia": "db6ce203-a9d9-4b08-957b-d9a834089f74",
           "necesidadBase": {
             "id": "HAB-005",
-            "categoria": "Soporte Técnico / Computación"
+            "categoria": "Soporte TÃ©cnico / ComputaciÃ³n"
           },
           "descripcionCondiciones": "Necesito soporte"
         }
@@ -156,7 +156,7 @@
     "version": 4,
     "monedero": {
       "creditosDisponibles": 50.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -175,7 +175,7 @@
           "idInstancia": "ba7328e4-21d3-46ff-ac9e-182cb09fce20",
           "habilidadBase": {
             "id": "HAB-001",
-            "categoria": "Plomería"
+            "categoria": "PlomerÃ­a"
           },
           "precioCreditos": 10,
           "descripcionServicio": "Plomeria avanzada"
@@ -184,7 +184,7 @@
           "idInstancia": "c5c845a5-41a2-4356-a4c4-f61f4b2a343b",
           "habilidadBase": {
             "id": "HAB-003",
-            "categoria": "Carpintería"
+            "categoria": "CarpinterÃ­a"
           },
           "precioCreditos": 15,
           "descripcionServicio": "Muebles a medida"
@@ -213,7 +213,7 @@
     "version": 3,
     "monedero": {
       "creditosDisponibles": 50.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -232,7 +232,7 @@
           "idInstancia": "0bc1286c-6979-4c47-b334-0d4d944e92bf",
           "habilidadBase": {
             "id": "HAB-005",
-            "categoria": "Soporte Técnico / Computación"
+            "categoria": "Soporte TÃ©cnico / ComputaciÃ³n"
           },
           "precioCreditos": 12,
           "descripcionServicio": "Soporte tecnico"
@@ -261,7 +261,7 @@
     "version": 9,
     "monedero": {
       "creditosDisponibles": 115.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 10.0
     },
     "catalogo": {
@@ -280,10 +280,10 @@
           "idInstancia": "61619220-0aff-4322-b11a-f2aa9ed0f000",
           "habilidadBase": {
             "id": "HAB-001",
-            "categoria": "Plomería"
+            "categoria": "PlomerÃ­a"
           },
           "precioCreditos": 50,
-          "descripcionServicio": "Reparaciones de plomería básicas"
+          "descripcionServicio": "Reparaciones de plomerÃ­a bÃ¡sicas"
         }
       ],
       "necesidadesRegistradas": []
@@ -309,7 +309,7 @@
     "version": 6,
     "monedero": {
       "creditosDisponibles": 0.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -336,7 +336,7 @@
     "version": 0,
     "monedero": {
       "creditosDisponibles": 0.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -365,7 +365,7 @@
     "version": 9,
     "monedero": {
       "creditosDisponibles": 5.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 10.0
     },
     "catalogo": {
@@ -384,9 +384,9 @@
           "idInstancia": "e2b7955c-3cd7-4b22-b7d0-224dc510f368",
           "necesidadBase": {
             "id": "HAB-005",
-            "categoria": "Soporte Técnico / Computación"
+            "categoria": "Soporte TÃ©cnico / ComputaciÃ³n"
           },
-          "descripcionCondiciones": "Soporte técnico para mi PC"
+          "descripcionCondiciones": "Soporte tÃ©cnico para mi PC"
         }
       ]
     },
@@ -411,7 +411,7 @@
     "version": 6,
     "monedero": {
       "creditosDisponibles": 90.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 10.0
     },
     "catalogo": {

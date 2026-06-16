@@ -185,7 +185,7 @@ public class ControladorUsuario {
         Optional<Usuario> usuarioOpt = servicioUsuario.buscarPorId(id);
         if (usuarioOpt.isPresent()) {
             Monedero m = usuarioOpt.get().getMonedero();
-            SaldoResponseDTO saldo = new SaldoResponseDTO(m.getCreditosDisponibles(), m.getCreditosRetenidos());
+            SaldoResponseDTO saldo = new SaldoResponseDTO(m.getCreditosDisponibles(), m.getCreditosComprometidos());
             return ResponseEntity.ok(saldo);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");

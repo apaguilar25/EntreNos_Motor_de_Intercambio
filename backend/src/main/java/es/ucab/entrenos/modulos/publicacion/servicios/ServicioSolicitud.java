@@ -150,7 +150,7 @@ public class ServicioSolicitud {
 
             Usuario demandante = servicioUsuario.buscarPorId(solicitud.getIdSolicitante())
                     .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
-            demandante.getMonedero().retener(pub.getPrecioCreditos());
+            demandante.getMonedero().comprometer(pub.getPrecioCreditos());
             demandante.incrementarVersion();
             servicioUsuario.guardar(demandante);
 

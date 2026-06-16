@@ -1,0 +1,316 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontName Consolas
+skinparam defaultFontSize 11
+hide circle
+hide empty members
+
+title "Vista de Datos — Sprint 2 (HU6 a HU10)"
+legend right
+  <<S1>> Heredado de Sprint 1
+  <<HU7>> Autenticacion (nuevos campos)
+  <<HU8>> Gestion de Incidencias
+  <<HU9>> Gamificacion
+  <<HU10>> Podio Semanal
+endlegend
+
+' ========================================================================
+' MODULO: IDENTIDAD  (Sprint 1 + HU7)
+' ========================================================================
+package "Identidad" as P_IDENTIDAD {
+  class "Usuario" as USUARIO <<S1, HU7>> {
+    + id : String [PK]
+    + nombre : String
+    + correoElectronico : String
+    + telefono : String
+    + descripcionPersonal : String
+    + contrasenaHash : String
+    + version : int
+    + estado : String
+    + rol : String
+  ++
+    ' HU7: Bloqueo por intentos fallidos
+    + intentosFallidos : int
+    + tiempoDesbloqueoMillis : long
+    + primerIntentoFallidoMillis : long
+    + reportesFraudeValidados : int
+  ++
+    + promedioCalificacion : float
+    + cantidadCalificaciones : int
+    + esVecinoDestacado : boolean
+    + urlFotoPerfil : String
+  }
+
+  class "Monedero" as MONEDERO <<emb, S1>> {
+    + creditosDisponibles : float
+    + creditosRetenidos : float
+    + creditosPorLogros : float
+  }
+
+  class "Catalogo" as CATALOGO <<emb, S1>> {
+    + completado : boolean
+  }
+
+  class "Habilidad Ofrecida" as HAB_OFRE <<emb, S1>> {
+    + idInstancia : String [PK]
+    + precioCreditos : int
+    + descripcionServicio : String
+  }
+
+  class "Necesidad Registrada" as NEC_REG <<emb, S1>> {
+    + idInstancia : String [PK]
+    + descripcionCondiciones : String
+  }
+
+  class "Habilidad" as HABILIDAD <<S1>> {
+    + id : String [PK]
+    + categoria : String
+  }
+}
+
+' ========================================================================
+' MODULO: PUBLICACION E INTERCAMBIO  (Sprint 1 + HU8)
+' ========================================================================
+package "Publicacion e Intercambio" as P_PUBLICACION {
+  class "Publicacion" as PUBLICACION <<S1>> {
+    + idPublicacion : String [PK]
+    + idUsuario : String [FK]
+    + tipoPublicacion : String
+    + nombreServicio : String
+    + descripcion : String
+    + precioCreditos : int
+    + disponible : boolean
+    + idInstanciaCatalogo : String [FK]
+    + version : int
+  }
+
+  class "Solicitud" as SOLICITUD <<S1>> {
+    + idSolicitud : String [PK]
+    + idPublicacion : String [FK]
+    + idSolicitante : String [FK]
+    + estado : String
+    + fechaCreacion : long
+    + fechaLimiteRespuesta : long
+    + version : int
+  }
+
+  class "Transaccion" as TRANSACCION <<S1, HU8>> {
+    + idTransaccion : String [PK]
+    + idPublicacion : String [FK]
+    + idOfertante : String [FK]
+    + idDemandante : String [FK]
+    + estado : String
+    + creditosRetenidos : int
+    + confirmacionOfertante : boolean
+    + confirmacionDemandante : boolean
+    + fechaCreacion : long
+  ++
+    ' HU8: Vinculo a incidencia
+    + idIncidencia : String [FK]
+    + idSolicitanteCancelacion : String [FK]
+    + motivoCancelacion : String
+    + cancelacionAceptada : boolean
+  ++
+    + version : int
+  }
+
+  class "Incidencia" as INCIDENCIA <<HU8>> {
+    + idIncidencia : String [PK]
+    + idTransaccion : String [FK]
+    + idUsuarioReportante : String [FK]
+    + descripcion : String
+    + urlEvidencia : String
+    + idUsuarioDefensor : String [FK]
+    + descripcionDefensa : String
+    + urlEvidenciaDefensa : String
+    + estado : String
+    + fechaCreacion : long
+  }
+
+  class "Resena" as RESENA <<S1>> {
+    + idResena : String [PK]
+    + idTransaccion : String [FK]
+    + idEmisor : String [FK]
+    + idReceptor : String [FK]
+    + calificacion : int
+    + fechaCreacion : long
+    + version : int
+  }
+
+  class "Motivo Cancelacion" as MOT_CANCEL <<S1>> {
+    + id : String [PK]
+    + descripcion : String
+    + activo : boolean
+  }
+}
+
+' ========================================================================
+' MODULO: SUBASTA  (Sprint 1, sin cambios en S2)
+' ========================================================================
+package "Subasta" as P_SUBASTA {
+  class "Subasta" as SUBASTA <<S1>> {
+    + id : String [PK]
+    + idPropietario : String [FK]
+    + nombreActivo : String
+    + descripcion : String
+    + estadoFisico : String
+    + imagenesUrls : List~String~
+    + fechaInicio : String
+    + fechaFinalizacionLicitacion : String
+    + estado : String
+    + idPropuestaGanadora : String [FK]
+    + version : int
+  }
+
+  class "Propuesta" as PROPUESTA <<emb, S1>> {
+    + idPropuesta : String [PK]
+    + idSubasta : String [FK]
+    + idPostor : String [FK]
+    + descripcion : String
+    + estadoFisico : String
+    + estadoPropuesta : String
+    + imagenesUrls : List~String~
+    + fechaPropuesta : String
+  }
+
+  class "Bien Ofrecido" as BIEN <<emb, S1>> {
+    + nombre : String
+    + cantidad : int
+  }
+}
+
+' ========================================================================
+' MODULO: GAMIFICACION  (HU9, HU10)
+' ========================================================================
+package "Gamificacion" as P_GAMIF {
+  class "Logro" as LOGRO <<HU9>> {
+    + idLogro : String [PK]
+    + nombre : String
+    + descripcion : String
+    + tipoCriterio : String
+    + bonoCreditos : int
+    + activo : boolean
+  }
+
+  class "Logro Desbloqueado" as LOGRO_DESB <<HU9>> {
+    + id : String [PK]
+    + idUsuario : String [FK]
+    + idLogro : String [FK]
+    + fechaDesbloqueo : long
+  }
+
+  class "Podio Semanal" as PODIO <<HU10>> {
+    + idPodio : String [PK]
+    + proveedorEliteId : String [FK]
+    + proveedorEliteNombre : String
+    + proveedorEliteServicios : int
+    + motorEconomiaId : String [FK]
+    + motorEconomiaNombre : String
+    + motorEconomiaTransacciones : int
+    + embajadorCalidadId : String [FK]
+    + embajadorCalidadNombre : String
+    + embajadorCalidadPromedio : double
+    + fechaInicioSemana : long
+    + fechaFinSemana : long
+    + fechaCalculo : long
+  }
+}
+
+' ========================================================================
+' MODULO: NOTIFICACION  (transversal)
+' ========================================================================
+package "Notificaciones" as P_NOTIF {
+  class "Notificacion" as NOTIFICACION <<transversal>> {
+    + idNotificacion : String [PK]
+    + idRemitente : String [FK]
+    + idDestinatario : String [FK]
+    + mensaje : String
+    + tipo : String
+    + estadoLectura : boolean
+    + fechaCreacion : long
+  }
+}
+
+' ========================================================================
+' RELACIONES
+' ========================================================================
+
+''''''''''''''''''' IDENTIDAD '''''''''''''''''''
+USUARIO *-- MONEDERO : contiene
+USUARIO *-- CATALOGO : contiene
+CATALOGO *-- HAB_OFRE : contiene
+CATALOGO *-- NEC_REG : contiene
+HAB_OFRE --> HABILIDAD : habilidadBase
+NEC_REG --> HABILIDAD : necesidadBase
+
+''''''''''''''''''' PUBLICACION '''''''''''''''''''
+USUARIO --> PUBLICACION : idUsuario
+PUBLICACION --> HAB_OFRE : idInstanciaCatalogo
+PUBLICACION --> NEC_REG : idInstanciaCatalogo
+PUBLICACION --> SOLICITUD : idPublicacion
+USUARIO --> SOLICITUD : idSolicitante
+
+''''''''''''''''''' TRANSACCION '''''''''''''''''''
+PUBLICACION --> TRANSACCION : idPublicacion
+USUARIO --> TRANSACCION : idOfertante
+USUARIO --> TRANSACCION : idDemandante
+TRANSACCION *-- RESENA : contiene (embebida)
+RESENA --> TRANSACCION : idTransaccion
+USUARIO --> RESENA : idEmisor / idReceptor
+
+''''''''''''''''''' INCIDENCIA (HU8) '''''''''''''''''''
+TRANSACCION --> INCIDENCIA : idIncidencia
+INCIDENCIA --> TRANSACCION : idTransaccion
+USUARIO --> INCIDENCIA : idUsuarioReportante
+USUARIO --> INCIDENCIA : idUsuarioDefensor
+
+''''''''''''''''''' SUBASTA '''''''''''''''''''
+USUARIO --> SUBASTA : idPropietario
+SUBASTA *-- PROPUESTA : contiene
+PROPUESTA *-- BIEN : contiene
+USUARIO --> PROPUESTA : idPostor
+
+''''''''''''''''''' GAMIFICACION (HU9, HU10) '''''''''''''''''''
+USUARIO --> LOGRO_DESB : idUsuario
+LOGRO --> LOGRO_DESB : idLogro
+USUARIO --> PODIO : proveedorEliteId
+USUARIO --> PODIO : motorEconomiaId
+USUARIO --> PODIO : embajadorCalidadId
+PODIO --> USUARIO : nombres denormalizados
+
+''''''''''''''''''' NOTIFICACION '''''''''''''''''''
+USUARIO --> NOTIFICACION : idRemitente
+USUARIO --> NOTIFICACION : idDestinatario
+
+' ========================================================================
+' NOTAS
+' ========================================================================
+note top of USUARIO
+  En S2 se anaden campos
+  de seguridad: intentosFallidos,
+  tiempoDesbloqueoMillis, etc. (HU7)
+end note
+
+note top of INCIDENCIA
+  NUEVO en Sprint 2 (HU8)
+  Permite reportar fraudes
+  y adjuntar evidencias
+  de defensa
+end note
+
+note top of LOGRO
+  NUEVO en Sprint 2 (HU9)
+end note
+
+note top of LOGRO_DESB
+  NUEVO en Sprint 2 (HU9)
+end note
+
+note top of PODIO
+  NUEVO en Sprint 2 (HU10)
+  Archivo: podio_semanal.json
+  *** Objeto unico (no array) ***
+end note
+
+@enduml

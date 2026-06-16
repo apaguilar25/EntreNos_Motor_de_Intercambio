@@ -124,23 +124,6 @@ public class Usuario {
     }
 
     /** ==================== ==================== ====================
-     *                          Monedero
-     * ==================== ==================== ====================
-     */
-
-    public void pagarServicio(float montoCreditos) {
-        asegurarUsuarioActivo();
-        incrementarVersion();
-        this.monedero.descontar(montoCreditos);
-    }
-
-    public void recibirCreditos(float montoCreditos) {
-        asegurarUsuarioActivo();
-        incrementarVersion();
-        this.monedero.acreditar(montoCreditos);
-    }
-
-    /** ==================== ==================== ====================
      *          MÉTODOS DE NEGOCIO: SEGURIDAD Y SANCIONES
      * ==================== ==================== ====================
      */

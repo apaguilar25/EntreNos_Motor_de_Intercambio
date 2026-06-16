@@ -10,7 +10,7 @@ public class Transaccion {
     private String idOfertante;
     private String idDemandante;
     private EstadoTransaccion estado;
-    private int creditosRetenidos;
+    private int creditosComprometidos;
     private boolean confirmacionOfertante;
     private boolean confirmacionDemandante;
     private long fechaCreacion;
@@ -23,12 +23,12 @@ public class Transaccion {
 
     public Transaccion() {}
 
-    public Transaccion(String idPublicacion, String idOfertante, String idDemandante, int creditosRetenidos) {
+    public Transaccion(String idPublicacion, String idOfertante, String idDemandante, int creditosComprometidos) {
         this.idTransaccion = "TX-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         this.idPublicacion = idPublicacion;
         this.idOfertante = idOfertante;
         this.idDemandante = idDemandante;
-        this.creditosRetenidos = creditosRetenidos;
+        this.creditosComprometidos = creditosComprometidos;
         this.estado = EstadoTransaccion.PENDIENTE;
         this.confirmacionOfertante = false;
         this.confirmacionDemandante = false;
@@ -108,7 +108,7 @@ public class Transaccion {
     public String getIdOfertante() { return idOfertante; }
     public String getIdDemandante() { return idDemandante; }
     public EstadoTransaccion getEstado() { return estado; }
-    public int getCreditosRetenidos() { return creditosRetenidos; }
+    public int getCreditosComprometidos() { return creditosComprometidos; }
     public boolean isConfirmacionOfertante() { return confirmacionOfertante; }
     public boolean isConfirmacionDemandante() { return confirmacionDemandante; }
     public long getFechaCreacion() { return fechaCreacion; }
@@ -127,7 +127,7 @@ public class Transaccion {
     public void setIdOfertante(String idOfertante) { this.idOfertante = idOfertante; }
     public void setIdDemandante(String idDemandante) { this.idDemandante = idDemandante; }
     public void setEstado(EstadoTransaccion estado) { this.estado = estado; }
-    public void setCreditosRetenidos(int creditosRetenidos) { this.creditosRetenidos = creditosRetenidos; }
+    public void setCreditosComprometidos(int creditosComprometidos) { this.creditosComprometidos = creditosComprometidos; }
     public void setConfirmacionOfertante(boolean confirmacionOfertante) { this.confirmacionOfertante = confirmacionOfertante; }
     public void setConfirmacionDemandante(boolean confirmacionDemandante) { this.confirmacionDemandante = confirmacionDemandante; }
     public void setFechaCreacion(long fechaCreacion) { this.fechaCreacion = fechaCreacion; }

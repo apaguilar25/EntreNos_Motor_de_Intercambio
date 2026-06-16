@@ -1,0 +1,232 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontName Consolas
+skinparam defaultFontSize 11
+hide circle
+hide empty members
+
+title "Vista de Datos — Sprint 1 (HU1 a HU5)"
+legend right
+  <<HU1>> Registro de Identidad y Catalogo
+  <<HU2>> Navegacion y Evaluacion
+  <<HU3>> Transacciones Seguras
+  <<HU4>> Subastas (Propietario)
+  <<HU5>> Subastas (Postor)
+endlegend
+
+' ========================================================================
+' MODULO: IDENTIDAD  (HU1)
+' ========================================================================
+package "Identidad" as P_IDENTIDAD {
+  class "Usuario" as USUARIO <<HU1>> {
+    + id : String [PK]
+    + nombre : String
+    + correoElectronico : String
+    + telefono : String
+    + descripcionPersonal : String
+    + contrasenaHash : String
+    + version : int
+    + estado : String
+    + rol : String
+    + promedioCalificacion : float
+    + cantidadCalificaciones : int
+    + esVecinoDestacado : boolean
+    + urlFotoPerfil : String
+  }
+
+  class "Monedero" as MONEDERO <<emb>> {
+    + creditosDisponibles : float
+    + creditosRetenidos : float
+    + creditosPorLogros : float
+  }
+
+  class "Catalogo" as CATALOGO <<emb>> {
+    + completado : boolean
+  }
+
+  class "Habilidad Ofrecida" as HAB_OFRE <<emb, HU1>> {
+    + idInstancia : String [PK]
+    + precioCreditos : int
+    + descripcionServicio : String
+  }
+
+  class "Necesidad Registrada" as NEC_REG <<emb, HU1>> {
+    + idInstancia : String [PK]
+    + descripcionCondiciones : String
+  }
+
+  class "Habilidad" as HABILIDAD <<HU1>> {
+    + id : String [PK]
+    + categoria : String
+  }
+}
+
+' ========================================================================
+' MODULO: PUBLICACION E INTERCAMBIO  (HU2, HU3)
+' ========================================================================
+package "Publicacion e Intercambio" as P_PUBLICACION {
+  class "Publicacion" as PUBLICACION <<HU2>> {
+    + idPublicacion : String [PK]
+    + idUsuario : String [FK]
+    + tipoPublicacion : String
+    + nombreServicio : String
+    + descripcion : String
+    + precioCreditos : int
+    + disponible : boolean
+    + idInstanciaCatalogo : String [FK]
+    + version : int
+  }
+
+  class "Solicitud" as SOLICITUD <<HU2>> {
+    + idSolicitud : String [PK]
+    + idPublicacion : String [FK]
+    + idSolicitante : String [FK]
+    + estado : String
+    + fechaCreacion : long
+    + fechaLimiteRespuesta : long
+    + version : int
+  }
+
+  class "Transaccion" as TRANSACCION <<HU3>> {
+    + idTransaccion : String [PK]
+    + idPublicacion : String [FK]
+    + idOfertante : String [FK]
+    + idDemandante : String [FK]
+    + estado : String
+    + creditosRetenidos : int
+    + confirmacionOfertante : boolean
+    + confirmacionDemandante : boolean
+    + fechaCreacion : long
+    + version : int
+  }
+
+  class "Resena" as RESENA <<HU3>> {
+    + idResena : String [PK]
+    + idTransaccion : String [FK]
+    + idEmisor : String [FK]
+    + idReceptor : String [FK]
+    + calificacion : int
+    + fechaCreacion : long
+    + version : int
+  }
+
+  class "Motivo Cancelacion" as MOT_CANCEL <<soporte>> {
+    + id : String [PK]
+    + descripcion : String
+    + activo : boolean
+  }
+}
+
+' ========================================================================
+' MODULO: SUBASTA  (HU4, HU5)
+' ========================================================================
+package "Subasta" as P_SUBASTA {
+  class "Subasta" as SUBASTA <<HU4>> {
+    + id : String [PK]
+    + idPropietario : String [FK]
+    + nombreActivo : String
+    + descripcion : String
+    + estadoFisico : String
+    + imagenesUrls : List~String~
+    + fechaInicio : String
+    + fechaFinalizacionLicitacion : String
+    + estado : String
+    + idPropuestaGanadora : String [FK]
+    + version : int
+  }
+
+  class "Propuesta" as PROPUESTA <<emb, HU5>> {
+    + idPropuesta : String [PK]
+    + idSubasta : String [FK]
+    + idPostor : String [FK]
+    + descripcion : String
+    + estadoFisico : String
+    + estadoPropuesta : String
+    + imagenesUrls : List~String~
+    + fechaPropuesta : String
+  }
+
+  class "Bien Ofrecido" as BIEN <<emb, HU5>> {
+    + nombre : String
+    + cantidad : int
+  }
+}
+
+' ========================================================================
+' MODULO: NOTIFICACION  (transversal a HU2, HU4, HU5)
+' ========================================================================
+package "Notificaciones" as P_NOTIF {
+  class "Notificacion" as NOTIFICACION <<transversal>> {
+    + idNotificacion : String [PK]
+    + idRemitente : String [FK]
+    + idDestinatario : String [FK]
+    + mensaje : String
+    + tipo : String
+    + estadoLectura : boolean
+    + fechaCreacion : long
+  }
+}
+
+' ========================================================================
+' RELACIONES
+' ========================================================================
+
+''''''''''''''''''' IDENTIDAD (HU1) '''''''''''''''''''
+USUARIO *-- MONEDERO : contiene
+USUARIO *-- CATALOGO : contiene
+CATALOGO *-- HAB_OFRE : contiene
+CATALOGO *-- NEC_REG : contiene
+HAB_OFRE --> HABILIDAD : habilidadBase
+NEC_REG --> HABILIDAD : necesidadBase
+
+''''''''''''''''''' PUBLICACION (HU2) '''''''''''''''''''
+USUARIO --> PUBLICACION : idUsuario
+PUBLICACION --> HAB_OFRE : idInstanciaCatalogo
+PUBLICACION --> NEC_REG : idInstanciaCatalogo
+
+''''''''''''''''''' SOLICITUD (HU2) '''''''''''''''''''
+PUBLICACION --> SOLICITUD : idPublicacion
+USUARIO --> SOLICITUD : idSolicitante
+
+''''''''''''''''''' TRANSACCION (HU3) '''''''''''''''''''
+PUBLICACION --> TRANSACCION : idPublicacion
+USUARIO --> TRANSACCION : idOfertante
+USUARIO --> TRANSACCION : idDemandante
+TRANSACCION *-- RESENA : contiene (embebida)
+RESENA --> TRANSACCION : idTransaccion
+USUARIO --> RESENA : idEmisor / idReceptor
+
+''''''''''''''''''' SUBASTA (HU4, HU5) '''''''''''''''''''
+USUARIO --> SUBASTA : idPropietario
+SUBASTA *-- PROPUESTA : contiene
+PROPUESTA *-- BIEN : contiene
+USUARIO --> PROPUESTA : idPostor
+
+''''''''''''''''''' NOTIFICACION '''''''''''''''''''
+USUARIO --> NOTIFICACION : idRemitente
+USUARIO --> NOTIFICACION : idDestinatario
+
+' ========================================================================
+' NOTAS DE ARCHIVOS
+' ========================================================================
+note top of USUARIO
+  Archivo: usuarios.json
+  Embebe Monedero, Catalogo,
+  HabilidadOfrecida,
+  NecesidadRegistrada
+end note
+note top of PUBLICACION : Archivo: publicaciones.json
+note top of SOLICITUD : Archivo: solicitudes.json
+note top of TRANSACCION : Archivo: transacciones.json
+note top of MOT_CANCEL : Archivo: motivos_cancelacion.json
+note top of SUBASTA : Archivo: subastas.json
+note top of HABILIDAD : Archivo: habilidades.json
+note top of NOTIFICACION : Archivo: notificaciones.json
+
+note bottom of RESENA
+  Embebida en transacciones.json
+  y tambien en resenas.json
+end note
+
+@enduml
