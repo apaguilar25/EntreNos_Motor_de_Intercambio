@@ -10,6 +10,7 @@ const Profile = () => {
   const [userProfile, setUserProfile] = useState(null);
   const [sentRequests, setSentRequests] = useState([]);
   const [myAuctions, setMyAuctions] = useState([]);
+  const [transacciones, setTransacciones] = useState([]);
   const [logros, setLogros] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -36,6 +37,13 @@ const Profile = () => {
         
         const auctionsData = await controladorSubasta.obtenerMisSubastas();
         setMyAuctions(auctionsData);
+
+        const transResponse = await fetch(`http://localhost:8080/api/transacciones`);
+        if (transResponse.ok) {
+          const transData = await transResponse.json();
+          const userTrans = transData.filter(t => t.idDemandante === user.id || t.idOfertante === user.id);
+          setTransacciones(userTrans);
+        }
 
         if (controladorGamificacion) {
           const logrosData = await controladorGamificacion.obtenerLogros(user.id);
@@ -93,14 +101,14 @@ const Profile = () => {
   const handleReportarIncidencia = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`http://localhost:8080/api/publicaciones/${reportData.idPublicacion}/reportar`, {
+      const res = await fetch(`http://localhost:8080/api/transacciones/${reportData.idPublicacion}/reportar-incidencia`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          idUsuarioReporta: user.id,
+          idUsuario: user.id,
           idUsuarioInvolucrado: reportData.idUsuarioInvolucrado,
-          descripcionProblema: reportData.descripcionProblema,
-          fotosEvidenciaBase64: reportData.fotosEvidenciaBase64
+          descripcion: reportData.descripcionProblema,
+          urlEvidencia: "N/A"
         })
       });
       if (res.ok) {
@@ -416,16 +424,54 @@ const Profile = () => {
                     {req.estado === 'PENDIENTE' && (
                       <button 
                         style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-red-600)', color: 'var(--color-red-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                        onClick={() => handleCancelRequest(req.idSolicitudIntercambio)}
+                        onClick={() => handleCancelRequest(req.idSolicitud)}
                       >
                         Cancelar
                       </button>
                     )}
-                    {req.estado === 'ACEPTADA' && (
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Historial de Transacciones */}
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h3 style={{ fontSize: '1.25rem' }}>Mis Transacciones Activas</h3>
+          </div>
+          <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {transacciones.length === 0 ? (
+              <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
+                No tienes transacciones activas.
+              </div>
+            ) : (
+              transacciones.map((tx, index) => (
+                <div key={index} style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <h4 style={{ marginBottom: '0.25rem', fontSize: '1rem' }}>Tx: {tx.idTransaccion}</h4>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Publicación: {tx.idPublicacion} • Costo: {tx.precioFinal} cr</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                      {tx.idDemandante === user.id ? 'Tú eres el Solicitante' : 'Tú eres el Proveedor'}
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <span style={{ 
+                      padding: '0.25rem 0.5rem', 
+                      borderRadius: '1rem', 
+                      fontSize: '0.75rem', 
+                      fontWeight: 'bold',
+                      backgroundColor: tx.estado === 'PENDIENTE' || tx.estado === 'INICIADA' ? 'var(--color-yellow-100)' : tx.estado === 'FINALIZADA' ? 'var(--color-green-100)' : 'var(--color-red-100)',
+                      color: tx.estado === 'PENDIENTE' || tx.estado === 'INICIADA' ? 'var(--color-orange-600)' : tx.estado === 'FINALIZADA' ? 'var(--color-green-700)' : 'var(--color-red-600)'
+                    }}>
+                      {tx.estado}
+                    </span>
+                    {(tx.estado === 'PENDIENTE' || tx.estado === 'INICIADA') && (
                       <button 
                         style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
                         onClick={() => {
-                          setReportData({ ...reportData, idPublicacion: req.idPublicacion || 'PUB-1', idUsuarioInvolucrado: req.idReceptor });
+                          setReportData({ ...reportData, idPublicacion: tx.idTransaccion, idUsuarioInvolucrado: tx.idDemandante === user.id ? tx.idOfertante : tx.idDemandante });
                           setReportModalOpen(true);
                         }}
                       >

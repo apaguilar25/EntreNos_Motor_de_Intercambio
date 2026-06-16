@@ -5,7 +5,7 @@ import { AppContext } from '../App';
 
 const Wall = () => {
   const navigate = useNavigate();
-  const { user, balance, hasCatalog, controladorMuro, controladorGamificacion } = useContext(AppContext);
+  const { user, balance, hasCatalog, controladorMuro, controladorGamificacion, controladorPerfil } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [tab, setTab] = useState('explorar'); // 'explorar' o 'parati'
@@ -14,6 +14,7 @@ const Wall = () => {
   const [showPodio, setShowPodio] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sentRequests, setSentRequests] = useState(new Set());
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -62,6 +63,11 @@ const Wall = () => {
         if (controladorGamificacion) {
           const podioData = await controladorGamificacion.obtenerPodio();
           setPodio(podioData || []);
+        }
+
+        if (controladorPerfil && user) {
+          const sols = await controladorPerfil.obtenerSolicitudesEnviadas(user.id);
+          setSentRequests(new Set(sols.map(s => s.idPublicacion)));
         }
 
         setError(null);
@@ -245,21 +251,29 @@ const Wall = () => {
                 </div>
               </div>
               
-              <button 
-                className="btn-primary" 
-                style={{ 
-                  padding: '0.5rem 1rem', 
-                  fontSize: '0.875rem',
-                  backgroundColor: post.price > balance ? 'var(--bg-tertiary)' : undefined,
-                  color: post.price > balance ? 'var(--text-tertiary)' : undefined,
-                  border: post.price > balance ? 'none' : undefined,
-                  cursor: post.price > balance ? 'not-allowed' : 'pointer'
-                }}
-                disabled={post.price > balance}
-                onClick={() => navigate(`/request/${post.id}?type=${post.type}&userId=${post.userId}&price=${post.price}&title=${encodeURIComponent(post.title)}&desc=${encodeURIComponent(post.description)}&owner=${encodeURIComponent(post.user)}&rep=${post.reputation}`)}
-              >
-                {post.price > balance ? 'Sin créditos' : 'Contactar'}
-              </button>
+              {(() => {
+                const alreadyRequested = sentRequests.has(post.id);
+                const noCredits = post.price > balance;
+                const disabled = alreadyRequested || noCredits;
+                
+                return (
+                  <button 
+                    className="btn-primary" 
+                    style={{ 
+                      padding: '0.5rem 1rem', 
+                      fontSize: '0.875rem',
+                      backgroundColor: disabled ? 'var(--bg-tertiary)' : undefined,
+                      color: disabled ? 'var(--text-tertiary)' : undefined,
+                      border: disabled ? 'none' : undefined,
+                      cursor: disabled ? 'not-allowed' : 'pointer'
+                    }}
+                    disabled={disabled}
+                    onClick={() => navigate(`/request/${post.id}?type=${post.type}&userId=${post.userId}&price=${post.price}&title=${encodeURIComponent(post.title)}&desc=${encodeURIComponent(post.description)}&owner=${encodeURIComponent(post.user)}&rep=${post.reputation}`)}
+                  >
+                    {alreadyRequested ? 'Ya ofertaste' : (noCredits ? 'Sin créditos' : 'Contactar')}
+                  </button>
+                );
+              })()}
             </div>
           </div>
         ))}

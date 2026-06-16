@@ -109,7 +109,11 @@ public class ServicioSolicitud {
                 .map(Usuario::getNombre).orElse("Un usuario");
         servicioNotificacion.enviarNotificacion(idSolicitante, pub.getIdUsuario(),
                 nombreSolicitante + " quiere contratar tu servicio: " + pub.getNombreServicio(),
-                TipoNotificacion.NUEVA_SOLICITUD_ENTRANTE);
+                TipoNotificacion.NUEVA_SOLICITUD_ENTRANTE, solicitud.getIdSolicitud(), pub.getIdPublicacion());
+
+        servicioNotificacion.enviarNotificacion("SISTEMA", idSolicitante,
+                "Has ofertado exitosamente por: " + pub.getNombreServicio() + ". Esperando respuesta del proveedor.",
+                TipoNotificacion.ALERTA_SISTEMA, solicitud.getIdSolicitud(), pub.getIdPublicacion());
 
         return solicitud;
     }
