@@ -14,6 +14,8 @@ import { ControladorPerfil } from './controladores/ControladorPerfil';
 import { ControladorNotificacion } from './controladores/ControladorNotificacion';
 import { ServicioGamificacion } from './servicios_api/ServicioGamificacion';
 import { ControladorGamificacion } from './controladores/ControladorGamificacion';
+import { ServicioAdministrador } from './servicios_api/ServicioAdministrador';
+import { ControladorAdministrador } from './controladores/ControladorAdministrador';
 
 // Vistas
 import IniciarSesion from './vistas/IniciarSesion';
@@ -29,6 +31,7 @@ import Notifications from './vistas/Notifications';
 import PostDetails from './vistas/PostDetails';
 import MakeRequest from './vistas/MakeRequest';
 import CatalogOnboarding from './vistas/CatalogOnboarding';
+import AdminDashboard from './vistas/AdminDashboard';
 
 // Contexto Global que actuará como Inyector de Dependencias
 export const AppContext = createContext();
@@ -67,13 +70,14 @@ function App() {
   }, []);
 
   // --- ENSAMBLAJE DE DEPENDENCIAS (Dependency Injection Container) ---
-  const { controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil, controladorGamificacion, controladorNotificacion } = React.useMemo(() => {
+  const { controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil, controladorGamificacion, controladorNotificacion, controladorAdministrador } = React.useMemo(() => {
     const clienteHttp = new ClienteHttp('http://localhost:8080/api');
     const servicioUsuario = new ServicioUsuario(clienteHttp);
     const servicioPublicacion = new ServicioPublicacion(clienteHttp);
     const servicioSubasta = new ServicioSubasta(clienteHttp);
     const servicioGamificacion = new ServicioGamificacion(clienteHttp);
     const servicioNotificacion = new ServicioNotificacion(clienteHttp);
+    const servicioAdministrador = new ServicioAdministrador(clienteHttp);
 
     const controladorAutenticacion = new ControladorAutenticacion(servicioUsuario, setContextState);
     const controladorMuro = new ControladorMuro(servicioPublicacion);
@@ -81,13 +85,14 @@ function App() {
     const controladorPerfil = new ControladorPerfil(servicioUsuario, servicioPublicacion);
     const controladorGamificacion = new ControladorGamificacion(servicioGamificacion);
     const controladorNotificacion = new ControladorNotificacion(servicioNotificacion, servicioPublicacion, servicioSubasta);
+    const controladorAdministrador = new ControladorAdministrador(servicioAdministrador);
 
-    return { controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil, controladorGamificacion, controladorNotificacion };
+    return { controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil, controladorGamificacion, controladorNotificacion, controladorAdministrador };
   }, [setContextState]);
 
   const contextValue = {
     theme, toggleTheme, user, balance, hasCatalog, setUser, setBalance, setHasCatalog,
-    controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil, controladorGamificacion, controladorNotificacion
+    controladorAutenticacion, controladorMuro, controladorSubasta, controladorPerfil, controladorGamificacion, controladorNotificacion, controladorAdministrador
   };
 
   return (
@@ -107,6 +112,7 @@ function App() {
             <Route path="notifications" element={<Notifications />} />
             <Route path="post/:id" element={<PostDetails />} />
             <Route path="request/:id" element={<MakeRequest />} />
+            <Route path="admin" element={user && user.rol === 'ADMINISTRADOR' ? <AdminDashboard /> : <Navigate to="/" />} />
           </Route>
         </Routes>
       </Router>

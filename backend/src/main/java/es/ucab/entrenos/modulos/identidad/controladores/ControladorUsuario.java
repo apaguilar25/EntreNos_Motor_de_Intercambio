@@ -40,7 +40,7 @@ public class ControladorUsuario {
                 descripcion,
                 precio
         );
-        pub.setIdPublicacion(idInstancia);
+        pub.setIdInstanciaCatalogo(idInstancia);
         servicioPublicacion.crearPublicacion(pub);
     }
 

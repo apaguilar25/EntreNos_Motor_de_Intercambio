@@ -37,6 +37,7 @@ C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\excepciones\HabilidadDuplicadaException.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\excepciones\TelefonoDuplicadoException.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\modelos\CatalogoUsuario.java
+C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\modelos\CorreoPermitido.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\modelos\EstadoCuenta.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\modelos\Habilidad.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\modelos\HabilidadOfrecida.java
@@ -44,8 +45,10 @@ C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\modelos\NecesidadRegistrada.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\modelos\RolUsuario.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\modelos\Usuario.java
+C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\repositorios\IRepositorioCorreoPermitido.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\repositorios\IRepositorioHabilidad.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\repositorios\IRepositorioUsuario.java
+C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\repositorios\RepositorioCorreoPermitido.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\repositorios\RepositorioHabilidad.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\repositorios\RepositorioUsuario.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\servicios\ServicioAdministrador.java

@@ -33,25 +33,74 @@ public class ControladorAdministrador {
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    @PostMapping("/sanciones/fraude")
-    public ResponseEntity<?> validarReporteFraude(
+    // --- GESTIÓN DE CORREOS PERMITIDOS ---
+    @GetMapping("/correos")
+    public ResponseEntity<?> listarCorreosPermitidos(@AuthenticationPrincipal Object principal) {
+        if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return ResponseEntity.ok(servicioAdministrador.listarCorreosPermitidos((String) principal));
+    }
+
+    @PostMapping("/correos")
+    public ResponseEntity<?> agregarCorreoPermitido(@AuthenticationPrincipal Object principal, @RequestBody Map<String, String> request) {
+        if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        servicioAdministrador.agregarCorreoPermitido((String) principal, request.get("correo"));
+        return ResponseEntity.ok("Correo permitido agregado.");
+    }
+
+    @DeleteMapping("/correos/{correo}")
+    public ResponseEntity<?> eliminarCorreoPermitido(@AuthenticationPrincipal Object principal, @PathVariable String correo) {
+        if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        servicioAdministrador.eliminarCorreoPermitido((String) principal, correo);
+        return ResponseEntity.ok("Correo permitido eliminado.");
+    }
+
+    // --- GESTIÓN DE USUARIOS ---
+    @GetMapping("/usuarios")
+    public ResponseEntity<?> listarUsuarios(@AuthenticationPrincipal Object principal) {
+        if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return ResponseEntity.ok(servicioAdministrador.listarUsuarios((String) principal));
+    }
+
+    @PutMapping("/usuarios/{idUsuario}/creditos")
+    public ResponseEntity<?> modificarCreditos(@AuthenticationPrincipal Object principal, @PathVariable String idUsuario, @RequestBody Map<String, Float> request) {
+        if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        Float nuevosCreditos = request.get("creditos");
+        if (nuevosCreditos == null) return ResponseEntity.badRequest().body("Falta el campo 'creditos'");
+        servicioAdministrador.modificarCreditosUsuario((String) principal, idUsuario, nuevosCreditos);
+        return ResponseEntity.ok("Créditos modificados exitosamente.");
+    }
+
+    @PutMapping("/usuarios/{idUsuario}/perdonar-faltas")
+    public ResponseEntity<?> perdonarFaltas(@AuthenticationPrincipal Object principal, @PathVariable String idUsuario) {
+        if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        servicioAdministrador.perdonarFaltas((String) principal, idUsuario);
+        return ResponseEntity.ok("Faltas perdonadas exitosamente.");
+    }
+
+    @PostMapping("/incidencias/{idIncidencia}/resolver")
+    public ResponseEntity<?> resolverIncidencia(
             @AuthenticationPrincipal Object principal,
-            @RequestBody Map<String, String> request) {
+            @PathVariable String idIncidencia,
+            @RequestBody Map<String, Object> request) {
         try {
             if (principal == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Acceso denegado: Token ausente o inválido.");
             }
 
             String idAdministrador = (String) principal;
-            String idInfractor = request.get("idUsuarioInfractor");
-            String idTransaccion = request.get("idTransaccion");
+            String idUsuarioGanador = (String) request.get("idUsuarioGanadorCreditos");
+            Boolean sancionarOfertante = (Boolean) request.get("sancionarOfertante");
+            Boolean sancionarDemandante = (Boolean) request.get("sancionarDemandante");
 
-            servicioAdministrador.validarReporteDeFraude(idAdministrador, idInfractor, idTransaccion);
-            return ResponseEntity.ok("Sanción aplicada exitosamente.");
+            if (sancionarOfertante == null) sancionarOfertante = false;
+            if (sancionarDemandante == null) sancionarDemandante = false;
+
+            servicioAdministrador.resolverIncidencia(idAdministrador, idIncidencia, idUsuarioGanador, sancionarOfertante, sancionarDemandante);
+            return ResponseEntity.ok("Incidencia resuelta exitosamente.");
 
         } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

@@ -16,6 +16,7 @@ public class PerfilUsuarioResponseDTO {
     private boolean catalogoCompletado;
     private float promedioCalificacion;
     private int cantidadCalificaciones;
+    private String rol;
 
     private List<HabilidadOfrecida> ofertas;
     private List<NecesidadRegistrada> necesidades;
@@ -33,6 +34,7 @@ public class PerfilUsuarioResponseDTO {
         this.catalogoCompletado = usuario.isCatalogoCompletado();
         this.promedioCalificacion = usuario.getPromedioCalificacion();
         this.cantidadCalificaciones = usuario.getCantidadCalificaciones();
+        this.rol = usuario.getRol() != null ? usuario.getRol().name() : "USUARIO_REGULAR";
         this.ofertas = usuario.getHabilidadesOfrecidas();
         this.necesidades = usuario.getNecesidadesRegistradas();
     }
@@ -47,6 +49,7 @@ public class PerfilUsuarioResponseDTO {
     public boolean isCatalogoCompletado() { return catalogoCompletado; }
     public float getPromedioCalificacion() { return promedioCalificacion; }
     public int getCantidadCalificaciones() { return cantidadCalificaciones; }
+    public String getRol() { return rol; }
     public List<HabilidadOfrecida> getOfertas() { return ofertas; }
     public List<NecesidadRegistrada> getNecesidades() { return necesidades; }
 }

@@ -83,7 +83,7 @@
     "telefono": "+58414000104",
     "descripcionPersonal": "Demandante frecuente",
     "contrasenaHash": "$2a$10$4kpJRAKc28vppDPW7ffLaee.fcRUuRl5q60hY2irWFgyHUw7j.VjW",
-    "version": 6,
+    "version": 8,
     "monedero": {
       "creditosDisponibles": 50.0,
       "creditosComprometidos": 0.0,
@@ -136,9 +136,9 @@
       ]
     },
     "estado": "ACTIVO",
-    "intentosFallidos": 0,
+    "intentosFallidos": 2,
     "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
+    "primerIntentoFallidoMillis": 1781611722455,
     "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
     "promedioCalificacion": 0.0,
@@ -325,8 +325,7 @@
     "urlFotoPerfil": "default.png",
     "promedioCalificacion": 0.0,
     "cantidadCalificaciones": 0,
-    "rol": "ADMINISTRADOR",
-    "esVecinoDestacado": false
+    "rol": "ADMINISTRADOR"
   },
   {
     "id": "d95b9f31-322b-48e0-b331-e1d5a003992c",
@@ -439,5 +438,35 @@
     "cantidadCalificaciones": 1,
     "rol": "MIEMBRO_COMUNIDAD",
     "esVecinoDestacado": false
+  },
+  {
+    "id": "d6ed5d51-8d8f-4c91-846f-c56c8a0f1d96",
+    "nombre": "Super Administrador",
+    "correoElectronico": "admin@alameda.com",
+    "telefono": "0000000000",
+    "descripcionPersonal": "Administrador general de la comunidad",
+    "contrasenaHash": "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
+    "version": 11,
+    "monedero": {
+      "creditosDisponibles": 0.0,
+      "creditosComprometidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": false,
+      "habilidadesOfrecidas": [],
+      "necesidadesRegistradas": []
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "ADMINISTRADOR",
+    "esVecinoDestacado": false
+
   }
 ]
