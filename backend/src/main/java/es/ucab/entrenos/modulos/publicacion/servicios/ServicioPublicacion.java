@@ -198,57 +198,7 @@ public class ServicioPublicacion {
         if (removido) {
             repositorioPublicacion.guardarTodas(todas);
         }
-        if (pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
-            Usuario solicitante = servicioUsuario.buscarPorId(idSolicitante)
-                    .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
-            if (solicitante.getMonedero().getSaldoDisponible() < pub.getPrecioCreditos()) {
-                throw new IllegalStateException("Saldo insuficiente. Necesitas " + pub.getPrecioCreditos()
-                        + " créditos, pero tienes " + solicitante.getMonedero().getSaldoDisponible() + " disponibles.");
-            }
-        }
-        pub.solicitar(idSolicitante, nombreSolicitante);
-        repositorioPublicacion.guardar(pub);
-        servicioNotificacion.enviarNotificacion(idSolicitante, pub.getIdUsuario(),
-                nombreSolicitante + " quiere contratar tu servicio: " + pub.getNombreServicio(),
-                TipoNotificacion.NUEVA_SOLICITUD_ENTRANTE, pub.getIdPublicacion(), idSolicitante);
-        return pub;
-    }
-
-    public Publicacion responderSolicitud(String idPublicacion, String idUsuario, boolean aceptar) {
-        Publicacion pub = repositorioPublicacion.obtenerPorId(idPublicacion)
-                .orElseThrow(() -> new IllegalArgumentException("Publicación no encontrada: " + idPublicacion));
-        if (!pub.getIdUsuario().equals(idUsuario)) {
-            throw new IllegalArgumentException("Solo el dueño de la publicación puede responder la solicitud.");
-        }
-        String solicitanteId = pub.getIdSolicitante();
-        String solicitanteNombre = pub.getNombreSolicitante();
-        pub.responderSolicitud(aceptar);
-        if (aceptar) {
-            Usuario demandante = servicioUsuario.buscarPorId(solicitanteId)
-                    .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
-            demandante.getMonedero().retener(pub.getPrecioCreditos());
-            demandante.incrementarVersion();
-            servicioUsuario.guardar(demandante);
-            Transaccion tx = new Transaccion(
-                pub.getIdPublicacion(),
-                pub.getIdUsuario(),
-                pub.getIdSolicitante(),
-                pub.getNombreServicio(),
-                pub.getDescripcion(),
-                pub.getPrecioCreditos()
-            );
-            repositorioTransaccion.guardar(tx);
-            servicioNotificacion.enviarNotificacion(pub.getIdUsuario(), solicitanteId,
-                    "Tu solicitud para " + pub.getNombreServicio() + " fue ACEPTADA. Se retuvieron "
-                            + pub.getPrecioCreditos() + " créditos.",
-                    TipoNotificacion.ESTADO_SOLICITUD_CAMBIADO, pub.getIdPublicacion(), null);
-        } else {
-            servicioNotificacion.enviarNotificacion(pub.getIdUsuario(), solicitanteId,
-                    "Tu solicitud para " + pub.getNombreServicio() + " fue RECHAZADA.",
-                    TipoNotificacion.ESTADO_SOLICITUD_CAMBIADO, pub.getIdPublicacion(), null);
-        }
-        repositorioPublicacion.guardar(pub);
-        return pub;
+        return removido;
     }
 
     public List<Transaccion> obtenerTodasLasTransacciones() {

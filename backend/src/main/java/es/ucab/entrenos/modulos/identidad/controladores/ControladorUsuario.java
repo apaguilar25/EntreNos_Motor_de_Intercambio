@@ -35,8 +35,6 @@ public class ControladorUsuario {
     private void generarPublicacionDesdeCatalogo(Usuario usuario, String idInstancia, String tipo, Habilidad habilidadBase, String descripcion, int precio) {
         Publicacion pub = new Publicacion(
                 usuario.getId(),
-                usuario.getNombre(),
-                usuario.getPromedioCalificacion(),
                 tipo,
                 habilidadBase.getCategoria(),
                 descripcion,
