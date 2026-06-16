@@ -4,20 +4,20 @@ skinparam orthogonalLayoutStrategy none
 skinparam DefaultFontName Arial
 skinparam DefaultFontSize 12
 skinparam class {
-    BackgroundColor White
+'    BackgroundColor White
     ArrowColor Black
     BorderColor Black
 }
 
 skinparam title {
-    FontSize 16
-    FontColor #2C3E50
+    FontSize 18
+'    FontColor #2C3E50
 }
 
 skinparam frame {
-    BorderColor #BDC3C7
-    FontColor #7F8C8D
-    BackgroundColor #FAFAFA
+    BorderColor #black
+    FontColor #black
+'    BackgroundColor #FAFAFA
 }
 
 hide empty members
