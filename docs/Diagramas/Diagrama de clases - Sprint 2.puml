@@ -41,12 +41,12 @@ package "Diagrama de clase EntreNós"  {
         - intentosFallidos: int
         - tiempoDesbloqueoMillis: long
         - primerIntentoFallidoMillis long
-        - reportesFraudeValidados int
-        - urlFotoPerfil String
-        - promedioCalificacion float
-        - cantidadCalificaciones int
-        - rol RolUsuario
-        - esVecinoDestacado boolean
+        - reportesFraudeValidados: int
+        - urlFotoPerfil: String
+        - promedioCalificacion: float
+        - cantidadCalificaciones: int
+        - rol: RolUsuario
+        - esVecinoDestacado: boolean
         + Usuario(id: String, nombre: String, correoElectronico: String, telefono: String, descripcionPersonal: String, contrasenaHash String): Usuario
         + isCatalogoCompletado(): boolean
         + asegurarUsuarioActivo(): void
@@ -70,59 +70,60 @@ package "Diagrama de clase EntreNós"  {
         - creditosDisponibles: float
         - creditosComprometidos: float
         - creditosPorLogros: float
-        + Monedero(float creditosDisponibles)
-        + void acreditar(float montoCreditos)
-        + void acreditarLogro(float montoCreditos)
-        + void descontar(float montoCreditos)
-        + void comprometer(float montoCreditos)
-        + void liberarCompromiso()
-        + void devolverCompromiso()
+        + Monedero(creditosDisponibles: float): Monedero
+        + acreditar(montoCreditos: float): void
+        + acreditarLogro(montoCreditos: float): void
+        + descontar(montoCreditos: float): void
+        + comprometer(montoCreditos: float): void
+        + liberarCompromiso(): void
+        + devolverCompromiso(): void
     }
 
     class CatalogoUsuario {
-        - boolean completado
-        + void marcarComoCompletado()
-        + void agregarHabilidadOfrecida(HabilidadOfrecida nuevaHabilidad)
-        + void actualizarHabilidadOfrecida(String idInstancia, int nuevoPrecio, String nuevaDescripcion)
-        + void agregarNecesidad(NecesidadRegistrada nuevaNecesidad)
-        + void actualizarNecesidadRegistrada(String idInstancia, String nuevaDescripcion)
-        + void eliminarHabilidadOfrecida(String idInstancia)
-        + void eliminarNecesidadRegistrada(String idInstancia)
-        + boolean isCompletado()
+        - completado: boolean
+        + CatalogoUsuario(): CatalogoUsuario
+        + marcarComoCompletado(): void
+        + agregarHabilidadOfrecida(nuevaHabilidad: HabilidadOfrecida): void
+        + actualizarHabilidadOfrecida(idInstancia: String, nuevoPrecio: int, nuevaDescripcion: String): void
+        + agregarNecesidad(nuevaNecesidad: NecesidadRegistrada): void
+        + actualizarNecesidadRegistrada(idInstancia: String, nuevaDescripcion: String): void
+        + eliminarHabilidadOfrecida(idInstancia: String): void
+        + eliminarNecesidadRegistrada(idInstancia: String): void
+        + isCompletado(): boolean
     }
 
     class Habilidad {
-        - private String id;
-        - private String categoria;
-        + Habilidad(String id, String categoria)
-        + boolean equals(Object o)
-        + int hashCode()
+        - id: String
+        - categoria: String
+        + Habilidad(id: String, categoria: String): Habilidad
+        + equals(o: Object): boolean
+        + hashCode(): int
     }
 
     class HabilidadOfrecida {
-        - String idInstancia
-        - Habilidad habilidadBase;
-        - int precioCreditos;
-        - String descripcionServicio;
-        + HabilidadOfrecida(Habilidad habilidadBase, int precioCreditos, String descripcionServicio)
-        + boolean equals(Object o)
-        + int hashCode()
+        - idInstancia: String
+        - habilidadBase: Habilidad
+        - precioCreditos: int
+        - descripcionServicio: String
+        + HabilidadOfrecida(habilidadBase: Habilidad, precioCreditos: int, descripcionServicio: String): HabilidadOfrecida
+        + equals(o: Object): boolean
+        + hashCode(): int
     }
 
     class NecesidadRegistrada {
-        - String idInstancia; // El identificador único e inmutable
-        - Habilidad necesidadBase;
-        - String descripcionCondiciones;
-        + NecesidadRegistrada(Habilidad necesidadBase, String descripcionCondiciones)
-        + boolean equals(Object o)
-        + int hashCode()
+        - idInstancia: String
+        - necesidadBase: Habilidad
+        - descripcionCondiciones: String
+        + NecesidadRegistrada(necesidadBase: Habilidad, descripcionCondiciones: String): NecesidadRegistrada
+        + equals(o: Object): boolean
+        + hashCode(): int
     }
 
     class CorreoPermitido {
         - id: String
         - correo: String
         - fechaCreacion: long
-        + CorreoPermitido(String correo): CorreoPermitido
+        + CorreoPermitido(correo: String): CorreoPermitido
     }
 
     enum EstadoCuenta {
@@ -140,72 +141,71 @@ package "Diagrama de clase EntreNós"  {
 '''''''''''SECCION PUBLICACION'''''''''''
 
     class Publicacion {
-        - String idPublicacion;
-        - String idUsuario;
-        - String tipoPublicacion;
-        - String nombreServicio;
-        - String descripcion;
-        - int precioCreditos;
-        - boolean disponible;
-        - String idInstanciaCatalogo;
-        - int version;
-        + Publicacion(String idUsuario, String tipoPublicacion, String nombreServicio, String descripcion, int precioCreditos)
+        - idPublicacion: String
+        - idUsuario: String
+        - tipoPublicacion: String
+        - nombreServicio: String
+        - descripcion: String
+        - precioCreditos: int
+        - disponible: boolean
+        - idInstanciaCatalogo: String
+        - version: int
+        + Publicacion(idUsuario: String, tipoPublicacion: String, nombreServicio: String, descripcion: String, precioCreditos: int): Publicacion
     }
 
     class Transaccion {
-        - String idTransaccion;
-        - String idPublicacion;
-        - String idOfertante;
-        - String idDemandante;
-        - EstadoTransaccion estado;
-        - int creditosComprometidos;
-        - boolean confirmacionOfertante;
-        - boolean confirmacionDemandante;
-        - long fechaCreacion;
-        - String idIncidencia;
-        - Resena resena;
-        - String idSolicitanteCancelacion;
-        - String motivoCancelacion;
-        - boolean cancelacionAceptada;
-        - int version;
-        + Transaccion(String idPublicacion, String idOfertante, String idDemandante, int creditosComprometidos)
-        + void confirmarEntregaOfertante()
-        + void confirmarRecepcionDemandante()
-        + void verificarCompletitud()
-        + void solicitarCancelacion(String idSolicitante, String motivoCancelacion)
-        + void aceptarCancelacion()
-        + void rehusarCancelacion()
-        + void asignarIncidencia(String idIncidencia)
+        - idTransaccion: String
+        - idPublicacion: String
+        - idOfertante: String
+        - idDemandante: String
+        - estado: EstadoTransaccion
+        - creditosComprometidos: int
+        - confirmacionOfertante: boolean
+        - confirmacionDemandante: boolean
+        - fechaCreacion: long
+        - idIncidencia: String
+        - idSolicitanteCancelacion: String
+        - motivoCancelacion: String
+        - cancelacionAceptada: boolean
+        - version: int version
+        + Transaccion(idPublicacion: String, idOfertante: String, idDemandante: String, creditosComprometidos: int)
+        + confirmarEntregaOfertante(): void
+        + confirmarRecepcionDemandante(): void
+        + verificarCompletitud(): void
+        + solicitarCancelacion(idSolicitante: String, motivoCancelacion: String): void
+        + aceptarCancelacion(): void
+        + rehusarCancelacion(): void
+        + asignarIncidencia(idIncidencia: String): void
     }
 
     class Incidencia {
-        - String idIncidencia;
-        - String idTransaccion;
-        - String idUsuarioReportante;
-        - String descripcion;
-        - String urlEvidencia;
-        - String idUsuarioDefensor;
-        - String descripcionDefensa;
-        - String urlEvidenciaDefensa;
-        - String estado;
-        - long fechaCreacion;
-        + Incidencia(String idTransaccion, String idUsuarioReportante, String descripcion, String urlEvidencia)
+        - idIncidencia: String
+        - idTransaccion: String
+        - idUsuarioReportante: String
+        - descripcion: String
+        - urlEvidencia: String
+        - idUsuarioDefensor: String
+        - descripcionDefensa: String
+        - urlEvidenciaDefensa: String
+        - estado: String
+        - fechaCreacion: long
+        + Incidencia(idTransaccion: String, idUsuarioReportante: String, descripcion: String, urlEvidencia: String): Incidencia
     }
 
     class Solicitud {
-        - String idSolicitud;
-        - String idPublicacion;
-        - String idSolicitante;
-        - String estado;
-        - long fechaCreacion;
-        - long fechaLimiteRespuesta;
-        - int version;
-        + Solicitud(String idPublicacion, String idSolicitante)
-        + void aceptar()
-        + void rechazar()
-        + void cancelar()
-        + void expirar()
-        + boolean haExpirado()
+        - idSolicitud: String
+        - idPublicacion: String
+        - idSolicitante: String
+        - estado: String
+        - fechaCreacion: long
+        - fechaLimiteRespuesta: long
+        - version: int
+        + Solicitud(idPublicacion: String, idSolicitante: String): Solicitud
+        + aceptar(): void
+        + rechazar(): void
+        + cancelar(): void
+        + expirar(): void
+        + haExpirado(): boolean
     }
 
     class MotivoCancelacion {
@@ -226,59 +226,60 @@ package "Diagrama de clase EntreNós"  {
 '''''''''''SECCION RESENA'''''''''''
 
     class Resena {
-        - String idResena;
-        - String idTransaccion;
-        - String idEmisor;
-        - String idReceptor;
-        - int calificacion;
-        - long fechaCreacion;
-        - int version;
-        + Resena(String idResena, String idTransaccion, String idEmisor, String idReceptor, int calificacion)
+        - idResena: String
+        - idTransaccion: String
+        - idEmisor: String
+        - idReceptor: String
+        - calificacion: int
+        - fechaCreacion: long
+        - version: int
+        + Resena(idResena: String, idTransaccion: String, idEmisor: String, idReceptor: String, calificacion: int): Resena
     }
 
 '''''''''''SECCION SUBASTA'''''''''''
 
     class Subasta {
-        - String id
-        - String idPropietario
-        - String nombreActivo
-        - String descripcion
-        - EstadoFisico estadoFisico
-        - List<String> imagenesUrls
-        - LocalDateTime fechaInicio;
-        - LocalDateTime fechaFinalizacionLicitacion;
-        - EstadoSubasta estado;
-        - String idPropuestaGanadora;
-        - boolean propietarioConfirmoEntrega;
+        - id: String
+        - idPropietario: String
+        - nombreActivo: String
+        - descripcion: String
+        - estadoFisico: EstadoFisico
+        - imagenesUrls: List<String>
+        - fechaInicio: LocalDateTime
+        - fechaFinalizacionLicitacion: LocalDateTime
+        - estado: EstadoSubasta
+        - idPropuestaGanadora: String
+        - propietarioConfirmoEntrega: boolean
         - boolean ganadorConfirmoEntrega
-        - int version;
-        + Subasta(String idPropietario, String nombreActivo, String descripcion, EstadoFisico estadoFisico, List<String> imagenesUrls, LocalDateTime fechaFinalizacionLicitacion)
-        + void registrarPropuesta(Propuesta nuevaPropuesta)
-        + void adjudicarGanador(String idPropuesta)
-        + void cancelarSubasta()
-        + void cerrarFaseLicitacion()
-        + cancelarSubastaDesierta()
-        + incrementarVersion()
-        + editarPropuesta(String idPropuesta, String idPostor, List<BienOfrecido> nuevosBienes, List<String> nuevasImagenes)
-        + void retirarPropuesta(String idPropuesta, String idPostor)
+        - version: int
+        + Subasta(idPropietario: String, nombreActivo: String, descripcion: String, estadoFisico: EstadoFisico, imagenesUrls: List<String>, fechaFinalizacionLicitacion: LocalDateTime): Subasta
+        + registrarPropuesta(nuevaPropuesta: Propuesta): void
+        + adjudicarGanador(idPropuesta: String): void
+        + cancelarSubasta(): void
+        + cerrarFaseLicitacion(): void
+        + cancelarSubastaDesierta(): void
+        + incrementarVersion(): void
+        + editarPropuesta(idPropuesta: String, idPostor: String, nuevosBienes: List<BienOfrecido>, nuevasImagenes: List<String>): void
+        + retirarPropuesta(idPropuesta: String, idPostor: String): void
     }
 
+
     class Propuesta {
-    - String idPropuesta;
-    - String idSubasta;
-    - String idPostor
-    - String descripcion;
-    - EstadoPropuesta estadoPropuesta;
-    - EstadoFisico estadoFisico;
-    - List<String> imagenesUrls;
-    - LocalDateTime fechaPropuesta
-    + Propuesta(String idPostor, String idSubasta, List<BienOfrecido> bienesOfrecidos, String descripcion, EstadoFisico estadoFisico, List<String> imagenesUrls)
+        - idPropuesta: String
+        - idSubasta: String
+        - idPostor: String
+        - descripcion: String
+        - estadoPropuesta: EstadoPropuesta
+        - estadoFisico: EstadoFisico
+        - imagenesUrls: List<String>
+        - fechaPropuesta: LocalDateTime
+        + Propuesta(idPostor: String, idSubasta: String, bienesOfrecidos: List<BienOfrecido>, descripcion: String, estadoFisico: EstadoFisico, imagenesUrls: List<String>): Propuesta
     }
 
     class BienOfrecido {
-        - String nombre;
-        - int cantidad;
-        + BienOfrecido(String nombre, int cantidad)
+        - nombre: String
+        - cantidad: int
+        + BienOfrecido(nombre: String, cantidad: int): BienOfrecido
     }
 
     enum EstadoFisico {
@@ -305,37 +306,37 @@ package "Diagrama de clase EntreNós"  {
 '''''''''''SECCION GAMIFICACION'''''''''''
 
     class LogroDesbloqueado {
-        - String id;
-        - String idUsuario;
-        - String idLogro;
-        - long fechaDesbloqueo;
-        + LogroDesbloqueado(String idUsuario, String idLogro)
+        - id: String
+        - idUsuario: String
+        - idLogro: String
+        - fechaDesbloqueo: long
+        + LogroDesbloqueado(idUsuario: String, idLogro: String): LogroDesbloqueado
     }
 
     class Logro {
-        - String idLogro;
-        - String nombre;
-        - String descripcion;
-        - TipoCriterioLogro tipoCriterio;
-        - int bonoCreditos;
-        - boolean activo;
-        + Logro(String idLogro, String nombre, String descripcion, TipoCriterioLogro tipoCriterio, int bonoCreditos)
+        - idLogro: String
+        - nombre: String
+        - descripcion: String
+        - tipoCriterio: TipoCriterioLogro
+        - bonoCreditos: int
+        - activo: boolean
+        + Logro(idLogro: String, nombre: String, descripcion: String, tipoCriterio: TipoCriterioLogro, bonoCreditos: int): Logro
     }
 
     class PodioSemanal {
-        private String idPodio;
-        private long fechaInicioSemana;
-        private long fechaFinSemana;
-        private long fechaCalculo;
-        private String proveedorEliteId;
-        private String proveedorEliteNombre;
-        private String motorEconomiaId;
-        private String motorEconomiaNombre;
-        private int motorEconomiaTransacciones;
-        private String embajadorCalidadId;
-        private String embajadorCalidadNombre;
-        private double embajadorCalidadPromedio;
-        + PodioSemanal(long fechaInicioSemana, long fechaFinSemana)
+        - idPodio: String
+        - fechaInicioSemana:long
+        - fechaFinSemana: long
+        - fechaCalculo: long
+        - proveedorEliteId: String
+        - proveedorEliteNombre: String
+        - motorEconomiaId: String
+        - motorEconomiaNombre: String
+        - motorEconomiaTransacciones: int
+        - embajadorCalidadId: String
+        - embajadorCalidadNombre: String
+        - embajadorCalidadPromedio: double
+        + PodioSemanal(fechaInicioSemana: long, fechaFinSemana: long): PodioSemanal
     }
 
     enum TipoCriterioLogro {
@@ -347,16 +348,16 @@ package "Diagrama de clase EntreNós"  {
 '''''''''''SECCION NOTIFICACION'''''''''''
 
     class Notificacion {
-        - String idNotificacion;
-        - String idRemitente;
-        - String idDestinatario;
-        - String mensaje;
-        - TipoNotificacion tipo;
-        - boolean estadoLectura;
-        - long fechaCreacion;
-        - String idReferencia;
-        - String idReferenciaAuxiliar;
-        + Notificacion(String idRemitente, String idDestinatario, String mensaje, TipoNotificacion tipo, String idReferencia, String idReferenciaAuxiliar)
+        - idNotificacion: String
+        - idRemitente: String
+        - idDestinatario: String
+        - mensaje: String
+        - tipo: TipoNotificacion
+        - estadoLectura: boolean
+        - fechaCreacion: long
+        - idReferencia: String
+        - idReferenciaAuxiliar: String
+        + Notificacion(idRemitente: String, idDestinatario: String, mensaje: String, tipo: TipoNotificacion, idReferencia: String, idReferenciaAuxiliar: String): Notificacion
     }
 
     enum TipoNotificacion {
@@ -372,21 +373,10 @@ package "Diagrama de clase EntreNós"  {
         SUBASTA_POR_REVISAR
         SANCION_APLICADA
         SUBASTA_CANCELADA
-    }
-
-'''''''''''SECCION algo'''''''''''
-
-    class Administrador
-
+   }
 
 }
 
-' --- GOBERNANZA Y MODERACIÓN (HU 8) ---
-Administrador --|> Usuario
-Administrador "1" -- "1..*" Habilidad : "administra >"
-Usuario "1" -up- "0..*" Incidencia : "reporta >"
-Administrador "1" -- "0..*" Incidencia : "resuelve >"
-Incidencia "0..1" --> "1 " Transaccion
 
 ' --- IDENTIDAD Y CATÁLOGO (HU 1) ---
 Usuario "1" *--- "1" Monedero
@@ -412,6 +402,10 @@ Usuario "1" -- "0..*" Subasta : "publica >"
 Subasta "1" *-- "0..*" Propuesta
 Propuesta "0..*" -- "1" Usuario : "efectuada por >"
 Propuesta "1" *-- "1..*" BienOfrecido
+
+' --- GOBERNANZA Y MODERACIÓN (HU 8) ---
+Usuario "1" -up- "0..*" Incidencia : "reporta >"
+Incidencia "0..1" --> "1 " Transaccion
 
 ' --- GAMIFICACIÓN Y RECONOCIMIENTO (HU 9 y HU 10) ---
 Usuario "1" -- "0..*" LogroDesbloqueado : "obtiene >"
