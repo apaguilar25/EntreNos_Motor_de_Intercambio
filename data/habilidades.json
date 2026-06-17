@@ -1,0 +1,22 @@
+[
+  {
+    "id": "HAB-001",
+    "categoria": "Plomería"
+  },
+  {
+    "id": "HAB-002",
+    "categoria": "Electricidad"
+  },
+  {
+    "id": "HAB-003",
+    "categoria": "Carpintería"
+  },
+  {
+    "id": "HAB-004",
+    "categoria": "Limpieza del Hogar"
+  },
+  {
+    "id": "HAB-005",
+    "categoria": "Soporte Técnico / Computación"
+  }
+]

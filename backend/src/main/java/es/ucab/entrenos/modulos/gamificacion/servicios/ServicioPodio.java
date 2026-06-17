@@ -1,7 +1,7 @@
 package es.ucab.entrenos.modulos.gamificacion.servicios;
 
 import es.ucab.entrenos.modulos.gamificacion.dtos.PodioResponseDTO;
-import es.ucab.entrenos.modulos.gamificacion.dtos.EntradaPodio;
+import es.ucab.entrenos.modulos.gamificacion.modelos.EntradaPodio;
 import es.ucab.entrenos.modulos.gamificacion.modelos.PodioSemanal;
 import es.ucab.entrenos.modulos.gamificacion.repositorios.IRepositorioPodio;
 import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
