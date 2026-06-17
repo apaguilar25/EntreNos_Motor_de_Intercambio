@@ -7,8 +7,7 @@ public class Cancelacion {
     private String idCancelacion;
     private String idTransaccion;
     private String idSolicitante;
-    private String idOfertante;
-    private String idDemandante;
+    private String idReceptor;
     private MotivoCancelacion motivo;
     private EstadoCancelacion estado;
     private long fechaCreacion;
@@ -16,12 +15,11 @@ public class Cancelacion {
 
     public Cancelacion() {}
 
-    public Cancelacion(String idTransaccion, String idSolicitante, String idOfertante, String idDemandante, MotivoCancelacion motivo) {
+    public Cancelacion(String idTransaccion, String idSolicitante, String idReceptor, MotivoCancelacion motivo) {
         this.idCancelacion = "CAN-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         this.idTransaccion = idTransaccion;
         this.idSolicitante = idSolicitante;
-        this.idOfertante = idOfertante;
-        this.idDemandante = idDemandante;
+        this.idReceptor = idReceptor;
         this.motivo = motivo;
         this.estado = EstadoCancelacion.PENDIENTE;
         this.fechaCreacion = System.currentTimeMillis();
@@ -50,11 +48,8 @@ public class Cancelacion {
     public String getIdSolicitante() { return idSolicitante; }
     public void setIdSolicitante(String idSolicitante) { this.idSolicitante = idSolicitante; }
 
-    public String getIdOfertante() { return idOfertante; }
-    public void setIdOfertante(String idOfertante) { this.idOfertante = idOfertante; }
-
-    public String getIdDemandante() { return idDemandante; }
-    public void setIdDemandante(String idDemandante) { this.idDemandante = idDemandante; }
+    public String getIdReceptor() { return idReceptor; }
+    public void setIdReceptor(String idReceptor) { this.idReceptor = idReceptor; }
 
     public MotivoCancelacion getMotivo() { return motivo; }
     public void setMotivo(MotivoCancelacion motivo) { this.motivo = motivo; }
