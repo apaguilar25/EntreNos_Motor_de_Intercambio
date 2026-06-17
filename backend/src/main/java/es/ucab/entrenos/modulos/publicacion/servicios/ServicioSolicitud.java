@@ -57,6 +57,18 @@ public class ServicioSolicitud {
         if (!solicitud.getIdSolicitante().equals(idUsuario)) {
             throw new IllegalArgumentException("Solo el solicitante puede cancelar la solicitud.");
         }
+
+        Publicacion pub = servicioPublicacion.obtenerPublicacionPorId(solicitud.getIdPublicacion())
+                .orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada."));
+
+        if (Solicitud.ESTADO_PENDIENTE.equals(solicitud.getEstado()) && pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
+            Usuario solicitante = servicioUsuario.buscarPorId(idUsuario)
+                    .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
+            solicitante.getMonedero().devolverCompromiso();
+            solicitante.incrementarVersion();
+            servicioUsuario.guardar(solicitante);
+        }
+
         solicitud.cancelar();
         repositorioSolicitud.guardar(solicitud);
         return solicitud;
@@ -100,6 +112,9 @@ public class ServicioSolicitud {
                 throw new IllegalStateException("Saldo insuficiente. Necesitas " + pub.getPrecioCreditos()
                         + " creditos, pero tienes " + solicitante.getMonedero().getSaldoDisponible() + " disponibles.");
             }
+            solicitante.getMonedero().comprometer(pub.getPrecioCreditos());
+            solicitante.incrementarVersion();
+            servicioUsuario.guardar(solicitante);
         }
 
         Solicitud solicitud = new Solicitud(idPublicacion, idSolicitante);
@@ -109,7 +124,11 @@ public class ServicioSolicitud {
                 .map(Usuario::getNombre).orElse("Un usuario");
         servicioNotificacion.enviarNotificacion(idSolicitante, pub.getIdUsuario(),
                 nombreSolicitante + " quiere contratar tu servicio: " + pub.getNombreServicio(),
-                TipoNotificacion.NUEVA_SOLICITUD_ENTRANTE);
+                TipoNotificacion.NUEVA_SOLICITUD_ENTRANTE, solicitud.getIdSolicitud(), pub.getIdPublicacion());
+
+        servicioNotificacion.enviarNotificacion("SISTEMA", idSolicitante,
+                "Has ofertado exitosamente por: " + pub.getNombreServicio() + ". Esperando respuesta del proveedor.",
+                TipoNotificacion.ALERTA_SISTEMA, solicitud.getIdSolicitud(), pub.getIdPublicacion());
 
         return solicitud;
     }
@@ -126,6 +145,13 @@ public class ServicioSolicitud {
         }
 
         if (solicitud.haExpirado()) {
+            if (Solicitud.ESTADO_PENDIENTE.equals(solicitud.getEstado()) && pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
+                Usuario solicitante = servicioUsuario.buscarPorId(solicitud.getIdSolicitante())
+                        .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
+                solicitante.getMonedero().devolverCompromiso();
+                solicitante.incrementarVersion();
+                servicioUsuario.guardar(solicitante);
+            }
             solicitud.expirar();
             repositorioSolicitud.guardar(solicitud);
             String nombreSolicitante = servicioUsuario.buscarPorId(solicitud.getIdSolicitante())
@@ -148,12 +174,6 @@ public class ServicioSolicitud {
             }
             solicitud.aceptar();
 
-            Usuario demandante = servicioUsuario.buscarPorId(solicitud.getIdSolicitante())
-                    .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
-            demandante.getMonedero().comprometer(pub.getPrecioCreditos());
-            demandante.incrementarVersion();
-            servicioUsuario.guardar(demandante);
-
             Transaccion tx = new Transaccion(
                 pub.getIdPublicacion(),
                 pub.getIdUsuario(),
@@ -167,6 +187,13 @@ public class ServicioSolicitud {
                             + pub.getPrecioCreditos() + " creditos.",
                     TipoNotificacion.ESTADO_SOLICITUD_CAMBIADO);
         } else {
+            if (Solicitud.ESTADO_PENDIENTE.equals(solicitud.getEstado()) && pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
+                Usuario solicitante = servicioUsuario.buscarPorId(solicitud.getIdSolicitante())
+                        .orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
+                solicitante.getMonedero().devolverCompromiso();
+                solicitante.incrementarVersion();
+                servicioUsuario.guardar(solicitante);
+            }
             solicitud.rechazar();
 
             servicioNotificacion.enviarNotificacion(pub.getIdUsuario(), solicitud.getIdSolicitante(),

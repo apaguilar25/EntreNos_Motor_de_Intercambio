@@ -23,6 +23,8 @@ import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioIncidencia;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioMotivoCancelacion;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioPublicacion;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioTransaccion;
+import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioSolicitud;
+import es.ucab.entrenos.modulos.publicacion.modelos.Solicitud;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,6 +39,10 @@ public class ServicioPublicacion {
     private final ServicioNotificacion servicioNotificacion;
     private final ServicioGamificacion servicioGamificacion;
     private final ServicioReputacion servicioReputacion;
+    
+    @org.springframework.beans.factory.annotation.Autowired
+    private IRepositorioSolicitud repositorioSolicitud;
+
     private static final Random RANDOM = new Random();
     public ServicioPublicacion(IRepositorioPublicacion repositorioPublicacion,
                                IRepositorioTransaccion repositorioTransaccion,
@@ -184,6 +190,7 @@ public class ServicioPublicacion {
     }
 
     public boolean eliminarPublicacion(String id) {
+        cancelarVinculosPublicacion(id);
         List<Publicacion> todas = repositorioPublicacion.obtenerTodas();
         boolean removido = todas.removeIf(p -> p.getIdPublicacion().equalsIgnoreCase(id));
         if (removido) {
@@ -193,12 +200,54 @@ public class ServicioPublicacion {
     }
 
     public boolean eliminarPublicacionPorInstancia(String idInstanciaCatalogo) {
+        Optional<Publicacion> pubOpt = obtenerPublicacionPorInstanciaCatalogo(idInstanciaCatalogo);
+        if (pubOpt.isPresent()) {
+            cancelarVinculosPublicacion(pubOpt.get().getIdPublicacion());
+        }
         List<Publicacion> todas = repositorioPublicacion.obtenerTodas();
         boolean removido = todas.removeIf(p -> idInstanciaCatalogo.equals(p.getIdInstanciaCatalogo()));
         if (removido) {
             repositorioPublicacion.guardarTodas(todas);
         }
         return removido;
+    }
+
+    private void cancelarVinculosPublicacion(String idPublicacion) {
+        List<Transaccion> txs = repositorioTransaccion.obtenerTodas().stream()
+            .filter(t -> t.getIdPublicacion().equalsIgnoreCase(idPublicacion) && 
+                (t.getEstado() == EstadoTransaccion.PENDIENTE || t.getEstado() == EstadoTransaccion.INICIADA || t.getEstado() == EstadoTransaccion.EN_DISPUTA))
+            .collect(Collectors.toList());
+
+        for (Transaccion t : txs) {
+            t.setEstado(EstadoTransaccion.RECHAZADA);
+            Usuario demandante = servicioUsuario.buscarPorId(t.getIdDemandante()).orElse(null);
+            if (demandante != null && t.getCreditosComprometidos() > 0) {
+                demandante.getMonedero().devolverCompromiso();
+                demandante.incrementarVersion();
+                servicioUsuario.guardar(demandante);
+            }
+            repositorioTransaccion.guardar(t);
+            servicioNotificacion.enviarNotificacion("SISTEMA", t.getIdDemandante(), "La publicación (" + idPublicacion + ") ha sido eliminada por su dueño. Transacción cancelada y créditos liberados.", TipoNotificacion.ALERTA_SISTEMA);
+            servicioNotificacion.enviarNotificacion("SISTEMA", t.getIdOfertante(), "Has eliminado la publicación (" + idPublicacion + "). Transacción cancelada.", TipoNotificacion.ALERTA_SISTEMA);
+        }
+
+        if (repositorioSolicitud != null) {
+            List<Solicitud> sols = repositorioSolicitud.obtenerTodas().stream()
+                .filter(s -> s.getIdPublicacion().equalsIgnoreCase(idPublicacion) && Solicitud.ESTADO_PENDIENTE.equals(s.getEstado()))
+                .collect(Collectors.toList());
+            for (Solicitud s : sols) {
+                s.setEstado(Solicitud.ESTADO_RECHAZADA);
+                Usuario solicitante = servicioUsuario.buscarPorId(s.getIdSolicitante()).orElse(null);
+                Publicacion pub = obtenerPublicacionPorId(idPublicacion).orElse(null);
+                if (solicitante != null && pub != null && pub.getTipoPublicacion().equals("HABILIDAD") && pub.getPrecioCreditos() > 0) {
+                    solicitante.getMonedero().devolverCompromiso();
+                    solicitante.incrementarVersion();
+                    servicioUsuario.guardar(solicitante);
+                }
+                repositorioSolicitud.guardar(s);
+                servicioNotificacion.enviarNotificacion("SISTEMA", s.getIdSolicitante(), "La publicación (" + idPublicacion + ") que solicitaste fue eliminada. Solicitud cancelada y créditos liberados.", TipoNotificacion.ALERTA_SISTEMA);
+            }
+        }
     }
 
     public List<Transaccion> obtenerTodasLasTransacciones() {

@@ -209,18 +209,6 @@ public class Usuario {
         return this.estado;
     }
 
-    // Métodos de conveniencia para tu código antiguo (Leen desde el Enum)
-    public boolean isCuentaBloqueada() {
-        return getEstado() == EstadoCuenta.BLOQUEADO_SEGURIDAD;
-    }
-
-    public boolean isCuentaSuspendida() {
-        return getEstado() == EstadoCuenta.SUSPENDIDO_FRAUDE || getEstado() == EstadoCuenta.SUSPENDIDO_SUBASTA;
-    }
-
-    public boolean tieneSancionActiva() {
-        return getEstado() == EstadoCuenta.SUSPENDIDO_SUBASTA;
-    }
     public void agregarCalificacion(int calificacion) {
         incrementarVersion();
         if (calificacion < 1 || calificacion > 5) {
