@@ -10,6 +10,7 @@ es\ucab\entrenos\modulos\subasta\controladores\ControladorSubasta.class
 es\ucab\entrenos\EntreNosApplication$1.class
 es\ucab\entrenos\modulos\identidad\controladores\ControladorAutenticacion.class
 es\ucab\entrenos\nucleo\seguridad\JsonIntegrityChecker.class
+es\ucab\entrenos\modulos\publicacion\repositorios\RepositorioCancelacion$1.class
 es\ucab\entrenos\modulos\publicacion\repositorios\RepositorioTransaccion$1.class
 es\ucab\entrenos\modulos\publicacion\dtos\ConfirmacionTransaccionResponseDTO.class
 es\ucab\entrenos\modulos\gamificacion\servicios\ServicioGamificacion$1.class
@@ -32,7 +33,6 @@ es\ucab\entrenos\modulos\publicacion\controladores\ControladorSolicitud.class
 es\ucab\entrenos\modulos\identidad\controladores\ControladorUsuario.class
 es\ucab\entrenos\modulos\notificacion\modelos\Notificacion.class
 es\ucab\entrenos\modulos\publicacion\servicios\ServicioExpiracion.class
-es\ucab\entrenos\modulos\publicacion\repositorios\RepositorioMotivoCancelacion.class
 es\ucab\entrenos\modulos\identidad\dtos\ConfiguracionCatalogoRequestDTO$OfertaDTO.class
 es\ucab\entrenos\modulos\identidad\servicios\ServicioAdministrador.class
 es\ucab\entrenos\modulos\utility\LocalDateTimeAdapter.class
@@ -47,8 +47,8 @@ es\ucab\entrenos\modulos\publicacion\repositorios\IRepositorioIncidencia.class
 es\ucab\entrenos\modulos\gamificacion\repositorios\RepositorioLogroDesbloqueado$1.class
 es\ucab\entrenos\modulos\gamificacion\repositorios\IRepositorioLogroDesbloqueado.class
 es\ucab\entrenos\modulos\gamificacion\repositorios\RepositorioLogroDesbloqueado.class
-es\ucab\entrenos\modulos\publicacion\repositorios\IRepositorioMotivoCancelacion.class
 es\ucab\entrenos\modulos\identidad\controladores\ControladorAdministrador.class
+es\ucab\entrenos\modulos\publicacion\modelos\EstadoCancelacion.class
 es\ucab\entrenos\modulos\subasta\modelos\EstadoSubasta.class
 es\ucab\entrenos\modulos\identidad\modelos\HabilidadOfrecida.class
 es\ucab\entrenos\modulos\subasta\dtos\ContactoUsuarioDTO.class
@@ -78,6 +78,7 @@ es\ucab\entrenos\modulos\identidad\dtos\NuevaNecesidadIndividualDTO.class
 es\ucab\entrenos\modulos\publicacion\controladores\ControladorPublicacion.class
 es\ucab\entrenos\modulos\subasta\controladores\ControladorPropuesta.class
 es\ucab\entrenos\modulos\identidad\servicios\ServicioCatalogo.class
+es\ucab\entrenos\modulos\publicacion\modelos\Cancelacion.class
 es\ucab\entrenos\modulos\gamificacion\repositorios\IRepositorioPodio.class
 es\ucab\entrenos\modulos\gamificacion\servicios\ServicioPodio.class
 es\ucab\entrenos\modulos\subasta\repositorios\RepositorioSubasta.class
@@ -86,11 +87,13 @@ es\ucab\entrenos\modulos\identidad\repositorios\RepositorioUsuario$1.class
 es\ucab\entrenos\modulos\identidad\modelos\CorreoPermitido.class
 es\ucab\entrenos\modulos\publicacion\repositorios\RepositorioPublicacion$1.class
 es\ucab\entrenos\modulos\gamificacion\controladores\ControladorPodio.class
+es\ucab\entrenos\modulos\publicacion\repositorios\IRepositorioCancelacion.class
 es\ucab\entrenos\modulos\publicacion\modelos\Transaccion.class
 es\ucab\entrenos\modulos\publicacion\controladores\ControladorTransaccion.class
 es\ucab\entrenos\modulos\subasta\modelos\Propuesta.class
 es\ucab\entrenos\modulos\gamificacion\servicios\ServicioGamificacion.class
 es\ucab\entrenos\modulos\subasta\dtos\AdjudicacionResponseDTO.class
+es\ucab\entrenos\modulos\gamificacion\dtos\EntradaPodio.class
 es\ucab\entrenos\modulos\publicacion\dto\RespuestaSolicitudDTO.class
 es\ucab\entrenos\modulos\gamificacion\modelos\LogroDesbloqueado.class
 es\ucab\entrenos\modulos\identidad\repositorios\RepositorioCorreoPermitido.class
@@ -114,9 +117,9 @@ es\ucab\entrenos\modulos\gamificacion\dtos\LogroEstadoDTO.class
 es\ucab\entrenos\modulos\identidad\dtos\EdicionNecesidadDTO.class
 es\ucab\entrenos\modulos\identidad\repositorios\RepositorioHabilidad$1.class
 es\ucab\entrenos\modulos\reputacion\dtos\ResenasPorUsuarioDTO.class
-es\ucab\entrenos\modulos\gamificacion\dtos\PodioResponseDTO$EntradaPodio.class
 es\ucab\entrenos\modulos\identidad\modelos\NecesidadRegistrada.class
 es\ucab\entrenos\modulos\gamificacion\modelos\PodioSemanal.class
+es\ucab\entrenos\modulos\publicacion\modelos\EstadoSolicitud.class
 es\ucab\entrenos\modulos\identidad\servicios\ServicioAutenticacion.class
 es\ucab\entrenos\modulos\publicacion\dtos\ReportarIncidenciaRequestDTO.class
 es\ucab\entrenos\modulos\reputacion\modelos\Resena.class
@@ -133,7 +136,6 @@ es\ucab\entrenos\modulos\subasta\modelos\BienOfrecido.class
 es\ucab\entrenos\modulos\reputacion\repositorios\RepositorioReputacion$1.class
 es\ucab\entrenos\nucleo\seguridad\configuracion\ConfiguracionSeguridad.class
 es\ucab\entrenos\modulos\identidad\modelos\RolUsuario.class
-es\ucab\entrenos\modulos\publicacion\repositorios\RepositorioMotivoCancelacion$1.class
 es\ucab\entrenos\modulos\identidad\dtos\NuevaOfertaIndividualDTO.class
 es\ucab\entrenos\modulos\identidad\repositorios\IRepositorioHabilidad.class
 es\ucab\entrenos\modulos\publicacion\repositorios\IRepositorioTransaccion.class
@@ -143,4 +145,5 @@ es\ucab\entrenos\modulos\identidad\dtos\ConfiguracionCatalogoRequestDTO$Necesida
 es\ucab\entrenos\modulos\identidad\dtos\ConfiguracionCatalogoRequestDTO.class
 es\ucab\entrenos\modulos\reputacion\servicios\ServicioReputacion.class
 es\ucab\entrenos\modulos\publicacion\modelos\EstadoTransaccion.class
+es\ucab\entrenos\modulos\publicacion\repositorios\RepositorioCancelacion.class
 es\ucab\entrenos\EntreNosApplication.class

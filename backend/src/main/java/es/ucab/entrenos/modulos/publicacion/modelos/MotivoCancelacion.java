@@ -1,22 +1,17 @@
 package es.ucab.entrenos.modulos.publicacion.modelos;
 
-public class MotivoCancelacion {
-    private String id;
-    private String descripcion;
-    private boolean activo;
+public enum MotivoCancelacion {
+    EQUIVOCACION("Me equivoqué al enviar la solicitud / oferta."),
+    YA_NO_NECESITO("Ya no necesito este servicio / Ya resolví mi necesidad."),
+    SIN_ACUERDO("No pudimos llegar a un acuerdo en el horario o los detalles.");
 
-    public MotivoCancelacion() {}
+    private final String descripcion;
 
-    public MotivoCancelacion(String id, String descripcion) {
-        this.id = id;
+    MotivoCancelacion(String descripcion) {
         this.descripcion = descripcion;
-        this.activo = true;
     }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
-    public boolean isActivo() { return activo; }
-    public void setActivo(boolean activo) { this.activo = activo; }
+    public String getDescripcion() {
+        return descripcion;
+    }
 }

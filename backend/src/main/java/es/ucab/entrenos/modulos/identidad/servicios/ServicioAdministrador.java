@@ -66,7 +66,7 @@ public class ServicioAdministrador {
         if (idUsuarioGanadorCreditos.equals(t.getIdOfertante())) {
             // Entregar fondos al ofertante
             demandante.getMonedero().liberarCompromiso();
-            ofertante.getMonedero().acreditar(t.getCreditosComprometidos());
+            ofertante.getMonedero().acreditar(t.getCreditosRetenidos());
         } else if (idUsuarioGanadorCreditos.equals(t.getIdDemandante())) {
             // Devolver fondos al demandante
             demandante.getMonedero().devolverCompromiso();
