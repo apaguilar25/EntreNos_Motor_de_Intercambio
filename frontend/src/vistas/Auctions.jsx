@@ -5,8 +5,9 @@ import { AppContext } from '../App';
 
 const Auctions = () => {
   const navigate = useNavigate();
-  const { user, controladorSubasta } = useContext(AppContext);
+  const { user, controladorSubasta, controladorPerfil } = useContext(AppContext);
   const [auctions, setAuctions] = useState([]);
+  const [usersMap, setUsersMap] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -16,6 +17,16 @@ const Auctions = () => {
         // Solo mostrar las que no son mías y que estén ACTIVA
         const publicAuctions = data.filter(s => s.idPropietario !== user?.id && s.estado === 'ACTIVA');
         setAuctions(publicAuctions);
+
+        const uniqueIds = [...new Set(publicAuctions.map(a => a.idPropietario))];
+        const uMap = {};
+        for (const id of uniqueIds) {
+          if (id) {
+            const p = await controladorPerfil.obtenerDatosPerfil(id);
+            uMap[id] = p.nombre || id;
+          }
+        }
+        setUsersMap(uMap);
       } catch (err) {
         console.error("Error al cargar subastas", err);
       } finally {
@@ -23,7 +34,7 @@ const Auctions = () => {
       }
     };
     fetchAuctions();
-  }, [user, controladorSubasta]);
+  }, [user, controladorSubasta, controladorPerfil]);
 
   const getMejorOferta = (propuestas) => {
     if (!propuestas || propuestas.length === 0) return '-';
@@ -78,7 +89,7 @@ const Auctions = () => {
                 </span>
                 <h3 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>{auction.nombreActivo}</h3>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem', fontSize: '0.875rem' }}>{auction.descripcion}</p>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>Subastador: {auction.idPropietario}</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>Subastador: {usersMap[auction.idPropietario] || auction.idPropietario}</div>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -110,7 +121,7 @@ const Auctions = () => {
                     <button 
                       className="btn-primary" 
                       style={{ backgroundColor: 'var(--color-green-700)', color: '#fff', padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-                      onClick={() => navigate(`/request/${auction.id}?type=subasta&title=${encodeURIComponent(auction.nombreActivo)}&desc=${encodeURIComponent(auction.descripcion)}&owner=${auction.idPropietario}`)}
+                      onClick={() => navigate(`/request/${auction.id}?type=subasta&title=${encodeURIComponent(auction.nombreActivo)}&desc=${encodeURIComponent(auction.descripcion)}&owner=${encodeURIComponent(usersMap[auction.idPropietario] || auction.idPropietario)}`)}
                     >
                       Pujar con Bienes
                     </button>

@@ -89,7 +89,7 @@ const CreateAuction = () => {
         </div>
 
         <div style={{ fontSize: '0.75rem', color: 'var(--color-red-600)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <strong>Advertencia:</strong> Si la subasta se cierra automáticamente por tiempo y no asignas a un ganador teniendo pujas válidas, serás penalizado en tu reputación.
+          <strong>Advertencia:</strong> Si la subasta se cierra y no se asigna un ganador 5 días después del cierre, serás penalizado y no podrás publicar subastas durante 72h
         </div>
 
         <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>

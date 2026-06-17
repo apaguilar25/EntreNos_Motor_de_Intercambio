@@ -13,6 +13,9 @@ const Profile = () => {
   const [transacciones, setTransacciones] = useState([]);
   const [logros, setLogros] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [usersMap, setUsersMap] = useState({});
+  const [pubsMap, setPubsMap] = useState({});
+  const [alertMessage, setAlertMessage] = useState('');
 
   // Modal Reporte
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -52,6 +55,40 @@ const Profile = () => {
           const logrosData = await controladorGamificacion.obtenerLogros(user.id);
           setLogros(logrosData || []);
         }
+
+        try {
+          // Extraer todos los IDs únicos para mapear nombres
+          const ids = new Set();
+          if (userTrans) {
+            userTrans.forEach(t => { ids.add(t.idDemandante); ids.add(t.idOfertante); });
+          }
+          if (auctionsData) {
+            auctionsData.forEach(a => {
+              if (a.propuestas) a.propuestas.forEach(p => ids.add(p.idPostor));
+            });
+          }
+          if (sentData) {
+            sentData.forEach(s => { ids.add(s.idUsuarioDefensor); ids.add(s.idUsuarioReportante); }); // Para incidencias si hubiere
+          }
+          
+          const uMap = {};
+          for (const uId of ids) {
+             if (uId) {
+                const p = await controladorPerfil.obtenerDatosPerfil(uId);
+                uMap[uId] = p.nombre || uId;
+             }
+          }
+          setUsersMap(uMap);
+          const resPubs = await fetch('http://localhost:8080/api/publicaciones');
+          if (resPubs.ok) {
+             const pubsData = await resPubs.json();
+             const pMap = {};
+             pubsData.forEach(p => pMap[p.idPublicacion] = p.nombreServicio);
+             setPubsMap(pMap);
+          }
+        } catch (e) {
+          console.error("Error fetching auxiliary data", e);
+        }
       } catch (err) {
         console.error("Error cargando perfil", err);
       } finally {
@@ -70,16 +107,15 @@ const Profile = () => {
         body: JSON.stringify({ idUsuario: user.id })
       });
       if (res.ok) {
-        alert("Solicitud cancelada con éxito.");
-        // Refetch sent requests to update UI
+        setAlertMessage("Solicitud cancelada con éxito.");
         const sentData = await controladorPerfil.obtenerSolicitudesEnviadas(user.id);
         setSentRequests(sentData);
       } else {
         const errorData = await res.json();
-        alert(errorData.error || "Error al cancelar la solicitud");
+        setAlertMessage(errorData.error || "Error al cancelar la solicitud");
       }
     } catch (err) {
-      alert("Error de conexión");
+      setAlertMessage("Error de conexión");
     }
   };
 
@@ -88,22 +124,21 @@ const Profile = () => {
     try {
       const res = await controladorSubasta.adjudicarGanador(oferta.idSubasta, oferta.idPropuesta);
       if (res) {
-        alert("Ganador adjudicado con éxito. Subasta concluida.");
-        // Refetch
+        setAlertMessage("Ganador adjudicado con éxito. Subasta concluida.");
         const auctionsData = await controladorSubasta.obtenerMisSubastas();
         setMyAuctions(auctionsData);
       } else {
-        alert("Error al adjudicar la subasta");
+        setAlertMessage("Error al adjudicar la subasta");
       }
     } catch (err) {
-      alert("Error de conexión");
+      setAlertMessage("Error de conexión");
     }
   };
 
   const handleReportarIncidencia = async (e) => {
     e.preventDefault();
     if (reportData.descripcionProblema.length < 20) {
-      alert("La descripción del incidente debe tener al menos 20 caracteres.");
+      setAlertMessage("La descripción del incidente debe tener al menos 20 caracteres.");
       return;
     }
 
@@ -118,15 +153,15 @@ const Profile = () => {
         })
       });
       if (res.ok) {
-        alert("Incidencia reportada con éxito. Nuestro equipo la revisará.");
+        setAlertMessage("Incidencia reportada con éxito. Nuestro equipo la revisará.");
         setReportModalOpen(false);
         setReportData({ idPublicacion: '', idUsuarioInvolucrado: '', descripcionProblema: '', fotosEvidenciaBase64: [] });
       } else {
         const errorData = await res.json();
-        alert(errorData.error || "Error al reportar");
+        setAlertMessage(errorData.error || "Error al reportar");
       }
     } catch (err) {
-      alert("Error de conexión");
+      setAlertMessage("Error de conexión");
     }
   };
 
@@ -167,7 +202,7 @@ const Profile = () => {
       }
 
       if (res.ok) {
-        alert("Publicación modificada con éxito.");
+        setAlertMessage("Publicación modificada con éxito.");
         setEditModalOpen(false);
         const data = await controladorPerfil.obtenerDatosPerfil(user.id);
         setUserProfile(data);
@@ -175,10 +210,10 @@ const Profile = () => {
         setMyAuctions(auctionsData);
       } else {
         const errorData = await res.json().catch(() => ({}));
-        alert(errorData.error || errorData.message || "Error al modificar");
+        setAlertMessage(errorData.error || errorData.message || "Error al modificar");
       }
     } catch (err) {
-      alert("Error de conexión");
+      setAlertMessage("Error de conexión");
     }
   };
 
@@ -195,17 +230,17 @@ const Profile = () => {
       }
 
       if (res.ok) {
-        alert("Publicación eliminada.");
+        setAlertMessage("Publicación eliminada.");
         const data = await controladorPerfil.obtenerDatosPerfil(user.id);
         setUserProfile(data);
         const auctionsData = await controladorSubasta.obtenerMisSubastas();
         setMyAuctions(auctionsData);
       } else {
         const errorData = await res.json().catch(() => ({}));
-        alert(errorData.error || errorData.message || "Error al eliminar");
+        setAlertMessage(errorData.error || errorData.message || "Error al eliminar");
       }
     } catch (err) {
-      alert("Error de conexión");
+      setAlertMessage("Error de conexión");
     }
   };
 
@@ -372,7 +407,7 @@ const Profile = () => {
                       {auction.propuestas.map((of, i) => (
                         <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem', backgroundColor: 'var(--bg-secondary)', borderRadius: '0.25rem', marginBottom: '0.5rem' }}>
                           <div>
-                            <span style={{ fontWeight: 'bold', fontSize: '0.875rem' }}>De: {of.idPostor}</span>
+                            <span style={{ fontWeight: 'bold', fontSize: '0.875rem' }}>De: {usersMap[of.idPostor] || of.idPostor}</span>
                             <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                               Bienes: {of.bienesOfrecidos?.map(b => `${b.cantidad}x ${b.nombre}`).join(', ')}
                             </div>
@@ -414,7 +449,7 @@ const Profile = () => {
                 <div key={index} style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
                     <h4 style={{ marginBottom: '0.25rem', fontSize: '1rem' }}>{req.nombreServicio}</h4>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>A: {req.idReceptor} • Costo: {req.precioCreditos} cr</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>A: {usersMap[req.idReceptor] || req.idReceptor} • Costo: {req.precioCreditos} cr</p>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <span style={{ 
@@ -457,9 +492,9 @@ const Profile = () => {
                 <div key={index} style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
                     <h4 style={{ marginBottom: '0.25rem', fontSize: '1rem' }}>Tx: {tx.idTransaccion}</h4>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Publicación: {tx.idPublicacion} • Costo: {tx.precioFinal} cr</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Publicación: {pubsMap[tx.idPublicacion] || tx.idPublicacion} • Costo: {tx.creditosComprometidos || tx.precioFinal || 0} cr</p>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                      {tx.idDemandante === user.id ? 'Tú eres el Solicitante' : 'Tú eres el Proveedor'}
+                      {tx.idDemandante === user.id ? `Tú eres el Solicitante (Contraparte: ${usersMap[tx.idOfertante] || tx.idOfertante})` : `Tú eres el Proveedor (Contraparte: ${usersMap[tx.idDemandante] || tx.idDemandante})`}
                     </p>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -477,7 +512,14 @@ const Profile = () => {
                       <button 
                         style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
                         onClick={() => {
-                          setReportData({ ...reportData, idPublicacion: tx.idTransaccion, idUsuarioInvolucrado: tx.idDemandante === user.id ? tx.idOfertante : tx.idDemandante });
+                          const contraparteId = tx.idDemandante === user.id ? tx.idOfertante : tx.idDemandante;
+                          setReportData({ 
+                            ...reportData, 
+                            idPublicacion: tx.idTransaccion,
+                            tituloPublicacion: pubsMap[tx.idPublicacion] || tx.idPublicacion, 
+                            idUsuarioInvolucrado: contraparteId,
+                            nombreContraparte: usersMap[contraparteId] || contraparteId
+                          });
                           setReportModalOpen(true);
                         }}
                       >
@@ -496,6 +538,11 @@ const Profile = () => {
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div className="card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
             <h3 style={{ marginBottom: '1rem' }}>Reportar Incidencia</h3>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+              <strong>Reportante:</strong> {user?.name || user?.nombre || 'Tú'}<br/>
+              <strong>Contraparte:</strong> {reportData.nombreContraparte}<br/>
+              <strong>Publicación/Transacción:</strong> {reportData.tituloPublicacion}
+            </p>
             <form onSubmit={handleReportarIncidencia} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Descripción del problema</label>
@@ -526,7 +573,7 @@ const Profile = () => {
       {editModalOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div className="card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
-            <h3 style={{ marginBottom: '1rem' }}>Modificar Publicación</h3>
+            <h3 style={{ marginBottom: '1rem' }}>{editType === 'subasta' ? 'Modificar Subasta' : 'Modificar Publicación'}</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem', fontSize: '0.875rem' }}>
               <strong>Título/Servicio:</strong> {editData.titulo}
             </p>
@@ -559,6 +606,19 @@ const Profile = () => {
                 <button type="submit" className="btn-primary" style={{ flex: 1, padding: '0.75rem' }}>Guardar Cambios</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Centralized Alert Modal */}
+      {alertMessage && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000 }}>
+          <div className="card animate-in" style={{ width: '90%', maxWidth: '400px', padding: '2rem', textAlign: 'center' }}>
+            <h3 style={{ marginBottom: '1rem', color: 'var(--text-primary)' }}>Aviso</h3>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', lineHeight: '1.5' }}>{alertMessage}</p>
+            <button className="btn-primary" style={{ width: '100%', padding: '0.75rem' }} onClick={() => setAlertMessage('')}>
+              Aceptar
+            </button>
           </div>
         </div>
       )}
