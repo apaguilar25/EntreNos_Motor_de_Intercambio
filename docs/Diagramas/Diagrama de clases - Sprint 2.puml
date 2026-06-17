@@ -237,7 +237,6 @@ package "Diagrama de clase EntreNós"  {
         + retirarPropuesta(idPropuesta: String, idPostor: String): void
     }
 
-
     class Propuesta {
         - idPropuesta: String
         - idSubasta: String
