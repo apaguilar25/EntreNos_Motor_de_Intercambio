@@ -485,11 +485,11 @@ public class ServicioPublicacion {
             return existente;
         }
 
-        Cancelacion cancelacion = new Cancelacion(idTransaccion, idUsuario, t.getIdOfertante(), t.getIdDemandante(), motivo);
+        String contraparte = t.getIdOfertante().equals(idUsuario) ? t.getIdDemandante() : t.getIdOfertante();
+        Cancelacion cancelacion = new Cancelacion(idTransaccion, idUsuario, contraparte, motivo);
         repositorioCancelacion.guardar(cancelacion);
         Publicacion pub = obtenerPublicacionPorId(t.getIdPublicacion()).orElse(null);
         String nombreServicio = pub != null ? pub.getNombreServicio() : "Servicio";
-        String contraparte = t.getIdOfertante().equals(idUsuario) ? t.getIdDemandante() : t.getIdOfertante();
         servicioNotificacion.enviarNotificacion(idUsuario, contraparte,
                 "Se ha solicitado la cancelación de \"" + nombreServicio + "\". Motivo: " + motivo.getDescripcion(),
                 TipoNotificacion.ALERTA_SISTEMA);

@@ -6,20 +6,21 @@ skinparam defaultFontSize 11
 hide circle
 hide empty members
 
-title "Vista de Datos — Sprint 1 (HU1 a HU5)"
+title "Vista de Datos — Sprint 1 (HU1 a HU5)\nLas flechas representan referencias (FK) a clases persistentes en otros archivos .json"
 legend right
-  <<HU1>> Registro de Identidad y Catalogo
-  <<HU2>> Navegacion y Evaluacion
-  <<HU3>> Transacciones Seguras
-  <<HU4>> Subastas (Propietario)
-  <<HU5>> Subastas (Postor)
+  == Referencias entre archivos .json ==
+  [#90EE90] Verde  = Referencia a Publicacion
+  [#FFAA66] Naranja = Referencia a Transaccion
+  [black] Negro  = Otras referencias
+  == Referencia local ==
+  (sin flecha entre archivos)
 endlegend
 
 ' ========================================================================
-' MODULO: IDENTIDAD  (HU1)
+' ARCHIVO: usuarios.json
 ' ========================================================================
-package "Identidad" as P_IDENTIDAD {
-  class "Usuario" as USUARIO <<HU1>> {
+package "usuarios.json" as P_USUARIOS {
+  class "Usuario" as USUARIO {
     + id : String [PK]
     + nombre : String
     + correoElectronico : String
@@ -35,38 +36,46 @@ package "Identidad" as P_IDENTIDAD {
     + urlFotoPerfil : String
   }
 
-  class "Monedero" as MONEDERO <<emb>> {
+  class "Monedero" as MONEDERO {
     + creditosDisponibles : float
     + creditosRetenidos : float
     + creditosPorLogros : float
   }
 
-  class "Catalogo" as CATALOGO <<emb>> {
+  class "Catalogo" as CATALOGO {
     + completado : boolean
   }
 
-  class "Habilidad Ofrecida" as HAB_OFRE <<emb, HU1>> {
+  class "Habilidad Ofrecida" as HAB_OFRE {
     + idInstancia : String [PK]
     + precioCreditos : int
     + descripcionServicio : String
   }
 
-  class "Necesidad Registrada" as NEC_REG <<emb, HU1>> {
+  class "Necesidad Registrada" as NEC_REG {
     + idInstancia : String [PK]
     + descripcionCondiciones : String
   }
+}
 
-  class "Habilidad" as HABILIDAD <<HU1>> {
+' ========================================================================
+' ARCHIVO: habilidades.json
+' ========================================================================
+package "habilidades.json" as P_HABILIDADES {
+  class "Habilidad" as HABILIDAD {
     + id : String [PK]
     + categoria : String
   }
 }
 
 ' ========================================================================
-' MODULO: PUBLICACION E INTERCAMBIO  (HU2, HU3)
+' ARCHIVO: publicaciones.json
 ' ========================================================================
-package "Publicacion e Intercambio" as P_PUBLICACION {
-  class "Publicacion" as PUBLICACION <<HU2>> {
+package "publicaciones.json" as P_PUBLICACIONES {
+  class "Usuario" as USUARIO_PUB {
+  }
+
+  class "Publicacion" as PUBLICACION {
     + idPublicacion : String [PK]
     + idUsuario : String [FK]
     + tipoPublicacion : String
@@ -77,8 +86,16 @@ package "Publicacion e Intercambio" as P_PUBLICACION {
     + idInstanciaCatalogo : String [FK]
     + version : int
   }
+}
 
-  class "Solicitud" as SOLICITUD <<HU2>> {
+' ========================================================================
+' ARCHIVO: solicitudes.json
+' ========================================================================
+package "solicitudes.json" as P_SOLICITUDES {
+  class "Usuario" as USUARIO_SOL {
+  }
+
+  class "Solicitud" as SOLICITUD {
     + idSolicitud : String [PK]
     + idPublicacion : String [FK]
     + idSolicitante : String [FK]
@@ -87,8 +104,16 @@ package "Publicacion e Intercambio" as P_PUBLICACION {
     + fechaLimiteRespuesta : long
     + version : int
   }
+}
 
-  class "Transaccion" as TRANSACCION <<HU3>> {
+' ========================================================================
+' ARCHIVO: transacciones.json
+' ========================================================================
+package "transacciones.json" as P_TRANSACCIONES {
+  class "Usuario" as USUARIO_TX {
+  }
+
+  class "Transaccion" as TRANSACCION {
     + idTransaccion : String [PK]
     + idPublicacion : String [FK]
     + idOfertante : String [FK]
@@ -101,7 +126,19 @@ package "Publicacion e Intercambio" as P_PUBLICACION {
     + version : int
   }
 
-  class "Resena" as RESENA <<HU3>> {
+  class "Resena" as RESENA_TX {
+    ' Solo nombre: atributos completos en resenas.json
+  }
+}
+
+' ========================================================================
+' ARCHIVO: resenas.json
+' ========================================================================
+package "resenas.json" as P_RESENAS {
+  class "Usuario" as USUARIO_RES {
+  }
+
+  class "Resena" as RESENA {
     + idResena : String [PK]
     + idTransaccion : String [FK]
     + idEmisor : String [FK]
@@ -110,19 +147,16 @@ package "Publicacion e Intercambio" as P_PUBLICACION {
     + fechaCreacion : long
     + version : int
   }
-
-  class "Motivo Cancelacion" as MOT_CANCEL <<soporte>> {
-    + id : String [PK]
-    + descripcion : String
-    + activo : boolean
-  }
 }
 
 ' ========================================================================
-' MODULO: SUBASTA  (HU4, HU5)
+' ARCHIVO: subastas.json
 ' ========================================================================
-package "Subasta" as P_SUBASTA {
-  class "Subasta" as SUBASTA <<HU4>> {
+package "subastas.json" as P_SUBASTAS {
+  class "Usuario" as USUARIO_SUB {
+  }
+
+  class "Subasta" as SUBASTA {
     + id : String [PK]
     + idPropietario : String [FK]
     + nombreActivo : String
@@ -136,7 +170,7 @@ package "Subasta" as P_SUBASTA {
     + version : int
   }
 
-  class "Propuesta" as PROPUESTA <<emb, HU5>> {
+  class "Propuesta" as PROPUESTA {
     + idPropuesta : String [PK]
     + idSubasta : String [FK]
     + idPostor : String [FK]
@@ -147,17 +181,20 @@ package "Subasta" as P_SUBASTA {
     + fechaPropuesta : String
   }
 
-  class "Bien Ofrecido" as BIEN <<emb, HU5>> {
+  class "Bien Ofrecido" as BIEN {
     + nombre : String
     + cantidad : int
   }
 }
 
 ' ========================================================================
-' MODULO: NOTIFICACION  (transversal a HU2, HU4, HU5)
+' ARCHIVO: notificaciones.json
 ' ========================================================================
-package "Notificaciones" as P_NOTIF {
-  class "Notificacion" as NOTIFICACION <<transversal>> {
+package "notificaciones.json" as P_NOTIF {
+  class "Usuario" as USUARIO_NOT {
+  }
+
+  class "Notificacion" as NOTIFICACION {
     + idNotificacion : String [PK]
     + idRemitente : String [FK]
     + idDestinatario : String [FK]
@@ -169,64 +206,58 @@ package "Notificaciones" as P_NOTIF {
 }
 
 ' ========================================================================
-' RELACIONES
+' ARCHIVO: correos_permitidos.json
 ' ========================================================================
+package "correos_permitidos.json" as P_CORREOS {
+  class "Correo Permitido" as CORREO {
+    + id : String [PK]
+    + correo : String
+    + fechaCreacion : long
+  }
+}
 
-''''''''''''''''''' IDENTIDAD (HU1) '''''''''''''''''''
+' ========================================================================
+' RELACIONES (INTERNAS A CADA ARCHIVO)
+' ========================================================================
 USUARIO *-- MONEDERO : contiene
 USUARIO *-- CATALOGO : contiene
 CATALOGO *-- HAB_OFRE : contiene
 CATALOGO *-- NEC_REG : contiene
-HAB_OFRE --> HABILIDAD : habilidadBase
-NEC_REG --> HABILIDAD : necesidadBase
-
-''''''''''''''''''' PUBLICACION (HU2) '''''''''''''''''''
-USUARIO --> PUBLICACION : idUsuario
-PUBLICACION --> HAB_OFRE : idInstanciaCatalogo
-PUBLICACION --> NEC_REG : idInstanciaCatalogo
-
-''''''''''''''''''' SOLICITUD (HU2) '''''''''''''''''''
-PUBLICACION --> SOLICITUD : idPublicacion
-USUARIO --> SOLICITUD : idSolicitante
-
-''''''''''''''''''' TRANSACCION (HU3) '''''''''''''''''''
-PUBLICACION --> TRANSACCION : idPublicacion
-USUARIO --> TRANSACCION : idOfertante
-USUARIO --> TRANSACCION : idDemandante
-TRANSACCION *-- RESENA : contiene (embebida)
-RESENA --> TRANSACCION : idTransaccion
-USUARIO --> RESENA : idEmisor / idReceptor
-
-''''''''''''''''''' SUBASTA (HU4, HU5) '''''''''''''''''''
-USUARIO --> SUBASTA : idPropietario
 SUBASTA *-- PROPUESTA : contiene
 PROPUESTA *-- BIEN : contiene
-USUARIO --> PROPUESTA : idPostor
-
-''''''''''''''''''' NOTIFICACION '''''''''''''''''''
-USUARIO --> NOTIFICACION : idRemitente
-USUARIO --> NOTIFICACION : idDestinatario
+TRANSACCION *-- RESENA_TX : contiene (embebida)
 
 ' ========================================================================
-' NOTAS DE ARCHIVOS
+' REFERENCIAS A USUARIO (locales, sin flecha entre archivos)
 ' ========================================================================
-note top of USUARIO
-  Archivo: usuarios.json
-  Embebe Monedero, Catalogo,
-  HabilidadOfrecida,
-  NecesidadRegistrada
-end note
-note top of PUBLICACION : Archivo: publicaciones.json
-note top of SOLICITUD : Archivo: solicitudes.json
-note top of TRANSACCION : Archivo: transacciones.json
-note top of MOT_CANCEL : Archivo: motivos_cancelacion.json
-note top of SUBASTA : Archivo: subastas.json
-note top of HABILIDAD : Archivo: habilidades.json
-note top of NOTIFICACION : Archivo: notificaciones.json
+PUBLICACION --> USUARIO_PUB : idUsuario
+SOLICITUD --> USUARIO_SOL : idSolicitante
+TRANSACCION --> USUARIO_TX : idOfertante
+TRANSACCION --> USUARIO_TX : idDemandante
+RESENA --> USUARIO_RES : idEmisor
+RESENA --> USUARIO_RES : idReceptor
+SUBASTA --> USUARIO_SUB : idPropietario
+PROPUESTA --> USUARIO_SUB : idPostor
+NOTIFICACION --> USUARIO_NOT : idRemitente
+NOTIFICACION --> USUARIO_NOT : idDestinatario
 
-note bottom of RESENA
-  Embebida en transacciones.json
-  y tambien en resenas.json
-end note
+' ========================================================================
+' REFERENCIAS A PUBLICACION (verde)
+' ========================================================================
+SOLICITUD -[#90EE90]-> PUBLICACION : idPublicacion
+TRANSACCION -[#90EE90]-> PUBLICACION : idPublicacion
+
+' ========================================================================
+' REFERENCIAS A TRANSACCION (naranja)
+' ========================================================================
+RESENA -[#FFAA66]-> TRANSACCION : idTransaccion
+
+' ========================================================================
+' OTRAS REFERENCIAS (negro, todas cruzan archivos)
+' ========================================================================
+HAB_OFRE --> HABILIDAD : habilidadBase
+NEC_REG --> HABILIDAD : necesidadBase
+PUBLICACION --> HAB_OFRE : idInstanciaCatalogo
+PUBLICACION --> NEC_REG : idInstanciaCatalogo
 
 @enduml

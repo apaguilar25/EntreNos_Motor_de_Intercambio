@@ -6,20 +6,22 @@ skinparam defaultFontSize 11
 hide circle
 hide empty members
 
-title "Vista de Datos — Sprint 2 (HU6 a HU10)"
+title "Vista de Datos — Sprint 2 (HU6 a HU10)\nLas flechas representan referencias (FK) a clases persistentes en otros archivos .json"
 legend right
-  <<S1>> Heredado de Sprint 1
-  <<HU7>> Autenticacion (nuevos campos)
-  <<HU8>> Gestion de Incidencias
-  <<HU9>> Gamificacion
-  <<HU10>> Podio Semanal
+  == Referencias entre archivos .json ==
+  [#90EE90] Verde   = Referencia a Publicacion
+  [#FFAA66] Naranja = Referencia a Transaccion
+  [#DDA0DD] Morado  = Referencia a Logro
+  [black] Negro    = Otras referencias
+  == Referencia local ==
+  (sin flecha entre archivos)
 endlegend
 
 ' ========================================================================
-' MODULO: IDENTIDAD  (Sprint 1 + HU7)
+' ARCHIVO: usuarios.json  (S1 + HU7)
 ' ========================================================================
-package "Identidad" as P_IDENTIDAD {
-  class "Usuario" as USUARIO <<S1, HU7>> {
+package "usuarios.json" as P_USUARIOS {
+  class "Usuario" as USUARIO {
     + id : String [PK]
     + nombre : String
     + correoElectronico : String
@@ -30,7 +32,6 @@ package "Identidad" as P_IDENTIDAD {
     + estado : String
     + rol : String
   ++
-    ' HU7: Bloqueo por intentos fallidos
     + intentosFallidos : int
     + tiempoDesbloqueoMillis : long
     + primerIntentoFallidoMillis : long
@@ -42,38 +43,46 @@ package "Identidad" as P_IDENTIDAD {
     + urlFotoPerfil : String
   }
 
-  class "Monedero" as MONEDERO <<emb, S1>> {
+  class "Monedero" as MONEDERO {
     + creditosDisponibles : float
     + creditosRetenidos : float
     + creditosPorLogros : float
   }
 
-  class "Catalogo" as CATALOGO <<emb, S1>> {
+  class "Catalogo" as CATALOGO {
     + completado : boolean
   }
 
-  class "Habilidad Ofrecida" as HAB_OFRE <<emb, S1>> {
+  class "Habilidad Ofrecida" as HAB_OFRE {
     + idInstancia : String [PK]
     + precioCreditos : int
     + descripcionServicio : String
   }
 
-  class "Necesidad Registrada" as NEC_REG <<emb, S1>> {
+  class "Necesidad Registrada" as NEC_REG {
     + idInstancia : String [PK]
     + descripcionCondiciones : String
   }
+}
 
-  class "Habilidad" as HABILIDAD <<S1>> {
+' ========================================================================
+' ARCHIVO: habilidades.json
+' ========================================================================
+package "habilidades.json" as P_HABILIDADES {
+  class "Habilidad" as HABILIDAD {
     + id : String [PK]
     + categoria : String
   }
 }
 
 ' ========================================================================
-' MODULO: PUBLICACION E INTERCAMBIO  (Sprint 1 + HU8)
+' ARCHIVO: publicaciones.json
 ' ========================================================================
-package "Publicacion e Intercambio" as P_PUBLICACION {
-  class "Publicacion" as PUBLICACION <<S1>> {
+package "publicaciones.json" as P_PUBLICACIONES {
+  class "Usuario" as USUARIO_PUB {
+  }
+
+  class "Publicacion" as PUBLICACION {
     + idPublicacion : String [PK]
     + idUsuario : String [FK]
     + tipoPublicacion : String
@@ -84,8 +93,16 @@ package "Publicacion e Intercambio" as P_PUBLICACION {
     + idInstanciaCatalogo : String [FK]
     + version : int
   }
+}
 
-  class "Solicitud" as SOLICITUD <<S1>> {
+' ========================================================================
+' ARCHIVO: solicitudes.json
+' ========================================================================
+package "solicitudes.json" as P_SOLICITUDES {
+  class "Usuario" as USUARIO_SOL {
+  }
+
+  class "Solicitud" as SOLICITUD {
     + idSolicitud : String [PK]
     + idPublicacion : String [FK]
     + idSolicitante : String [FK]
@@ -94,8 +111,16 @@ package "Publicacion e Intercambio" as P_PUBLICACION {
     + fechaLimiteRespuesta : long
     + version : int
   }
+}
 
-  class "Transaccion" as TRANSACCION <<S1, HU8>> {
+' ========================================================================
+' ARCHIVO: transacciones.json  (S1 + HU8: idIncidencia)
+' ========================================================================
+package "transacciones.json" as P_TRANSACCIONES {
+  class "Usuario" as USUARIO_TX {
+  }
+
+  class "Transaccion" as TRANSACCION {
     + idTransaccion : String [PK]
     + idPublicacion : String [FK]
     + idOfertante : String [FK]
@@ -106,16 +131,27 @@ package "Publicacion e Intercambio" as P_PUBLICACION {
     + confirmacionDemandante : boolean
     + fechaCreacion : long
   ++
-    ' HU8: Vinculo a incidencia
     + idIncidencia : String [FK]
-    + idSolicitanteCancelacion : String [FK]
-    + motivoCancelacion : String
-    + cancelacionAceptada : boolean
   ++
     + version : int
   }
 
-  class "Incidencia" as INCIDENCIA <<HU8>> {
+  class "Resena" as RESENA_TX {
+    ' Solo nombre: atributos completos en resenas.json
+  }
+}
+
+' ========================================================================
+' ARCHIVO: incidencias.json  (NUEVO HU8)
+' ========================================================================
+package "incidencias.json" as P_INCIDENCIAS {
+  class "Usuario" as USUARIO_INC {
+  }
+
+  class "Transaccion" as TRANSACCION_INC {
+  }
+
+  class "Incidencia" as INCIDENCIA {
     + idIncidencia : String [PK]
     + idTransaccion : String [FK]
     + idUsuarioReportante : String [FK]
@@ -127,8 +163,39 @@ package "Publicacion e Intercambio" as P_PUBLICACION {
     + estado : String
     + fechaCreacion : long
   }
+}
 
-  class "Resena" as RESENA <<S1>> {
+' ========================================================================
+' ARCHIVO: cancelaciones.json  (NUEVO HU8)
+' ========================================================================
+package "cancelaciones.json" as P_CANCELACIONES {
+  class "Usuario" as USUARIO_CAN {
+  }
+
+  class "Transaccion" as TRANSACCION_CAN {
+  }
+
+  class "Cancelacion" as CANCELACION {
+    + idCancelacion : String [PK]
+    + idTransaccion : String [FK]
+    + idSolicitante : String [FK]
+    + idOfertante : String [FK]
+    + idDemandante : String [FK]
+    + motivo : String
+    + estado : String
+    + fechaCreacion : long
+    + version : int
+  }
+}
+
+' ========================================================================
+' ARCHIVO: resenas.json
+' ========================================================================
+package "resenas.json" as P_RESENAS {
+  class "Usuario" as USUARIO_RES {
+  }
+
+  class "Resena" as RESENA {
     + idResena : String [PK]
     + idTransaccion : String [FK]
     + idEmisor : String [FK]
@@ -137,19 +204,16 @@ package "Publicacion e Intercambio" as P_PUBLICACION {
     + fechaCreacion : long
     + version : int
   }
-
-  class "Motivo Cancelacion" as MOT_CANCEL <<S1>> {
-    + id : String [PK]
-    + descripcion : String
-    + activo : boolean
-  }
 }
 
 ' ========================================================================
-' MODULO: SUBASTA  (Sprint 1, sin cambios en S2)
+' ARCHIVO: subastas.json
 ' ========================================================================
-package "Subasta" as P_SUBASTA {
-  class "Subasta" as SUBASTA <<S1>> {
+package "subastas.json" as P_SUBASTAS {
+  class "Usuario" as USUARIO_SUB {
+  }
+
+  class "Subasta" as SUBASTA {
     + id : String [PK]
     + idPropietario : String [FK]
     + nombreActivo : String
@@ -163,7 +227,7 @@ package "Subasta" as P_SUBASTA {
     + version : int
   }
 
-  class "Propuesta" as PROPUESTA <<emb, S1>> {
+  class "Propuesta" as PROPUESTA {
     + idPropuesta : String [PK]
     + idSubasta : String [FK]
     + idPostor : String [FK]
@@ -174,17 +238,17 @@ package "Subasta" as P_SUBASTA {
     + fechaPropuesta : String
   }
 
-  class "Bien Ofrecido" as BIEN <<emb, S1>> {
+  class "Bien Ofrecido" as BIEN {
     + nombre : String
     + cantidad : int
   }
 }
 
 ' ========================================================================
-' MODULO: GAMIFICACION  (HU9, HU10)
+' ARCHIVO: logros.json  (NUEVO HU9)
 ' ========================================================================
-package "Gamificacion" as P_GAMIF {
-  class "Logro" as LOGRO <<HU9>> {
+package "logros.json" as P_LOGROS {
+  class "Logro" as LOGRO {
     + idLogro : String [PK]
     + nombre : String
     + descripcion : String
@@ -192,36 +256,58 @@ package "Gamificacion" as P_GAMIF {
     + bonoCreditos : int
     + activo : boolean
   }
+}
 
-  class "Logro Desbloqueado" as LOGRO_DESB <<HU9>> {
+' ========================================================================
+' ARCHIVO: logros_desbloqueados.json  (NUEVO HU9)
+' ========================================================================
+package "logros_desbloqueados.json" as P_LOGROS_DESB {
+  class "Usuario" as USUARIO_LGD {
+  }
+
+  class "Logro" as LOGRO_LGD {
+  }
+
+  class "Logro Desbloqueado" as LOGRO_DESB {
     + id : String [PK]
     + idUsuario : String [FK]
     + idLogro : String [FK]
     + fechaDesbloqueo : long
   }
+}
 
-  class "Podio Semanal" as PODIO <<HU10>> {
+' ========================================================================
+' ARCHIVO: podio_semanal.json  (NUEVO HU10)
+' ========================================================================
+package "podio_semanal.json" as P_PODIO {
+  class "Usuario" as USUARIO_POD {
+  }
+
+  class "Podio Semanal" as PODIO {
     + idPodio : String [PK]
-    + proveedorEliteId : String [FK]
-    + proveedorEliteNombre : String
-    + proveedorEliteServicios : int
-    + motorEconomiaId : String [FK]
-    + motorEconomiaNombre : String
-    + motorEconomiaTransacciones : int
-    + embajadorCalidadId : String [FK]
-    + embajadorCalidadNombre : String
-    + embajadorCalidadPromedio : double
     + fechaInicioSemana : long
     + fechaFinSemana : long
     + fechaCalculo : long
+    + proveedorElite : List~EntradaPodio~
+    + motorEconomia : List~EntradaPodio~
+    + embajadorCalidad : List~EntradaPodio~
+  }
+
+  class "Entrada Podio" as ENTRADA {
+    + idUsuario : String [FK denorm]
+    + nombreUsuario : String
+    + valor : double
   }
 }
 
 ' ========================================================================
-' MODULO: NOTIFICACION  (transversal)
+' ARCHIVO: notificaciones.json
 ' ========================================================================
-package "Notificaciones" as P_NOTIF {
-  class "Notificacion" as NOTIFICACION <<transversal>> {
+package "notificaciones.json" as P_NOTIF {
+  class "Usuario" as USUARIO_NOT {
+  }
+
+  class "Notificacion" as NOTIFICACION {
     + idNotificacion : String [PK]
     + idRemitente : String [FK]
     + idDestinatario : String [FK]
@@ -233,84 +319,74 @@ package "Notificaciones" as P_NOTIF {
 }
 
 ' ========================================================================
-' RELACIONES
+' ARCHIVO: correos_permitidos.json
 ' ========================================================================
+package "correos_permitidos.json" as P_CORREOS {
+  class "Correo Permitido" as CORREO {
+    + id : String [PK]
+    + correo : String
+    + fechaCreacion : long
+  }
+}
 
-''''''''''''''''''' IDENTIDAD '''''''''''''''''''
+' ========================================================================
+' RELACIONES (INTERNAS A CADA ARCHIVO)
+' ========================================================================
 USUARIO *-- MONEDERO : contiene
 USUARIO *-- CATALOGO : contiene
 CATALOGO *-- HAB_OFRE : contiene
 CATALOGO *-- NEC_REG : contiene
-HAB_OFRE --> HABILIDAD : habilidadBase
-NEC_REG --> HABILIDAD : necesidadBase
-
-''''''''''''''''''' PUBLICACION '''''''''''''''''''
-USUARIO --> PUBLICACION : idUsuario
-PUBLICACION --> HAB_OFRE : idInstanciaCatalogo
-PUBLICACION --> NEC_REG : idInstanciaCatalogo
-PUBLICACION --> SOLICITUD : idPublicacion
-USUARIO --> SOLICITUD : idSolicitante
-
-''''''''''''''''''' TRANSACCION '''''''''''''''''''
-PUBLICACION --> TRANSACCION : idPublicacion
-USUARIO --> TRANSACCION : idOfertante
-USUARIO --> TRANSACCION : idDemandante
-TRANSACCION *-- RESENA : contiene (embebida)
-RESENA --> TRANSACCION : idTransaccion
-USUARIO --> RESENA : idEmisor / idReceptor
-
-''''''''''''''''''' INCIDENCIA (HU8) '''''''''''''''''''
-TRANSACCION --> INCIDENCIA : idIncidencia
-INCIDENCIA --> TRANSACCION : idTransaccion
-USUARIO --> INCIDENCIA : idUsuarioReportante
-USUARIO --> INCIDENCIA : idUsuarioDefensor
-
-''''''''''''''''''' SUBASTA '''''''''''''''''''
-USUARIO --> SUBASTA : idPropietario
 SUBASTA *-- PROPUESTA : contiene
 PROPUESTA *-- BIEN : contiene
-USUARIO --> PROPUESTA : idPostor
-
-''''''''''''''''''' GAMIFICACION (HU9, HU10) '''''''''''''''''''
-USUARIO --> LOGRO_DESB : idUsuario
-LOGRO --> LOGRO_DESB : idLogro
-USUARIO --> PODIO : proveedorEliteId
-USUARIO --> PODIO : motorEconomiaId
-USUARIO --> PODIO : embajadorCalidadId
-PODIO --> USUARIO : nombres denormalizados
-
-''''''''''''''''''' NOTIFICACION '''''''''''''''''''
-USUARIO --> NOTIFICACION : idRemitente
-USUARIO --> NOTIFICACION : idDestinatario
+TRANSACCION *-- RESENA_TX : contiene (embebida)
+PODIO *-- ENTRADA : contiene
 
 ' ========================================================================
-' NOTAS
+' REFERENCIAS A USUARIO (locales, sin flecha entre archivos)
 ' ========================================================================
-note top of USUARIO
-  En S2 se anaden campos
-  de seguridad: intentosFallidos,
-  tiempoDesbloqueoMillis, etc. (HU7)
-end note
+PUBLICACION --> USUARIO_PUB : idUsuario
+SOLICITUD --> USUARIO_SOL : idSolicitante
+TRANSACCION --> USUARIO_TX : idOfertante
+TRANSACCION --> USUARIO_TX : idDemandante
+RESENA --> USUARIO_RES : idEmisor
+RESENA --> USUARIO_RES : idReceptor
+SUBASTA --> USUARIO_SUB : idPropietario
+PROPUESTA --> USUARIO_SUB : idPostor
+NOTIFICACION --> USUARIO_NOT : idRemitente
+NOTIFICACION --> USUARIO_NOT : idDestinatario
+INCIDENCIA --> USUARIO_INC : idUsuarioReportante
+INCIDENCIA --> USUARIO_INC : idUsuarioDefensor
+CANCELACION --> USUARIO_CAN : idSolicitante
+CANCELACION --> USUARIO_CAN : idOfertante
+CANCELACION --> USUARIO_CAN : idDemandante
+LOGRO_DESB --> USUARIO_LGD : idUsuario
+ENTRADA --> USUARIO_POD : idUsuario (denorm)
 
-note top of INCIDENCIA
-  NUEVO en Sprint 2 (HU8)
-  Permite reportar fraudes
-  y adjuntar evidencias
-  de defensa
-end note
+' ========================================================================
+' REFERENCIAS A PUBLICACION (verde)
+' ========================================================================
+SOLICITUD -[#90EE90]-> PUBLICACION : idPublicacion
+TRANSACCION -[#90EE90]-> PUBLICACION : idPublicacion
 
-note top of LOGRO
-  NUEVO en Sprint 2 (HU9)
-end note
+' ========================================================================
+' REFERENCIAS A TRANSACCION (naranja)
+' ========================================================================
+RESENA -[#FFAA66]-> TRANSACCION : idTransaccion
+INCIDENCIA -[#FFAA66]-> TRANSACCION_INC : idTransaccion
+TRANSACCION -[#FFAA66]-> INCIDENCIA : idIncidencia
+CANCELACION -[#FFAA66]-> TRANSACCION_CAN : idTransaccion
 
-note top of LOGRO_DESB
-  NUEVO en Sprint 2 (HU9)
-end note
+' ========================================================================
+' REFERENCIAS A LOGRO (morado)
+' ========================================================================
+LOGRO_DESB -[#DDA0DD]-> LOGRO_LGD : idLogro
 
-note top of PODIO
-  NUEVO en Sprint 2 (HU10)
-  Archivo: podio_semanal.json
-  *** Objeto unico (no array) ***
-end note
+' ========================================================================
+' OTRAS REFERENCIAS (negro, cruzan archivos)
+' ========================================================================
+HAB_OFRE --> HABILIDAD : habilidadBase
+NEC_REG --> HABILIDAD : necesidadBase
+PUBLICACION --> HAB_OFRE : idInstanciaCatalogo
+PUBLICACION --> NEC_REG : idInstanciaCatalogo
 
 @enduml
