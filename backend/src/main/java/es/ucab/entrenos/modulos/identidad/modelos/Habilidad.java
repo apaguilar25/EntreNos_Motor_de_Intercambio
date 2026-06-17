@@ -33,16 +33,4 @@ public class Habilidad {
         this.categoria = categoria.trim();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Habilidad habilidad = (Habilidad) o;
-        return Objects.equals(id, habilidad.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

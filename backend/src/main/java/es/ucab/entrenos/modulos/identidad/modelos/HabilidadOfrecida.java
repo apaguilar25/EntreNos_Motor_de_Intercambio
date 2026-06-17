@@ -54,17 +54,5 @@ public class HabilidadOfrecida {
         this.descripcionServicio = descripcionServicio;
     }
 
-    // Ahora la igualdad se basa estrictamente en el ID de Instancia (UUID)
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        HabilidadOfrecida that = (HabilidadOfrecida) o;
-        return Objects.equals(idInstancia, that.idInstancia);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(idInstancia);
-    }
 }

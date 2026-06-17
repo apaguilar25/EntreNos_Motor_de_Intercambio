@@ -37,17 +37,4 @@ public class NecesidadRegistrada {
         this.descripcionCondiciones = descripcionCondiciones;
     }
 
-    // Se permiten varias habilidades de la misma categoria mientras tengan ids distintas
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NecesidadRegistrada that = (NecesidadRegistrada) o;
-        return Objects.equals(idInstancia, that.idInstancia);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(idInstancia);
-    }
 }
