@@ -56,17 +56,17 @@ package "usuarios.json" as P_USUARIOS {
     + creditosPorLogros : float
   }
 
-  class "Catalogo" as CATALOGO {
+  class "CatalogoUsuario" as CATALOGO {
     + completado : boolean
   }
 
-  class "Habilidad Ofrecida" as HAB_OFRE {
+  class "HabilidadOfrecida" as HAB_OFRE {
     + idInstancia : String [PK]
     + precioCreditos : int
     + descripcionServicio : String
   }
 
-  class "Necesidad Registrada" as NEC_REG {
+  class "NecesidadRegistrada" as NEC_REG {
     + idInstancia : String [PK]
     + descripcionCondiciones : String
   }
@@ -223,7 +223,7 @@ package "notificaciones.json" as P_NOTIF {
 ' ARCHIVO: correos_permitidos.json
 ' ========================================================================
 package "correos_permitidos.json" as P_CORREOS {
-  class "Correo Permitido" as CORREO {
+  class "CorreoPermitido" as CORREO {
     + id : String [PK]
     + correo : String
     + fechaCreacion : long
