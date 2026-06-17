@@ -94,30 +94,6 @@ public class Subasta {
         this.estado = EstadoSubasta.CANCELADA;
     }
 
-    public void confirmarIntercambio(String idUsuarioConfirmando) {
-        if (this.estado != EstadoSubasta.ADJUDICADA_INTERCAMBIO_PENDIENTE) {
-            throw new IllegalStateException("La subasta no está en fase de intercambio.");
-        }
-
-        if (idUsuarioConfirmando.equals(this.idPropietario)) {
-            this.propietarioConfirmoEntrega = true;
-        } else {
-            Propuesta propuestaGanadora = this.propuestas.stream()
-                    .filter(p -> p.getIdPropuesta().equals(this.idPropuestaGanadora))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("Propuesta ganadora no encontrada."));
-
-            if (idUsuarioConfirmando.equals(propuestaGanadora.getIdPostor())) {
-                this.ganadorConfirmoEntrega = true;
-            } else {
-                throw new SecurityException("No tienes permisos para confirmar esta entrega.");
-            }
-        }
-
-        if (this.propietarioConfirmoEntrega && this.ganadorConfirmoEntrega) {
-            this.estado = EstadoSubasta.FINALIZADA_CON_EXITO;
-        }
-    }
 
     public void cerrarFaseLicitacion() {
         if (this.estado == EstadoSubasta.ACTIVA) {
