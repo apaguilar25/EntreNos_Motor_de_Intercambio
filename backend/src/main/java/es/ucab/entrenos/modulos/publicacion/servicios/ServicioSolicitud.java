@@ -166,6 +166,19 @@ public class ServicioSolicitud {
                     "Tu solicitud para " + pub.getNombreServicio() + " fue ACEPTADA. Se retuvieron "
                             + pub.getPrecioCreditos() + " creditos.",
                     TipoNotificacion.ESTADO_SOLICITUD_CAMBIADO);
+
+            Usuario ofertante = servicioUsuario.buscarPorId(pub.getIdUsuario())
+                    .orElseThrow(() -> new IllegalArgumentException("Ofertante no encontrado."));
+            servicioNotificacion.enviarNotificacion("SISTEMA", solicitud.getIdSolicitante(),
+                    "Datos de contacto del ofertante " + ofertante.getNombre()
+                            + ": Correo: " + ofertante.getCorreoElectronico()
+                            + " — Teléfono: " + ofertante.getTelefono(),
+                    TipoNotificacion.TRANSACCION_ACTUALIZADA);
+            servicioNotificacion.enviarNotificacion("SISTEMA", pub.getIdUsuario(),
+                    "Datos de contacto del demandante " + demandante.getNombre()
+                            + ": Correo: " + demandante.getCorreoElectronico()
+                            + " — Teléfono: " + demandante.getTelefono(),
+                    TipoNotificacion.TRANSACCION_ACTUALIZADA);
         } else {
             solicitud.rechazar();
 

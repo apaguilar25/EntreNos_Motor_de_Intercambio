@@ -5,14 +5,15 @@ import es.ucab.entrenos.modulos.publicacion.dtos.ConfirmacionTransaccionResponse
 import es.ucab.entrenos.modulos.publicacion.dtos.ReportarIncidenciaRequestDTO;
 import es.ucab.entrenos.modulos.publicacion.dtos.SolicitarCancelacionRequestDTO;
 import es.ucab.entrenos.modulos.publicacion.dtos.ResponderCancelacionRequestDTO;
+import es.ucab.entrenos.modulos.publicacion.modelos.Cancelacion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Incidencia;
-import es.ucab.entrenos.modulos.publicacion.modelos.MotivoCancelacion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Transaccion;
 import es.ucab.entrenos.modulos.publicacion.servicios.ServicioPublicacion;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+
 @RestController
 @RequestMapping("/api/transacciones")
 public class ControladorTransaccion {
@@ -64,18 +65,12 @@ public class ControladorTransaccion {
         }
     }
 
-    @GetMapping("/motivos-cancelacion")
-    public ResponseEntity<List<MotivoCancelacion>> listarMotivosCancelacion() {
-        return ResponseEntity.ok(servicioPublicacion.listarMotivosCancelacion());
-    }
-
     @PostMapping("/{id}/solicitar-cancelacion")
     public ResponseEntity<?> solicitarCancelacion(@PathVariable String id,
                                                    @RequestBody SolicitarCancelacionRequestDTO dto) {
         try {
-            Transaccion t = servicioPublicacion.solicitarCancelacion(id,
-                    dto.getIdUsuario(), dto.getIdMotivoCancelacion());
-            return ResponseEntity.ok(t);
+            Cancelacion cancelacion = servicioPublicacion.solicitarCancelacion(id, dto.getIdUsuario(), dto.getMotivo());
+            return ResponseEntity.ok(cancelacion);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (IllegalStateException e) {
@@ -87,9 +82,9 @@ public class ControladorTransaccion {
     public ResponseEntity<?> responderCancelacion(@PathVariable String id,
                                                    @RequestBody ResponderCancelacionRequestDTO dto) {
         try {
-            Transaccion t = servicioPublicacion.responderCancelacion(id,
+            Cancelacion cancelacion = servicioPublicacion.responderCancelacion(id,
                     dto.getIdUsuario(), dto.isAceptar());
-            return ResponseEntity.ok(t);
+            return ResponseEntity.ok(cancelacion);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (IllegalStateException e) {

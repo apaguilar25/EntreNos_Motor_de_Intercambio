@@ -1,6 +1,7 @@
 package es.ucab.entrenos.modulos.gamificacion.servicios;
 
 import es.ucab.entrenos.modulos.gamificacion.dtos.PodioResponseDTO;
+import es.ucab.entrenos.modulos.gamificacion.modelos.EntradaPodio;
 import es.ucab.entrenos.modulos.gamificacion.modelos.PodioSemanal;
 import es.ucab.entrenos.modulos.gamificacion.repositorios.IRepositorioPodio;
 import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.UUID;
 
 @Service
 public class ServicioPodio {
@@ -50,9 +50,9 @@ public class ServicioPodio {
 
         PodioSemanal podio = new PodioSemanal(inicioSemana, ahora);
 
-        asignarProveedorElite(podio, semanales);
-        asignarMotorEconomia(podio, semanales);
-        asignarEmbajadorCalidad(podio, semanales);
+        podio.setProveedorElite(topNProveedores(semanales, 3));
+        podio.setMotorEconomia(topNDemandantes(semanales, 3));
+        podio.setEmbajadorCalidad(topNCalidad(semanales, 3));
 
         repositorioPodio.guardar(podio);
 
@@ -61,81 +61,55 @@ public class ServicioPodio {
         return podio;
     }
 
-    private void asignarProveedorElite(PodioSemanal podio, List<Transaccion> semanales) {
+    private List<EntradaPodio> topNProveedores(List<Transaccion> semanales, int n) {
         Map<String, Long> conteo = semanales.stream()
-                .filter(t -> t.getEstado() == EstadoTransaccion.FINALIZADA)
                 .collect(Collectors.groupingBy(Transaccion::getIdOfertante, Collectors.counting()));
-
-        elegirGanador(podio, conteo, true);
+        return topN(conteo, n);
     }
 
-    private void asignarMotorEconomia(PodioSemanal podio, List<Transaccion> semanales) {
+    private List<EntradaPodio> topNDemandantes(List<Transaccion> semanales, int n) {
         Map<String, Long> conteo = semanales.stream()
-                .filter(t -> t.getEstado() == EstadoTransaccion.FINALIZADA)
                 .collect(Collectors.groupingBy(Transaccion::getIdDemandante, Collectors.counting()));
-
-        elegirGanador(podio, conteo, false);
+        return topN(conteo, n);
     }
 
-    private void elegirGanador(PodioSemanal podio, Map<String, Long> conteo, boolean esProveedor) {
-        List<Map.Entry<String, Long>> elegibles = conteo.entrySet().stream()
+    private List<EntradaPodio> topN(Map<String, Long> conteo, int n) {
+        return conteo.entrySet().stream()
                 .filter(e -> e.getValue() >= UMBRAL_MINIMO_TRANSACCIONES)
                 .sorted((a, b) -> {
                     int cmp = Long.compare(b.getValue(), a.getValue());
                     if (cmp != 0) return cmp;
-                    double repA = obtenerReputacionHistorica(a.getKey());
-                    double repB = obtenerReputacionHistorica(b.getKey());
-                    return Double.compare(repB, repA);
+                    return Double.compare(obtenerReputacionHistorica(b.getKey()),
+                            obtenerReputacionHistorica(a.getKey()));
                 })
+                .limit(n)
+                .map(e -> new EntradaPodio(
+                        e.getKey(), obtenerNombreUsuario(e.getKey()), e.getValue()))
                 .collect(Collectors.toList());
-
-        if (!elegibles.isEmpty()) {
-            Map.Entry<String, Long> ganador = elegibles.get(0);
-            String nombre = obtenerNombreUsuario(ganador.getKey());
-            if (esProveedor) {
-                podio.setProveedorEliteId(ganador.getKey());
-                podio.setProveedorEliteNombre(nombre);
-                podio.setProveedorEliteServicios(ganador.getValue().intValue());
-            } else {
-                podio.setMotorEconomiaId(ganador.getKey());
-                podio.setMotorEconomiaNombre(nombre);
-                podio.setMotorEconomiaTransacciones(ganador.getValue().intValue());
-            }
-        }
     }
 
-    private void asignarEmbajadorCalidad(PodioSemanal podio, List<Transaccion> semanales) {
+    private List<EntradaPodio> topNCalidad(List<Transaccion> semanales, int n) {
         Map<String, Double> promedios = semanales.stream()
                 .filter(t -> t.getCalificacion() != null)
                 .collect(Collectors.groupingBy(
                         Transaccion::getIdOfertante,
-                        Collectors.averagingInt(t -> t.getCalificacion())
-                ));
+                        Collectors.averagingInt(t -> t.getCalificacion())));
 
         Map<String, Long> conteoOfertante = semanales.stream()
-                .filter(t -> t.getEstado() == EstadoTransaccion.FINALIZADA)
                 .collect(Collectors.groupingBy(Transaccion::getIdOfertante, Collectors.counting()));
 
-        List<Map.Entry<String, Double>> elegibles = promedios.entrySet().stream()
-                .filter(e -> {
-                    long total = conteoOfertante.getOrDefault(e.getKey(), 0L);
-                    return total >= UMBRAL_MINIMO_TRANSACCIONES && e.getValue() > 0;
-                })
+        return promedios.entrySet().stream()
+                .filter(e -> conteoOfertante.getOrDefault(e.getKey(), 0L) >= UMBRAL_MINIMO_TRANSACCIONES)
                 .sorted((a, b) -> {
                     int cmp = Double.compare(b.getValue(), a.getValue());
                     if (cmp != 0) return cmp;
-                    double repA = obtenerReputacionHistorica(a.getKey());
-                    double repB = obtenerReputacionHistorica(b.getKey());
-                    return Double.compare(repB, repA);
+                    return Double.compare(obtenerReputacionHistorica(b.getKey()),
+                            obtenerReputacionHistorica(a.getKey()));
                 })
+                .limit(n)
+                .map(e -> new EntradaPodio(
+                        e.getKey(), obtenerNombreUsuario(e.getKey()), e.getValue()))
                 .collect(Collectors.toList());
-
-        if (!elegibles.isEmpty()) {
-            Map.Entry<String, Double> ganador = elegibles.get(0);
-            podio.setEmbajadorCalidadId(ganador.getKey());
-            podio.setEmbajadorCalidadNombre(obtenerNombreUsuario(ganador.getKey()));
-            podio.setEmbajadorCalidadPromedio(ganador.getValue());
-        }
     }
 
     private double obtenerReputacionHistorica(String idUsuario) {
@@ -166,9 +140,12 @@ public class ServicioPodio {
 
     private void marcarVecinosDestacados(PodioSemanal podio) {
         Set<String> idsDestacados = new HashSet<>();
-        if (podio.getProveedorEliteId() != null) idsDestacados.add(podio.getProveedorEliteId());
-        if (podio.getMotorEconomiaId() != null) idsDestacados.add(podio.getMotorEconomiaId());
-        if (podio.getEmbajadorCalidadId() != null) idsDestacados.add(podio.getEmbajadorCalidadId());
+        if (podio.getProveedorElite() != null && !podio.getProveedorElite().isEmpty())
+            idsDestacados.add(podio.getProveedorElite().get(0).getIdUsuario());
+        if (podio.getMotorEconomia() != null && !podio.getMotorEconomia().isEmpty())
+            idsDestacados.add(podio.getMotorEconomia().get(0).getIdUsuario());
+        if (podio.getEmbajadorCalidad() != null && !podio.getEmbajadorCalidad().isEmpty())
+            idsDestacados.add(podio.getEmbajadorCalidad().get(0).getIdUsuario());
 
         if (idsDestacados.isEmpty()) return;
 
@@ -185,6 +162,11 @@ public class ServicioPodio {
     }
 
     public PodioResponseDTO obtenerTop3() {
+        Optional<PodioSemanal> almacenado = repositorioPodio.obtenerActual();
+        if (almacenado.isPresent() && listaTieneDatos(almacenado.get().getProveedorElite())) {
+            return convertirADTO(almacenado.get());
+        }
+
         long ahora = System.currentTimeMillis();
         long inicioSemana = ahora - 7L * 24 * 60 * 60 * 1000;
 
@@ -199,49 +181,26 @@ public class ServicioPodio {
         dto.setFechaFinSemana(ahora);
         dto.setFechaCalculo(ahora);
 
-        Map<String, Long> proveedores = semanales.stream()
-                .collect(Collectors.groupingBy(Transaccion::getIdOfertante, Collectors.counting()));
-        dto.setProveedorElite(topN(proveedores, 3));
-
-        Map<String, Long> demandantes = semanales.stream()
-                .collect(Collectors.groupingBy(Transaccion::getIdDemandante, Collectors.counting()));
-        dto.setMotorEconomia(topN(demandantes, 3));
-
-        Map<String, Double> promedios = semanales.stream()
-                .filter(t -> t.getCalificacion() != null)
-                .collect(Collectors.groupingBy(
-                        Transaccion::getIdOfertante,
-                        Collectors.averagingInt(t -> t.getCalificacion())));
-        Map<String, Long> conteoOfertante = semanales.stream()
-                .collect(Collectors.groupingBy(Transaccion::getIdOfertante, Collectors.counting()));
-        dto.setEmbajadorCalidad(promedios.entrySet().stream()
-                .filter(e -> conteoOfertante.getOrDefault(e.getKey(), 0L) >= UMBRAL_MINIMO_TRANSACCIONES)
-                .sorted((a, b) -> {
-                    int cmp = Double.compare(b.getValue(), a.getValue());
-                    if (cmp != 0) return cmp;
-                    return Double.compare(obtenerReputacionHistorica(b.getKey()),
-                            obtenerReputacionHistorica(a.getKey()));
-                })
-                .limit(3)
-                .map(e -> new PodioResponseDTO.EntradaPodio(
-                        e.getKey(), obtenerNombreUsuario(e.getKey()), e.getValue()))
-                .collect(Collectors.toList()));
+        dto.setProveedorElite(topNProveedores(semanales, 3));
+        dto.setMotorEconomia(topNDemandantes(semanales, 3));
+        dto.setEmbajadorCalidad(topNCalidad(semanales, 3));
 
         return dto;
     }
 
-    private List<PodioResponseDTO.EntradaPodio> topN(Map<String, Long> conteo, int n) {
-        return conteo.entrySet().stream()
-                .filter(e -> e.getValue() >= UMBRAL_MINIMO_TRANSACCIONES)
-                .sorted((a, b) -> {
-                    int cmp = Long.compare(b.getValue(), a.getValue());
-                    if (cmp != 0) return cmp;
-                    return Double.compare(obtenerReputacionHistorica(b.getKey()),
-                            obtenerReputacionHistorica(a.getKey()));
-                })
-                .limit(n)
-                .map(e -> new PodioResponseDTO.EntradaPodio(
-                        e.getKey(), obtenerNombreUsuario(e.getKey()), e.getValue()))
-                .collect(Collectors.toList());
+    private PodioResponseDTO convertirADTO(PodioSemanal podio) {
+        PodioResponseDTO dto = new PodioResponseDTO();
+        dto.setIdPodio(podio.getIdPodio());
+        dto.setFechaInicioSemana(podio.getFechaInicioSemana());
+        dto.setFechaFinSemana(podio.getFechaFinSemana());
+        dto.setFechaCalculo(podio.getFechaCalculo());
+        dto.setProveedorElite(podio.getProveedorElite());
+        dto.setMotorEconomia(podio.getMotorEconomia());
+        dto.setEmbajadorCalidad(podio.getEmbajadorCalidad());
+        return dto;
+    }
+
+    private boolean listaTieneDatos(List<EntradaPodio> lista) {
+        return lista != null && !lista.isEmpty();
     }
 }

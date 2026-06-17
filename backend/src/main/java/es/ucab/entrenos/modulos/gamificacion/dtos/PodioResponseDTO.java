@@ -1,5 +1,7 @@
 package es.ucab.entrenos.modulos.gamificacion.dtos;
 
+import es.ucab.entrenos.modulos.gamificacion.modelos.EntradaPodio;
+
 import java.util.List;
 
 public class PodioResponseDTO {
@@ -14,28 +16,6 @@ public class PodioResponseDTO {
     private List<EntradaPodio> embajadorCalidad;
 
     public PodioResponseDTO() {}
-
-    public static class EntradaPodio {
-        private String idUsuario;
-        private String nombreUsuario;
-        private double valor;
-
-        public EntradaPodio() {}
-
-        public EntradaPodio(String idUsuario, String nombreUsuario, double valor) {
-            this.idUsuario = idUsuario;
-            this.nombreUsuario = nombreUsuario;
-            this.valor = valor;
-        }
-
-        public String getIdUsuario() { return idUsuario; }
-        public String getNombreUsuario() { return nombreUsuario; }
-        public double getValor() { return valor; }
-
-        public void setIdUsuario(String idUsuario) { this.idUsuario = idUsuario; }
-        public void setNombreUsuario(String nombreUsuario) { this.nombreUsuario = nombreUsuario; }
-        public void setValor(double valor) { this.valor = valor; }
-    }
 
     public String getIdPodio() { return idPodio; }
     public long getFechaInicioSemana() { return fechaInicioSemana; }

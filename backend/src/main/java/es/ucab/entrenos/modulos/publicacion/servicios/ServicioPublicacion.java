@@ -13,14 +13,16 @@ import es.ucab.entrenos.modulos.publicacion.dtos.ConfirmacionTransaccionResponse
 import es.ucab.entrenos.modulos.reputacion.servicios.ServicioReputacion;
 import es.ucab.entrenos.modulos.publicacion.dtos.PublicacionResponseDTO;
 import es.ucab.entrenos.modulos.publicacion.dto.RecomendacionDTO;
+import es.ucab.entrenos.modulos.publicacion.modelos.Cancelacion;
+import es.ucab.entrenos.modulos.publicacion.modelos.EstadoCancelacion;
+import es.ucab.entrenos.modulos.publicacion.modelos.MotivoCancelacion;
 import es.ucab.entrenos.modulos.publicacion.modelos.EstadoTransaccion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Incidencia;
-import es.ucab.entrenos.modulos.publicacion.modelos.MotivoCancelacion;
 import es.ucab.entrenos.modulos.reputacion.modelos.Resena;
 import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Transaccion;
+import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioCancelacion;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioIncidencia;
-import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioMotivoCancelacion;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioPublicacion;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioTransaccion;
 import org.springframework.stereotype.Service;
@@ -32,7 +34,7 @@ public class ServicioPublicacion {
     private final IRepositorioPublicacion repositorioPublicacion;
     private final IRepositorioTransaccion repositorioTransaccion;
     private final IRepositorioIncidencia repositorioIncidencia;
-    private final IRepositorioMotivoCancelacion repositorioMotivoCancelacion;
+    private final IRepositorioCancelacion repositorioCancelacion;
     private final ServicioUsuario servicioUsuario;
     private final ServicioNotificacion servicioNotificacion;
     private final ServicioGamificacion servicioGamificacion;
@@ -41,7 +43,7 @@ public class ServicioPublicacion {
     public ServicioPublicacion(IRepositorioPublicacion repositorioPublicacion,
                                IRepositorioTransaccion repositorioTransaccion,
                                IRepositorioIncidencia repositorioIncidencia,
-                               IRepositorioMotivoCancelacion repositorioMotivoCancelacion,
+                               IRepositorioCancelacion repositorioCancelacion,
                                ServicioUsuario servicioUsuario,
                                ServicioNotificacion servicioNotificacion,
                                ServicioGamificacion servicioGamificacion,
@@ -49,7 +51,7 @@ public class ServicioPublicacion {
         this.repositorioPublicacion = repositorioPublicacion;
         this.repositorioTransaccion = repositorioTransaccion;
         this.repositorioIncidencia = repositorioIncidencia;
-        this.repositorioMotivoCancelacion = repositorioMotivoCancelacion;
+        this.repositorioCancelacion = repositorioCancelacion;
         this.servicioUsuario = servicioUsuario;
         this.servicioNotificacion = servicioNotificacion;
         this.servicioGamificacion = servicioGamificacion;
@@ -271,39 +273,17 @@ public class ServicioPublicacion {
                 .orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada."));
         demandante.getMonedero().liberarCompromiso();
         demandante.incrementarVersion();
-        ofertante.getMonedero().acreditar(t.getCreditosComprometidos());
+        ofertante.getMonedero().acreditar(t.getCreditosRetenidos());
         ofertante.incrementarVersion();
         servicioUsuario.guardar(demandante);
         servicioUsuario.guardar(ofertante);
         servicioNotificacion.enviarNotificacion("SISTEMA", t.getIdOfertante(),
-                "Recibiste " + t.getCreditosComprometidos() + " créditos por el servicio: " + pub.getNombreServicio(),
+                "Recibiste " + t.getCreditosRetenidos() + " créditos por el servicio: " + pub.getNombreServicio(),
                 TipoNotificacion.MOVIMIENTO_MONEDERO);
         servicioNotificacion.enviarNotificacion("SISTEMA", t.getIdDemandante(),
-                "Se liberaron " + t.getCreditosComprometidos() + " créditos comprometidos por: " + pub.getNombreServicio(),
+                "Se liberaron " + t.getCreditosRetenidos() + " créditos comprometidos por: " + pub.getNombreServicio(),
                 TipoNotificacion.MOVIMIENTO_MONEDERO);
     }
-
-    // private void simularDemandante(Transaccion t) {
-    //     if (t.isConfirmacionDemandante()) return;
-    //     boolean confirma = RANDOM.nextBoolean();
-    //     if (confirma) {
-    //         t.setConfirmacionDemandante(true);
-    //         Resena resena = servicioReputacion.crearResena(
-    //                 t.getIdTransaccion(), t.getIdDemandante(), t.getIdOfertante(),
-    //                 RANDOM.nextInt(5) + 1);
-    //         t.setResena(resena);
-    //         t.confirmarRecepcionDemandante();
-    //     }
-    // }
-
-    // private void simularOfertante(Transaccion t) {
-    //     if (t.isConfirmacionOfertante()) return;
-    //     boolean confirma = RANDOM.nextBoolean();
-    //     if (confirma) {
-    //         t.setConfirmacionOfertante(true);
-    //         t.confirmarEntregaOfertante();
-    //     }
-    // }
 
     public Transaccion calificar(String idTransaccion, String idUsuario, int calificacion) {
         Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
@@ -414,11 +394,7 @@ public class ServicioPublicacion {
         return incidencia;
     }
 
-    public List<MotivoCancelacion> listarMotivosCancelacion() {
-        return repositorioMotivoCancelacion.obtenerTodos();
-    }
-
-    public Transaccion solicitarCancelacion(String idTransaccion, String idUsuario, String idMotivoCancelacion) {
+    public Cancelacion solicitarCancelacion(String idTransaccion, String idUsuario, String idMotivoCancelacion) {
         Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
                 .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada: " + idTransaccion));
         if (!t.getIdOfertante().equals(idUsuario) && !t.getIdDemandante().equals(idUsuario)) {
@@ -427,44 +403,75 @@ public class ServicioPublicacion {
         if (t.getEstado() == EstadoTransaccion.FINALIZADA || t.getEstado() == EstadoTransaccion.RECHAZADA || t.getEstado() == EstadoTransaccion.EN_DISPUTA) {
             throw new IllegalStateException("No se puede solicitar cancelación en estado " + t.getEstado() + ".");
         }
-        if (t.getIdSolicitanteCancelacion() != null) {
-            throw new IllegalStateException("Ya hay una solicitud de cancelación pendiente.");
+
+        MotivoCancelacion motivo;
+        try {
+            motivo = MotivoCancelacion.valueOf(idMotivoCancelacion);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Motivo de cancelación no válido: " + idMotivoCancelacion);
         }
-        MotivoCancelacion motivo = repositorioMotivoCancelacion.obtenerPorId(idMotivoCancelacion)
-                .orElseThrow(() -> new IllegalArgumentException("Motivo de cancelación no válido."));
-        t.solicitarCancelacion(idUsuario, motivo.getDescripcion());
-        repositorioTransaccion.guardar(t);
+
+        Optional<Cancelacion> pendiente = repositorioCancelacion.obtenerTodas().stream()
+                .filter(c -> c.getIdTransaccion().equals(idTransaccion)
+                        && c.getEstado() == EstadoCancelacion.PENDIENTE)
+                .findFirst();
+
+        if (pendiente.isPresent()) {
+            Cancelacion existente = pendiente.get();
+            if (existente.getIdSolicitante().equals(idUsuario)) {
+                throw new IllegalStateException("Ya solicitaste la cancelación de esta transacción.");
+            }
+            existente.aceptar();
+            repositorioCancelacion.guardar(existente);
+            procesarCancelacionAceptada(t);
+            Publicacion pub = obtenerPublicacionPorId(t.getIdPublicacion()).orElse(null);
+            String nombreServicio = pub != null ? pub.getNombreServicio() : "Servicio";
+            servicioNotificacion.enviarNotificacion("SISTEMA", existente.getIdSolicitante(),
+                    "Ambas partes solicitaron la cancelación de \"" + nombreServicio + "\". La transacción ha sido cancelada.",
+                    TipoNotificacion.ALERTA_SISTEMA);
+            servicioNotificacion.enviarNotificacion("SISTEMA", idUsuario,
+                    "Ambas partes solicitaron la cancelación de \"" + nombreServicio + "\". La transacción ha sido cancelada.",
+                    TipoNotificacion.ALERTA_SISTEMA);
+            return existente;
+        }
+
+        Cancelacion cancelacion = new Cancelacion(idTransaccion, idUsuario, t.getIdOfertante(), t.getIdDemandante(), motivo);
+        repositorioCancelacion.guardar(cancelacion);
         Publicacion pub = obtenerPublicacionPorId(t.getIdPublicacion()).orElse(null);
         String nombreServicio = pub != null ? pub.getNombreServicio() : "Servicio";
         String contraparte = t.getIdOfertante().equals(idUsuario) ? t.getIdDemandante() : t.getIdOfertante();
         servicioNotificacion.enviarNotificacion(idUsuario, contraparte,
                 "Se ha solicitado la cancelación de \"" + nombreServicio + "\". Motivo: " + motivo.getDescripcion(),
                 TipoNotificacion.ALERTA_SISTEMA);
-        return t;
+        return cancelacion;
     }
 
-    public Transaccion responderCancelacion(String idTransaccion, String idUsuario, boolean aceptar) {
+    public Cancelacion responderCancelacion(String idTransaccion, String idUsuario, boolean aceptar) {
         Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
                 .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada: " + idTransaccion));
-        if (t.getIdSolicitanteCancelacion() == null) {
-            throw new IllegalStateException("No hay una solicitud de cancelación pendiente.");
-        }
-        if (t.getIdSolicitanteCancelacion().equals(idUsuario)) {
+
+        Cancelacion cancelacion = repositorioCancelacion.obtenerTodas().stream()
+                .filter(c -> c.getIdTransaccion().equals(idTransaccion)
+                        && c.getEstado() == EstadoCancelacion.PENDIENTE)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No hay una solicitud de cancelación pendiente."));
+
+        if (cancelacion.getIdSolicitante().equals(idUsuario)) {
             throw new IllegalArgumentException("No puedes responder tu propia solicitud de cancelación.");
         }
-        if (aceptar) {
-            if (t.getEstado() == EstadoTransaccion.INICIADA) {
-                Usuario demandante = servicioUsuario.buscarPorId(t.getIdDemandante())
-                        .orElseThrow(() -> new IllegalArgumentException("Demandante no encontrado."));
-        demandante.getMonedero().liberarCompromiso();
-                demandante.incrementarVersion();
-                servicioUsuario.guardar(demandante);
-            }
-            t.aceptarCancelacion();
-        } else {
-            t.rehusarCancelacion();
+        if (!t.getIdOfertante().equals(idUsuario) && !t.getIdDemandante().equals(idUsuario)) {
+            throw new IllegalArgumentException("No eres parte de esta transacción.");
         }
-        repositorioTransaccion.guardar(t);
+
+        if (aceptar) {
+            cancelacion.aceptar();
+            repositorioCancelacion.guardar(cancelacion);
+            procesarCancelacionAceptada(t);
+        } else {
+            cancelacion.rechazar();
+            repositorioCancelacion.guardar(cancelacion);
+        }
+
         Publicacion pub = obtenerPublicacionPorId(t.getIdPublicacion()).orElse(null);
         String nombreServicio = pub != null ? pub.getNombreServicio() : "Servicio";
         String contraparte = t.getIdOfertante().equals(idUsuario) ? t.getIdDemandante() : t.getIdOfertante();
@@ -477,7 +484,19 @@ public class ServicioPublicacion {
                     "La cancelación de \"" + nombreServicio + "\" ha sido rechazada. La transacción continúa.",
                     TipoNotificacion.ALERTA_SISTEMA);
         }
-        return t;
+        return cancelacion;
+    }
+
+    private void procesarCancelacionAceptada(Transaccion t) {
+        if (t.getEstado() == EstadoTransaccion.INICIADA) {
+            Usuario demandante = servicioUsuario.buscarPorId(t.getIdDemandante())
+                    .orElseThrow(() -> new IllegalArgumentException("Demandante no encontrado."));
+            demandante.getMonedero().devolverCompromiso();
+            demandante.incrementarVersion();
+            servicioUsuario.guardar(demandante);
+        }
+        t.setEstado(EstadoTransaccion.RECHAZADA);
+        repositorioTransaccion.guardar(t);
     }
 
     public PublicacionResponseDTO toResponseDTO(Publicacion p) {
