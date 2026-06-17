@@ -28,6 +28,8 @@ title __Modelo de Dominio - EntreNós__
 frame "Modelo de Dominio EntreNós" {
 
 class Usuario
+
+
 class Monedero
 class CatalogoUsuario
 class Habilidad
@@ -35,7 +37,6 @@ class HabilidadOfrecida
 class NecesidadRegistrada
 class Publicacion
 class Transaccion
-class Resena
 class Subasta
 class Propuesta
 class BienOfrecido
@@ -46,16 +47,20 @@ class Administrador
 class Solicitud
 class Incidencia
 
+'class Resena
+'class Notificacion
+'class Cancelacion,
+
 ' --- GOBERNANZA Y MODERACIÓN (HU 8) ---
-Administrador --|> Usuario
+Administrador --|> Usuario : "es un >"
 Administrador "1" -- "1..*" Habilidad : "administra >"
-Usuario "1" -up- "0..*" Incidencia : "reporta >"
+Usuario "1" -up- "0..*" Incidencia : "informa >"
 Administrador "1" -- "0..*" Incidencia : "resuelve >"
-Incidencia "0..1" --> "1 " Transaccion
+Incidencia "0..1" -- "1 " Transaccion : "reporta a >"
 
 ' --- IDENTIDAD Y CATÁLOGO (HU 1) ---
-Usuario "1" *--- "1" Monedero
-Usuario "1" --- "1" CatalogoUsuario
+Usuario "1" *--- "1 " Monedero : "tiene >"
+Usuario "1" --- "1" CatalogoUsuario : "crea >"
 CatalogoUsuario "1" *-- "0..*" HabilidadOfrecida
 CatalogoUsuario "1" *---  "0..*" NecesidadRegistrada
 HabilidadOfrecida "0..*" --> "1" Habilidad
@@ -66,11 +71,14 @@ HabilidadOfrecida "1" --right "1" Publicacion : "genera >"
 NecesidadRegistrada "1" --right "1" Publicacion : "genera >"
 
 ' --- FLUJO DE SERVICIOS (HU 3) ---
-Usuario "1" -- "0..*" Solicitud : "realiza >"
+'Usuario "1" -- "0..*" Solicitud : "realiza >"
+
+Usuario -- Publicacion : "examina >"
+
 Solicitud "0..*" --- "1" Publicacion : "genera <"
-Solicitud "1" -- "0..1" Transaccion : "genera >"
+Solicitud "1" -up- "0..1" Transaccion : "conlleva a >"
 Usuario "2" -- "0..*" Transaccion : "participa en >"
-Transaccion "1" -- "1" Resena : "genera >"
+Transaccion "1" -up-- "1" HabilidadOfrecida : "califica >"
 
 ' --- FLUJO DE SUBASTAS - VARIANTE 3 (HU 4 y HU 5) ---
 Usuario "1" -- "0..*" Subasta : "publica >"
@@ -79,9 +87,9 @@ Propuesta "0..*" -- "1" Usuario : "efectuada por >"
 Propuesta "1" *-- "1..*" BienOfrecido
 
 ' --- GAMIFICACIÓN Y RECONOCIMIENTO (HU 9 y HU 10) ---
-Usuario "1" -- "0..*" LogroDesbloqueado : "obtiene >"
-LogroDesbloqueado "0..*" --> "1" Logro
-Usuario "0..3" -- "1" PodioSemanal : "es destacado en >"
+Usuario "1" -- "0..*" LogroDesbloqueado : "desbloquea >"
+LogroDesbloqueado "0..*" --> "1" Logro : "es un >"
+Usuario "0..3" --- "1" PodioSemanal : "es destacado en >"
 
 }
 

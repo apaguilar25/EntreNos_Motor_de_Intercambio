@@ -1,0 +1,89 @@
+@startuml
+
+skinparam orthogonalLayoutStrategy none
+skinparam DefaultFontName Arial
+skinparam DefaultFontSize 12
+skinparam class {
+    BackgroundColor White
+    ArrowColor Black
+    BorderColor Black
+}
+
+skinparam title {
+    FontSize 18
+}
+
+skinparam frame {
+    BorderColor Black
+    FontColor Black
+    BackgroundColor White
+}
+
+hide empty members
+hide methods
+hide circle
+
+title __Modelo de Dominio - EntreNós (Alto Nivel Conceptual)__
+frame "Modelo de Dominio EntreNós" {
+
+class Usuario
+class Monedero
+class CatalogoUsuario
+class Habilidad
+class HabilidadOfrecida
+class NecesidadRegistrada
+class Publicacion
+class Solicitud
+class Transaccion
+class Resena
+class Subasta
+class Propuesta
+class BienOfrecido
+class Incidencia
+class LogroDesbloqueado
+class Logro
+class PodioSemanal
+class Administrador
+
+' --- GOBERNANZA, MODERACIÓN Y SEGURIDAD ---
+Administrador --|> Usuario : "es un >"
+Administrador "1" -- "1..*" Habilidad : "administra >"
+Administrador "1" -- "0..*" Incidencia : "resuelve >"
+Usuario "1" -- "0..*" Incidencia : "reporta >"
+Transaccion "1" -- "0..*" Incidencia : "puede originar >"
+
+' --- IDENTIDAD, CONFIGURACIÓN Y CAPACIDADES ---
+Usuario "1" *-- "1" Monedero : "posee >"
+Usuario "1" -- "1" CatalogoUsuario : "gestiona >"
+CatalogoUsuario "1" *-- "0..*" HabilidadOfrecida : "registra >"
+CatalogoUsuario "1" *-- "0..*" NecesidadRegistrada : "registra >"
+HabilidadOfrecida "0..*" --> "1" Habilidad : "se basa en >"
+NecesidadRegistrada "0..*" --> "1" Habilidad : "se basa en >"
+
+' --- EL MURO Y LA INTERACCIÓN COMUNITARIA ---
+HabilidadOfrecida "1" ---- "1" Publicacion : "se expone como >"
+NecesidadRegistrada "1" --- "1" Publicacion : "se expone como >"
+Usuario "1" -- "0..*" Publicacion : "explora >"
+
+' --- FLUJO TRANSACCIONAL DE SERVICIOS (Trueque de Tiempo) ---
+Usuario "1" -- "0..*" Solicitud : "realiza >"
+Solicitud "0..*" -- "1" Publicacion : "se aplica a >"
+Solicitud "1" -- "0..1" Transaccion : "se formaliza en >"
+Usuario "2" -- "0..*" Transaccion : "participa en >"
+Transaccion "1" -- "1" Resena : "da lugar a >"
+Usuario "1" -- "0..*" Resena : "recibe >"
+
+' --- DINÁMICA DE SUBASTAS (Trueque de Bienes Tangibles) ---
+Usuario "1" -- "0..*" Subasta : "publica >"
+Subasta "1" *-- "0..*" Propuesta : "recibe >"
+Propuesta "0..*" -- "1" Usuario : "presenta <"
+Propuesta "1" *-- "1..*" BienOfrecido : "compromete >"
+
+' --- GAMIFICACIÓN, REPUTACIÓN Y FIDELIZACIÓN ---
+Usuario "1" -- "0..*" LogroDesbloqueado : "alcanza >"
+LogroDesbloqueado "0..*" --> "1" Logro : "corresponde a >"
+Usuario "0..9" -- "1" PodioSemanal : "es galardonado en >"
+
+}
+
+@enduml
