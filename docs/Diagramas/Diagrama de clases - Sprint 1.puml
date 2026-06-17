@@ -21,7 +21,7 @@ skinparam frame {
 }
 
 
-title __Diagrama de clase Sprint 1 - EntreNós__
+title <size:26> __Diagrama de clase Sprint 1 - EntreNós__
 
 package "Diagrama de clase EntreNós"  {
 
@@ -159,22 +159,16 @@ package "Diagrama de clase EntreNós"  {
         - idOfertante: String
         - idDemandante: String
         - estado: EstadoTransaccion
-        - creditosComprometidos: int
+        - creditosRetenidos: int
         - confirmacionOfertante: boolean
         - confirmacionDemandante: boolean
         - fechaCreacion: long
         - idIncidencia: String
-        - idSolicitanteCancelacion: String
-        - motivoCancelacion: String
-        - cancelacionAceptada: boolean
         - version: int version
         + Transaccion(idPublicacion: String, idOfertante: String, idDemandante: String, creditosComprometidos: int)
         + confirmarEntregaOfertante(): void
         + confirmarRecepcionDemandante(): void
         + verificarCompletitud(): void
-        + solicitarCancelacion(idSolicitante: String, motivoCancelacion: String): void
-        + aceptarCancelacion(): void
-        + rehusarCancelacion(): void
         + asignarIncidencia(idIncidencia: String): void
     }
 
@@ -192,35 +186,6 @@ package "Diagrama de clase EntreNós"  {
         + cancelar(): void
         + expirar(): void
         + haExpirado(): boolean
-    }
-
-    class Cancelacion {
-        - idCancelacion: String
-        - idTransaccion: String
-        - idSolicitante: String
-        - idOfertante: String
-        - idDemandante: String
-        - motivo: MotivoCancelacion
-        - estado: EstadoCancelacion
-        - fechaCreacion: long
-        - version: int
-        + Cancelacion(idTransaccion: String, idSolicitante: String, idOfertante: String, idDemandante: String, motivo: MotivoCancelacion): Cancelacion
-        + aceptar(): void
-        + rechazar(): void
-    }
-
-    enum MotivoCancelacion {
-        EQUIVOCACION
-        YA_NO_NECESITO
-        SIN_ACUERDO
-        - descripcion: String
-        + MotivoCancelacion(descripcion: String): MotivoCancelacion
-    }
-
-    enum EstadoCancelacion {
-        PENDIENTE
-        ACEPTADA
-        RECHAZADA
     }
 
     enum EstadoTransaccion {
@@ -362,11 +327,10 @@ HabilidadOfrecida "1" --right "1" Publicacion : "genera >"
 NecesidadRegistrada "1" --right "1" Publicacion : "genera >"
 
 ' --- FLUJO DE SERVICIOS  ---
-Usuario "1" -- "0..*" Solicitud : "realiza >"
 Solicitud "0..*" --- "1" Publicacion : "envía <"
-Solicitud "1" -- "0..1" Transaccion : "genera >"
+Publicacion "1" -- "1" Transaccion : "referencia <"
 Usuario "2" -- "0..*" Transaccion : "participa en >"
-Transaccion "1" -- "1" Resena : "genera >"
+Transaccion "1" *-- "1" Resena
 
 ' --- FLUJO DE SUBASTAS - VARIANTE 3 ---
 Usuario "1" -- "0..*" Subasta : "publica >"

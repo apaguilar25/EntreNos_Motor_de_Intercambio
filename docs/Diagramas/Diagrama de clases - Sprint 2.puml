@@ -159,22 +159,16 @@ package "Diagrama de clase EntreNós"  {
         - idOfertante: String
         - idDemandante: String
         - estado: EstadoTransaccion
-        - creditosComprometidos: int
+        - creditosRetenidos: int
         - confirmacionOfertante: boolean
         - confirmacionDemandante: boolean
         - fechaCreacion: long
         - idIncidencia: String
-        - idSolicitanteCancelacion: String
-        - motivoCancelacion: String
-        - cancelacionAceptada: boolean
         - version: int version
         + Transaccion(idPublicacion: String, idOfertante: String, idDemandante: String, creditosComprometidos: int)
         + confirmarEntregaOfertante(): void
         + confirmarRecepcionDemandante(): void
         + verificarCompletitud(): void
-        + solicitarCancelacion(idSolicitante: String, motivoCancelacion: String): void
-        + aceptarCancelacion(): void
-        + rehusarCancelacion(): void
         + asignarIncidencia(idIncidencia: String): void
     }
 
