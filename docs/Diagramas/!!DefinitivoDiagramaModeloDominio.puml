@@ -54,7 +54,7 @@ class Administrador
 Administrador --|> Usuario : "es un >"
 Administrador "1" -- "1..*" Habilidad : "administra >"
 Administrador "1" -- "0..*" Incidencia : "resuelve >"
-Usuario "1" -- "0..*" Incidencia : "reporta >"
+Usuario "1" -up- "0..*" Incidencia : "reporta >"
 Transaccion "1" -- "0..1" Incidencia : "puede originar >"
 
 ' --- IDENTIDAD, CONFIGURACIÓN Y CAPACIDADES ---
@@ -68,11 +68,11 @@ NecesidadRegistrada "0..*" -- "1" Habilidad : "se basa en >"
 ' --- EL MURO Y LA INTERACCIÓN COMUNITARIA ---
 HabilidadOfrecida "1" ---- "1" Publicacion : "se expone como >"
 NecesidadRegistrada "1" --- "1" Publicacion : "se expone como >"
-Usuario "1" -- "0..*" Publicacion : "explora >"
+Usuario "1" -- "0..*" Publicacion : "selecciona >"
 
 ' --- FLUJO TRANSACCIONAL DE SERVICIOS (Trueque de Tiempo) ---
-Usuario "1" -- "0..*" Solicitud : "realiza >"
-Solicitud "0..*" -- "1" Publicacion : "se aplica a >"
+'Usuario "1" -- "0..*" Solicitud : "realiza >"
+Solicitud "0..*" -- "1" Publicacion : "envia <"
 Solicitud "1" -- "0..1" Transaccion : "se formaliza en >"
 Usuario "2" -- "0..*" Transaccion : "participa en >"
 Transaccion "1" -- "1" Resena : "da lugar a >"
