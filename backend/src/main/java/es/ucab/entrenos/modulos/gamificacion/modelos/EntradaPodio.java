@@ -1,4 +1,4 @@
-package es.ucab.entrenos.modulos.gamificacion.dtos;
+package es.ucab.entrenos.modulos.gamificacion.modelos;
 
 public class EntradaPodio {
     private String idUsuario;

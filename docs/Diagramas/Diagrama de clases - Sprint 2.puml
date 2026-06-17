@@ -196,7 +196,7 @@ package "Diagrama de clase EntreNós"  {
         - idSolicitud: String
         - idPublicacion: String
         - idSolicitante: String
-        - estado: String
+        - estado: EstadoSolicitud
         - fechaCreacion: long
         - fechaLimiteRespuesta: long
         - version: int
@@ -208,11 +208,33 @@ package "Diagrama de clase EntreNós"  {
         + haExpirado(): boolean
     }
 
-    class MotivoCancelacion {
-        - String id;
-        - String descripcion;
-        - boolean activo;
-        + MotivoCancelacion(String id, String descripcion)
+    class Cancelacion {
+        - idCancelacion: String
+        - idTransaccion: String
+        - idSolicitante: String
+        - idOfertante: String
+        - idDemandante: String
+        - motivo: MotivoCancelacion
+        - estado: EstadoCancelacion
+        - fechaCreacion: long
+        - version: int
+        + Cancelacion(idTransaccion: String, idSolicitante: String, idOfertante: String, idDemandante: String, motivo: MotivoCancelacion): Cancelacion
+        + aceptar(): void
+        + rechazar(): void
+    }
+
+    enum MotivoCancelacion {
+        EQUIVOCACION
+        YA_NO_NECESITO
+        SIN_ACUERDO
+        - descripcion: String
+        + MotivoCancelacion(descripcion: String): MotivoCancelacion
+    }
+
+    enum EstadoCancelacion {
+        PENDIENTE
+        ACEPTADA
+        RECHAZADA
     }
 
     enum EstadoTransaccion {
@@ -221,6 +243,13 @@ package "Diagrama de clase EntreNós"  {
         FINALIZADA
         RECHAZADA
         EN_DISPUTA
+    }
+
+    enum EstadoSolicitud {
+        PENDIENTE
+        ACEPTADA
+        RECHAZADA
+        EXPIRADA
     }
 
 '''''''''''SECCION RESENA'''''''''''
@@ -328,15 +357,14 @@ package "Diagrama de clase EntreNós"  {
         - fechaInicioSemana:long
         - fechaFinSemana: long
         - fechaCalculo: long
-        - proveedorEliteId: String
-        - proveedorEliteNombre: String
-        - motorEconomiaId: String
-        - motorEconomiaNombre: String
-        - motorEconomiaTransacciones: int
-        - embajadorCalidadId: String
-        - embajadorCalidadNombre: String
-        - embajadorCalidadPromedio: double
         + PodioSemanal(fechaInicioSemana: long, fechaFinSemana: long): PodioSemanal
+    }
+
+     class EntradaPodio {
+        - idUsuario: String
+        - nombreUsuario: String
+        - valor: double
+        + EntradaPodio(idUsuario: String, nombreUsuario: String, valor: double): EntradaPodio
     }
 
     enum TipoCriterioLogro {
