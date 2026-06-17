@@ -1,6 +1,6 @@
 package es.ucab.entrenos.modulos.gamificacion.dtos;
 
-import es.ucab.entrenos.modulos.gamificacion.modelos.EntradaPodio;
+import es.ucab.entrenos.modulos.gamificacion.dtos.EntradaPodio;
 
 import java.util.List;
 

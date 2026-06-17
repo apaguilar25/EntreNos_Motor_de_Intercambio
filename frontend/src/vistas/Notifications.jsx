@@ -38,8 +38,8 @@ const Notifications = () => {
   const handleResponderSolicitud = async (notificacion, aceptar) => {
     try {
       await controladorNotificacion.responderSolicitud(
-        notificacion.idReferencia, // idPublicacion
-        notificacion.idReferenciaAuxiliar, // idSolicitante
+        notificacion.idReferencia, // idSolicitud
+        user.id, // idUsuario
         aceptar
       );
       // Remove notification after responding

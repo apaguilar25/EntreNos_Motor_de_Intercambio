@@ -13,6 +13,8 @@ public class PerfilUsuarioResponseDTO {
     private String descripcionPersonal;
     private String urlFotoPerfil;
     private float creditosDisponibles;
+    private float saldoDisponible;
+    private float creditosComprometidos;
     private boolean catalogoCompletado;
     private float promedioCalificacion;
     private int cantidadCalificaciones;
@@ -31,6 +33,8 @@ public class PerfilUsuarioResponseDTO {
         this.descripcionPersonal = usuario.getDescripcionPersonal();
         this.urlFotoPerfil = usuario.getUrlFotoPerfil();
         this.creditosDisponibles = usuario.getMonedero().getCreditosDisponibles();
+        this.saldoDisponible = usuario.getMonedero().getSaldoDisponible();
+        this.creditosComprometidos = usuario.getMonedero().getCreditosComprometidos();
         this.catalogoCompletado = usuario.isCatalogoCompletado();
         this.promedioCalificacion = usuario.getPromedioCalificacion();
         this.cantidadCalificaciones = usuario.getCantidadCalificaciones();
@@ -46,6 +50,8 @@ public class PerfilUsuarioResponseDTO {
     public String getDescripcionPersonal() { return descripcionPersonal; }
     public String getUrlFotoPerfil() { return urlFotoPerfil; }
     public float getCreditosDisponibles() { return creditosDisponibles; }
+    public float getSaldoDisponible() { return saldoDisponible; }
+    public float getCreditosComprometidos() { return creditosComprometidos; }
     public boolean isCatalogoCompletado() { return catalogoCompletado; }
     public float getPromedioCalificacion() { return promedioCalificacion; }
     public int getCantidadCalificaciones() { return cantidadCalificaciones; }

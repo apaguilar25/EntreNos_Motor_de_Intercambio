@@ -210,10 +210,10 @@
     "telefono": "+58414000102",
     "descripcionPersonal": "Segundo mejor proveedor",
     "contrasenaHash": "$2a$10$IBj1Zoex6ld3BX7VbZpUoOEDpP.D7OYEPbMgIykvfOs7tocnXjJge",
-    "version": 3,
+    "version": 26,
     "monedero": {
-      "creditosDisponibles": 50.0,
-      "creditosComprometidos": 0.0,
+      "creditosDisponibles": 300.0,
+      "creditosComprometidos": 111.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -407,7 +407,7 @@
     "telefono": "+58415000001",
     "descripcionPersonal": "test",
     "contrasenaHash": "$2a$10$JEZFYan3tuGhUVVTGaY5ouGGhE.eYxohNvuDcA.oSVwruuwIrLs7q",
-    "version": 6,
+    "version": 8,
     "monedero": {
       "creditosDisponibles": 90.0,
       "creditosComprometidos": 0.0,
@@ -429,9 +429,9 @@
       "necesidadesRegistradas": []
     },
     "estado": "ACTIVO",
-    "intentosFallidos": 0,
+    "intentosFallidos": 2,
     "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
+    "primerIntentoFallidoMillis": 1781614736010,
     "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
     "promedioCalificacion": 5.0,
@@ -446,15 +446,34 @@
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
     "contrasenaHash": "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
-    "version": 11,
+    "version": 31,
     "monedero": {
-      "creditosDisponibles": 0.0,
+      "creditosDisponibles": 50.0,
       "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
-      "completado": false,
-      "habilidadesOfrecidas": [],
+      "completado": true,
+      "habilidadesOfrecidas": [
+        {
+          "idInstancia": "e5e7bc1d-3b3c-4a27-8229-cbfdf3ef9253",
+          "habilidadBase": {
+            "id": "HAB-003",
+            "categoria": "Carpintería"
+          },
+          "precioCreditos": 50,
+          "descripcionServicio": "ddededd"
+        },
+        {
+          "idInstancia": "9bfb193c-5b33-459c-a289-97fedc762ab3",
+          "habilidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "precioCreditos": 10,
+          "descripcionServicio": "deeee"
+        }
+      ],
       "necesidadesRegistradas": []
     },
     "estado": "ACTIVO",

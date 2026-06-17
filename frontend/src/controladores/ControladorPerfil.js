@@ -22,10 +22,11 @@ export class ControladorPerfil {
 
   async obtenerSaldo(idUsuario) {
     try {
-      // Intentamos usar el endpoint del controlador /usuarios/{id}/saldo si existe en el servicio
-      // Como no lo hemos agregado en ServicioUsuario, vamos a llamar a obtenerUsuario y extraerlo
       const usuario = await this.servicioUsuario.obtenerUsuario(idUsuario);
-      return usuario.monedero || { creditosDisponibles: 0, creditosRetenidos: 0 };
+      return { 
+        creditosDisponibles: usuario.saldoDisponible !== undefined ? usuario.saldoDisponible : (usuario.creditosDisponibles || 0), 
+        creditosRetenidos: usuario.creditosComprometidos || 0 
+      };
     } catch (error) {
       return { creditosDisponibles: 0, creditosRetenidos: 0 };
     }
@@ -33,9 +34,7 @@ export class ControladorPerfil {
 
   async obtenerSolicitudesEnviadas(idUsuario) {
     try {
-      const publicaciones = await this.servicioPublicacion.obtenerPublicaciones();
-      // Filtramos aquellas publicaciones donde el usuario actual es el solicitante
-      return publicaciones.filter(pub => pub.idSolicitante === idUsuario);
+      return await this.servicioPublicacion.obtenerSolicitudesEnviadas(idUsuario);
     } catch (error) {
       return [];
     }

@@ -83,6 +83,8 @@ public class ServicioAdministrador {
         }
 
         // Guardar usuarios
+        ofertante.incrementarVersion();
+        demandante.incrementarVersion();
         repositorioUsuario.guardar(ofertante);
         repositorioUsuario.guardar(demandante);
 
@@ -137,6 +139,7 @@ public class ServicioAdministrador {
         } else if (diferencia < 0) {
             usuario.getMonedero().descontar(Math.abs(diferencia));
         }
+        usuario.incrementarVersion();
         repositorioUsuario.guardar(usuario);
     }
 
@@ -146,6 +149,7 @@ public class ServicioAdministrador {
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
         
         usuario.perdonarFaltas();
+        usuario.incrementarVersion();
         repositorioUsuario.guardar(usuario);
     }
 

@@ -8,7 +8,7 @@ const MakeRequest = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const type = searchParams.get('type') || 'oferta'; // oferta, demanda, subasta
-  const { user, balance, setBalance, controladorSubasta } = useContext(AppContext);
+  const { user, balance, setBalance, controladorSubasta, controladorMuro } = useContext(AppContext);
 
   const [message, setMessage] = useState('');
   const [items, setItems] = useState('');
@@ -150,25 +150,11 @@ const MakeRequest = () => {
 
       // Enviar solicitud al backend
       try {
-        const payload = {
-          idEmisor: user?.id || 'user-123',
-          idReceptor: data.userId || 'owner-456',
-          nombreServicio: data.title,
-          precioCreditos: cost,
-          descripcionServicio: message
-        };
+        const idUsuario = user?.id || 'user-123';
+        const response = await controladorMuro.solicitarServicio(id, idUsuario);
 
-        const response = await fetch('http://localhost:8080/api/solicitudes/proponer', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-          const errData = await response.json();
-          throw new Error(errData.error || 'Error al enviar la solicitud.');
+        if (!response || response.error) {
+          throw new Error(response?.error || 'Error al enviar la solicitud.');
         }
 
         // Descontar saldo localmente para reflejar el backend

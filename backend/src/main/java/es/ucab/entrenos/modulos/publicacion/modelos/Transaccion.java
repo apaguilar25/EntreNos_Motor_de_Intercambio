@@ -67,8 +67,8 @@ public class Transaccion {
     }
 
     public void asignarIncidencia(String idIncidencia) {
-        if (this.estado != EstadoTransaccion.INICIADA) {
-            throw new IllegalStateException("Solo se puede reportar una incidencia en transacciones INICIADAS.");
+        if (this.estado != EstadoTransaccion.INICIADA && this.estado != EstadoTransaccion.PENDIENTE) {
+            throw new IllegalStateException("Solo se puede reportar una incidencia en transacciones PENDIENTES o INICIADAS.");
         }
         this.idIncidencia = idIncidencia;
         this.estado = EstadoTransaccion.EN_DISPUTA;

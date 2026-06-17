@@ -3,10 +3,10 @@ C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\EntreNosApplication.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\gamificacion\controladores\ControladorLogro.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\gamificacion\controladores\ControladorPodio.java
+C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\gamificacion\dtos\EntradaPodio.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\gamificacion\dtos\LogroDesbloqueadoResponseDTO.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\gamificacion\dtos\LogroEstadoDTO.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\gamificacion\dtos\PodioResponseDTO.java
-C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\gamificacion\modelos\EntradaPodio.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\gamificacion\modelos\Logro.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\gamificacion\modelos\LogroDesbloqueado.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\gamificacion\modelos\PodioSemanal.java

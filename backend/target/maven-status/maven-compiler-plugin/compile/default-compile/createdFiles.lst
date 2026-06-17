@@ -93,6 +93,7 @@ es\ucab\entrenos\modulos\publicacion\controladores\ControladorTransaccion.class
 es\ucab\entrenos\modulos\subasta\modelos\Propuesta.class
 es\ucab\entrenos\modulos\gamificacion\servicios\ServicioGamificacion.class
 es\ucab\entrenos\modulos\subasta\dtos\AdjudicacionResponseDTO.class
+es\ucab\entrenos\modulos\gamificacion\dtos\EntradaPodio.class
 es\ucab\entrenos\modulos\publicacion\dto\RespuestaSolicitudDTO.class
 es\ucab\entrenos\modulos\gamificacion\modelos\LogroDesbloqueado.class
 es\ucab\entrenos\modulos\identidad\repositorios\RepositorioCorreoPermitido.class
@@ -115,7 +116,6 @@ es\ucab\entrenos\modulos\gamificacion\repositorios\RepositorioPodio.class
 es\ucab\entrenos\modulos\gamificacion\dtos\LogroEstadoDTO.class
 es\ucab\entrenos\modulos\identidad\dtos\EdicionNecesidadDTO.class
 es\ucab\entrenos\modulos\identidad\repositorios\RepositorioHabilidad$1.class
-es\ucab\entrenos\modulos\gamificacion\modelos\EntradaPodio.class
 es\ucab\entrenos\modulos\reputacion\dtos\ResenasPorUsuarioDTO.class
 es\ucab\entrenos\modulos\identidad\modelos\NecesidadRegistrada.class
 es\ucab\entrenos\modulos\gamificacion\modelos\PodioSemanal.class

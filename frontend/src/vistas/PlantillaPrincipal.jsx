@@ -4,8 +4,20 @@ import { AppContext } from '../App';
 import { Home, Gavel, User, Wallet, LogOut, Sun, Moon, Bell, Shield } from 'lucide-react';
 
 const PlantillaPrincipal = () => {
-  const { theme, toggleTheme, controladorAutenticacion, balance, user } = useContext(AppContext);
+  const { theme, toggleTheme, controladorAutenticacion, controladorPerfil, setBalance, balance, user } = useContext(AppContext);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (user && user.id && controladorPerfil) {
+      controladorPerfil.obtenerSaldo(user.id)
+        .then(monedero => {
+          if (monedero && monedero.creditosDisponibles !== undefined) {
+            setBalance(monedero.creditosDisponibles);
+          }
+        })
+        .catch(err => console.error("Error al obtener saldo:", err));
+    }
+  }, [user?.id, controladorPerfil, setBalance]);
 
   const handleLogout = () => {
     // Aquí el controlador en un futuro podría llamar a un servicio de logout real
