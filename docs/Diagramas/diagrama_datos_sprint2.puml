@@ -61,17 +61,17 @@ package "usuarios.json" as P_USUARIOS {
     + creditosPorLogros : float
   }
 
-  class "Catalogo" as CATALOGO {
+  class "CatalogoUsuario" as CATALOGO {
     + completado : boolean
   }
 
-  class "Habilidad Ofrecida" as HAB_OFRE {
+  class "HabilidadOfrecida" as HAB_OFRE {
     + idInstancia : String [PK]
     + precioCreditos : int
     + descripcionServicio : String
   }
 
-  class "Necesidad Registrada" as NEC_REG {
+  class "NecesidadRegistrada" as NEC_REG {
     + idInstancia : String [PK]
     + descripcionCondiciones : String
   }
@@ -279,7 +279,7 @@ package "logros_desbloqueados.json" as P_LOGROS_DESB {
   class "Logro" as LOGRO_LGD {
   }
 
-  class "Logro Desbloqueado" as LOGRO_DESB {
+  class "LogroDesbloqueado" as LOGRO_DESB {
     + id : String [PK]
     + idUsuario : String [FK]
     + idLogro : String [FK]
@@ -294,7 +294,7 @@ package "podio_semanal.json" as P_PODIO {
   class "Usuario" as USUARIO_POD {
   }
 
-  class "Podio Semanal" as PODIO {
+  class "PodioSemanal" as PODIO {
     + idPodio : String [PK]
     + fechaInicioSemana : long
     + fechaFinSemana : long
