@@ -16,9 +16,6 @@ public class Transaccion {
     private long fechaCreacion;
     private String idIncidencia;
     private Resena resena;
-    private String idSolicitanteCancelacion;
-    private String motivoCancelacion;
-    private boolean cancelacionAceptada;
     private int version;
 
     public Transaccion() {}
@@ -69,38 +66,12 @@ public class Transaccion {
         }
     }
 
-    public void solicitarCancelacion(String idSolicitante, String motivoCancelacion) {
-        if (this.estado == EstadoTransaccion.FINALIZADA || this.estado == EstadoTransaccion.RECHAZADA || this.estado == EstadoTransaccion.EN_DISPUTA) {
-            throw new IllegalStateException("No se puede solicitar cancelación en estado " + this.estado + ".");
-        }
-        this.idSolicitanteCancelacion = idSolicitante;
-        this.motivoCancelacion = motivoCancelacion;
-    }
-
-    public void aceptarCancelacion() {
-        if (this.idSolicitanteCancelacion == null) {
-            throw new IllegalStateException("No hay una solicitud de cancelación pendiente.");
-        }
-        this.cancelacionAceptada = true;
-        this.estado = EstadoTransaccion.RECHAZADA;
-    }
-
-    public void rehusarCancelacion() {
-        if (this.idSolicitanteCancelacion == null) {
-            throw new IllegalStateException("No hay una solicitud de cancelación pendiente.");
-        }
-        this.idSolicitanteCancelacion = null;
-        this.motivoCancelacion = null;
-    }
-
     public void asignarIncidencia(String idIncidencia) {
-        if (this.estado != EstadoTransaccion.INICIADA) {
-            throw new IllegalStateException("Solo se puede reportar una incidencia en transacciones INICIADAS.");
+        if (this.estado != EstadoTransaccion.INICIADA && this.estado != EstadoTransaccion.PENDIENTE) {
+            throw new IllegalStateException("Solo se puede reportar una incidencia en transacciones PENDIENTES o INICIADAS.");
         }
         this.idIncidencia = idIncidencia;
         this.estado = EstadoTransaccion.EN_DISPUTA;
-        this.idSolicitanteCancelacion = null;
-        this.motivoCancelacion = null;
     }
 
     public String getIdTransaccion() { return idTransaccion; }
@@ -115,9 +86,6 @@ public class Transaccion {
     public String getIdIncidencia() { return idIncidencia; }
     public Integer getCalificacion() { return resena != null ? resena.getCalificacion() : null; }
     public Resena getResena() { return resena; }
-    public String getIdSolicitanteCancelacion() { return idSolicitanteCancelacion; }
-    public String getMotivoCancelacion() { return motivoCancelacion; }
-    public boolean isCancelacionAceptada() { return cancelacionAceptada; }
 
     public int getVersion() { return version; }
     public void setVersion(int version) { this.version = version; }
@@ -133,7 +101,4 @@ public class Transaccion {
     public void setFechaCreacion(long fechaCreacion) { this.fechaCreacion = fechaCreacion; }
     public void setIdIncidencia(String idIncidencia) { this.idIncidencia = idIncidencia; }
     public void setResena(Resena resena) { this.resena = resena; }
-    public void setIdSolicitanteCancelacion(String idSolicitanteCancelacion) { this.idSolicitanteCancelacion = idSolicitanteCancelacion; }
-    public void setMotivoCancelacion(String motivoCancelacion) { this.motivoCancelacion = motivoCancelacion; }
-    public void setCancelacionAceptada(boolean cancelacionAceptada) { this.cancelacionAceptada = cancelacionAceptada; }
 }

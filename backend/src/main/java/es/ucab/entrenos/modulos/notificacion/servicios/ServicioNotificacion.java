@@ -19,6 +19,11 @@ public class ServicioNotificacion {
         repositorioNotificacion.guardar(notificacion);
     }
 
+    public void enviarNotificacion(String idRemitente, String idDestinatario, String mensaje, TipoNotificacion tipo, String idReferencia, String idReferenciaAuxiliar) {
+        Notificacion notificacion = new Notificacion(idRemitente, idDestinatario, mensaje, tipo, idReferencia, idReferenciaAuxiliar);
+        repositorioNotificacion.guardar(notificacion);
+    }
+
     /**
      * SOBRECARGA PARA NOTIFICACIONES DEL SISTEMA:
      * Este método se usa cuando el propio backend (Cron Jobs o Reglas de Negocio)
@@ -50,5 +55,13 @@ public class ServicioNotificacion {
         for (Notificacion n : noLeidas) {
             repositorioNotificacion.marcarComoLeida(n.getIdNotificacion());
         }
+    }
+
+    public void eliminarNotificacion(String idNotificacion) {
+        repositorioNotificacion.eliminar(idNotificacion);
+    }
+
+    public void eliminarNotificacionesPorReferencia(String idDestinatario, String idReferencia) {
+        repositorioNotificacion.eliminarPorReferencia(idDestinatario, idReferencia);
     }
 }

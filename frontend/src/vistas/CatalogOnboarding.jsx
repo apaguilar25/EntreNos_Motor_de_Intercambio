@@ -4,21 +4,20 @@ import { AppContext } from '../App';
 
 const CatalogOnboarding = () => {
   const navigate = useNavigate();
-  const { user, setHasCatalog, setBalance, hasCatalog } = useContext(AppContext);
+  const { user, setHasCatalog, setBalance, hasCatalog, controladorPerfil } = useContext(AppContext);
 
   const [skills, setSkills] = useState({});
   const [needs, setNeeds] = useState({});
 
   const availableSkills = [
-    { id: 's1', label: 'Reparación de Computadoras' },
-    { id: 's2', label: 'Asesoría Legal Básica' },
-    { id: 's3', label: 'Paseo de Perros' },
+    { id: 'HAB-005', label: 'Soporte Técnico / Computación' },
+    { id: 'HAB-001', label: 'Plomería' },
+    { id: 'HAB-003', label: 'Carpintería' },
   ];
 
   const availableNeeds = [
-    { id: 'n1', label: 'Mantenimiento de Aire Acondicionado' },
-    { id: 'n2', label: 'Clases de Matemáticas' },
-    { id: 'n3', label: 'Traducción de Textos' },
+    { id: 'HAB-002', label: 'Electricidad' },
+    { id: 'HAB-004', label: 'Limpieza del Hogar' },
   ];
 
   const handleSkillChange = (id, checked) => {
@@ -73,35 +72,29 @@ const CatalogOnboarding = () => {
       return;
     }
 
-    // Formatear para el Backend
-    const habilidadesArreglo = Object.keys(skills).map(id => {
-      const label = availableSkills.find(s => s.id === id).label;
+    // Formatear para el Backend (ConfiguracionCatalogoRequestDTO)
+    const ofertasArreglo = Object.keys(skills).map(id => {
       return {
-        nombre: label,
-        descripcionHabilidad: skills[id].description,
+        idHabilidadCategoria: id,
+        descripcionServicio: skills[id].description,
         precioCreditos: parseInt(skills[id].price) || 0
       };
     });
 
     const necesidadesArreglo = Object.keys(needs).map(id => {
-      const label = availableNeeds.find(n => n.id === id).label;
       return {
-        nombre: label,
-        descripcionNecesidad: needs[id].description
+        idHabilidadCategoria: id,
+        descripcionCondiciones: needs[id].description
       };
     });
 
     try {
-      const response = await fetch(`http://localhost:8080/api/usuarios/${user?.id || 'USR-1001'}/catalogo`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          habilidades: habilidadesArreglo,
-          necesidades: necesidadesArreglo
-        })
+      const response = await controladorPerfil.actualizarCatalogo(user?.id || 'USR-1001', {
+        ofertas: ofertasArreglo,
+        necesidades: necesidadesArreglo
       });
 
-      if (!response.ok) {
+      if (!response && response !== null) { // Dependiendo de lo que retorne el backend
         throw new Error("Error guardando el catálogo en el servidor.");
       }
 

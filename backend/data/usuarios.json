@@ -9,7 +9,7 @@
     "version": 6,
     "monedero": {
       "creditosDisponibles": 30.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 10.0
     },
     "catalogo": {
@@ -47,7 +47,7 @@
     "version": 2,
     "monedero": {
       "creditosDisponibles": 50.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -83,10 +83,10 @@
     "telefono": "+58414000104",
     "descripcionPersonal": "Demandante frecuente",
     "contrasenaHash": "$2a$10$4kpJRAKc28vppDPW7ffLaee.fcRUuRl5q60hY2irWFgyHUw7j.VjW",
-    "version": 6,
+    "version": 8,
     "monedero": {
       "creditosDisponibles": 50.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -105,7 +105,7 @@
           "idInstancia": "74e9e956-cbeb-4483-887e-7a4c8d51f37e",
           "necesidadBase": {
             "id": "HAB-001",
-            "categoria": "Plomería"
+            "categoria": "PlomerÃ­a"
           },
           "descripcionCondiciones": "Necesito plomero"
         },
@@ -113,7 +113,7 @@
           "idInstancia": "cc7cf81d-ea7f-41a5-8c74-24c46ebb0e1e",
           "necesidadBase": {
             "id": "HAB-003",
-            "categoria": "Carpintería"
+            "categoria": "CarpinterÃ­a"
           },
           "descripcionCondiciones": "Necesito carpintero"
         },
@@ -129,16 +129,16 @@
           "idInstancia": "db6ce203-a9d9-4b08-957b-d9a834089f74",
           "necesidadBase": {
             "id": "HAB-005",
-            "categoria": "Soporte Técnico / Computación"
+            "categoria": "Soporte TÃ©cnico / ComputaciÃ³n"
           },
           "descripcionCondiciones": "Necesito soporte"
         }
       ]
     },
     "estado": "ACTIVO",
-    "intentosFallidos": 0,
+    "intentosFallidos": 2,
     "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
+    "primerIntentoFallidoMillis": 1781611722455,
     "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
     "promedioCalificacion": 0.0,
@@ -156,7 +156,7 @@
     "version": 4,
     "monedero": {
       "creditosDisponibles": 50.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -175,7 +175,7 @@
           "idInstancia": "ba7328e4-21d3-46ff-ac9e-182cb09fce20",
           "habilidadBase": {
             "id": "HAB-001",
-            "categoria": "Plomería"
+            "categoria": "PlomerÃ­a"
           },
           "precioCreditos": 10,
           "descripcionServicio": "Plomeria avanzada"
@@ -184,7 +184,7 @@
           "idInstancia": "c5c845a5-41a2-4356-a4c4-f61f4b2a343b",
           "habilidadBase": {
             "id": "HAB-003",
-            "categoria": "Carpintería"
+            "categoria": "CarpinterÃ­a"
           },
           "precioCreditos": 15,
           "descripcionServicio": "Muebles a medida"
@@ -210,10 +210,10 @@
     "telefono": "+58414000102",
     "descripcionPersonal": "Segundo mejor proveedor",
     "contrasenaHash": "$2a$10$IBj1Zoex6ld3BX7VbZpUoOEDpP.D7OYEPbMgIykvfOs7tocnXjJge",
-    "version": 3,
+    "version": 26,
     "monedero": {
-      "creditosDisponibles": 50.0,
-      "creditosRetenidos": 0.0,
+      "creditosDisponibles": 300.0,
+      "creditosComprometidos": 111.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -232,7 +232,7 @@
           "idInstancia": "0bc1286c-6979-4c47-b334-0d4d944e92bf",
           "habilidadBase": {
             "id": "HAB-005",
-            "categoria": "Soporte Técnico / Computación"
+            "categoria": "Soporte TÃ©cnico / ComputaciÃ³n"
           },
           "precioCreditos": 12,
           "descripcionServicio": "Soporte tecnico"
@@ -261,7 +261,7 @@
     "version": 9,
     "monedero": {
       "creditosDisponibles": 115.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 10.0
     },
     "catalogo": {
@@ -280,10 +280,10 @@
           "idInstancia": "61619220-0aff-4322-b11a-f2aa9ed0f000",
           "habilidadBase": {
             "id": "HAB-001",
-            "categoria": "Plomería"
+            "categoria": "PlomerÃ­a"
           },
           "precioCreditos": 50,
-          "descripcionServicio": "Reparaciones de plomería básicas"
+          "descripcionServicio": "Reparaciones de plomerÃ­a bÃ¡sicas"
         }
       ],
       "necesidadesRegistradas": []
@@ -309,7 +309,7 @@
     "version": 6,
     "monedero": {
       "creditosDisponibles": 0.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -325,8 +325,7 @@
     "urlFotoPerfil": "default.png",
     "promedioCalificacion": 0.0,
     "cantidadCalificaciones": 0,
-    "rol": "ADMINISTRADOR",
-    "esVecinoDestacado": false
+    "rol": "ADMINISTRADOR"
   },
   {
     "id": "d95b9f31-322b-48e0-b331-e1d5a003992c",
@@ -336,7 +335,7 @@
     "version": 0,
     "monedero": {
       "creditosDisponibles": 0.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -365,7 +364,7 @@
     "version": 9,
     "monedero": {
       "creditosDisponibles": 5.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 10.0
     },
     "catalogo": {
@@ -384,9 +383,9 @@
           "idInstancia": "e2b7955c-3cd7-4b22-b7d0-224dc510f368",
           "necesidadBase": {
             "id": "HAB-005",
-            "categoria": "Soporte Técnico / Computación"
+            "categoria": "Soporte TÃ©cnico / ComputaciÃ³n"
           },
-          "descripcionCondiciones": "Soporte técnico para mi PC"
+          "descripcionCondiciones": "Soporte tÃ©cnico para mi PC"
         }
       ]
     },
@@ -408,10 +407,10 @@
     "telefono": "+58415000001",
     "descripcionPersonal": "test",
     "contrasenaHash": "$2a$10$JEZFYan3tuGhUVVTGaY5ouGGhE.eYxohNvuDcA.oSVwruuwIrLs7q",
-    "version": 6,
+    "version": 8,
     "monedero": {
       "creditosDisponibles": 90.0,
-      "creditosRetenidos": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 10.0
     },
     "catalogo": {
@@ -430,14 +429,63 @@
       "necesidadesRegistradas": []
     },
     "estado": "ACTIVO",
-    "intentosFallidos": 0,
+    "intentosFallidos": 2,
     "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
+    "primerIntentoFallidoMillis": 1781614736010,
     "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
     "promedioCalificacion": 5.0,
     "cantidadCalificaciones": 1,
     "rol": "MIEMBRO_COMUNIDAD",
     "esVecinoDestacado": false
+  },
+  {
+    "id": "d6ed5d51-8d8f-4c91-846f-c56c8a0f1d96",
+    "nombre": "Super Administrador",
+    "correoElectronico": "admin@alameda.com",
+    "telefono": "0000000000",
+    "descripcionPersonal": "Administrador general de la comunidad",
+    "contrasenaHash": "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
+    "version": 31,
+    "monedero": {
+      "creditosDisponibles": 50.0,
+      "creditosComprometidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": true,
+      "habilidadesOfrecidas": [
+        {
+          "idInstancia": "e5e7bc1d-3b3c-4a27-8229-cbfdf3ef9253",
+          "habilidadBase": {
+            "id": "HAB-003",
+            "categoria": "Carpintería"
+          },
+          "precioCreditos": 50,
+          "descripcionServicio": "ddededd"
+        },
+        {
+          "idInstancia": "9bfb193c-5b33-459c-a289-97fedc762ab3",
+          "habilidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "precioCreditos": 10,
+          "descripcionServicio": "deeee"
+        }
+      ],
+      "necesidadesRegistradas": []
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "ADMINISTRADOR",
+    "esVecinoDestacado": false
+
   }
 ]

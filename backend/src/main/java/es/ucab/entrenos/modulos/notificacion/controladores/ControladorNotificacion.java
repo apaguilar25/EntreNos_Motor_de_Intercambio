@@ -43,4 +43,10 @@ public class ControladorNotificacion {
         servicioNotificacion.marcarTodasComoLeidas(idDestinatario);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{idNotificacion}")
+    public ResponseEntity<Void> eliminarNotificacion(@PathVariable String idNotificacion) {
+        servicioNotificacion.eliminarNotificacion(idNotificacion);
+        return ResponseEntity.noContent().build();
+    }
 }

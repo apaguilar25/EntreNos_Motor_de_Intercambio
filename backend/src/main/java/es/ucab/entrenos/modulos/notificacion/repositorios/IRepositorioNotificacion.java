@@ -12,4 +12,6 @@ public interface IRepositorioNotificacion {
     void guardar(Notificacion notificacion);
     void guardarTodas(List<Notificacion> notificaciones);
     void marcarComoLeida(String idNotificacion);
+    void eliminar(String idNotificacion);
+    void eliminarPorReferencia(String idDestinatario, String idReferencia);
 }

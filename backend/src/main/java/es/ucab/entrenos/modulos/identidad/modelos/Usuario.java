@@ -124,23 +124,6 @@ public class Usuario {
     }
 
     /** ==================== ==================== ====================
-     *                          Monedero
-     * ==================== ==================== ====================
-     */
-
-    public void pagarServicio(float montoCreditos) {
-        asegurarUsuarioActivo();
-        incrementarVersion();
-        this.monedero.descontar(montoCreditos);
-    }
-
-    public void recibirCreditos(float montoCreditos) {
-        asegurarUsuarioActivo();
-        incrementarVersion();
-        this.monedero.acreditar(montoCreditos);
-    }
-
-    /** ==================== ==================== ====================
      *          MÉTODOS DE NEGOCIO: SEGURIDAD Y SANCIONES
      * ==================== ==================== ====================
      */
@@ -190,6 +173,14 @@ public class Usuario {
         }
     }
 
+    public void perdonarFaltas() {
+        incrementarVersion();
+        this.reportesFraudeValidados = 0;
+        if (this.estado == EstadoCuenta.SUSPENDIDO_FRAUDE) {
+            this.estado = EstadoCuenta.ACTIVO;
+        }
+    }
+
     public void incrementarVersion(){
         this.version++;
     }
@@ -218,18 +209,6 @@ public class Usuario {
         return this.estado;
     }
 
-    // Métodos de conveniencia para tu código antiguo (Leen desde el Enum)
-    public boolean isCuentaBloqueada() {
-        return getEstado() == EstadoCuenta.BLOQUEADO_SEGURIDAD;
-    }
-
-    public boolean isCuentaSuspendida() {
-        return getEstado() == EstadoCuenta.SUSPENDIDO_FRAUDE || getEstado() == EstadoCuenta.SUSPENDIDO_SUBASTA;
-    }
-
-    public boolean tieneSancionActiva() {
-        return getEstado() == EstadoCuenta.SUSPENDIDO_SUBASTA;
-    }
     public void agregarCalificacion(int calificacion) {
         incrementarVersion();
         if (calificacion < 1 || calificacion > 5) {
@@ -256,6 +235,7 @@ public class Usuario {
     public long getPrimerIntentoFallidoMillis() { return primerIntentoFallidoMillis; }
     public long getTiempoDesbloqueoMillis() { return tiempoDesbloqueoMillis; }
     public RolUsuario getRol() { return rol; }
+    public int getReportesFraudeValidados() { return reportesFraudeValidados; }
     public int getVersion() {return version;}
     public String getUrlFotoPerfil() { return urlFotoPerfil; }
     public float getPromedioCalificacion() { return promedioCalificacion; }

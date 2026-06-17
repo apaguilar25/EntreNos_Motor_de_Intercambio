@@ -2,6 +2,8 @@ package es.ucab.entrenos.modulos.identidad.servicios;
 
 import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
 import es.ucab.entrenos.modulos.identidad.repositorios.IRepositorioUsuario;
+import es.ucab.entrenos.modulos.identidad.repositorios.IRepositorioCorreoPermitido;
+import es.ucab.entrenos.modulos.identidad.modelos.CorreoPermitido;
 import es.ucab.entrenos.modulos.publicacion.modelos.EstadoTransaccion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Incidencia;
 import es.ucab.entrenos.modulos.publicacion.modelos.Transaccion;
@@ -16,16 +18,20 @@ import java.util.Optional;
 public class ServicioAdministrador {
 
     private final IRepositorioUsuario repositorioUsuario;
+    private final IRepositorioCorreoPermitido repositorioCorreoPermitido;
     private final ServicioHabilidad servicioHabilidad;
     private final ServicioAutenticacion servicioAutenticacion;
     private final IRepositorioIncidencia repositorioIncidencia;
     private final IRepositorioTransaccion repositorioTransaccion;
 
-    public ServicioAdministrador(IRepositorioUsuario repositorioUsuario, ServicioHabilidad servicioHabilidad,
+    public ServicioAdministrador(IRepositorioUsuario repositorioUsuario, 
+                                  IRepositorioCorreoPermitido repositorioCorreoPermitido,
+                                  ServicioHabilidad servicioHabilidad,
                                   ServicioAutenticacion servicioAutenticacion,
                                   IRepositorioIncidencia repositorioIncidencia,
                                   IRepositorioTransaccion repositorioTransaccion) {
         this.repositorioUsuario = repositorioUsuario;
+        this.repositorioCorreoPermitido = repositorioCorreoPermitido;
         this.servicioHabilidad = servicioHabilidad;
         this.servicioAutenticacion = servicioAutenticacion;
         this.repositorioIncidencia = repositorioIncidencia;
@@ -40,24 +46,54 @@ public class ServicioAdministrador {
         return repositorioIncidencia.obtenerPorId(idIncidencia);
     }
 
-    /**
-     * Requisito ERS: Validar reporte de fraude y aplicar sanción.
-     */
-    public void validarReporteDeFraude(String idAdministrador, String idUsuarioInfractor, String idTransaccion) {
+    public void resolverIncidencia(String idAdministrador, String idIncidencia, String idUsuarioGanadorCreditos, boolean sancionarOfertante, boolean sancionarDemandante) {
         verificarPermisosAdmin(idAdministrador);
 
-        Usuario infractor = repositorioUsuario.buscarPorId(idUsuarioInfractor)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario infractor no encontrado."));
+        Incidencia incidencia = repositorioIncidencia.obtenerPorId(idIncidencia)
+                .orElseThrow(() -> new IllegalArgumentException("Incidencia no encontrada."));
 
-        infractor.registrarReporteFraudeValidado();
-        repositorioUsuario.guardar(infractor);
-
-        if (idTransaccion != null && !idTransaccion.isBlank()) {
-            repositorioTransaccion.obtenerPorId(idTransaccion).ifPresent(t -> {
-                t.setEstado(EstadoTransaccion.FINALIZADA);
-                repositorioTransaccion.guardar(t);
-            });
+        if (!incidencia.getEstado().equals("ABIERTA")) {
+            throw new IllegalStateException("Esta incidencia ya ha sido resuelta.");
         }
+
+        Transaccion t = repositorioTransaccion.obtenerPorId(incidencia.getIdTransaccion())
+                .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada."));
+
+        // Resolver pago
+        Usuario ofertante = repositorioUsuario.buscarPorId(t.getIdOfertante()).orElseThrow();
+        Usuario demandante = repositorioUsuario.buscarPorId(t.getIdDemandante()).orElseThrow();
+
+        if (idUsuarioGanadorCreditos.equals(t.getIdOfertante())) {
+            // Entregar fondos al ofertante
+            demandante.getMonedero().liberarCompromiso();
+            ofertante.getMonedero().acreditar(t.getCreditosRetenidos());
+        } else if (idUsuarioGanadorCreditos.equals(t.getIdDemandante())) {
+            // Devolver fondos al demandante
+            demandante.getMonedero().devolverCompromiso();
+        } else {
+            throw new IllegalArgumentException("El ganador debe ser el ofertante o el demandante de la transacción.");
+        }
+
+        // Sancionar
+        if (sancionarOfertante) {
+            ofertante.registrarReporteFraudeValidado();
+        }
+        if (sancionarDemandante) {
+            demandante.registrarReporteFraudeValidado();
+        }
+
+        // Guardar usuarios
+        ofertante.incrementarVersion();
+        demandante.incrementarVersion();
+        repositorioUsuario.guardar(ofertante);
+        repositorioUsuario.guardar(demandante);
+
+        // Finalizar transacción e incidencia
+        t.setEstado(EstadoTransaccion.FINALIZADA);
+        repositorioTransaccion.guardar(t);
+
+        incidencia.setEstado("RESUELTA");
+        repositorioIncidencia.guardar(incidencia);
     }
 
     /**
@@ -68,6 +104,53 @@ public class ServicioAdministrador {
 
         // Delegamos la creación al servicio de habilidades que ya tenías
         servicioHabilidad.crearHabilidad(nombreCategoria);
+    }
+
+    // --- GESTIÓN DE CORREOS PERMITIDOS ---
+    public List<CorreoPermitido> listarCorreosPermitidos(String idAdministrador) {
+        verificarPermisosAdmin(idAdministrador);
+        return repositorioCorreoPermitido.obtenerTodos();
+    }
+
+    public void agregarCorreoPermitido(String idAdministrador, String correo) {
+        verificarPermisosAdmin(idAdministrador);
+        repositorioCorreoPermitido.guardar(new CorreoPermitido(correo));
+    }
+
+    public void eliminarCorreoPermitido(String idAdministrador, String correo) {
+        verificarPermisosAdmin(idAdministrador);
+        repositorioCorreoPermitido.eliminar(correo);
+    }
+
+    // --- GESTIÓN DE USUARIOS ---
+    public List<Usuario> listarUsuarios(String idAdministrador) {
+        verificarPermisosAdmin(idAdministrador);
+        return repositorioUsuario.listarUsuarios();
+    }
+
+    public void modificarCreditosUsuario(String idAdministrador, String idUsuarioObjetivo, float nuevosCreditos) {
+        verificarPermisosAdmin(idAdministrador);
+        Usuario usuario = repositorioUsuario.buscarPorId(idUsuarioObjetivo)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+        
+        float diferencia = nuevosCreditos - usuario.getMonedero().getCreditosDisponibles();
+        if (diferencia > 0) {
+            usuario.getMonedero().acreditar(diferencia);
+        } else if (diferencia < 0) {
+            usuario.getMonedero().descontar(Math.abs(diferencia));
+        }
+        usuario.incrementarVersion();
+        repositorioUsuario.guardar(usuario);
+    }
+
+    public void perdonarFaltas(String idAdministrador, String idUsuarioObjetivo) {
+        verificarPermisosAdmin(idAdministrador);
+        Usuario usuario = repositorioUsuario.buscarPorId(idUsuarioObjetivo)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+        
+        usuario.perdonarFaltas();
+        usuario.incrementarVersion();
+        repositorioUsuario.guardar(usuario);
     }
 
     // --- FUNCIÓN DE SEGURIDAD INTERNA ---

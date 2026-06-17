@@ -17,7 +17,7 @@ const Login = () => {
 
   const [error, setError] = useState('');
 
-  const { setUser, setBalance, setHasCatalog } = useContext(AppContext);
+  const { controladorAutenticacion } = useContext(AppContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -39,36 +39,11 @@ const Login = () => {
         return;
       }
       
-      const domain = correoElectronico.split('@')[1];
-      if (domain !== 'alameda.com') {
-        setError('El correo debe pertenecer al dominio oficial de la comunidad (alameda.com).');
-        return;
-      }
-      const prefix = correoElectronico.split('@')[0].toLowerCase();
-      let assignedId = 'USR-1001';
-      if (prefix === 'carlos') assignedId = 'USR-1002';
-      else if (prefix === 'luis') assignedId = 'USR-1003';
-      
-      setUser({ id: assignedId, name: prefix.charAt(0).toUpperCase() + prefix.slice(1), email: correoElectronico });
-      
       try {
-        const response = await fetch(`http://localhost:8080/api/usuarios/${assignedId}`);
-        if (response.ok) {
-           const data = await response.json();
-           const hasCat = (data.habilidades && data.habilidades.length > 0) || (data.necesidades && data.necesidades.length > 0);
-           setHasCatalog(hasCat);
-           if (data.monedero) setBalance(data.monedero.creditosDisponibles);
-           
-           if (hasCat) {
-              navigate('/');
-           } else {
-              navigate('/onboarding');
-           }
-        } else {
-           navigate('/onboarding');
-        }
+        const redirectPath = await controladorAutenticacion.iniciarSesion(correoElectronico, 'contrasena123'); // Password mock if no field exists in UI
+        navigate(redirectPath);
       } catch (err) {
-        navigate('/onboarding');
+        setError(err.message);
       }
     } else {
       // --- REGISTRO REAL CON JAVA ---
@@ -77,32 +52,17 @@ const Login = () => {
         return;
       }
 
-      const prefix = correoElectronico.split('@')[0].toLowerCase();
-      let assignedId = 'USR-1001';
-      if (prefix === 'carlos') assignedId = 'USR-1002';
-      else if (prefix === 'luis') assignedId = 'USR-1003';
-
-      // Registro simulado
-      setUser({ id: assignedId, nombre, correoElectronico: correoElectronico, telefono: telefono, descripcionPersonal: descripcionPersonal });
-      
       try {
-        const response = await fetch(`http://localhost:8080/api/usuarios/${assignedId}`);
-        if (response.ok) {
-           const data = await response.json();
-           const hasCat = (data.habilidades && data.habilidades.length > 0) || (data.necesidades && data.necesidades.length > 0);
-           setHasCatalog(hasCat);
-           if (data.monedero) setBalance(data.monedero.creditosDisponibles);
-           
-           if (hasCat) {
-              navigate('/');
-           } else {
-              navigate('/onboarding');
-           }
-        } else {
-           navigate('/onboarding');
-        }
+        const redirectPath = await controladorAutenticacion.registrarUsuario({
+            nombre,
+            correoElectronico,
+            telefono,
+            descripcionPersonal,
+            contrasena: 'contrasena123' // Mock if no password field in UI
+        });
+        navigate(redirectPath);
       } catch (err) {
-        navigate('/onboarding');
+        setError(err.message);
       }
     }
   };

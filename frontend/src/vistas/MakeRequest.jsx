@@ -8,11 +8,12 @@ const MakeRequest = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const type = searchParams.get('type') || 'oferta'; // oferta, demanda, subasta
-  const { user, balance, setBalance } = useContext(AppContext);
+  const { user, balance, setBalance, controladorSubasta, controladorMuro } = useContext(AppContext);
 
   const [message, setMessage] = useState('');
   const [items, setItems] = useState('');
   const [showInterestPrompt, setShowInterestPrompt] = useState(true);
+  const [estadoFisico, setEstadoFisico] = useState('NUEVO');
 
   // Mock JSON items
   const availableGoods = [
@@ -94,30 +95,33 @@ const MakeRequest = () => {
         alert('Es obligatorio adjuntar una imagen como evidencia visual física de los productos.');
         return;
       }
+      if (!message) {
+        alert('Debes escribir una descripción para tu oferta.');
+        return;
+      }
 
       try {
         const lineasPayload = Object.entries(selectedGoods).map(([goodId, qty]) => {
           const goodInfo = availableGoods.find(g => g.id === parseInt(goodId));
           return {
             cantidad: qty,
-            bienConsumo: { nombreBienConsumo: goodInfo.name }
+            nombre: goodInfo.name
           };
         });
 
         const payload = {
-          idOfertante: user?.id || 'USR-1002',
-          lineas: lineasPayload
+          idPostor: user?.id || 'USR-1002',
+          idSubasta: id,
+          bienesOfrecidos: lineasPayload,
+          descripcion: message,
+          estadoFisico: estadoFisico,
+          imagenesUrls: ['http://dummy.img/evidence.jpg']
         };
 
-        const response = await fetch(`http://localhost:8080/api/subastas/${id}/ofertar`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+        const response = await controladorSubasta.hacerOferta(id, payload);
 
-        if (!response.ok) {
-          const errData = await response.text();
-          throw new Error(errData || 'Error al enviar la oferta.');
+        if (!response) {
+          throw new Error('Error al enviar la oferta.');
         }
 
         alert('¡Oferta enviada con éxito!');
@@ -146,25 +150,11 @@ const MakeRequest = () => {
 
       // Enviar solicitud al backend
       try {
-        const payload = {
-          idEmisor: user?.id || 'user-123',
-          idReceptor: data.userId || 'owner-456',
-          nombreServicio: data.title,
-          precioCreditos: cost,
-          descripcionServicio: message
-        };
+        const idUsuario = user?.id || 'user-123';
+        const response = await controladorMuro.solicitarServicio(id, idUsuario);
 
-        const response = await fetch('http://localhost:8080/api/solicitudes/proponer', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-          const errData = await response.json();
-          throw new Error(errData.error || 'Error al enviar la solicitud.');
+        if (!response || response.error) {
+          throw new Error(response?.error || 'Error al enviar la solicitud.');
         }
 
         // Descontar saldo localmente para reflejar el backend
@@ -255,6 +245,32 @@ const MakeRequest = () => {
                   >
                     <p>{offerImage ? 'Imagen adjuntada' : 'Click para simular carga de imagen'}</p>
                   </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Estado Físico de los Bienes</label>
+                  <select 
+                    value={estadoFisico} 
+                    onChange={(e) => setEstadoFisico(e.target.value)}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', outline: 'none' }}
+                  >
+                    <option value="NUEVO">Nuevo</option>
+                    <option value="USADO">Usado</option>
+                    <option value="REPARADO">Reparado</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: '500' }}>
+                    <MessageSquare size={16} /> Descripción de tu Oferta
+                  </label>
+                  <textarea 
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Describe los detalles de los productos, caducidad o condiciones de entrega..."
+                    rows={3}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', resize: 'vertical' }}
+                  />
                 </div>
               </>
             ) : (

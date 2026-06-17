@@ -1,0 +1,41 @@
+[ {
+  "id" : "329c4781-49d6-41e6-9258-e93839dd790f",
+  "correo" : "testb.flow@alameda.com",
+  "fechaCreacion" : 1781612674866
+}, {
+  "id" : "7384e0cf-6676-4561-8744-b00637414dd2",
+  "correo" : "carlos.podio@alameda.com",
+  "fechaCreacion" : 1781612674866
+}, {
+  "id" : "4ed2643f-46ec-42a5-b943-de2c530e1aa0",
+  "correo" : "diana.podio@alameda.com",
+  "fechaCreacion" : 1781612674866
+}, {
+  "id" : "8fa331de-6a5f-43b4-83a0-4672050b021e",
+  "correo" : "ana.podio@alameda.com",
+  "fechaCreacion" : 1781612674866
+}, {
+  "id" : "520c2d89-8d06-48e3-9b46-b4cee34a0fcf",
+  "correo" : "bob.podio@alameda.com",
+  "fechaCreacion" : 1781612674866
+}, {
+  "id" : "6f416836-ca46-4f73-81c9-d0a022fd1ec8",
+  "correo" : "ana.ofertante@alameda.com",
+  "fechaCreacion" : 1781612674866
+}, {
+  "id" : "d5b4522a-f775-45c5-bcaa-a91fbdfe8eda",
+  "correo" : "test.cancel@alameda.com",
+  "fechaCreacion" : 1781612674866
+}, {
+  "id" : "cf01eeb7-1951-4129-bdf4-6ad57bde137c",
+  "correo" : "bob.demandante@alameda.com",
+  "fechaCreacion" : 1781612674866
+}, {
+  "id" : "d2687519-eecb-47b7-b383-0acb80ec94a8",
+  "correo" : "testa.flow@alameda.com",
+  "fechaCreacion" : 1781612674866
+}, {
+  "id" : "0eba4ae4-1950-4365-9889-4344db25951e",
+  "correo" : "admin@alameda.com",
+  "fechaCreacion" : 1781612674866
+} ]

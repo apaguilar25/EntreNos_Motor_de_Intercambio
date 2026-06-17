@@ -5,13 +5,13 @@ public class Logro {
     private String idLogro;
     private String nombre;
     private String descripcion;
-    private String tipoCriterio;
+    private TipoCriterioLogro tipoCriterio;
     private int bonoCreditos;
     private boolean activo;
 
     public Logro() {}
 
-    public Logro(String idLogro, String nombre, String descripcion, String tipoCriterio,
+    public Logro(String idLogro, String nombre, String descripcion, TipoCriterioLogro tipoCriterio,
                  int bonoCreditos) {
         this.idLogro = idLogro;
         this.nombre = nombre;
@@ -30,8 +30,8 @@ public class Logro {
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public String getTipoCriterio() { return tipoCriterio; }
-    public void setTipoCriterio(String tipoCriterio) { this.tipoCriterio = tipoCriterio; }
+    public TipoCriterioLogro getTipoCriterio() { return tipoCriterio; }
+    public void setTipoCriterio(TipoCriterioLogro tipoCriterio) { this.tipoCriterio = tipoCriterio; }
 
     public int getBonoCreditos() { return bonoCreditos; }
     public void setBonoCreditos(int bonoCreditos) { this.bonoCreditos = bonoCreditos; }

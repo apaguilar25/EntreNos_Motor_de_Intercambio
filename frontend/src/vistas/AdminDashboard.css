@@ -1,0 +1,162 @@
+.admin-dashboard {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    font-family: inherit;
+    color: var(--text-primary);
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.admin-tabs button {
+    padding: 10px 25px;
+    background-color: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 0;
+    transition: all 0.3s ease;
+}
+
+.admin-tabs button:hover {
+    color: var(--accent-primary);
+}
+
+.admin-tabs button.active {
+    color: var(--accent-primary);
+    border-bottom: 3px solid var(--accent-primary);
+}
+
+.admin-content h2 {
+    margin-bottom: 20px;
+    color: var(--text-primary);
+}
+
+.admin-content table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 20px;
+}
+
+.admin-content th {
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.admin-content td {
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.admin-content tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-content tr:hover {
+    background-color: var(--bg-primary);
+}
+
+.add-correo {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.add-correo input {
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    flex-grow: 1;
+    max-width: 300px;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.add-correo button {
+    padding: 10px 20px;
+    background-color: var(--accent-primary);
+    color: var(--text-on-accent);
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.add-correo button:hover {
+    opacity: 0.9;
+}
+
+.admin-content td button {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    margin-right: 8px;
+    background-color: var(--bg-tertiary);
+    color: var(--accent-primary);
+    transition: all 0.2s ease;
+}
+
+.admin-content td button:hover {
+    background-color: var(--accent-primary);
+    color: var(--text-on-accent);
+}
+
+.admin-content ul {
+    list-style: none;
+    padding: 0;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+}
+
+.admin-content li {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-primary);
+}
+
+.admin-content li:last-child {
+    border-bottom: none;
+}
+
+.admin-content li button {
+    background-color: transparent;
+    color: var(--text-tertiary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    border: none;
+}
+
+.admin-content li button:hover {
+    color: var(--accent-warning);
+}

@@ -5,7 +5,7 @@ import { AppContext } from '../App';
 
 const CreateAuction = () => {
   const navigate = useNavigate();
-  const { user } = React.useContext(AppContext);
+  const { user, controladorSubasta } = React.useContext(AppContext);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [duration, setDuration] = useState('1');
@@ -113,28 +113,25 @@ const CreateAuction = () => {
               }
               
               const payload = {
-                idSubastador: user?.id || 'USR-1001',
                 descripcion: description,
                 nombreActivo: title,
                 estadoFisico: status,
-                rutasImagenes: ["/ruta/foto1.jpg"]
+                imagenesUrls: ["/ruta/foto1.jpg"],
+                diasDuracion: parseInt(duration)
               };
 
               try {
-                const res = await fetch('http://localhost:8080/api/subastas/crear', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(payload)
-                });
-                if (res.ok) {
+                // We use controladorSubasta from useContext
+                
+                const res = await controladorSubasta.crearSubasta(payload);
+                if (res) {
                   alert('Subasta creada con éxito.');
                   navigate(-1);
                 } else {
-                  const data = await res.json();
-                  alert(data.error || 'Error al crear la subasta');
+                  alert('Error al crear la subasta');
                 }
               } catch (error) {
-                alert('Error de red');
+                alert('Error de red al crear subasta');
               }
             }}
           >

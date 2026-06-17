@@ -1,0 +1,346 @@
+@startuml
+
+skinparam orthogonalLayoutStrategy none
+skinparam DefaultFontName Arial
+skinparam DefaultFontSize 12
+skinparam class {
+'   BackgroundColor White
+    ArrowColor Black
+    BorderColor Black
+}
+
+skinparam title {
+    FontSize 18
+'   FontColor #2C3E50
+}
+
+skinparam frame {
+    BorderColor #black
+    FontColor #black
+'   BackgroundColor #FAFAFA
+}
+
+
+title __Diagrama de clase Sprint 1 - EntreNós__
+
+package "Diagrama de clase EntreNós"  {
+
+'''''''''''MODULO IDENTIDAD'''''''''''
+
+    class Usuario {
+        - id: String
+        - nombre: String
+        - correoElectronico: String
+        - telefono: String
+        - descripcionPersonal: String
+        - contrasenaHash: String
+        - version: int
+        - monedero: Monedero
+        - catalogo: CatalogoUsuario
+        - estado: EstadoCuenta
+        - intentosFallidos: int
+        - tiempoDesbloqueoMillis: long
+        - primerIntentoFallidoMillis long
+        - reportesFraudeValidados int
+        - urlFotoPerfil String
+        - promedioCalificacion float
+        - cantidadCalificaciones int
+        - rol RolUsuario
+        - esVecinoDestacado boolean
+        + Usuario(id: String, nombre: String, correoElectronico: String, telefono: String, descripcionPersonal: String, contrasenaHash String): Usuario
+        + isCatalogoCompletado(): boolean
+        + asegurarUsuarioActivo(): void
+        + finalizarConfiguracionCatalogo(float: capitalSemilla): void
+        + agregarHabilidadOfrecida(nuevaHabilidad: HabilidadOfrecida): void
+        + actualizarHabilidadOfrecida(idInstancia: String, nuevoPrecio: int, nuevaDescripcion: String): void
+        + eliminarHabilidadOfrecida(idInstancia: String): void
+        + agregarNecesidad(nuevaNecesidad: NecesidadRegistrada): void
+        + actualizarNecesidadRegistrada(idInstancia: String, nuevaDescripcion: String): void
+        + eliminarNecesidadRegistrada(idInstancia: String): void
+        + registrarIntentoFallido(): void
+        + registrarInicioSesionExitoso(): void
+        + aplicarSancionPorInactividadSubasta(): void
+        + registrarReporteFraudeValidado(): void
+        + incrementarVersion(): void
+        + agregarCalificacion(calificacion: int): void
+        + isAdministrador(): boolean
+    }
+
+    class Monedero {
+        - creditosDisponibles: float
+        - creditosComprometidos: float
+        - creditosPorLogros: float
+        + Monedero(float creditosDisponibles)
+        + void acreditar(float montoCreditos)
+        + void acreditarLogro(float montoCreditos)
+        + void descontar(float montoCreditos)
+        + void comprometer(float montoCreditos)
+        + void liberarCompromiso()
+        + void devolverCompromiso()
+    }
+
+    class CatalogoUsuario {
+        - boolean completado
+        + void marcarComoCompletado()
+        + void agregarHabilidadOfrecida(HabilidadOfrecida nuevaHabilidad)
+        + void actualizarHabilidadOfrecida(String idInstancia, int nuevoPrecio, String nuevaDescripcion)
+        + void agregarNecesidad(NecesidadRegistrada nuevaNecesidad)
+        + void actualizarNecesidadRegistrada(String idInstancia, String nuevaDescripcion)
+        + void eliminarHabilidadOfrecida(String idInstancia)
+        + void eliminarNecesidadRegistrada(String idInstancia)
+        + boolean isCompletado()
+    }
+
+    class Habilidad {
+        - private String id;
+        - private String categoria;
+        + Habilidad(String id, String categoria)
+        + boolean equals(Object o)
+        + int hashCode()
+    }
+
+    class HabilidadOfrecida {
+        - String idInstancia
+        - Habilidad habilidadBase;
+        - int precioCreditos;
+        - String descripcionServicio;
+        + HabilidadOfrecida(Habilidad habilidadBase, int precioCreditos, String descripcionServicio)
+        + boolean equals(Object o)
+        + int hashCode()
+    }
+
+    class NecesidadRegistrada {
+        - String idInstancia; // El identificador único e inmutable
+        - Habilidad necesidadBase;
+        - String descripcionCondiciones;
+        + NecesidadRegistrada(Habilidad necesidadBase, String descripcionCondiciones)
+        + boolean equals(Object o)
+        + int hashCode()
+    }
+
+    class CorreoPermitido {
+        - id: String
+        - correo: String
+        - fechaCreacion: long
+        + CorreoPermitido(String correo): CorreoPermitido
+    }
+
+    enum EstadoCuenta {
+        ACTIVO
+        BLOQUEADO_SEGURIDAD
+        SUSPENDIDO_FRAUDE
+        SUSPENDIDO_SUBASTA
+    }
+
+    enum RolUsuario {
+        ADMINISTRADOR
+        MIEMBRO_COMUNIDAD
+    }
+
+'''''''''''MODULO PUBLICACION'''''''''''
+
+    class Publicacion {
+        - String idPublicacion;
+        - String idUsuario;
+        - String tipoPublicacion;
+        - String nombreServicio;
+        - String descripcion;
+        - int precioCreditos;
+        - boolean disponible;
+        - String idInstanciaCatalogo;
+        - int version;
+        + Publicacion(String idUsuario, String tipoPublicacion, String nombreServicio, String descripcion, int precioCreditos)
+    }
+
+    class Transaccion {
+        - String idTransaccion;
+        - String idPublicacion;
+        - String idOfertante;
+        - String idDemandante;
+        - EstadoTransaccion estado;
+        - int creditosComprometidos;
+        - boolean confirmacionOfertante;
+        - boolean confirmacionDemandante;
+        - long fechaCreacion;
+        - String idIncidencia;
+        - Resena resena;
+        - String idSolicitanteCancelacion;
+        - String motivoCancelacion;
+        - boolean cancelacionAceptada;
+        - int version;
+        + Transaccion(String idPublicacion, String idOfertante, String idDemandante, int creditosComprometidos)
+        + void confirmarEntregaOfertante()
+        + void confirmarRecepcionDemandante()
+        + void verificarCompletitud()
+        + void solicitarCancelacion(String idSolicitante, String motivoCancelacion)
+        + void aceptarCancelacion()
+        + void rehusarCancelacion()
+        + void asignarIncidencia(String idIncidencia)
+    }
+
+    class Incidencia {
+        - String idIncidencia;
+        - String idTransaccion;
+        - String idUsuarioReportante;
+        - String descripcion;
+        - String urlEvidencia;
+        - String idUsuarioDefensor;
+        - String descripcionDefensa;
+        - String urlEvidenciaDefensa;
+        - String estado;
+        - long fechaCreacion;
+        + Incidencia(String idTransaccion, String idUsuarioReportante, String descripcion, String urlEvidencia)
+    }
+
+    class Solicitud {
+        - String idSolicitud;
+        - String idPublicacion;
+        - String idSolicitante;
+        - String estado;
+        - long fechaCreacion;
+        - long fechaLimiteRespuesta;
+        - int version;
+        + Solicitud(String idPublicacion, String idSolicitante)
+        + void aceptar()
+        + void rechazar()
+        + void cancelar()
+        + void expirar()
+        + boolean haExpirado()
+    }
+
+    class MotivoCancelacion {
+        - String id;
+        - String descripcion;
+        - boolean activo;
+        + MotivoCancelacion(String id, String descripcion)
+    }
+
+    enum EstadoTransaccion {
+        PENDIENTE
+        INICIADA
+        FINALIZADA
+        RECHAZADA
+        EN_DISPUTA
+    }
+
+'''''''''''MODULO RESENA'''''''''''
+
+    class Resena {
+        - String idResena;
+        - String idTransaccion;
+        - String idEmisor;
+        - String idReceptor;
+        - int calificacion;
+        - long fechaCreacion;
+        - int version;
+        + Resena(String idResena, String idTransaccion, String idEmisor, String idReceptor, int calificacion)
+    }
+
+'''''''''''MODULO SUBASTA'''''''''''
+
+    class Subasta {
+        - String id
+        - String idPropietario
+        - String nombreActivo
+        - String descripcion
+        - EstadoFisico estadoFisico
+        - List<String> imagenesUrls
+        - LocalDateTime fechaInicio;
+        - LocalDateTime fechaFinalizacionLicitacion;
+        - EstadoSubasta estado;
+        - String idPropuestaGanadora;
+        - boolean propietarioConfirmoEntrega;
+        - boolean ganadorConfirmoEntrega
+        - int version;
+        + Subasta(String idPropietario, String nombreActivo, String descripcion, EstadoFisico estadoFisico, List<String> imagenesUrls, LocalDateTime fechaFinalizacionLicitacion)
+        + void registrarPropuesta(Propuesta nuevaPropuesta)
+        + void adjudicarGanador(String idPropuesta)
+        + void cancelarSubasta()
+        + void cerrarFaseLicitacion()
+        + cancelarSubastaDesierta()
+        + incrementarVersion()
+        + editarPropuesta(String idPropuesta, String idPostor, List<BienOfrecido> nuevosBienes, List<String> nuevasImagenes)
+        + void retirarPropuesta(String idPropuesta, String idPostor)
+    }
+
+    class Propuesta {
+    - String idPropuesta;
+    - String idSubasta;
+    - String idPostor
+    - String descripcion;
+    - EstadoPropuesta estadoPropuesta;
+    - EstadoFisico estadoFisico;
+    - List<String> imagenesUrls;
+    - LocalDateTime fechaPropuesta
+    + Propuesta(String idPostor, String idSubasta, List<BienOfrecido> bienesOfrecidos, String descripcion, EstadoFisico estadoFisico, List<String> imagenesUrls)
+    }
+
+    class BienOfrecido {
+        - String nombre;
+        - int cantidad;
+        + BienOfrecido(String nombre, int cantidad)
+    }
+
+    enum EstadoFisico {
+        NUEVO
+        USADO
+        REPARADO
+    }
+
+    enum EstadoPropuesta {
+        EN_EVALUACION
+        ACEPTADA
+        RECHAZADA
+    }
+
+    enum EstadoSubasta {
+        ACTIVA
+        ESPERANDO_DECISION
+        ADJUDICADA_INTERCAMBIO_PENDIENTE
+        FINALIZADA_CON_EXITO
+        CANCELADA
+        CERRADA_POR_INACTIVIDAD
+    }
+
+}
+
+' --- GOBERNANZA Y MODERACIÓN (HU 8) ---
+Administrador --|> Usuario
+Administrador "1" -- "1..*" Habilidad : "administra >"
+Usuario "1" -up- "0..*" Incidencia : "reporta >"
+Administrador "1" -- "0..*" Incidencia : "resuelve >"
+Incidencia "0..1" --> "1 " Transaccion
+
+' --- IDENTIDAD Y CATÁLOGO (HU 1) ---
+Usuario "1" *--- "1" Monedero
+Usuario "1" --- "1" CatalogoUsuario
+CatalogoUsuario "1" *-- "0..*" HabilidadOfrecida
+CatalogoUsuario "1" *---  "0..*" NecesidadRegistrada
+HabilidadOfrecida "0..*" --> "1" Habilidad
+NecesidadRegistrada "0..*" --> "1" Habilidad
+
+' --- RELACIONES DE PUBLICACIÓN (HU 2) ---
+HabilidadOfrecida "1" --right "1" Publicacion : "genera >"
+NecesidadRegistrada "1" --right "1" Publicacion : "genera >"
+
+' --- FLUJO DE SERVICIOS (HU 3) ---
+Usuario "1" -- "0..*" Solicitud : "realiza >"
+Solicitud "0..*" --- "1" Publicacion : "envía <"
+Solicitud "1" -- "0..1" Transaccion : "genera >"
+Usuario "2" -- "0..*" Transaccion : "participa en >"
+Transaccion "1" -- "1" Resena : "genera >"
+
+' --- FLUJO DE SUBASTAS - VARIANTE 3 (HU 4 y HU 5) ---
+Usuario "1" -- "0..*" Subasta : "publica >"
+Subasta "1" *-- "0..*" Propuesta
+Propuesta "0..*" -- "1" Usuario : "efectuada por >"
+Propuesta "1" *-- "1..*" BienOfrecido
+
+' --- GAMIFICACIÓN Y RECONOCIMIENTO (HU 9 y HU 10) ---
+Usuario "1" -- "0..*" LogroDesbloqueado : "obtiene >"
+LogroDesbloqueado "0..*" --> "1" Logro
+Usuario "0..3" -- "1" PodioSemanal : "es destacado en >"
+
+}
+
+@enduml

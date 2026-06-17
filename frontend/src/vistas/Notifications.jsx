@@ -1,8 +1,62 @@
-import React, { useState } from 'react';
-import { Filter, Bell } from 'lucide-react';
+import React, { useState, useEffect, useContext } from 'react';
+import { Filter, Bell, Trash2, Check, X } from 'lucide-react';
+import { AppContext } from '../App';
 
 const Notifications = () => {
+  const { user, controladorNotificacion, controladorSubasta } = useContext(AppContext);
   const [filter, setFilter] = useState('Todas');
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchNotifications = async () => {
+    if (!user) return;
+    try {
+      setLoading(true);
+      const data = await controladorNotificacion.obtenerNotificaciones(user.id);
+      // Sort by newest first
+      setNotifications(data.sort((a, b) => b.fechaCreacion - a.fechaCreacion));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [user]);
+
+  const handleDelete = async (idNotificacion) => {
+    if (window.confirm('¿Estás seguro de que deseas eliminar esta notificación?')) {
+      const success = await controladorNotificacion.eliminarNotificacion(idNotificacion);
+      if (success) {
+        setNotifications(prev => prev.filter(n => n.idNotificacion !== idNotificacion));
+      }
+    }
+  };
+
+  const handleResponderSolicitud = async (notificacion, aceptar) => {
+    try {
+      await controladorNotificacion.responderSolicitud(
+        notificacion.idReferencia, // idSolicitud
+        user.id, // idUsuario
+        aceptar
+      );
+      // Remove notification after responding
+      await controladorNotificacion.eliminarNotificacion(notificacion.idNotificacion);
+      fetchNotifications();
+    } catch (error) {
+      alert('Error al responder a la solicitud. Revisa si tienes saldo o si la publicación sigue vigente.');
+    }
+  };
+
+  const filteredNotifications = notifications.filter(n => {
+    if (filter === 'Todas') return true;
+    if (filter === 'Solicitudes') return n.tipo === 'NUEVA_SOLICITUD_ENTRANTE';
+    if (filter === 'Subastas') return n.tipo.includes('SUBASTA');
+    if (filter === 'Sistema') return ['SANCION_APLICADA', 'SANCION_LEVANTADA'].includes(n.tipo);
+    return true;
+  });
 
   return (
     <div className="animate-in" style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -25,21 +79,71 @@ const Notifications = () => {
             }}
           >
             <option value="Todas">Todas</option>
-            <option value="Oferta">Ofertas</option>
-            <option value="Demanda">Demandas</option>
-            <option value="Subasta">Subastas</option>
+            <option value="Solicitudes">Solicitudes</option>
+            <option value="Subastas">Subastas</option>
+            <option value="Sistema">Sistema</option>
           </select>
         </div>
       </div>
 
-      <div className="card" style={{ padding: '3rem 1rem', textAlign: 'center', color: 'var(--text-tertiary)' }}>
-        <Bell size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-        <h3 style={{ marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>No hay notificaciones</h3>
-        <p style={{ fontSize: '0.875rem' }}>
-          Aún no tienes notificaciones de {filter.toLowerCase() === 'todas' ? 'ningún tipo' : filter.toLowerCase() + 's'}. 
-          Aquí aparecerán las solicitudes y actualizaciones de tus publicaciones.
-        </p>
-      </div>
+      {loading ? (
+        <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>Cargando...</p>
+      ) : filteredNotifications.length === 0 ? (
+        <div className="card" style={{ padding: '3rem 1rem', textAlign: 'center', color: 'var(--text-tertiary)' }}>
+          <Bell size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
+          <h3 style={{ marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>No hay notificaciones</h3>
+          <p style={{ fontSize: '0.875rem' }}>
+            Aún no tienes notificaciones de {filter.toLowerCase() === 'todas' ? 'ningún tipo' : filter.toLowerCase()}.
+          </p>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {filteredNotifications.map((notif) => (
+            <div key={notif.idNotificacion} className="card" style={{ padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ flex: 1 }}>
+                <p style={{ margin: '0 0 0.5rem 0', fontWeight: '500' }}>{notif.mensaje}</p>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', backgroundColor: 'var(--bg-tertiary)', padding: '0.2rem 0.5rem', borderRadius: '1rem' }}>
+                    {notif.tipo.replace(/_/g, ' ')}
+                  </span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
+                    {new Date(notif.fechaCreacion).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem' }}>
+                {notif.tipo === 'NUEVA_SOLICITUD_ENTRANTE' && (
+                  <>
+                    <button 
+                      className="btn btn-primary" 
+                      style={{ padding: '0.5rem', borderRadius: '50%', minWidth: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      onClick={() => handleResponderSolicitud(notif, true)}
+                      title="Aceptar Solicitud"
+                    >
+                      <Check size={18} />
+                    </button>
+                    <button 
+                      className="btn" 
+                      style={{ padding: '0.5rem', borderRadius: '50%', minWidth: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--error-color)', color: 'var(--error-color)' }}
+                      onClick={() => handleResponderSolicitud(notif, false)}
+                      title="Rechazar Solicitud"
+                    >
+                      <X size={18} />
+                    </button>
+                  </>
+                )}
+                <button 
+                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', padding: '0.5rem' }}
+                  onClick={() => handleDelete(notif.idNotificacion)}
+                  title="Eliminar notificación"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
