@@ -106,11 +106,6 @@ package "Diagrama de clase EntreNós"  {
         + CorreoPermitido(correo: String): CorreoPermitido
     }
 
-    enum EstadoCuenta {
-        ACTIVO
-        SUSPENDIDO_SUBASTA
-    }
-
 '''''''''''MODULO PUBLICACION'''''''''''
 
     class Publicacion {
@@ -157,20 +152,6 @@ package "Diagrama de clase EntreNós"  {
         + cancelar(): void
         + expirar(): void
         + haExpirado(): boolean
-    }
-
-    enum EstadoTransaccion {
-        PENDIENTE
-        INICIADA
-        FINALIZADA
-        RECHAZADA
-    }
-
-    enum EstadoSolicitud {
-        PENDIENTE
-        ACEPTADA
-        RECHAZADA
-        EXPIRADA
     }
 
 '''''''''''MODULO RESENA'''''''''''
@@ -231,27 +212,6 @@ package "Diagrama de clase EntreNós"  {
         + BienOfrecido(nombre: String, cantidad: int): BienOfrecido
     }
 
-    enum EstadoFisico {
-        NUEVO
-        USADO
-        REPARADO
-    }
-
-    enum EstadoPropuesta {
-        EN_EVALUACION
-        ACEPTADA
-        RECHAZADA
-    }
-
-    enum EstadoSubasta {
-        ACTIVA
-        ESPERANDO_DECISION
-        ADJUDICADA_INTERCAMBIO_PENDIENTE
-        FINALIZADA_CON_EXITO
-        CANCELADA
-        CERRADA_POR_INACTIVIDAD
-    }
-
 '''''''''''SECCION NOTIFICACION'''''''''''
 
     class Notificacion {
@@ -267,18 +227,64 @@ package "Diagrama de clase EntreNós"  {
         + Notificacion(idRemitente: String, idDestinatario: String, mensaje: String, tipo: TipoNotificacion, idReferencia: String, idReferenciaAuxiliar: String): Notificacion
     }
 
-    enum TipoNotificacion {
-        ALERTA_SISTEMA
-        NUEVA_SOLICITUD_ENTRANTE
-        ESTADO_SOLICITUD_CAMBIADO
-        TRANSACCION_ACTUALIZADA
-        MOVIMIENTO_MONEDERO
-        ACTUALIZACION_SUBASTA
-        NUEVA_OFERTA_SUBASTA
-        SUBASTA_GANADA
-        SUBASTA_POR_REVISAR
-        SANCION_APLICADA
-        SUBASTA_CANCELADA
+
+   package Enumerados {
+
+       enum EstadoCuenta {
+           ACTIVO
+           SUSPENDIDO_SUBASTA
+       }
+
+
+       enum EstadoTransaccion {
+           PENDIENTE
+           INICIADA
+           FINALIZADA
+           RECHAZADA
+       }
+
+       enum EstadoSolicitud {
+           PENDIENTE
+           ACEPTADA
+           RECHAZADA
+           EXPIRADA
+       }
+
+       enum EstadoFisico {
+           NUEVO
+           USADO
+           REPARADO
+       }
+
+       enum EstadoPropuesta {
+           EN_EVALUACION
+           ACEPTADA
+           RECHAZADA
+       }
+
+       enum EstadoSubasta {
+           ACTIVA
+           ESPERANDO_DECISION
+           ADJUDICADA_INTERCAMBIO_PENDIENTE
+           FINALIZADA_CON_EXITO
+           CANCELADA
+           CERRADA_POR_INACTIVIDAD
+       }
+
+        enum TipoNotificacion {
+            ALERTA_SISTEMA
+            NUEVA_SOLICITUD_ENTRANTE
+            ESTADO_SOLICITUD_CAMBIADO
+            TRANSACCION_ACTUALIZADA
+            MOVIMIENTO_MONEDERO
+            ACTUALIZACION_SUBASTA
+            NUEVA_OFERTA_SUBASTA
+            SUBASTA_GANADA
+            SUBASTA_POR_REVISAR
+            SANCION_APLICADA
+            SUBASTA_CANCELADA
+       }
+
    }
 
 }

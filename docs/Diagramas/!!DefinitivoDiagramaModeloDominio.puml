@@ -86,7 +86,7 @@ Propuesta "1" -- "1..*" BienOfrecido : "compromete >"
 
 ' --- GAMIFICACIÓN, REPUTACIÓN Y FIDELIZACIÓN ---
 Usuario "1" -- "0..*" LogroDesbloqueado : "alcanza >"
-LogroDesbloqueado "0..*" -- "1" Logro : "corresponde a >"
+LogroDesbloqueado "0..*" -- "1" Logro : "se basa en >"
 Usuario "0..9" -- "1" PodioSemanal : "es galardonado en >"
 
 }
