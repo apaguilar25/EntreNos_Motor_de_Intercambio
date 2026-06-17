@@ -35,8 +35,6 @@ package "Diagrama de clase EntreNós"  {
         - descripcionPersonal: String
         - contrasenaHash: String
         - version: int
-        - monedero: Monedero
-        - catalogo: CatalogoUsuario
         - estado: EstadoCuenta
         - intentosFallidos: int
         - tiempoDesbloqueoMillis: long
@@ -96,8 +94,6 @@ package "Diagrama de clase EntreNós"  {
         - id: String
         - categoria: String
         + Habilidad(id: String, categoria: String): Habilidad
-        + equals(o: Object): boolean
-        + hashCode(): int
     }
 
     class HabilidadOfrecida {
@@ -106,8 +102,6 @@ package "Diagrama de clase EntreNós"  {
         - precioCreditos: int
         - descripcionServicio: String
         + HabilidadOfrecida(habilidadBase: Habilidad, precioCreditos: int, descripcionServicio: String): HabilidadOfrecida
-        + equals(o: Object): boolean
-        + hashCode(): int
     }
 
     class NecesidadRegistrada {
@@ -115,8 +109,6 @@ package "Diagrama de clase EntreNós"  {
         - necesidadBase: Habilidad
         - descripcionCondiciones: String
         + NecesidadRegistrada(necesidadBase: Habilidad, descripcionCondiciones: String): NecesidadRegistrada
-        + equals(o: Object): boolean
-        + hashCode(): int
     }
 
     class CorreoPermitido {
@@ -399,40 +391,39 @@ package "Diagrama de clase EntreNós"  {
 
 }
 
-
-' --- IDENTIDAD Y CATÁLOGO (HU 1) ---
+' --- IDENTIDAD Y CATÁLOGO ---
 Usuario "1" *--- "1" Monedero
-Usuario "1" --- "1" CatalogoUsuario
-CatalogoUsuario "1" *-- "0..*" HabilidadOfrecida
-CatalogoUsuario "1" *---  "0..*" NecesidadRegistrada
-HabilidadOfrecida "0..*" --> "1" Habilidad
-NecesidadRegistrada "0..*" --> "1" Habilidad
+Usuario "1" *--- "1" CatalogoUsuario
+CatalogoUsuario "1   " *-- "0..*         " HabilidadOfrecida
+CatalogoUsuario "1  " *---  "0..* " NecesidadRegistrada
+HabilidadOfrecida "0..*   " *-- "1  " Habilidad
+NecesidadRegistrada "0..*  " *-- "1     " Habilidad
 
-' --- RELACIONES DE PUBLICACIÓN (HU 2) ---
+' --- RELACIONES DE PUBLICACIÓN ---
 HabilidadOfrecida "1" --right "1" Publicacion : "genera >"
 NecesidadRegistrada "1" --right "1" Publicacion : "genera >"
 
-' --- FLUJO DE SERVICIOS (HU 3) ---
-Usuario "1" -- "0..*" Solicitud : "realiza >"
-Solicitud "0..*" --- "1" Publicacion : "genera <"
-Solicitud "1" -- "0..1" Transaccion : "genera >"
-Usuario "2" -- "0..*" Transaccion : "participa en >"
-Transaccion "1" -- "1" Resena : "genera >"
+' --- FLUJO DE SERVICIOS  ---
+Solicitud "0..* " --- "1  " Publicacion : "envía <"
+Publicacion "1 " -- "1      " Transaccion : "referencia <"
+Usuario "2   " -- "0..*" Transaccion : "participa en >"
+Transaccion "1  " *-- "1  " Resena
 
-' --- FLUJO DE SUBASTAS - VARIANTE 3 (HU 4 y HU 5) ---
-Usuario "1" -- "0..*" Subasta : "publica >"
-Subasta "1" *-- "0..*" Propuesta
+' --- FLUJO DE SUBASTAS - VARIANTE 3 ---
+Usuario "1   " -- "0..*" Subasta : "publica >"
+Subasta "1  " *-- "0..*" Propuesta
 Propuesta "0..*" -- "1" Usuario : "efectuada por >"
-Propuesta "1" *-- "1..*" BienOfrecido
+Propuesta "1  " *-- "1..*" BienOfrecido
 
-' --- GOBERNANZA Y MODERACIÓN (HU 8) ---
-Usuario "1" -up- "0..*" Incidencia : "reporta >"
-Incidencia "0..1" --> "1 " Transaccion
+' --- GOBERNANZA Y MODERACIÓN ---
+Incidencia "0..1" -- "1 " Transaccion: "puede originar <"
+Cancelacion "0..1" -- "1" Transaccion : "anula >"
 
-' --- GAMIFICACIÓN Y RECONOCIMIENTO (HU 9 y HU 10) ---
-Usuario "1" -- "0..*" LogroDesbloqueado : "obtiene >"
-LogroDesbloqueado "0..*" --> "1" Logro
-Usuario "0..3" -- "1" PodioSemanal : "es destacado en >"
+' --- GAMIFICACIÓN, REPUTACIÓN Y FIDELIZACIÓN ---
+Usuario "1" -- "0..*" LogroDesbloqueado : "pertenece a <"
+LogroDesbloqueado "0..*" -- "1" Logro : "corresponde a >"
+Usuario "0..9" -- "1" PodioSemanal : "es galardonado en >"
+
 
 }
 
