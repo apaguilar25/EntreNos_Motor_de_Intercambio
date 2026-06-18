@@ -95,6 +95,7 @@ C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\repositorios\RepositorioPublicacion.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\repositorios\RepositorioSolicitud.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\repositorios\RepositorioTransaccion.java
+C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\servicios\CachePublicaciones.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\servicios\ServicioExpiracion.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\servicios\ServicioPublicacion.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\servicios\ServicioSolicitud.java

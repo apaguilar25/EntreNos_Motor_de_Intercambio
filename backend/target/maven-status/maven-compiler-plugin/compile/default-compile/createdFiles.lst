@@ -106,6 +106,7 @@ es\ucab\entrenos\modulos\identidad\modelos\Usuario.class
 es\ucab\entrenos\nucleo\seguridad\jwt\ServicioJWT.class
 es\ucab\entrenos\modulos\identidad\repositorios\IRepositorioCorreoPermitido.class
 es\ucab\entrenos\modulos\identidad\repositorios\RepositorioCorreoPermitido$1.class
+es\ucab\entrenos\modulos\publicacion\servicios\CachePublicaciones.class
 es\ucab\entrenos\modulos\identidad\dtos\EdicionOfertaDTO.class
 es\ucab\entrenos\modulos\identidad\modelos\EstadoCuenta.class
 es\ucab\entrenos\modulos\publicacion\dto\CancelarRequestDTO.class

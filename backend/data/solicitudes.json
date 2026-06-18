@@ -70,5 +70,14 @@
     "fechaCreacion": 1781622490798,
     "fechaLimiteRespuesta": 1782054490798,
     "version": 1
+  },
+  {
+    "idSolicitud": "SOL-16C77788",
+    "idPublicacion": "PUB-D9EBD342",
+    "idSolicitante": "2f0c416a-2948-4d3c-9390-6242b700a711",
+    "estado": "PENDIENTE",
+    "fechaCreacion": 1781734396771,
+    "fechaLimiteRespuesta": 1782166396771,
+    "version": 0
   }
 ]

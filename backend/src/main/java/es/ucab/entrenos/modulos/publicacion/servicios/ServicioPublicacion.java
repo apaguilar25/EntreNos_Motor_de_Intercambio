@@ -28,6 +28,9 @@ import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioPublicacion
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioTransaccion;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioSolicitud;
 import es.ucab.entrenos.modulos.publicacion.modelos.Solicitud;
+import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,7 +49,12 @@ public class ServicioPublicacion {
     @org.springframework.beans.factory.annotation.Autowired
     private IRepositorioSolicitud repositorioSolicitud;
 
+    private static final Logger log = LoggerFactory.getLogger(ServicioPublicacion.class);
     private static final Random RANDOM = new Random();
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private CachePublicaciones cachePublicaciones;
+
     public ServicioPublicacion(IRepositorioPublicacion repositorioPublicacion,
                                IRepositorioTransaccion repositorioTransaccion,
                                IRepositorioIncidencia repositorioIncidencia,
@@ -65,11 +73,27 @@ public class ServicioPublicacion {
         this.servicioReputacion = servicioReputacion;
     }
 
+    @PostConstruct
+    public void initCache() {
+        List<Publicacion> todas = repositorioPublicacion.obtenerTodas();
+        cachePublicaciones.refrescar(todas);
+        log.info("Cache de publicaciones inicializada con {} elementos", todas.size());
+    }
+
     public List<Publicacion> obtenerTodasLasPublicaciones() {
         return repositorioPublicacion.obtenerTodas();
     }
 
     public List<PublicacionResponseDTO> obtenerPublicacionesFiltradas(String tipo, String servicio) {
+        if (tipo == null && servicio == null) {
+            long inicio = System.currentTimeMillis();
+            List<PublicacionResponseDTO> resultado = cachePublicaciones.getRecientes().stream()
+                    .map(this::toResponseDTO)
+                    .sorted(Comparator.comparingDouble(PublicacionResponseDTO::getReputacionUsuario).reversed())
+                    .collect(Collectors.toList());
+            log.info("Cache hit para landing page ({} ms)", System.currentTimeMillis() - inicio);
+            return resultado;
+        }
         return repositorioPublicacion.obtenerTodas().stream()
                 .filter(p -> tipo == null || tipo.isEmpty() || p.getTipoPublicacion().equalsIgnoreCase(tipo))
                 .filter(p -> servicio == null || servicio.isEmpty() ||
@@ -158,6 +182,7 @@ public class ServicioPublicacion {
         }
         publicacion.setDisponible(true);
         repositorioPublicacion.guardar(publicacion);
+        cachePublicaciones.refrescar(repositorioPublicacion.obtenerTodas());
         return toResponseDTO(publicacion);
     }
 
@@ -168,6 +193,8 @@ public class ServicioPublicacion {
         pub.setPrecioCreditos(precioCreditos);
         pub.setDescripcion(descripcion);
         repositorioPublicacion.guardar(pub);
+        cachePublicaciones.invalidar(idPublicacion);
+        cachePublicaciones.refrescar(repositorioPublicacion.obtenerTodas());
         return pub;
     }
 
@@ -183,6 +210,7 @@ public class ServicioPublicacion {
 
     public void guardarPublicacion(Publicacion publicacion) {
         repositorioPublicacion.guardar(publicacion);
+        cachePublicaciones.refrescar(repositorioPublicacion.obtenerTodas());
     }
 
     public List<PublicacionResponseDTO> obtenerPublicacionesPorUsuario(String idUsuario) {
@@ -198,6 +226,7 @@ public class ServicioPublicacion {
         boolean removido = todas.removeIf(p -> p.getIdPublicacion().equalsIgnoreCase(id));
         if (removido) {
             repositorioPublicacion.guardarTodas(todas);
+            cachePublicaciones.refrescar(repositorioPublicacion.obtenerTodas());
         }
         return removido;
     }
@@ -211,6 +240,7 @@ public class ServicioPublicacion {
         boolean removido = todas.removeIf(p -> idInstanciaCatalogo.equals(p.getIdInstanciaCatalogo()));
         if (removido) {
             repositorioPublicacion.guardarTodas(todas);
+            cachePublicaciones.refrescar(repositorioPublicacion.obtenerTodas());
         }
         return removido;
     }

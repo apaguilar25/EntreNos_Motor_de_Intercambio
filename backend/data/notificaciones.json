@@ -278,4 +278,24 @@
   "fechaCreacion" : 1781622684477,
   "idReferencia" : null,
   "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "4e2859d4-973a-4831-a754-44a47f3a0ef6",
+  "idRemitente" : "2f0c416a-2948-4d3c-9390-6242b700a711",
+  "idDestinatario" : "b05fdf5f-1c32-4d44-89f6-b0ba8e4ce2c8",
+  "mensaje" : "Bob Demandante quiere contratar tu servicio: Limpieza del Hogar",
+  "tipo" : "NUEVA_SOLICITUD_ENTRANTE",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1781734396777,
+  "idReferencia" : "SOL-16C77788",
+  "idReferenciaAuxiliar" : "PUB-D9EBD342"
+}, {
+  "idNotificacion" : "b36a9d94-7c54-47b4-9b21-bf683f42d48e",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "2f0c416a-2948-4d3c-9390-6242b700a711",
+  "mensaje" : "Has ofertado exitosamente por: Limpieza del Hogar. Esperando respuesta del proveedor.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1781734396839,
+  "idReferencia" : "SOL-16C77788",
+  "idReferenciaAuxiliar" : "PUB-D9EBD342"
 } ]

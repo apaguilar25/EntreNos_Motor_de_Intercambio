@@ -1,0 +1,444 @@
+{
+  "info": {
+    "name": "EntreNos - Cache de Publicaciones",
+    "description": "Colección para probar el caché de las 10 ofertas más recientes en la landing page. La caché se usa cuando NO hay filtros (tipo, servicio).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "01 - Setup: Registro y Login",
+      "item": [
+        {
+          "name": "Registrar Usuario A",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('idA', resp.id);",
+                  "console.log('Usuario A:', resp.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ana Ofertante\",\n  \"correoElectronico\": \"ana.cache@alameda.com\",\n  \"telefono\": \"+58414000901\",\n  \"descripcionPersonal\": \"Test cache\",\n  \"contrasena\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/registro",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "registro"]
+            }
+          }
+        },
+        {
+          "name": "Registrar Usuario B",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('idB', resp.id);",
+                  "console.log('Usuario B:', resp.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Bob Demandante\",\n  \"correoElectronico\": \"bob.cache@alameda.com\",\n  \"telefono\": \"+58414000902\",\n  \"descripcionPersonal\": \"Test cache\",\n  \"contrasena\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/registro",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "usuarios", "registro"]
+            }
+          }
+        },
+        {
+          "name": "Login como A (obtener token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('tokenA', resp.token);",
+                  "console.log('Token A obtenido');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correoElectronico\": \"ana.cache@alameda.com\",\n  \"contrasena\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Crear publicaciones para llenar caché",
+      "item": [
+        {
+          "name": "Publicación 1 - Yoga",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('pub1', resp.idPublicacion);",
+                  "console.log('Pub1:', resp.idPublicacion);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idA}}\",\n  \"tipoPublicacion\": \"HABILIDAD\",\n  \"nombreServicio\": \"Clases de Yoga\",\n  \"descripcion\": \"Clases de yoga para principiantes\",\n  \"precioCreditos\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones"]
+            }
+          }
+        },
+        {
+          "name": "Publicación 2 - Masajes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('pub2', resp.idPublicacion);",
+                  "console.log('Pub2:', resp.idPublicacion);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idA}}\",\n  \"tipoPublicacion\": \"HABILIDAD\",\n  \"nombreServicio\": \"Masajes Relajantes\",\n  \"descripcion\": \"Masajes de espalda y cuello\",\n  \"precioCreditos\": 3\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones"]
+            }
+          }
+        },
+        {
+          "name": "Publicación 3 - Clases de Piano",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('pub3', resp.idPublicacion);",
+                  "console.log('Pub3:', resp.idPublicacion);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idA}}\",\n  \"tipoPublicacion\": \"HABILIDAD\",\n  \"nombreServicio\": \"Clases de Piano\",\n  \"descripcion\": \"Clases de piano nivel básico\",\n  \"precioCreditos\": 4\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones"]
+            }
+          }
+        },
+        {
+          "name": "Publicación 4 - Cuidado de Mascotas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('pub4', resp.idPublicacion);",
+                  "console.log('Pub4:', resp.idPublicacion);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idA}}\",\n  \"tipoPublicacion\": \"HABILIDAD\",\n  \"nombreServicio\": \"Cuidado de Mascotas\",\n  \"descripcion\": \"Paseo y cuidado de perros y gatos\",\n  \"precioCreditos\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones"]
+            }
+          }
+        },
+        {
+          "name": "Publicación 5 - Clases de Cocina",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('pub5', resp.idPublicacion);",
+                  "console.log('Pub5:', resp.idPublicacion);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idA}}\",\n  \"tipoPublicacion\": \"HABILIDAD\",\n  \"nombreServicio\": \"Clases de Cocina\",\n  \"descripcion\": \"Cocina italiana básica\",\n  \"precioCreditos\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Probar caché en Landing Page",
+      "item": [
+        {
+          "name": "Landing (sin filtros) - debe usar caché",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "console.log('Landing: ' + data.length + ' publicaciones');",
+                  "pm.test('Devuelve publicaciones', function() { pm.expect(data.length).to.be.above(0); });",
+                  "pm.test('Tiempo < 100ms (cache)', function() { pm.expect(pm.response.responseTime).to.be.below(100); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones"]
+            }
+          }
+        },
+        {
+          "name": "Filtrado por tipo - NO usa caché",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "console.log('Filtradas: ' + data.length + ' publicaciones');",
+                  "pm.test('Devuelve publicaciones filtradas', function() { pm.expect(data.length).to.be.above(0); });",
+                  "data.forEach(function(p) { pm.expect(p.tipoPublicacion).to.equal('HABILIDAD'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones?tipo=HABILIDAD",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones"],
+              "query": [
+                { "key": "tipo", "value": "HABILIDAD" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Probar invalidadción al crear/eliminar",
+      "item": [
+        {
+          "name": "Crear nueva publicación (refresca caché)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var resp = pm.response.json();",
+                  "pm.collectionVariables.set('pubNueva', resp.idPublicacion);",
+                  "console.log('Nueva pub:', resp.idPublicacion);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idUsuario\": \"{{idA}}\",\n  \"tipoPublicacion\": \"HABILIDAD\",\n  \"nombreServicio\": \"Nueva publicación test\",\n  \"descripcion\": \"Creada para probar refresco de caché\",\n  \"precioCreditos\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones"]
+            }
+          }
+        },
+        {
+          "name": "Landing post-creación (verificar caché actualizada)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "console.log('Landing post-creación: ' + data.length + ' publicaciones');",
+                  "pm.test('Caché incluye la nueva publicación', function() {",
+                  "  var encontrada = data.some(function(p) { return p.idPublicacion === pm.collectionVariables.get('pubNueva'); });",
+                  "  pm.expect(encontrada).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar publicación (refresca caché)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "console.log('Eliminada pub:', pm.collectionVariables.get('pub1'));",
+                  "pm.test('Eliminación exitosa', function() { pm.expect(pm.response.code).to.equal(204); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tokenA}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones/{{pub1}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones", "{{pub1}}"]
+            }
+          }
+        },
+        {
+          "name": "Landing post-eliminación (verificar caché actualizada)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var data = pm.response.json();",
+                  "console.log('Landing post-eliminación: ' + data.length + ' publicaciones');",
+                  "pm.test('Caché ya no incluye la publicación eliminada', function() {",
+                  "  var encontrada = data.some(function(p) { return p.idPublicacion === pm.collectionVariables.get('pub1'); });",
+                  "  pm.expect(encontrada).to.be.false;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/publicaciones",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "publicaciones"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -325,7 +325,8 @@
     "urlFotoPerfil": "default.png",
     "promedioCalificacion": 0.0,
     "cantidadCalificaciones": 0,
-    "rol": "ADMINISTRADOR"
+    "rol": "ADMINISTRADOR",
+    "esVecinoDestacado": false
   },
   {
     "id": "d95b9f31-322b-48e0-b331-e1d5a003992c",
@@ -361,10 +362,10 @@
     "telefono": "+58414000002",
     "descripcionPersonal": "Vecino que busca servicios",
     "contrasenaHash": "$2a$10$IAKMhouwSuhNoU0aQ2Dw.OeSDHVZbNtduIAeTh0demhdtUdlYDRCy",
-    "version": 9,
+    "version": 11,
     "monedero": {
       "creditosDisponibles": 5.0,
-      "creditosComprometidos": 0.0,
+      "creditosComprometidos": 5.0,
       "creditosPorLogros": 10.0
     },
     "catalogo": {
@@ -486,6 +487,5 @@
     "cantidadCalificaciones": 0,
     "rol": "ADMINISTRADOR",
     "esVecinoDestacado": false
-
   }
 ]
