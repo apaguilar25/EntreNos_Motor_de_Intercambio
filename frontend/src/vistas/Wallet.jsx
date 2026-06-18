@@ -62,16 +62,12 @@ const Wallet = () => {
           <div style={{ fontSize: '3rem', fontWeight: 'bold' }}>
             {retainedBalance} <span style={{ fontSize: '1.5rem', fontWeight: 'normal', opacity: 0.8 }}>cr</span>
           </div>
-          <p style={{ fontSize: '0.75rem', marginTop: '0.5rem', opacity: 0.8 }}>
-            Garantía para transacciones en curso (Épica 5).
-          </p>
         </div>
       </div>
 
       <h3 style={{ marginBottom: '1rem', fontSize: '1.25rem' }}>Historial de Transacciones</h3>
       <div className="card" style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--text-tertiary)' }}>
         <p style={{ fontStyle: 'italic', marginBottom: '0.5rem' }}>Aún no hay transacciones en tu historial.</p>
-        <p style={{ fontSize: '0.875rem' }}>Módulo en desarrollo por el equipo Backend.</p>
       </div>
 
       {/* Receipt Modal */}

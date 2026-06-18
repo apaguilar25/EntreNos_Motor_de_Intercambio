@@ -8,8 +8,18 @@ function AdminDashboard() {
 
     const [incidencias, setIncidencias] = useState([]);
     const [usuarios, setUsuarios] = useState([]);
+    const [usersMap, setUsersMap] = useState({});
     const [correos, setCorreos] = useState([]);
     const [nuevoCorreo, setNuevoCorreo] = useState('');
+
+    // Modal state for Disputa
+    const [modalDisputa, setModalDisputa] = useState({ isOpen: false, data: null, ganador: '', sancionarO: false, sancionarD: false });
+    // Modal state for Creditos
+    const [modalCreditos, setModalCreditos] = useState({ isOpen: false, idUsuario: null, cantidad: '' });
+    // Modal state for Alerts
+    const [modalAlert, setModalAlert] = useState({ isOpen: false, message: '' });
+
+    const showAlert = (message) => setModalAlert({ isOpen: true, message });
 
     useEffect(() => {
         if (user && user.rol === 'ADMINISTRADOR') {
@@ -23,6 +33,9 @@ function AdminDashboard() {
             setIncidencias(inc || []);
             const usrs = await controladorAdministrador.cargarUsuarios();
             setUsuarios(usrs || []);
+            const map = {};
+            (usrs || []).forEach(u => map[u.id] = u.nombre);
+            setUsersMap(map);
             const crs = await controladorAdministrador.cargarCorreosPermitidos();
             setCorreos(crs || []);
         } catch (error) {
@@ -30,65 +43,87 @@ function AdminDashboard() {
         }
     };
 
-    const handleResolver = async (idIncidencia, idTransaccion, idOfertante, idDemandante) => {
-        const idGanador = prompt(`Resolución de disputa. Ingresa el ID del usuario ganador:\nOfertante: ${idOfertante}\nDemandante: ${idDemandante}`);
-        if (!idGanador) return;
+    const handleResolverClick = (incidencia) => {
+        setModalDisputa({
+            isOpen: true,
+            data: incidencia,
+            ganador: '',
+            sancionarO: false,
+            sancionarD: false
+        });
+    };
 
-        const sancionarOfertante = window.confirm("¿Sancionar al Ofertante por fraude?");
-        const sancionarDemandante = window.confirm("¿Sancionar al Demandante por fraude?");
-
+    const confirmResolver = async () => {
+        if (!modalDisputa.ganador) {
+            showAlert("Debes seleccionar un usuario ganador o indicar 'empate'.");
+            return;
+        }
         try {
-            await controladorAdministrador.resolverIncidencia(idIncidencia, idGanador, sancionarOfertante, sancionarDemandante);
-            alert("Incidencia resuelta.");
+            await controladorAdministrador.resolverIncidencia(
+                modalDisputa.data.idIncidencia, 
+                modalDisputa.ganador, 
+                modalDisputa.sancionarO, 
+                modalDisputa.sancionarD
+            );
+            showAlert("Incidencia resuelta exitosamente.");
+            setModalDisputa({ isOpen: false, data: null, ganador: '', sancionarO: false, sancionarD: false });
             cargarDatos();
         } catch (error) {
-            alert("Error: " + error.message);
+            showAlert("Error: " + error.message);
         }
     };
 
     const handleAgregarCorreo = async () => {
         if (!nuevoCorreo.endsWith('@alameda.com')) {
-            alert("El correo debe terminar en @alameda.com");
+            showAlert("El correo debe terminar en @alameda.com");
             return;
         }
         try {
             await controladorAdministrador.agregarCorreo(nuevoCorreo);
             setNuevoCorreo('');
+            showAlert("Correo agregado con éxito.");
             cargarDatos();
         } catch (error) {
-            alert("Error al agregar correo.");
+            showAlert("Error al agregar correo.");
         }
     };
 
     const handleEliminarCorreo = async (correo) => {
         try {
             await controladorAdministrador.eliminarCorreo(correo);
+            showAlert("Correo eliminado exitosamente.");
             cargarDatos();
         } catch (error) {
-            alert("Error al eliminar correo.");
+            showAlert("Error al eliminar correo.");
         }
     };
 
-    const handleModificarCreditos = async (idUsuario) => {
-        const creditos = prompt("Ingresa la nueva cantidad de créditos exactos:");
-        if (creditos !== null) {
-            try {
-                await controladorAdministrador.modificarCreditos(idUsuario, parseFloat(creditos));
-                alert("Créditos actualizados");
-                cargarDatos();
-            } catch (error) {
-                alert("Error actualizando créditos");
-            }
+    const handleModificarCreditosClick = (idUsuario) => {
+        setModalCreditos({ isOpen: true, idUsuario, cantidad: '' });
+    };
+
+    const confirmModificarCreditos = async () => {
+        if (modalCreditos.cantidad === '') {
+            showAlert("Debes ingresar una cantidad.");
+            return;
+        }
+        try {
+            await controladorAdministrador.modificarCreditos(modalCreditos.idUsuario, parseFloat(modalCreditos.cantidad));
+            showAlert("Créditos actualizados con éxito.");
+            setModalCreditos({ isOpen: false, idUsuario: null, cantidad: '' });
+            cargarDatos();
+        } catch (error) {
+            showAlert("Error actualizando créditos.");
         }
     };
 
     const handlePerdonar = async (idUsuario) => {
         try {
             await controladorAdministrador.perdonarFaltas(idUsuario);
-            alert("Faltas perdonadas.");
+            showAlert("Faltas perdonadas exitosamente.");
             cargarDatos();
         } catch (error) {
-            alert("Error al perdonar faltas.");
+            showAlert("Error al perdonar faltas.");
         }
     };
 
@@ -128,12 +163,12 @@ function AdminDashboard() {
                                             <td>{inc.idIncidencia}</td>
                                             <td>{inc.idTransaccion}</td>
                                             <td>{inc.estado}</td>
-                                            <td>{inc.idUsuarioReportante} <br/><a href={inc.urlEvidencia} target="_blank" rel="noreferrer">Evidencia</a></td>
-                                            <td>{inc.idUsuarioDefensor || 'N/A'} {inc.urlEvidenciaDefensa ? <a href={inc.urlEvidenciaDefensa} target="_blank" rel="noreferrer">Evidencia</a> : ''}</td>
+                                            <td>{usersMap[inc.idUsuarioReportante] || inc.idUsuarioReportante} <br/><a href={inc.urlEvidencia} target="_blank" rel="noreferrer">Evidencia</a></td>
+                                            <td>{inc.idUsuarioDefensor ? (usersMap[inc.idUsuarioDefensor] || inc.idUsuarioDefensor) : 'N/A'} {inc.urlEvidenciaDefensa ? <a href={inc.urlEvidenciaDefensa} target="_blank" rel="noreferrer">Evidencia</a> : ''}</td>
                                             <td>{inc.descripcion}</td>
                                             <td>
                                                 {inc.estado === 'ABIERTA' && (
-                                                    <button onClick={() => handleResolver(inc.idIncidencia, inc.idTransaccion, inc.idUsuarioDefensor, inc.idUsuarioReportante)}>Resolver Disputa</button>
+                                                    <button className="btn-primary" style={{ backgroundColor: 'var(--color-green-700)', color: '#fff', fontSize: '0.75rem', padding: '0.25rem 0.5rem' }} onClick={() => handleResolverClick(inc)}>Resolver Disputa</button>
                                                 )}
                                             </td>
                                         </tr>
@@ -169,9 +204,9 @@ function AdminDashboard() {
                                         <td>{u.reportesFraudeValidados}</td>
                                         <td>{u.monedero?.creditosDisponibles}</td>
                                         <td>
-                                            <button onClick={() => handleModificarCreditos(u.id)}>Modificar Créditos</button>
+                                            <button style={{ marginRight: '0.5rem', marginBottom: '0.5rem' }} className="btn-primary" onClick={() => handleModificarCreditosClick(u.id)}>Modificar Créditos</button>
                                             {u.reportesFraudeValidados > 0 && (
-                                                <button onClick={() => handlePerdonar(u.id)}>Perdonar Faltas</button>
+                                                <button className="btn-primary" style={{ backgroundColor: 'var(--color-orange-600)' }} onClick={() => handlePerdonar(u.id)}>Perdonar Faltas</button>
                                             )}
                                         </td>
                                     </tr>
@@ -198,6 +233,82 @@ function AdminDashboard() {
                     </div>
                 )}
             </div>
+
+            {/* Modals */}
+            {modalDisputa.isOpen && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+                    <div style={{ backgroundColor: 'var(--bg-primary)', padding: '2rem', borderRadius: '1rem', width: '90%', maxWidth: '500px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
+                        <h2 style={{ marginTop: 0, color: 'var(--color-green-700)' }}>Resolución de Disputa</h2>
+                        <p style={{ color: 'var(--text-secondary)' }}>Selecciona al ganador de la disputa y las sanciones correspondientes.</p>
+                        
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Usuario Ganador:</label>
+                            <select 
+                                style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)' }}
+                                value={modalDisputa.ganador} 
+                                onChange={(e) => setModalDisputa({ ...modalDisputa, ganador: e.target.value })}
+                            >
+                                <option value="">-- Selecciona un ganador --</option>
+                                <option value={modalDisputa.data?.idUsuarioReportante}>Reportante: {usersMap[modalDisputa.data?.idUsuarioReportante] || modalDisputa.data?.idUsuarioReportante}</option>
+                                {modalDisputa.data?.idUsuarioDefensor && (
+                                    <option value={modalDisputa.data?.idUsuarioDefensor}>Defensor: {usersMap[modalDisputa.data?.idUsuarioDefensor] || modalDisputa.data?.idUsuarioDefensor}</option>
+                                )}
+                            </select>
+                        </div>
+
+                        <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                <input type="checkbox" checked={modalDisputa.sancionarD} onChange={(e) => setModalDisputa({ ...modalDisputa, sancionarD: e.target.checked })} />
+                                <span>Sancionar Reportante por Fraude (Suma falta)</span>
+                            </label>
+                            {modalDisputa.data?.idUsuarioDefensor && (
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                    <input type="checkbox" checked={modalDisputa.sancionarO} onChange={(e) => setModalDisputa({ ...modalDisputa, sancionarO: e.target.checked })} />
+                                    <span>Sancionar Defensor por Fraude (Suma falta)</span>
+                                </label>
+                            )}
+                        </div>
+
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+                            <button className="btn-primary" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)' }} onClick={() => setModalDisputa({ isOpen: false, data: null, ganador: '', sancionarO: false, sancionarD: false })}>Cancelar</button>
+                            <button className="btn-primary" style={{ backgroundColor: 'var(--color-green-700)', color: '#fff' }} onClick={confirmResolver}>Confirmar Resolución</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {modalCreditos.isOpen && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+                    <div style={{ backgroundColor: 'var(--bg-primary)', padding: '2rem', borderRadius: '1rem', width: '90%', maxWidth: '400px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
+                        <h2 style={{ marginTop: 0, color: 'var(--color-green-700)' }}>Modificar Créditos</h2>
+                        <p style={{ color: 'var(--text-secondary)' }}>Ingresa la nueva cantidad exacta de créditos disponibles para este usuario.</p>
+                        
+                        <input 
+                            type="number" 
+                            step="0.1"
+                            style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', marginBottom: '1.5rem', boxSizing: 'border-box' }}
+                            value={modalCreditos.cantidad}
+                            onChange={(e) => setModalCreditos({ ...modalCreditos, cantidad: e.target.value })}
+                            placeholder="Ej. 100"
+                        />
+
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+                            <button className="btn-primary" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)' }} onClick={() => setModalCreditos({ isOpen: false, idUsuario: null, cantidad: '' })}>Cancelar</button>
+                            <button className="btn-primary" style={{ backgroundColor: 'var(--color-green-700)', color: '#fff' }} onClick={confirmModificarCreditos}>Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {modalAlert.isOpen && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100 }}>
+                    <div style={{ backgroundColor: 'var(--bg-primary)', padding: '2rem', borderRadius: '1rem', width: '90%', maxWidth: '400px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)', textAlign: 'center' }}>
+                        <h3 style={{ marginTop: 0, color: 'var(--text-primary)' }}>Aviso</h3>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>{modalAlert.message}</p>
+                        <button className="btn-primary" style={{ backgroundColor: 'var(--color-green-700)', color: '#fff', width: '100%' }} onClick={() => setModalAlert({ isOpen: false, message: '' })}>Aceptar</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
