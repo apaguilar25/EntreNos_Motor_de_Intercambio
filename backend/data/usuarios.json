@@ -210,7 +210,7 @@
     "telefono": "+58414000102",
     "descripcionPersonal": "Segundo mejor proveedor",
     "contrasenaHash": "$2a$10$IBj1Zoex6ld3BX7VbZpUoOEDpP.D7OYEPbMgIykvfOs7tocnXjJge",
-    "version": 26,
+    "version": 27,
     "monedero": {
       "creditosDisponibles": 300.0,
       "creditosComprometidos": 111.0,
@@ -305,8 +305,8 @@
     "correoElectronico": "admin@alameda.com",
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
-    "contrasenaHash": "$2a$10$QWRLH1VJ8KphSh4b/Ucy..jtmvKPCSAOErYT7fGP0KDMFPAE9ZDNy",
-    "version": 6,
+    "contrasenaHash": "$2a$10$jDsyFVW13J1VdgK92J/.4.wOYxv4xCTJ2UwTmC5VeUqK7ASqIhrB6",
+    "version": 18,
     "monedero": {
       "creditosDisponibles": 0.0,
       "creditosComprometidos": 0.0,
@@ -446,7 +446,7 @@
     "correoElectronico": "admin@alameda.com",
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
-    "contrasenaHash": "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
+    "contrasenaHash": "$2a$10$jDsyFVW13J1VdgK92J/.4.wOYxv4xCTJ2UwTmC5VeUqK7ASqIhrB6",
     "version": 31,
     "monedero": {
       "creditosDisponibles": 50.0,
