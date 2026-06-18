@@ -20,6 +20,15 @@ skinparam frame {
 '   BackgroundColor #FAFAFA
 }
 
+skinparam note {
+    BackgroundColor #E3F2FD
+    BorderColor #2196F3
+    FontColor #0D47A1
+    FontSize 26
+    ' La línea sigue siendo transparente, pero el borde da el diseño
+    LineColor Transparent
+}
+
 
 title __Diagrama de clase Sprint 2 - EntreNós__
 
@@ -391,6 +400,15 @@ package "Diagrama de clase EntreNós"  {
                 SUBASTA_CANCELADA
            }
    }
+
+   note as N1
+
+     <b>   Nota de diseño:</b>
+        Todas las clases incluyen sus constructores,
+        getters y setters estándar, omitidos en el
+        diagrama por simplicidad visual.
+
+   end note
 
 }
 

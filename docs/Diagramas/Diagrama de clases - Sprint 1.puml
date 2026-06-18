@@ -2,7 +2,7 @@
 
 skinparam orthogonalLayoutStrategy none
 skinparam DefaultFontName Arial
-skinparam DefaultFontSize 12
+skinparam DefaultFontSize 15
 skinparam class {
 '   BackgroundColor White
     ArrowColor Black
@@ -10,7 +10,7 @@ skinparam class {
 }
 
 skinparam title {
-    FontSize 18
+    FontSize 20
 '   FontColor #2C3E50
 }
 
@@ -18,6 +18,15 @@ skinparam frame {
     BorderColor #black
     FontColor #black
 '   BackgroundColor #FAFAFA
+}
+
+skinparam note {
+    BackgroundColor #E3F2FD
+    BorderColor #2196F3
+    FontColor #0D47A1
+    FontSize 26
+    ' La línea sigue siendo transparente, pero el borde da el diseño
+    LineColor Transparent
 }
 
 
@@ -287,6 +296,16 @@ package "Diagrama de clase EntreNós"  {
 
    }
 
+
+note as N1
+
+  <b>   Nota de diseño:</b>
+     Todas las clases incluyen sus constructores,
+     getters y setters estándar, omitidos en el
+     diagrama por simplicidad visual.
+
+end note
+
 }
 
 ' --- IDENTIDAD Y CATÁLOGO ---
@@ -314,5 +333,7 @@ Propuesta "0..*" -- "1" Usuario : "efectuada por >"
 Propuesta "1  " *-- "1..*" BienOfrecido
 
 }
+
+
 
 @enduml
