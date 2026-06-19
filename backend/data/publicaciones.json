@@ -8,6 +8,7 @@
     "precioCreditos": 30,
     "disponible": true,
     "idInstanciaCatalogo": "5e27fbde-91b7-4992-ba3f-4c87ad5fe57d",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -19,6 +20,7 @@
     "precioCreditos": 0,
     "disponible": true,
     "idInstanciaCatalogo": "2a828634-527b-4c9e-bafc-2d4af9c87de9",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -29,6 +31,7 @@
     "descripcion": "Limpieza gral",
     "precioCreditos": 30,
     "disponible": true,
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -40,6 +43,7 @@
     "precioCreditos": 30,
     "disponible": true,
     "idInstanciaCatalogo": "5015d9d8-b14c-4bc5-a07c-c0161112b248",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -51,6 +55,7 @@
     "precioCreditos": 50,
     "disponible": true,
     "idInstanciaCatalogo": "61619220-0aff-4322-b11a-f2aa9ed0f000",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -62,6 +67,7 @@
     "precioCreditos": 0,
     "disponible": true,
     "idInstanciaCatalogo": "53560dec-5eb0-49ce-9b16-10c2485bdf02",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -73,6 +79,7 @@
     "precioCreditos": 0,
     "disponible": true,
     "idInstanciaCatalogo": "e2b7955c-3cd7-4b22-b7d0-224dc510f368",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -83,6 +90,7 @@
     "descripcion": "Limpieza general de casas y apartamentos",
     "precioCreditos": 30,
     "disponible": true,
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -93,6 +101,7 @@
     "descripcion": "Clases particulares de yoga relajante",
     "precioCreditos": 25,
     "disponible": true,
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -103,6 +112,7 @@
     "descripcion": "Masajes corporales completos",
     "precioCreditos": 40,
     "disponible": true,
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -114,6 +124,7 @@
     "precioCreditos": 5,
     "disponible": true,
     "idInstanciaCatalogo": "27011c54-f3c2-45b0-a969-8de8b6140148",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -125,6 +136,7 @@
     "precioCreditos": 10,
     "disponible": true,
     "idInstanciaCatalogo": "ba7328e4-21d3-46ff-ac9e-182cb09fce20",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -136,6 +148,7 @@
     "precioCreditos": 15,
     "disponible": true,
     "idInstanciaCatalogo": "c5c845a5-41a2-4356-a4c4-f61f4b2a343b",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -147,6 +160,7 @@
     "precioCreditos": 8,
     "disponible": true,
     "idInstanciaCatalogo": "34c2044d-55e2-4d38-b096-8ddb404f02db",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -158,6 +172,7 @@
     "precioCreditos": 12,
     "disponible": true,
     "idInstanciaCatalogo": "0bc1286c-6979-4c47-b334-0d4d944e92bf",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -169,6 +184,7 @@
     "precioCreditos": 3,
     "disponible": true,
     "idInstanciaCatalogo": "4caa3b17-d8af-4dda-932b-bfa1ba7cbd8f",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -180,6 +196,7 @@
     "precioCreditos": 0,
     "disponible": true,
     "idInstanciaCatalogo": "bcdfed66-d47c-4675-a255-eb6fe96b6bdf",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -191,6 +208,7 @@
     "precioCreditos": 0,
     "disponible": true,
     "idInstanciaCatalogo": "74e9e956-cbeb-4483-887e-7a4c8d51f37e",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -202,6 +220,7 @@
     "precioCreditos": 0,
     "disponible": true,
     "idInstanciaCatalogo": "cc7cf81d-ea7f-41a5-8c74-24c46ebb0e1e",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -213,6 +232,7 @@
     "precioCreditos": 0,
     "disponible": true,
     "idInstanciaCatalogo": "7854c11e-420a-4b5c-a407-176621d5d048",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -224,6 +244,7 @@
     "precioCreditos": 0,
     "disponible": true,
     "idInstanciaCatalogo": "db6ce203-a9d9-4b08-957b-d9a834089f74",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -235,6 +256,7 @@
     "precioCreditos": 51,
     "disponible": true,
     "idInstanciaCatalogo": "7cc90549-9af9-4f5f-8849-ab3397204782",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -246,6 +268,7 @@
     "precioCreditos": 50,
     "disponible": true,
     "idInstanciaCatalogo": "e5e7bc1d-3b3c-4a27-8229-cbfdf3ef9253",
+    "fechaCreacion": 0,
     "version": 0
   },
   {
@@ -257,6 +280,62 @@
     "precioCreditos": 10,
     "disponible": true,
     "idInstanciaCatalogo": "9bfb193c-5b33-459c-a289-97fedc762ab3",
+    "fechaCreacion": 0,
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-FE2A3555",
+    "idUsuario": "19adf8c1-27a8-4a77-a064-48aa3e06613e",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Masajes Relajantes",
+    "descripcion": "Masajes de espalda y cuello",
+    "precioCreditos": 3,
+    "disponible": true,
+    "fechaCreacion": 1781828141497,
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-9F7BD25E",
+    "idUsuario": "19adf8c1-27a8-4a77-a064-48aa3e06613e",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Clases de Piano",
+    "descripcion": "Clases de piano nivel básico",
+    "precioCreditos": 4,
+    "disponible": true,
+    "fechaCreacion": 1781828157107,
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-72E35130",
+    "idUsuario": "19adf8c1-27a8-4a77-a064-48aa3e06613e",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Cuidado de Mascotas",
+    "descripcion": "Paseo y cuidado de perros y gatos",
+    "precioCreditos": 1,
+    "disponible": true,
+    "fechaCreacion": 1781828170976,
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-4CFA7A25",
+    "idUsuario": "19adf8c1-27a8-4a77-a064-48aa3e06613e",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Clases de Cocina",
+    "descripcion": "Cocina italiana básica",
+    "precioCreditos": 2,
+    "disponible": true,
+    "fechaCreacion": 1781828184399,
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-FEA635F7",
+    "idUsuario": "19adf8c1-27a8-4a77-a064-48aa3e06613e",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Nueva publicación test",
+    "descripcion": "Creada para probar refresco de caché",
+    "precioCreditos": 1,
+    "disponible": true,
+    "fechaCreacion": 1781828953947,
     "version": 0
   }
 ]
