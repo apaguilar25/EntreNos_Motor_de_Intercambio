@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "EntreNos - Cache de Publicaciones",
-    "description": "Colección para probar el caché de las 10 ofertas más recientes en la landing page. La caché se usa cuando NO hay filtros (tipo, servicio).",
+    "name": "EntreNos - Cache de Publicaciones (por reputación)",
+    "description": "Compara rendimiento entre GET /api/publicaciones (CON caché, top 10 reputación en RAM) y GET /api/publicaciones/sin-cache (SIN caché, lee JSON de disco cada vez).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -9,10 +9,10 @@
   ],
   "item": [
     {
-      "name": "01 - Setup: Autorizar correos (admin) + registrar usuarios",
+      "name": "01 - Setup: Autorizar correos + registrar usuarios + login",
       "item": [
         {
-          "name": "1.1 Login como admin (admin@alameda.com / admin123)",
+          "name": "1.1 Login como admin",
           "event": [
             {
               "listen": "test",
@@ -41,7 +41,7 @@
           }
         },
         {
-          "name": "1.2 Autorizar correo A en whitelist",
+          "name": "1.2 Autorizar correo A",
           "request": {
             "method": "POST",
             "header": [
@@ -60,7 +60,7 @@
           }
         },
         {
-          "name": "1.3 Autorizar correo B en whitelist",
+          "name": "1.3 Autorizar correo B",
           "request": {
             "method": "POST",
             "header": [
@@ -137,7 +137,7 @@
           }
         },
         {
-          "name": "1.6 Login como A (obtener token)",
+          "name": "1.6 Login como A",
           "event": [
             {
               "listen": "test",
@@ -168,7 +168,7 @@
       ]
     },
     {
-      "name": "02 - Crear publicaciones para llenar caché",
+      "name": "02 - Crear publicaciones",
       "item": [
         {
           "name": "Publicación 1 - Yoga",
@@ -235,7 +235,7 @@
           }
         },
         {
-          "name": "Publicación 3 - Clases de Piano",
+          "name": "Publicación 3 - Piano",
           "event": [
             {
               "listen": "test",
@@ -267,7 +267,7 @@
           }
         },
         {
-          "name": "Publicación 4 - Cuidado de Mascotas",
+          "name": "Publicación 4 - Mascotas",
           "event": [
             {
               "listen": "test",
@@ -299,7 +299,7 @@
           }
         },
         {
-          "name": "Publicación 5 - Clases de Cocina",
+          "name": "Publicación 5 - Cocina",
           "event": [
             {
               "listen": "test",
@@ -333,19 +333,20 @@
       ]
     },
     {
-      "name": "03 - Probar caché en Landing Page",
+      "name": "03 - Comparar CON caché vs SIN caché",
       "item": [
         {
-          "name": "Landing (sin filtros) - debe usar caché",
+          "name": "CON caché - top 10 reputación (GET /api/publicaciones)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
                   "var data = pm.response.json();",
-                  "console.log('Landing: ' + data.length + ' publicaciones');",
-                  "pm.test('Devuelve publicaciones', function() { pm.expect(data.length).to.be.above(0); });",
-                  "pm.test('Tiempo < 100ms (cache)', function() { pm.expect(pm.response.responseTime).to.be.below(100); });"
+                  "var tiempoConCache = pm.response.responseTime;",
+                  "pm.collectionVariables.set('tiempoConCache', tiempoConCache);",
+                  "console.log('CON cache: ' + data.length + ' pubs, ' + tiempoConCache + ' ms');",
+                  "pm.test('Devuelve maximo 10', function() { pm.expect(data.length).to.be.at.most(10); });"
                 ],
                 "type": "text/javascript"
               }
@@ -361,16 +362,21 @@
           }
         },
         {
-          "name": "Filtrado por tipo - NO usa caché",
+          "name": "SIN caché - top 10 reputación (GET /api/publicaciones/sin-cache)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
                   "var data = pm.response.json();",
-                  "console.log('Filtradas: ' + data.length + ' publicaciones');",
-                  "pm.test('Devuelve publicaciones filtradas', function() { pm.expect(data.length).to.be.above(0); });",
-                  "data.forEach(function(p) { pm.expect(p.tipoPublicacion).to.equal('HABILIDAD'); });"
+                  "var tiempoSinCache = pm.response.responseTime;",
+                  "var tiempoConCache = pm.collectionVariables.get('tiempoConCache');",
+                  "console.log('SIN cache: ' + data.length + ' pubs, ' + tiempoSinCache + ' ms');",
+                  "console.log('Diferencia: ' + (tiempoSinCache - tiempoConCache) + ' ms');",
+                  "pm.test('Devuelve maximo 10', function() { pm.expect(data.length).to.be.at.most(10); });",
+                  "pm.test('SIN cache debe ser mas lento que CON cache', function() {",
+                  "  pm.expect(tiempoSinCache).to.be.at.least(tiempoConCache);",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
@@ -379,22 +385,19 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/publicaciones?tipo=HABILIDAD",
+              "raw": "{{baseUrl}}/api/publicaciones/sin-cache",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "publicaciones"],
-              "query": [
-                { "key": "tipo", "value": "HABILIDAD" }
-              ]
+              "path": ["api", "publicaciones", "sin-cache"]
             }
           }
         }
       ]
     },
     {
-      "name": "04 - Probar invalidadción al crear/eliminar",
+      "name": "04 - Invalidación al crear/eliminar",
       "item": [
         {
-          "name": "Crear nueva publicación (refresca caché)",
+          "name": "Crear nueva publicación",
           "event": [
             {
               "listen": "test",
@@ -426,14 +429,14 @@
           }
         },
         {
-          "name": "Landing post-creación (verificar caché actualizada)",
+          "name": "CON caché post-creación (caché actualizada)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
                   "var data = pm.response.json();",
-                  "console.log('Landing post-creación: ' + data.length + ' publicaciones');",
+                  "console.log('CON cache post-creación: ' + data.length + ' pubs');",
                   "pm.test('Caché incluye la nueva publicación', function() {",
                   "  var encontrada = data.some(function(p) { return p.idPublicacion === pm.collectionVariables.get('pubNueva'); });",
                   "  pm.expect(encontrada).to.be.true;",
@@ -453,13 +456,12 @@
           }
         },
         {
-          "name": "Eliminar publicación (refresca caché)",
+          "name": "Eliminar publicación 1",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "console.log('Eliminada pub:', pm.collectionVariables.get('pub1'));",
                   "pm.test('Eliminación exitosa', function() { pm.expect(pm.response.code).to.equal(204); });"
                 ],
                 "type": "text/javascript"
@@ -479,14 +481,14 @@
           }
         },
         {
-          "name": "Landing post-eliminación (verificar caché actualizada)",
+          "name": "CON caché post-eliminación (caché actualizada)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
                   "var data = pm.response.json();",
-                  "console.log('Landing post-eliminación: ' + data.length + ' publicaciones');",
+                  "console.log('CON cache post-eliminación: ' + data.length + ' pubs');",
                   "pm.test('Caché ya no incluye la publicación eliminada', function() {",
                   "  var encontrada = data.some(function(p) { return p.idPublicacion === pm.collectionVariables.get('pub1'); });",
                   "  pm.expect(encontrada).to.be.false;",

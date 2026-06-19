@@ -10,7 +10,6 @@ public class Publicacion {
     private int precioCreditos;
     private boolean disponible;
     private String idInstanciaCatalogo;
-    private long fechaCreacion;
     private int version;
 
     public Publicacion() {}
@@ -22,7 +21,6 @@ public class Publicacion {
         this.descripcion = descripcion;
         this.precioCreditos = precioCreditos;
         this.disponible = true;
-        this.fechaCreacion = System.currentTimeMillis();
     }
 
     public String getIdPublicacion() { return idPublicacion; }
@@ -33,7 +31,6 @@ public class Publicacion {
     public int getPrecioCreditos() { return precioCreditos; }
     public boolean isDisponible() { return disponible; }
     public String getIdInstanciaCatalogo() { return idInstanciaCatalogo; }
-    public long getFechaCreacion() { return fechaCreacion; }
     public int getVersion() { return version; }
 
     public void setIdPublicacion(String idPublicacion) { this.idPublicacion = idPublicacion; }
@@ -44,6 +41,5 @@ public class Publicacion {
     public void setPrecioCreditos(int precioCreditos) { this.precioCreditos = precioCreditos; }
     public void setDisponible(boolean disponible) { this.disponible = disponible; }
     public void setIdInstanciaCatalogo(String idInstanciaCatalogo) { this.idInstanciaCatalogo = idInstanciaCatalogo; }
-    public void setFechaCreacion(long fechaCreacion) { this.fechaCreacion = fechaCreacion; }
     public void setVersion(int version) { this.version = version; }
 }

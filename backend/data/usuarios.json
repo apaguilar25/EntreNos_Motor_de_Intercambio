@@ -1,490 +1,11 @@
 [
   {
-    "id": "e46e66ab-5e9b-480a-bd09-6be30e60b244",
-    "nombre": "Test B",
-    "correoElectronico": "testb.flow@alameda.com",
-    "telefono": "+58415000002",
-    "descripcionPersonal": "test",
-    "contrasenaHash": "$2a$10$BhYKThhjPsMBaL2QmMiraOzNMbthLmrytGBzQ1TT1YzaUxwEz7lqG",
-    "version": 6,
-    "monedero": {
-      "creditosDisponibles": 30.0,
-      "creditosComprometidos": 0.0,
-      "creditosPorLogros": 10.0
-    },
-    "catalogo": {
-      "completado": true,
-      "habilidadesOfrecidas": [],
-      "necesidadesRegistradas": [
-        {
-          "idInstancia": "2a828634-527b-4c9e-bafc-2d4af9c87de9",
-          "necesidadBase": {
-            "id": "HAB-004",
-            "categoria": "Limpieza del Hogar"
-          },
-          "descripcionCondiciones": "Limpieza semanal"
-        }
-      ]
-    },
-    "estado": "ACTIVO",
-    "intentosFallidos": 0,
-    "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
-    "reportesFraudeValidados": 0,
-    "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 0.0,
-    "cantidadCalificaciones": 0,
-    "rol": "MIEMBRO_COMUNIDAD",
-    "esVecinoDestacado": false
-  },
-  {
-    "id": "09a6d17d-542a-409e-ba65-d061b28e9e07",
-    "nombre": "Diana Demandante",
-    "correoElectronico": "diana.podio@alameda.com",
-    "telefono": "+58414000104",
-    "descripcionPersonal": "Demandante frecuente",
-    "contrasenaHash": "$2a$10$4kpJRAKc28vppDPW7ffLaee.fcRUuRl5q60hY2irWFgyHUw7j.VjW",
-    "version": 8,
-    "monedero": {
-      "creditosDisponibles": 50.0,
-      "creditosComprometidos": 0.0,
-      "creditosPorLogros": 0.0
-    },
-    "catalogo": {
-      "completado": true,
-      "habilidadesOfrecidas": [],
-      "necesidadesRegistradas": [
-        {
-          "idInstancia": "bcdfed66-d47c-4675-a255-eb6fe96b6bdf",
-          "necesidadBase": {
-            "id": "HAB-004",
-            "categoria": "Limpieza del Hogar"
-          },
-          "descripcionCondiciones": "Necesito limpieza"
-        },
-        {
-          "idInstancia": "74e9e956-cbeb-4483-887e-7a4c8d51f37e",
-          "necesidadBase": {
-            "id": "HAB-001",
-            "categoria": "PlomerÃ­a"
-          },
-          "descripcionCondiciones": "Necesito plomero"
-        },
-        {
-          "idInstancia": "cc7cf81d-ea7f-41a5-8c74-24c46ebb0e1e",
-          "necesidadBase": {
-            "id": "HAB-003",
-            "categoria": "CarpinterÃ­a"
-          },
-          "descripcionCondiciones": "Necesito carpintero"
-        },
-        {
-          "idInstancia": "7854c11e-420a-4b5c-a407-176621d5d048",
-          "necesidadBase": {
-            "id": "HAB-002",
-            "categoria": "Electricidad"
-          },
-          "descripcionCondiciones": "Necesito electricista"
-        },
-        {
-          "idInstancia": "db6ce203-a9d9-4b08-957b-d9a834089f74",
-          "necesidadBase": {
-            "id": "HAB-005",
-            "categoria": "Soporte TÃ©cnico / ComputaciÃ³n"
-          },
-          "descripcionCondiciones": "Necesito soporte"
-        }
-      ]
-    },
-    "estado": "ACTIVO",
-    "intentosFallidos": 2,
-    "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 1781611722455,
-    "reportesFraudeValidados": 0,
-    "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 0.0,
-    "cantidadCalificaciones": 0,
-    "rol": "MIEMBRO_COMUNIDAD",
-    "esVecinoDestacado": false
-  },
-  {
-    "id": "b05fdf5f-1c32-4d44-89f6-b0ba8e4ce2c8",
-    "nombre": "Ana Proveedora",
-    "correoElectronico": "ana.podio@alameda.com",
-    "telefono": "+58414000101",
-    "descripcionPersonal": "Proveedora estrella",
-    "contrasenaHash": "$2a$10$W1NdUkGaIb3dBHKfc6r2l.H733QbMLKqOZG3ilqVSeGtJAjx7T1Oq",
-    "version": 4,
-    "monedero": {
-      "creditosDisponibles": 50.0,
-      "creditosComprometidos": 0.0,
-      "creditosPorLogros": 0.0
-    },
-    "catalogo": {
-      "completado": true,
-      "habilidadesOfrecidas": [
-        {
-          "idInstancia": "27011c54-f3c2-45b0-a969-8de8b6140148",
-          "habilidadBase": {
-            "id": "HAB-004",
-            "categoria": "Limpieza del Hogar"
-          },
-          "precioCreditos": 5,
-          "descripcionServicio": "Limpieza profunda"
-        },
-        {
-          "idInstancia": "ba7328e4-21d3-46ff-ac9e-182cb09fce20",
-          "habilidadBase": {
-            "id": "HAB-001",
-            "categoria": "PlomerÃ­a"
-          },
-          "precioCreditos": 10,
-          "descripcionServicio": "Plomeria avanzada"
-        },
-        {
-          "idInstancia": "c5c845a5-41a2-4356-a4c4-f61f4b2a343b",
-          "habilidadBase": {
-            "id": "HAB-003",
-            "categoria": "CarpinterÃ­a"
-          },
-          "precioCreditos": 15,
-          "descripcionServicio": "Muebles a medida"
-        }
-      ],
-      "necesidadesRegistradas": []
-    },
-    "estado": "ACTIVO",
-    "intentosFallidos": 0,
-    "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
-    "reportesFraudeValidados": 0,
-    "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 0.0,
-    "cantidadCalificaciones": 0,
-    "rol": "MIEMBRO_COMUNIDAD",
-    "esVecinoDestacado": false
-  },
-  {
-    "id": "8c37ad61-3a22-483b-aae7-bb47d25d6cae",
-    "nombre": "Bob Proveedor",
-    "correoElectronico": "bob.podio@alameda.com",
-    "telefono": "+58414000102",
-    "descripcionPersonal": "Segundo mejor proveedor",
-    "contrasenaHash": "$2a$10$IBj1Zoex6ld3BX7VbZpUoOEDpP.D7OYEPbMgIykvfOs7tocnXjJge",
-    "version": 26,
-    "monedero": {
-      "creditosDisponibles": 300.0,
-      "creditosComprometidos": 111.0,
-      "creditosPorLogros": 0.0
-    },
-    "catalogo": {
-      "completado": true,
-      "habilidadesOfrecidas": [
-        {
-          "idInstancia": "34c2044d-55e2-4d38-b096-8ddb404f02db",
-          "habilidadBase": {
-            "id": "HAB-002",
-            "categoria": "Electricidad"
-          },
-          "precioCreditos": 8,
-          "descripcionServicio": "Electricidad residencial"
-        },
-        {
-          "idInstancia": "0bc1286c-6979-4c47-b334-0d4d944e92bf",
-          "habilidadBase": {
-            "id": "HAB-005",
-            "categoria": "Soporte TÃ©cnico / ComputaciÃ³n"
-          },
-          "precioCreditos": 12,
-          "descripcionServicio": "Soporte tecnico"
-        }
-      ],
-      "necesidadesRegistradas": []
-    },
-    "estado": "ACTIVO",
-    "intentosFallidos": 0,
-    "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
-    "reportesFraudeValidados": 0,
-    "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 0.0,
-    "cantidadCalificaciones": 0,
-    "rol": "MIEMBRO_COMUNIDAD",
-    "esVecinoDestacado": false
-  },
-  {
-    "id": "84e724bf-624b-4141-9357-df7da92e61eb",
-    "nombre": "Ana Ofertante",
-    "correoElectronico": "ana.ofertante@alameda.com",
-    "telefono": "+58414000001",
-    "descripcionPersonal": "Profesora de yoga y masajes",
-    "contrasenaHash": "$2a$10$rRXLvlUr5WuJtFlU3yPldutr3P56kFSieSPEyIwXB/1xA3jXO57m6",
-    "version": 9,
-    "monedero": {
-      "creditosDisponibles": 115.0,
-      "creditosComprometidos": 0.0,
-      "creditosPorLogros": 10.0
-    },
-    "catalogo": {
-      "completado": true,
-      "habilidadesOfrecidas": [
-        {
-          "idInstancia": "5015d9d8-b14c-4bc5-a07c-c0161112b248",
-          "habilidadBase": {
-            "id": "HAB-004",
-            "categoria": "Limpieza del Hogar"
-          },
-          "precioCreditos": 30,
-          "descripcionServicio": "Limpieza general del hogar"
-        },
-        {
-          "idInstancia": "61619220-0aff-4322-b11a-f2aa9ed0f000",
-          "habilidadBase": {
-            "id": "HAB-001",
-            "categoria": "PlomerÃ­a"
-          },
-          "precioCreditos": 50,
-          "descripcionServicio": "Reparaciones de plomerÃ­a bÃ¡sicas"
-        }
-      ],
-      "necesidadesRegistradas": []
-    },
-    "estado": "ACTIVO",
-    "intentosFallidos": 0,
-    "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
-    "reportesFraudeValidados": 0,
-    "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 4.0,
-    "cantidadCalificaciones": 2,
-    "rol": "MIEMBRO_COMUNIDAD",
-    "esVecinoDestacado": false
-  },
-  {
-    "id": "2f0c416a-2948-4d3c-9390-6242b700a711",
-    "nombre": "Bob Demandante",
-    "correoElectronico": "bob.demandante@alameda.com",
-    "telefono": "+58414000002",
-    "descripcionPersonal": "Vecino que busca servicios",
-    "contrasenaHash": "$2a$10$IAKMhouwSuhNoU0aQ2Dw.OeSDHVZbNtduIAeTh0demhdtUdlYDRCy",
-    "version": 11,
-    "monedero": {
-      "creditosDisponibles": 5.0,
-      "creditosComprometidos": 5.0,
-      "creditosPorLogros": 10.0
-    },
-    "catalogo": {
-      "completado": true,
-      "habilidadesOfrecidas": [],
-      "necesidadesRegistradas": [
-        {
-          "idInstancia": "53560dec-5eb0-49ce-9b16-10c2485bdf02",
-          "necesidadBase": {
-            "id": "HAB-004",
-            "categoria": "Limpieza del Hogar"
-          },
-          "descripcionCondiciones": "Necesito limpieza semanal"
-        },
-        {
-          "idInstancia": "e2b7955c-3cd7-4b22-b7d0-224dc510f368",
-          "necesidadBase": {
-            "id": "HAB-005",
-            "categoria": "Soporte TÃ©cnico / ComputaciÃ³n"
-          },
-          "descripcionCondiciones": "Soporte tÃ©cnico para mi PC"
-        }
-      ]
-    },
-    "estado": "ACTIVO",
-    "intentosFallidos": 0,
-    "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
-    "reportesFraudeValidados": 0,
-    "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 0.0,
-    "cantidadCalificaciones": 0,
-    "rol": "MIEMBRO_COMUNIDAD",
-    "esVecinoDestacado": false
-  },
-  {
-    "id": "d6ed5d51-8d8f-4c91-846f-c56c8a0f1d96",
-    "nombre": "Super Administrador",
-    "correoElectronico": "admin@alameda.com",
-    "telefono": "0000000000",
-    "descripcionPersonal": "Administrador general de la comunidad",
-    "contrasenaHash": "$2a$10$UrDVA/nnEUow1OKAkMD0yO2vWryQfmESqx8.ZifhWepo07L.6WMyW",
-    "version": 31,
-    "monedero": {
-      "creditosDisponibles": 50.0,
-      "creditosComprometidos": 0.0,
-      "creditosPorLogros": 0.0
-    },
-    "catalogo": {
-      "completado": true,
-      "habilidadesOfrecidas": [
-        {
-          "idInstancia": "e5e7bc1d-3b3c-4a27-8229-cbfdf3ef9253",
-          "habilidadBase": {
-            "id": "HAB-003",
-            "categoria": "Carpintería"
-          },
-          "precioCreditos": 50,
-          "descripcionServicio": "ddededd"
-        },
-        {
-          "idInstancia": "9bfb193c-5b33-459c-a289-97fedc762ab3",
-          "habilidadBase": {
-            "id": "HAB-005",
-            "categoria": "Soporte Técnico / Computación"
-          },
-          "precioCreditos": 10,
-          "descripcionServicio": "deeee"
-        }
-      ],
-      "necesidadesRegistradas": []
-    },
-    "estado": "ACTIVO",
-    "intentosFallidos": 0,
-    "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
-    "reportesFraudeValidados": 0,
-    "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 0.0,
-    "cantidadCalificaciones": 0,
-    "rol": "ADMINISTRADOR",
-    "esVecinoDestacado": false
-  },
-  {
-    "id": "7f65a0dd-eaaf-49cb-a00b-6fc3e4b08273",
-    "nombre": "Carlos Ocasional",
-    "correoElectronico": "carlos.podio@alameda.com",
-    "telefono": "+58414000103",
-    "descripcionPersonal": "Proveedor ocasional",
-    "contrasenaHash": "$2a$10$yjOmmM0oqHAR.2APuyqCde0qz7N9pbOckY4Gq.HcSd9rGDHn2RqKS",
-    "version": 2,
-    "monedero": {
-      "creditosDisponibles": 50.0,
-      "creditosComprometidos": 0.0,
-      "creditosPorLogros": 0.0
-    },
-    "catalogo": {
-      "completado": true,
-      "habilidadesOfrecidas": [
-        {
-          "idInstancia": "4caa3b17-d8af-4dda-932b-bfa1ba7cbd8f",
-          "habilidadBase": {
-            "id": "HAB-004",
-            "categoria": "Limpieza del Hogar"
-          },
-          "precioCreditos": 3,
-          "descripcionServicio": "Limpieza ligera"
-        }
-      ],
-      "necesidadesRegistradas": []
-    },
-    "estado": "ACTIVO",
-    "intentosFallidos": 0,
-    "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
-    "reportesFraudeValidados": 0,
-    "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 0.0,
-    "cantidadCalificaciones": 0,
-    "rol": "MIEMBRO_COMUNIDAD",
-    "esVecinoDestacado": false
-  },
-  {
-    "id": "e44fe828-3390-4229-9dc4-20ad341933cb",
-    "nombre": "Bob Demandante",
-    "correoElectronico": "bob.cache@alameda.com",
-    "telefono": "+58414000902",
-    "descripcionPersonal": "Test cache",
-    "contrasenaHash": "$2a$10$rah2BjzQHVb2/bC8sopO2ezKT/FAtyVC2sWefAWOFboVCdWtl6tfC",
-    "version": 0,
-    "monedero": {
-      "creditosDisponibles": 0.0,
-      "creditosComprometidos": 0.0,
-      "creditosPorLogros": 0.0
-    },
-    "catalogo": {
-      "completado": false,
-      "habilidadesOfrecidas": [],
-      "necesidadesRegistradas": []
-    },
-    "estado": "ACTIVO",
-    "intentosFallidos": 0,
-    "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
-    "reportesFraudeValidados": 0,
-    "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 0.0,
-    "cantidadCalificaciones": 0,
-    "rol": "MIEMBRO_COMUNIDAD",
-    "esVecinoDestacado": false
-  },
-  {
-    "id": "8e1baf4c-a128-497e-a1c4-ed7d4e742465",
-    "nombre": "Super Administrador",
-    "correoElectronico": "admin@alameda.com",
-    "telefono": "0000000000",
-    "descripcionPersonal": "Administrador general de la comunidad",
-    "contrasenaHash": "$2a$10$QWRLH1VJ8KphSh4b/Ucy..jtmvKPCSAOErYT7fGP0KDMFPAE9ZDNy",
-    "version": 7,
-    "monedero": {
-      "creditosDisponibles": 0.0,
-      "creditosComprometidos": 0.0,
-      "creditosPorLogros": 0.0
-    },
-    "catalogo": {
-      "completado": false,
-      "habilidadesOfrecidas": [],
-      "necesidadesRegistradas": []
-    },
-    "estado": "ACTIVO",
-    "intentosFallidos": 0,
-    "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
-    "reportesFraudeValidados": 0,
-    "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 0.0,
-    "cantidadCalificaciones": 0,
-    "rol": "ADMINISTRADOR",
-    "esVecinoDestacado": false
-  },
-  {
-    "id": "d95b9f31-322b-48e0-b331-e1d5a003992c",
-    "correoElectronico": "test.cancel@alameda.com",
-    "telefono": "+584141234567",
-    "contrasenaHash": "$2a$10$/CiJCTsnErdQm36.mn4EDuOPbTFgC7X7iANZG92QxxiIzXP3ggdke",
-    "version": 0,
-    "monedero": {
-      "creditosDisponibles": 0.0,
-      "creditosComprometidos": 0.0,
-      "creditosPorLogros": 0.0
-    },
-    "catalogo": {
-      "completado": false,
-      "habilidadesOfrecidas": [],
-      "necesidadesRegistradas": []
-    },
-    "estado": "ACTIVO",
-    "intentosFallidos": 0,
-    "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
-    "reportesFraudeValidados": 0,
-    "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 0.0,
-    "cantidadCalificaciones": 0,
-    "rol": "MIEMBRO_COMUNIDAD",
-    "esVecinoDestacado": false
-  },
-  {
-    "id": "19adf8c1-27a8-4a77-a064-48aa3e06613e",
+    "id": "e561668f-1fa0-4622-a545-0e6a406b36be",
     "nombre": "Ana Ofertante",
     "correoElectronico": "ana.cache@alameda.com",
     "telefono": "+58414000901",
     "descripcionPersonal": "Test cache",
-    "contrasenaHash": "$2a$10$lMwMd3.dThOGeaYoXLjsOuU6GXaImLLEK3NH3QmyZPaWbsnc3sbki",
+    "contrasenaHash": "$2a$10$7kL2JJjDZbkGf7hwaZGnIenjT/9dw9/Xf/eRCOOWwnbyaqIpZ7hIG",
     "version": 1,
     "monedero": {
       "creditosDisponibles": 0.0,
@@ -508,42 +29,61 @@
     "esVecinoDestacado": false
   },
   {
-    "id": "4bfb4e9b-37bf-4134-8790-0fc790a2fb2f",
-    "nombre": "Test A",
-    "correoElectronico": "testa.flow@alameda.com",
-    "telefono": "+58415000001",
-    "descripcionPersonal": "test",
-    "contrasenaHash": "$2a$10$JEZFYan3tuGhUVVTGaY5ouGGhE.eYxohNvuDcA.oSVwruuwIrLs7q",
-    "version": 8,
+    "id": "610b0b73-746c-4d2a-88b7-c90778427553",
+    "nombre": "Bob Demandante",
+    "correoElectronico": "bob.cache@alameda.com",
+    "telefono": "+58414000902",
+    "descripcionPersonal": "Test cache",
+    "contrasenaHash": "$2a$10$mH4pnjCJpKNyqslU51xe0O62AXiBqmU9V5Ad0vcdQcsgqZTnMojk2",
+    "version": 0,
     "monedero": {
-      "creditosDisponibles": 90.0,
+      "creditosDisponibles": 0.0,
       "creditosComprometidos": 0.0,
-      "creditosPorLogros": 10.0
+      "creditosPorLogros": 0.0
     },
     "catalogo": {
-      "completado": true,
-      "habilidadesOfrecidas": [
-        {
-          "idInstancia": "5e27fbde-91b7-4992-ba3f-4c87ad5fe57d",
-          "habilidadBase": {
-            "id": "HAB-004",
-            "categoria": "Limpieza del Hogar"
-          },
-          "precioCreditos": 30,
-          "descripcionServicio": "Limpieza"
-        }
-      ],
+      "completado": false,
+      "habilidadesOfrecidas": [],
       "necesidadesRegistradas": []
     },
     "estado": "ACTIVO",
-    "intentosFallidos": 2,
+    "intentosFallidos": 0,
     "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 1781614736010,
+    "primerIntentoFallidoMillis": 0,
     "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 5.0,
-    "cantidadCalificaciones": 1,
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
     "rol": "MIEMBRO_COMUNIDAD",
+    "esVecinoDestacado": false
+  },
+  {
+    "id": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "nombre": "Super Administrador",
+    "correoElectronico": "admin@alameda.com",
+    "telefono": "0000000000",
+    "descripcionPersonal": "Administrador general de la comunidad",
+    "contrasenaHash": "$2a$10$8Wf3ABToBcPb548r/M3BruD0/u5HZeiXVuV0QwfjbUmI5Qz1/Z7ze",
+    "version": 1,
+    "monedero": {
+      "creditosDisponibles": 0.0,
+      "creditosComprometidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": false,
+      "habilidadesOfrecidas": [],
+      "necesidadesRegistradas": []
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "ADMINISTRADOR",
     "esVecinoDestacado": false
   }
 ]

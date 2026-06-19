@@ -44,6 +44,7 @@ es\ucab\entrenos\modulos\subasta\repositorios\RepositorioSubasta$1.class
 es\ucab\entrenos\config\GsonConfig.class
 es\ucab\entrenos\modulos\publicacion\servicios\ServicioSolicitud.class
 es\ucab\entrenos\modulos\publicacion\repositorios\IRepositorioIncidencia.class
+es\ucab\entrenos\modulos\publicacion\utilidades\CachePublicacion.class
 es\ucab\entrenos\modulos\gamificacion\repositorios\RepositorioLogroDesbloqueado$1.class
 es\ucab\entrenos\modulos\gamificacion\repositorios\IRepositorioLogroDesbloqueado.class
 es\ucab\entrenos\modulos\gamificacion\repositorios\RepositorioLogroDesbloqueado.class
@@ -106,7 +107,6 @@ es\ucab\entrenos\modulos\identidad\modelos\Usuario.class
 es\ucab\entrenos\nucleo\seguridad\jwt\ServicioJWT.class
 es\ucab\entrenos\modulos\identidad\repositorios\IRepositorioCorreoPermitido.class
 es\ucab\entrenos\modulos\identidad\repositorios\RepositorioCorreoPermitido$1.class
-es\ucab\entrenos\modulos\publicacion\servicios\CachePublicaciones.class
 es\ucab\entrenos\modulos\identidad\dtos\EdicionOfertaDTO.class
 es\ucab\entrenos\modulos\identidad\modelos\EstadoCuenta.class
 es\ucab\entrenos\modulos\publicacion\dto\CancelarRequestDTO.class

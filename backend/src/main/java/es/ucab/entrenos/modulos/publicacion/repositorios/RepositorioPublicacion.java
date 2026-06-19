@@ -47,15 +47,21 @@ public class RepositorioPublicacion implements IRepositorioPublicacion {
         }
     }
 
-    @Override
-    public List<Publicacion> obtenerTodas() {
-        lock.readLock().lock();
+    private List<Publicacion> leerDesdeDisco() {
         try (Reader reader = new InputStreamReader(new FileInputStream(RUTA_ARCHIVO), StandardCharsets.UTF_8)) {
             Type tipoLista = new TypeToken<ArrayList<Publicacion>>() {}.getType();
             List<Publicacion> publicaciones = gson.fromJson(reader, tipoLista);
             return publicaciones != null ? publicaciones : new ArrayList<>();
         } catch (IOException e) {
             throw new RuntimeException("Error al leer publicaciones.json", e);
+        }
+    }
+
+    @Override
+    public List<Publicacion> obtenerTodas() {
+        lock.readLock().lock();
+        try {
+            return leerDesdeDisco();
         } finally {
             lock.readLock().unlock();
         }
@@ -72,7 +78,7 @@ public class RepositorioPublicacion implements IRepositorioPublicacion {
     public void guardar(Publicacion publicacion) {
         lock.writeLock().lock();
         try {
-            List<Publicacion> todas = obtenerTodas();
+            List<Publicacion> todas = leerDesdeDisco();
             boolean existe = false;
             for (int i = 0; i < todas.size(); i++) {
                 Publicacion pBD = todas.get(i);

@@ -28,6 +28,7 @@ import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioPublicacion
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioTransaccion;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioSolicitud;
 import es.ucab.entrenos.modulos.publicacion.modelos.Solicitud;
+import es.ucab.entrenos.modulos.publicacion.utilidades.CachePublicacion;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public class ServicioPublicacion {
     private static final Random RANDOM = new Random();
 
     @org.springframework.beans.factory.annotation.Autowired
-    private CachePublicaciones cachePublicaciones;
+    private CachePublicacion cachePublicacion;
 
     public ServicioPublicacion(IRepositorioPublicacion repositorioPublicacion,
                                IRepositorioTransaccion repositorioTransaccion,
@@ -75,9 +76,15 @@ public class ServicioPublicacion {
 
     @PostConstruct
     public void initCache() {
-        List<Publicacion> todas = repositorioPublicacion.obtenerTodas();
-        cachePublicaciones.refrescar(todas);
-        log.info("Cache de publicaciones inicializada con {} elementos", todas.size());
+        refrescarCache();
+    }
+
+    private void refrescarCache() {
+        List<PublicacionResponseDTO> todas = repositorioPublicacion.obtenerTodas().stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+        cachePublicacion.refrescar(todas);
+        log.info("CachePublicacion inicializada con {} publicaciones en total", todas.size());
     }
 
     public List<Publicacion> obtenerTodasLasPublicaciones() {
@@ -86,13 +93,7 @@ public class ServicioPublicacion {
 
     public List<PublicacionResponseDTO> obtenerPublicacionesFiltradas(String tipo, String servicio) {
         if (tipo == null && servicio == null) {
-            long inicio = System.currentTimeMillis();
-            List<PublicacionResponseDTO> resultado = cachePublicaciones.getRecientes().stream()
-                    .map(this::toResponseDTO)
-                    .sorted(Comparator.comparingDouble(PublicacionResponseDTO::getReputacionUsuario).reversed())
-                    .collect(Collectors.toList());
-            log.info("Cache hit para landing page ({} ms)", System.currentTimeMillis() - inicio);
-            return resultado;
+            return cachePublicacion.getTop10();
         }
         return repositorioPublicacion.obtenerTodas().stream()
                 .filter(p -> tipo == null || tipo.isEmpty() || p.getTipoPublicacion().equalsIgnoreCase(tipo))
@@ -102,6 +103,17 @@ public class ServicioPublicacion {
                 .map(this::toResponseDTO)
                 .sorted(Comparator.comparingDouble(PublicacionResponseDTO::getReputacionUsuario).reversed())
                 .collect(Collectors.toList());
+    }
+
+    public List<PublicacionResponseDTO> obtenerPublicacionesSinCache() {
+        long inicio = System.currentTimeMillis();
+        List<PublicacionResponseDTO> resultado = repositorioPublicacion.obtenerTodas().stream()
+                .map(this::toResponseDTO)
+                .sorted(Comparator.comparingDouble(PublicacionResponseDTO::getReputacionUsuario).reversed())
+                .limit(10)
+                .collect(Collectors.toList());
+        log.info("Publicaciones leidas desde disco ({} ms)", System.currentTimeMillis() - inicio);
+        return resultado;
     }
 
     public List<RecomendacionDTO> obtenerRecomendadas(String idUsuario) {
@@ -182,7 +194,7 @@ public class ServicioPublicacion {
         }
         publicacion.setDisponible(true);
         repositorioPublicacion.guardar(publicacion);
-        cachePublicaciones.refrescar(repositorioPublicacion.obtenerTodas());
+        refrescarCache();
         return toResponseDTO(publicacion);
     }
 
@@ -193,8 +205,7 @@ public class ServicioPublicacion {
         pub.setPrecioCreditos(precioCreditos);
         pub.setDescripcion(descripcion);
         repositorioPublicacion.guardar(pub);
-        cachePublicaciones.invalidar(idPublicacion);
-        cachePublicaciones.refrescar(repositorioPublicacion.obtenerTodas());
+        refrescarCache();
         return pub;
     }
 
@@ -210,7 +221,7 @@ public class ServicioPublicacion {
 
     public void guardarPublicacion(Publicacion publicacion) {
         repositorioPublicacion.guardar(publicacion);
-        cachePublicaciones.refrescar(repositorioPublicacion.obtenerTodas());
+        refrescarCache();
     }
 
     public List<PublicacionResponseDTO> obtenerPublicacionesPorUsuario(String idUsuario) {
@@ -226,7 +237,7 @@ public class ServicioPublicacion {
         boolean removido = todas.removeIf(p -> p.getIdPublicacion().equalsIgnoreCase(id));
         if (removido) {
             repositorioPublicacion.guardarTodas(todas);
-            cachePublicaciones.refrescar(repositorioPublicacion.obtenerTodas());
+            refrescarCache();
         }
         return removido;
     }
@@ -240,7 +251,7 @@ public class ServicioPublicacion {
         boolean removido = todas.removeIf(p -> idInstanciaCatalogo.equals(p.getIdInstanciaCatalogo()));
         if (removido) {
             repositorioPublicacion.guardarTodas(todas);
-            cachePublicaciones.refrescar(repositorioPublicacion.obtenerTodas());
+            refrescarCache();
         }
         return removido;
     }
