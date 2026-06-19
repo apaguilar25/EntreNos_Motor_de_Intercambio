@@ -79,6 +79,28 @@ public class ServicioPublicacion {
         refrescarCache();
     }
 
+    public PublicacionResponseDTO crearPublicacion(Publicacion publicacion) {
+        if (publicacion.getIdPublicacion() == null || publicacion.getIdPublicacion().isEmpty()) {
+            publicacion.setIdPublicacion("PUB-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+        }
+        publicacion.setDisponible(true);
+        repositorioPublicacion.guardar(publicacion);
+        refrescarCache();
+        return toResponseDTO(publicacion);
+    }
+
+    public Publicacion actualizarPublicacion(String idPublicacion, int precioCreditos, String descripcion) {
+        Publicacion pub = repositorioPublicacion.obtenerPorId(idPublicacion)
+                .orElseThrow(() -> new IllegalArgumentException("Publicación no encontrada en el muro: " + idPublicacion));
+
+        pub.setPrecioCreditos(precioCreditos);
+        pub.setDescripcion(descripcion);
+        repositorioPublicacion.guardar(pub);
+        refrescarCache();
+        return pub;
+    }
+
+
     private void refrescarCache() {
         List<PublicacionResponseDTO> todas = repositorioPublicacion.obtenerTodas().stream()
                 .map(this::toResponseDTO)
@@ -188,26 +210,6 @@ public class ServicioPublicacion {
         };
     }
 
-    public PublicacionResponseDTO crearPublicacion(Publicacion publicacion) {
-        if (publicacion.getIdPublicacion() == null || publicacion.getIdPublicacion().isEmpty()) {
-            publicacion.setIdPublicacion("PUB-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
-        }
-        publicacion.setDisponible(true);
-        repositorioPublicacion.guardar(publicacion);
-        refrescarCache();
-        return toResponseDTO(publicacion);
-    }
-
-    public Publicacion actualizarPublicacion(String idPublicacion, int precioCreditos, String descripcion) {
-        Publicacion pub = repositorioPublicacion.obtenerPorId(idPublicacion)
-                .orElseThrow(() -> new IllegalArgumentException("Publicación no encontrada en el muro: " + idPublicacion));
-        
-        pub.setPrecioCreditos(precioCreditos);
-        pub.setDescripcion(descripcion);
-        repositorioPublicacion.guardar(pub);
-        refrescarCache();
-        return pub;
-    }
 
     public Optional<Publicacion> obtenerPublicacionPorId(String id) {
         return repositorioPublicacion.obtenerPorId(id);

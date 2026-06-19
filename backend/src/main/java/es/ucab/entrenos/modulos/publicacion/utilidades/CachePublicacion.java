@@ -20,10 +20,12 @@ public class CachePublicacion {
 
     public void actualizar(List<PublicacionResponseDTO> todas) {
         List<PublicacionResponseDTO> nuevo = todas.stream()
-                .sorted(Comparator.comparingDouble(PublicacionResponseDTO::getReputacionUsuario).reversed())
+                .sorted(Comparator.comparingDouble(
+                        PublicacionResponseDTO::getReputacionUsuario)
+                .reversed())
                 .limit(MAX_SIZE)
-                .collect(Collectors.collectingAndThen(
-                        Collectors.toList(), Collections::unmodifiableList));
+                .collect(Collectors.collectingAndThen(Collectors.toList(),
+                        Collections::unmodifiableList));
         this.top10 = nuevo;
         log.debug("CachePublicacion actualizada con {} publicaciones", nuevo.size());
     }
