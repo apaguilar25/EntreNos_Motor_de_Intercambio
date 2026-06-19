@@ -1,6 +1,6 @@
 package es.ucab.entrenos.modulos.publicacion.controladores;
 
-import es.ucab.entrenos.modulos.publicacion.dto.CancelarRequestDTO;
+import es.ucab.entrenos.modulos.publicacion.dtos.CancelarRequestDTO;
 import es.ucab.entrenos.modulos.publicacion.dto.RespuestaSolicitudDTO;
 import es.ucab.entrenos.modulos.publicacion.dto.SolicitudRequestDTO;
 import es.ucab.entrenos.modulos.publicacion.modelos.Solicitud;

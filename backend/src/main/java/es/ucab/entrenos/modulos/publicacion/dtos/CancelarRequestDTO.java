@@ -1,4 +1,4 @@
-package es.ucab.entrenos.modulos.publicacion.dto;
+package es.ucab.entrenos.modulos.publicacion.dtos;
 
 public class CancelarRequestDTO {
     private String idUsuario;
