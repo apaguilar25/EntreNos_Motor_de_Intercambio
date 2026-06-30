@@ -27,6 +27,7 @@ es\ucab\entrenos\modulos\subasta\modelos\EstadoFisico.class
 es\ucab\entrenos\modulos\identidad\modelos\Habilidad.class
 es\ucab\entrenos\modulos\notificacion\modelos\TipoNotificacion.class
 es\ucab\entrenos\modulos\notificacion\repositorios\RepositorioNotificacion.class
+es\ucab\entrenos\modulos\publicacion\servicios\ServicioTransaccion.class
 es\ucab\entrenos\modulos\identidad\excepciones\TelefonoDuplicadoException.class
 es\ucab\entrenos\modulos\publicacion\dtos\ResponderCancelacionRequestDTO.class
 es\ucab\entrenos\modulos\publicacion\controladores\ControladorSolicitud.class
@@ -74,10 +75,12 @@ es\ucab\entrenos\modulos\utility\UtilidadTexto.class
 es\ucab\entrenos\modulos\identidad\dtos\LoginRequestDTO.class
 es\ucab\entrenos\modulos\publicacion\repositorios\IRepositorioPublicacion.class
 es\ucab\entrenos\modulos\identidad\dtos\SaldoResponseDTO.class
+es\ucab\entrenos\modulos\notificacion\servicios\SseService.class
 es\ucab\entrenos\modulos\gamificacion\repositorios\IRepositorioLogro.class
 es\ucab\entrenos\modulos\identidad\dtos\NuevaNecesidadIndividualDTO.class
 es\ucab\entrenos\modulos\publicacion\controladores\ControladorPublicacion.class
 es\ucab\entrenos\modulos\subasta\controladores\ControladorPropuesta.class
+es\ucab\entrenos\modulos\publicacion\dtos\CancelarRequestDTO.class
 es\ucab\entrenos\modulos\identidad\servicios\ServicioCatalogo.class
 es\ucab\entrenos\modulos\publicacion\modelos\Cancelacion.class
 es\ucab\entrenos\modulos\gamificacion\repositorios\IRepositorioPodio.class
@@ -109,7 +112,6 @@ es\ucab\entrenos\modulos\identidad\repositorios\IRepositorioCorreoPermitido.clas
 es\ucab\entrenos\modulos\identidad\repositorios\RepositorioCorreoPermitido$1.class
 es\ucab\entrenos\modulos\identidad\dtos\EdicionOfertaDTO.class
 es\ucab\entrenos\modulos\identidad\modelos\EstadoCuenta.class
-es\ucab\entrenos\modulos\publicacion\dto\CancelarRequestDTO.class
 es\ucab\entrenos\modulos\publicacion\dtos\PublicacionResponseDTO.class
 es\ucab\entrenos\modulos\subasta\servicios\ServicioPropuesta.class
 es\ucab\entrenos\modulos\gamificacion\repositorios\RepositorioPodio.class

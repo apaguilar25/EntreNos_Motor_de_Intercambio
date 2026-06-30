@@ -1,0 +1,41 @@
+[ {
+  "idNotificacion" : "4cc7bb13-2a4f-412a-bb5c-c40a1aa51c56",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a1b2c3d4-e5f6-7890-abcd-000000000002",
+  "mensaje" : "La solicitud de Ana García para Programación Web ha expirado automáticamente.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1782789220610,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "593dfd33-14ad-4cbb-8f84-0f50a176c31e",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a1b2c3d4-e5f6-7890-abcd-000000000001",
+  "mensaje" : "Tu solicitud para Programación Web ha expirado (sin respuesta).",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1782789220656,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "e0bd4459-c743-4467-a26b-21110d3e8588",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a1b2c3d4-e5f6-7890-abcd-000000000002",
+  "mensaje" : "La solicitud de María Rodríguez para Clases de Piano ha expirado automáticamente.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1782789220671,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "3a1d7948-2aae-4817-ba74-ead2f83c53b7",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a1b2c3d4-e5f6-7890-abcd-000000000003",
+  "mensaje" : "Tu solicitud para Clases de Piano ha expirado (sin respuesta).",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1782789220675,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+} ]

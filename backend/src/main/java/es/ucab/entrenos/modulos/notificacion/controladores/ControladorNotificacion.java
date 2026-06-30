@@ -2,8 +2,11 @@ package es.ucab.entrenos.modulos.notificacion.controladores;
 
 import es.ucab.entrenos.modulos.notificacion.modelos.Notificacion;
 import es.ucab.entrenos.modulos.notificacion.servicios.ServicioNotificacion;
+import es.ucab.entrenos.modulos.notificacion.servicios.SseService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.util.List;
 import java.util.Map;
 
@@ -12,9 +15,16 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:5173")
 public class ControladorNotificacion {
     private final ServicioNotificacion servicioNotificacion;
+    private final SseService sseService;
 
-    public ControladorNotificacion(ServicioNotificacion servicioNotificacion) {
+    public ControladorNotificacion(ServicioNotificacion servicioNotificacion, SseService sseService) {
         this.servicioNotificacion = servicioNotificacion;
+        this.sseService = sseService;
+    }
+
+    @GetMapping(value = "/stream/{idUsuario}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter stream(@PathVariable String idUsuario) {
+        return sseService.suscribir(idUsuario);
     }
 
     @GetMapping("/{idDestinatario}")

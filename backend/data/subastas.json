@@ -1,42 +1,66 @@
-[
+﻿[
   {
-    "id": "SUB-5A909735",
-    "idPropietario": "84e724bf-624b-4141-9357-df7da92e61eb",
-    "nombreActivo": "Bicicleta Montaña Rodada 29",
-    "descripcion": "Bicicleta en buen estado, ideal para rutas de montaña",
+    "id": "SUB-YOGA",
+    "idPropietario": "14a5f94a-c35f-434a-82eb-d687e9b2d618",
+    "nombreActivo": "Esterilla de Yoga profesional",
+    "descripcion": "Esterilla de yoga Manduka Pro, color morado, 6mm de grosor. Incluye correa de transporte.",
     "estadoFisico": "USADO",
-    "imagenesUrls": [
-      "https://ejemplo.com/bici1.jpg"
-    ],
-    "fechaInicio": "2026-06-15T20:25:11.6801178",
-    "fechaFinalizacionLicitacion": "2026-06-22T20:25:11.6791139",
+    "imagenesUrls": ["https://ejemplo.com/esterilla1.jpg"],
+    "fechaInicio": "2026-06-25T10:00:00",
+    "fechaFinalizacionLicitacion": "2026-07-10T10:00:00",
     "estado": "ACTIVA",
-    "propuestas": [
-      {
-        "idPropuesta": "PROP-055172",
-        "idSubasta": "SUB-5A909735",
-        "idPostor": "2f0c416a-2948-4d3c-9390-6242b700a711",
-        "bienesOfrecidos": [
-          {
-            "nombre": "Libros de programación",
-            "cantidad": 3
-          },
-          {
-            "nombre": "Curso online de Java",
-            "cantidad": 1
-          }
-        ],
-        "descripcion": "Ofrezco libros de programación y un curso online",
-        "estadoPropuesta": "EN_EVALUACION",
-        "estadoFisico": "NUEVO",
-        "imagenesUrls": [
-          "https://ejemplo.com/libros.jpg"
-        ],
-        "fechaPropuesta": "2026-06-15T20:26:38.2641723"
-      }
-    ],
+    "idPropuestaGanadora": null,
+    "propuestas": [],
     "propietarioConfirmoEntrega": false,
     "ganadorConfirmoEntrega": false,
-    "version": 1
+    "version": 0
+  },
+  {
+    "id": "SUB-GUITARRA",
+    "idPropietario": "f551477f-6cb5-4abe-b204-928c24d11d7c",
+    "nombreActivo": "Guitarra ac\u00fastica Yamaha",
+    "descripcion": "Guitarra ac\u00fastica Yamaha F310, cuerdas de acero, incluye funda y afinador.",
+    "estadoFisico": "USADO",
+    "imagenesUrls": ["https://ejemplo.com/guitarra1.jpg"],
+    "fechaInicio": "2026-06-20T15:30:00",
+    "fechaFinalizacionLicitacion": "2026-07-05T15:30:00",
+    "estado": "ACTIVA",
+    "idPropuestaGanadora": null,
+    "propuestas": [],
+    "propietarioConfirmoEntrega": false,
+    "ganadorConfirmoEntrega": false,
+    "version": 0
+  },
+  {
+    "id": "SUB-HERRAMIENTAS",
+    "idPropietario": "eb2dd112-8d4e-4f62-836b-46e145e22d2c",
+    "nombreActivo": "Kit de herramientas el\u00e9ctricas",
+    "descripcion": "Taladro inal\u00e1mbrico Black+Decker + accesorios. Como nuevo, usado solo una vez.",
+    "estadoFisico": "NUEVO",
+    "imagenesUrls": ["https://ejemplo.com/herramientas1.jpg"],
+    "fechaInicio": "2026-06-28T09:00:00",
+    "fechaFinalizacionLicitacion": "2026-07-12T09:00:00",
+    "estado": "ACTIVA",
+    "idPropuestaGanadora": null,
+    "propuestas": [],
+    "propietarioConfirmoEntrega": false,
+    "ganadorConfirmoEntrega": false,
+    "version": 0
+  },
+  {
+    "id": "SUB-LIBROS",
+    "idPropietario": "21785cf5-c265-456b-84c1-b8a889894b27",
+    "nombreActivo": "Libros de jardiner\u00eda",
+    "descripcion": "Lote de 5 libros sobre jardiner\u00eda, paisajismo y bot\u00e1nica b\u00e1sica. En perfecto estado.",
+    "estadoFisico": "USADO",
+    "imagenesUrls": ["https://ejemplo.com/libros1.jpg"],
+    "fechaInicio": "2026-06-22T11:00:00",
+    "fechaFinalizacionLicitacion": "2026-07-08T11:00:00",
+    "estado": "ACTIVA",
+    "idPropuestaGanadora": null,
+    "propuestas": [],
+    "propietarioConfirmoEntrega": false,
+    "ganadorConfirmoEntrega": false,
+    "version": 0
   }
 ]

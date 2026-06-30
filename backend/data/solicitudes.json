@@ -1,1 +1,56 @@
-[]
+[
+  {
+    "idSolicitud": "SOL-001",
+    "idPublicacion": "PUB-YOGA0001",
+    "idSolicitante": "f551477f-6cb5-4abe-b204-928c24d11d7c",
+    "estado": "PENDIENTE",
+    "fechaCreacion": 1782786000000,
+    "fechaLimiteRespuesta": 1783218000000,
+    "version": 0
+  },
+  {
+    "idSolicitud": "SOL-002",
+    "idPublicacion": "PUB-INGLES01",
+    "idSolicitante": "21785cf5-c265-456b-84c1-b8a889894b27",
+    "estado": "PENDIENTE",
+    "fechaCreacion": 1782786100000,
+    "fechaLimiteRespuesta": 1783218100000,
+    "version": 0
+  },
+  {
+    "idSolicitud": "SOL-003",
+    "idPublicacion": "PUB-PROG0001",
+    "idSolicitante": "14a5f94a-c35f-434a-82eb-d687e9b2d618",
+    "estado": "ACEPTADA",
+    "fechaCreacion": 1782700000000,
+    "fechaLimiteRespuesta": 1783132000000,
+    "version": 1
+  },
+  {
+    "idSolicitud": "SOL-004",
+    "idPublicacion": "PUB-JARDIN01",
+    "idSolicitante": "eb2dd112-8d4e-4f62-836b-46e145e22d2c",
+    "estado": "PENDIENTE",
+    "fechaCreacion": 1782786300000,
+    "fechaLimiteRespuesta": 1783218300000,
+    "version": 0
+  },
+  {
+    "idSolicitud": "SOL-F7C4923F",
+    "idPublicacion": "PUB-MACOCIN",
+    "idSolicitante": "14a5f94a-c35f-434a-82eb-d687e9b2d618",
+    "estado": "PENDIENTE",
+    "fechaCreacion": 1782791268061,
+    "fechaLimiteRespuesta": 1783223268061,
+    "version": 0
+  },
+  {
+    "idSolicitud": "SOL-54F9DAF0",
+    "idPublicacion": "PUB-MECANICA",
+    "idSolicitante": "14a5f94a-c35f-434a-82eb-d687e9b2d618",
+    "estado": "PENDIENTE",
+    "fechaCreacion": 1782791282630,
+    "fechaLimiteRespuesta": 1783223282630,
+    "version": 0
+  }
+]

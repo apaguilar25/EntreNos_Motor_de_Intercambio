@@ -1,22 +1,16 @@
 [
-  {
-    "id": "HAB-001",
-    "categoria": "Plomería"
-  },
-  {
-    "id": "HAB-002",
-    "categoria": "Electricidad"
-  },
-  {
-    "id": "HAB-003",
-    "categoria": "Carpintería"
-  },
-  {
-    "id": "HAB-004",
-    "categoria": "Limpieza del Hogar"
-  },
-  {
-    "id": "HAB-005",
-    "categoria": "Soporte Técnico / Computación"
-  }
+  { "id": "HAB-001", "categoria": "Plomer\u00eda" },
+  { "id": "HAB-002", "categoria": "Electricidad" },
+  { "id": "HAB-003", "categoria": "Carpinter\u00eda" },
+  { "id": "HAB-004", "categoria": "Limpieza del Hogar" },
+  { "id": "HAB-005", "categoria": "Soporte T\u00e9cnico / Computaci\u00f3n" },
+  { "id": "HAB-006", "categoria": "Yoga" },
+  { "id": "HAB-007", "categoria": "Cocina Italiana" },
+  { "id": "HAB-008", "categoria": "Programaci\u00f3n Web" },
+  { "id": "HAB-009", "categoria": "Piano Cl\u00e1sico" },
+  { "id": "HAB-010", "categoria": "Ingl\u00e9s Conversacional" },
+  { "id": "HAB-011", "categoria": "Mec\u00e1nica de Bicicletas" },
+  { "id": "HAB-012", "categoria": "Jardiner\u00eda" },
+  { "id": "HAB-013", "categoria": "Electricidad B\u00e1sica" },
+  { "id": "HAB-014", "categoria": "Guitarra Ac\u00fastica" }
 ]

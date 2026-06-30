@@ -63,11 +63,12 @@ C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\notificacion\repositorios\IRepositorioNotificacion.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\notificacion\repositorios\RepositorioNotificacion.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\notificacion\servicios\ServicioNotificacion.java
+C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\notificacion\servicios\SseService.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\controladores\ControladorPublicacion.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\controladores\ControladorSolicitud.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\controladores\ControladorTransaccion.java
-C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\dto\CancelarRequestDTO.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\dtos\CalificarRequestDTO.java
+C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\dtos\CancelarRequestDTO.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\dtos\ConfirmacionTransaccionResponseDTO.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\dtos\PublicacionResponseDTO.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\dtos\RecomendacionDTO.java
@@ -98,6 +99,7 @@ C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\servicios\ServicioExpiracion.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\servicios\ServicioPublicacion.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\servicios\ServicioSolicitud.java
+C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\servicios\ServicioTransaccion.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\publicacion\utilidades\CachePublicacion.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\reputacion\controladores\ControladorReputacion.java
 C:\Users\PC\IdeaProjects\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\reputacion\dtos\ResenasPorUsuarioDTO.java

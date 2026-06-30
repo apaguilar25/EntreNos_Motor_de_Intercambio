@@ -1,52 +1,14 @@
-[
-  {
-    "idPublicacion": "PUB-6C4481D0",
-    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
-    "tipoPublicacion": "HABILIDAD",
-    "nombreServicio": "Clases de Yoga",
-    "descripcion": "Clases de yoga para principiantes",
-    "precioCreditos": 2,
-    "disponible": true,
-    "version": 0
-  },
-  {
-    "idPublicacion": "PUB-2F687B5B",
-    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
-    "tipoPublicacion": "HABILIDAD",
-    "nombreServicio": "Masajes Relajantes",
-    "descripcion": "Masajes de espalda y cuello",
-    "precioCreditos": 3,
-    "disponible": true,
-    "version": 0
-  },
-  {
-    "idPublicacion": "PUB-997EECCA",
-    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
-    "tipoPublicacion": "HABILIDAD",
-    "nombreServicio": "Clases de Piano",
-    "descripcion": "Clases de piano nivel básico",
-    "precioCreditos": 4,
-    "disponible": true,
-    "version": 0
-  },
-  {
-    "idPublicacion": "PUB-89221E86",
-    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
-    "tipoPublicacion": "HABILIDAD",
-    "nombreServicio": "Cuidado de Mascotas",
-    "descripcion": "Paseo y cuidado de perros y gatos",
-    "precioCreditos": 1,
-    "disponible": true,
-    "version": 0
-  },
-  {
-    "idPublicacion": "PUB-DD479444",
-    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
-    "tipoPublicacion": "HABILIDAD",
-    "nombreServicio": "Clases de Cocina",
-    "descripcion": "Cocina italiana básica",
-    "precioCreditos": 2,
-    "disponible": true,
-    "version": 0
-  }
+﻿[
+  {"idPublicacion":"PUB-YOGA0001","idUsuario":"14a5f94a-c35f-434a-82eb-d687e9b2d618","tipoPublicacion":"HABILIDAD","nombreServicio":"Clases de Yoga","descripcion":"Clases de yoga para principiantes y nivel intermedio, incluye sesiones de meditacion guiada","precioCreditos":2,"disponible":true,"idInstanciaCatalogo":"h-yoga-0001-4000-8000-000000000001","version":0},
+  {"idPublicacion":"PUB-COCINA01","idUsuario":"14a5f94a-c35f-434a-82eb-d687e9b2d618","tipoPublicacion":"HABILIDAD","nombreServicio":"Cocina Italiana","descripcion":"Enseno a preparar pasta fresca, pizza napolitana y postres italianos tradicionales","precioCreditos":3,"disponible":true,"idInstanciaCatalogo":"h-cocina-0001-4000-8000-000000000001","version":0},
+  {"idPublicacion":"PUB-PROG0001","idUsuario":"f551477f-6cb5-4abe-b204-928c24d11d7c","tipoPublicacion":"HABILIDAD","nombreServicio":"Programacion Web","descripcion":"Clases de desarrollo web full-stack: HTML, CSS, JavaScript, React y Java Spring Boot","precioCreditos":4,"disponible":true,"idInstanciaCatalogo":"h-prog-0001-4000-8000-000000000002","version":0},
+  {"idPublicacion":"PUB-PIANO01","idUsuario":"f551477f-6cb5-4abe-b204-928c24d11d7c","tipoPublicacion":"HABILIDAD","nombreServicio":"Clases de Piano","descripcion":"Clases de piano clasico desde nivel basico hasta intermedio, teoria musical incluida","precioCreditos":3,"disponible":true,"idInstanciaCatalogo":"h-piano-0001-4000-8000-000000000002","version":0},
+  {"idPublicacion":"PUB-INGLES01","idUsuario":"eb2dd112-8d4e-4f62-836b-46e145e22d2c","tipoPublicacion":"HABILIDAD","nombreServicio":"Ingles Conversacional","descripcion":"Clases de ingles conversacional para todos los niveles, preparacion para examenes internacionales","precioCreditos":2,"disponible":true,"idInstanciaCatalogo":"h-ingles-0001-4000-8000-000000000003","version":0},
+  {"idPublicacion":"PUB-MECANICA","idUsuario":"eb2dd112-8d4e-4f62-836b-46e145e22d2c","tipoPublicacion":"HABILIDAD","nombreServicio":"Mecanica de Bicicletas","descripcion":"Reparacion y mantenimiento basico de bicicletas: frenos, cambios, ruedas y lubricacion","precioCreditos":3,"disponible":true,"idInstanciaCatalogo":"h-mecanica-0001-4000-8000-000000000003","version":0},
+  {"idPublicacion":"PUB-JARDIN01","idUsuario":"21785cf5-c265-456b-84c1-b8a889894b27","tipoPublicacion":"HABILIDAD","nombreServicio":"Jardineria","descripcion":"Servicios de jardineria: poda de arboles, siembra de plantas ornamentales y diseno de jardines","precioCreditos":2,"disponible":true,"idInstanciaCatalogo":"h-jardin-0001-4000-8000-000000000004","version":0},
+  {"idPublicacion":"PUB-ELECTRI","idUsuario":"21785cf5-c265-456b-84c1-b8a889894b27","tipoPublicacion":"HABILIDAD","nombreServicio":"Electricidad Basica","descripcion":"Reparaciones electricas domiciliarias: instalacion de lamparas, tomacorrientes y cableado basico","precioCreditos":4,"disponible":true,"idInstanciaCatalogo":"h-elect-0001-4000-8000-000000000004","version":0},
+  {"idPublicacion":"PUB-ANPROG","idUsuario":"14a5f94a-c35f-434a-82eb-d687e9b2d618","tipoPublicacion":"NECESIDAD","nombreServicio":"Clases de Programacion Web","descripcion":"Busco alguien que me ensene fundamentos de HTML, CSS y JavaScript para crear mi sitio web","precioCreditos":2,"disponible":true,"idInstanciaCatalogo":null,"version":0},
+  {"idPublicacion":"PUB-CANYOGA","idUsuario":"f551477f-6cb5-4abe-b204-928c24d11d7c","tipoPublicacion":"NECESIDAD","nombreServicio":"Clases de Yoga","descripcion":"Busco instructor de yoga para mejorar mi flexibilidad y reducir el estres laboral","precioCreditos":1,"disponible":true,"idInstanciaCatalogo":null,"version":0},
+  {"idPublicacion":"PUB-MACOCIN","idUsuario":"eb2dd112-8d4e-4f62-836b-46e145e22d2c","tipoPublicacion":"NECESIDAD","nombreServicio":"Clases de Cocina Italiana","descripcion":"Quiero aprender a cocinar pasta fresca, pizza y platos tipicos italianos desde cero","precioCreditos":1,"disponible":true,"idInstanciaCatalogo":null,"version":0},
+  {"idPublicacion":"PUB-PEGUITA","idUsuario":"21785cf5-c265-456b-84c1-b8a889894b27","tipoPublicacion":"NECESIDAD","nombreServicio":"Clases de Guitarra Acustica","descripcion":"Busco profesor de guitarra acustica para aprender desde cero, disponibilidad los fines de semana","precioCreditos":2,"disponible":true,"idInstanciaCatalogo":null,"version":0}
 ]

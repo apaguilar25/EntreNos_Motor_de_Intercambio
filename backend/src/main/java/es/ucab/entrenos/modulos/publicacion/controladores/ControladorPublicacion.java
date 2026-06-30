@@ -84,43 +84,4 @@ public class ControladorPublicacion {
         return ResponseEntity.ok(
                 servicioPublicacion.obtenerCalificacionesPorPublicacion(id));
     }
-
-    // --- Endpoints de Transacción ---
-    @GetMapping("/transacciones")
-    public ResponseEntity<List<Transaccion>> obtenerTransacciones() {
-        return ResponseEntity.ok(servicioPublicacion.obtenerTodasLasTransacciones());
-    }
-    @GetMapping("/transacciones/{id}")
-    public ResponseEntity<Transaccion> obtenerTransaccionPorId(@PathVariable String id) {
-        return servicioPublicacion.obtenerTransaccionPorId(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-    }
-    @PostMapping("/transacciones")
-    public ResponseEntity<Transaccion> crearTransaccion(@RequestBody Transaccion transaccion) {
-        Transaccion nueva = servicioPublicacion.crearTransaccion(transaccion);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
-    }
-    @PostMapping("/transacciones/{id}/confirmar-ofertante")
-    public ResponseEntity<?> confirmarOfertante(@PathVariable String id) {
-        try {
-            ConfirmacionTransaccionResponseDTO respuesta = servicioPublicacion.confirmarOfertante(id);
-            return ResponseEntity.ok(respuesta);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-    @PostMapping("/transacciones/{id}/confirmar-demandante")
-    public ResponseEntity<?> confirmarDemandante(@PathVariable String id) {
-        try {
-            ConfirmacionTransaccionResponseDTO respuesta = servicioPublicacion.confirmarDemandante(id);
-            return ResponseEntity.ok(respuesta);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
 }

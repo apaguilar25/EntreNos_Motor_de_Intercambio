@@ -1,1 +1,134 @@
-[]
+[
+  {
+    "idPublicacion": "PUB-YOGA0001",
+    "idUsuario": "a1b2c3d4-e5f6-7890-abcd-000000000001",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Clases de Yoga",
+    "descripcion": "Clases de yoga para principiantes y nivel intermedio, incluye sesiones de meditación guiada",
+    "precioCreditos": 2,
+    "disponible": true,
+    "idInstanciaCatalogo": "h-yoga-0001-4000-8000-000000000001",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-COCINA01",
+    "idUsuario": "a1b2c3d4-e5f6-7890-abcd-000000000001",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Cocina Italiana",
+    "descripcion": "Enseño a preparar pasta fresca, pizza napolitana y postres italianos tradicionales",
+    "precioCreditos": 3,
+    "disponible": true,
+    "idInstanciaCatalogo": "h-cocina-0001-4000-8000-000000000001",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-PROG0001",
+    "idUsuario": "a1b2c3d4-e5f6-7890-abcd-000000000002",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Programación Web",
+    "descripcion": "Clases de desarrollo web full-stack: HTML, CSS, JavaScript, React y Java Spring Boot",
+    "precioCreditos": 4,
+    "disponible": true,
+    "idInstanciaCatalogo": "h-prog-0001-4000-8000-000000000002",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-PIANO01",
+    "idUsuario": "a1b2c3d4-e5f6-7890-abcd-000000000002",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Clases de Piano",
+    "descripcion": "Clases de piano clásico desde nivel básico hasta intermedio, teoría musical incluida",
+    "precioCreditos": 3,
+    "disponible": true,
+    "idInstanciaCatalogo": "h-piano-0001-4000-8000-000000000002",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-INGLES01",
+    "idUsuario": "a1b2c3d4-e5f6-7890-abcd-000000000003",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Inglés Conversacional",
+    "descripcion": "Clases de inglés conversacional para todos los niveles, preparación para exámenes internacionales",
+    "precioCreditos": 2,
+    "disponible": true,
+    "idInstanciaCatalogo": "h-ingles-0001-4000-8000-000000000003",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-MECANICA",
+    "idUsuario": "a1b2c3d4-e5f6-7890-abcd-000000000003",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Mecánica de Bicicletas",
+    "descripcion": "Reparación y mantenimiento básico de bicicletas: frenos, cambios, ruedas y lubricación",
+    "precioCreditos": 3,
+    "disponible": true,
+    "idInstanciaCatalogo": "h-mecanica-0001-4000-8000-000000000003",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-JARDIN01",
+    "idUsuario": "a1b2c3d4-e5f6-7890-abcd-000000000004",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Jardinería",
+    "descripcion": "Servicios de jardinería: poda de árboles, siembra de plantas ornamentales y diseño de jardines",
+    "precioCreditos": 2,
+    "disponible": true,
+    "idInstanciaCatalogo": "h-jardin-0001-4000-8000-000000000004",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-ELECTRI",
+    "idUsuario": "a1b2c3d4-e5f6-7890-abcd-000000000004",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Electricidad Básica",
+    "descripcion": "Reparaciones eléctricas domiciliarias: instalación de lámparas, tomacorrientes y cableado básico",
+    "precioCreditos": 4,
+    "disponible": true,
+    "idInstanciaCatalogo": "h-elect-0001-4000-8000-000000000004",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-ANPROG",
+    "idUsuario": "a1b2c3d4-e5f6-7890-abcd-000000000001",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Clases de Programación Web",
+    "descripcion": "Busco alguien que me enseñe fundamentos de HTML, CSS y JavaScript para crear mi sitio web",
+    "precioCreditos": 2,
+    "disponible": true,
+    "idInstanciaCatalogo": null,
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-CANYOGA",
+    "idUsuario": "a1b2c3d4-e5f6-7890-abcd-000000000002",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Clases de Yoga",
+    "descripcion": "Busco instructor de yoga para mejorar mi flexibilidad y reducir el estrés laboral",
+    "precioCreditos": 1,
+    "disponible": true,
+    "idInstanciaCatalogo": null,
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-MACOCIN",
+    "idUsuario": "a1b2c3d4-e5f6-7890-abcd-000000000003",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Clases de Cocina Italiana",
+    "descripcion": "Quiero aprender a cocinar pasta fresca, pizza y platos típicos italianos desde cero",
+    "precioCreditos": 1,
+    "disponible": true,
+    "idInstanciaCatalogo": null,
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-PEGUITA",
+    "idUsuario": "a1b2c3d4-e5f6-7890-abcd-000000000004",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Clases de Guitarra Acústica",
+    "descripcion": "Busco profesor de guitarra acústica para aprender desde cero, disponibilidad los fines de semana",
+    "precioCreditos": 2,
+    "disponible": true,
+    "idInstanciaCatalogo": null,
+    "version": 0
+  }
+]

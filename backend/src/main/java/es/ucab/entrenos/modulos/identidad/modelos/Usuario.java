@@ -216,7 +216,7 @@ public class Usuario {
         }
         float sumaActual = this.promedioCalificacion * this.cantidadCalificaciones;
         this.cantidadCalificaciones++;
-        this.promedioCalificacion = (sumaActual + calificacion) / this.cantidadCalificaciones;
+        this.promedioCalificacion = Math.round(((sumaActual + calificacion) / this.cantidadCalificaciones) * 10.0f) / 10.0f;
     }
 
     public boolean isAdministrador() {

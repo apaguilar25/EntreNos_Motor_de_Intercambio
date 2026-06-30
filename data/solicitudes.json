@@ -1,1 +1,38 @@
-[]
+[
+  {
+    "idSolicitud": "SOL-YOGA01",
+    "idPublicacion": "PUB-YOGA0001",
+    "idSolicitante": "a1b2c3d4-e5f6-7890-abcd-000000000002",
+    "estado": "ACEPTADA",
+    "fechaCreacion": 1756396800000,
+    "fechaLimiteRespuesta": 1756828800000,
+    "version": 1
+  },
+  {
+    "idSolicitud": "SOL-PROG01",
+    "idPublicacion": "PUB-PROG0001",
+    "idSolicitante": "a1b2c3d4-e5f6-7890-abcd-000000000001",
+    "estado": "EXPIRADA",
+    "fechaCreacion": 1756483200000,
+    "fechaLimiteRespuesta": 1756915200000,
+    "version": 0
+  },
+  {
+    "idSolicitud": "SOL-PIANO1",
+    "idPublicacion": "PUB-PIANO01",
+    "idSolicitante": "a1b2c3d4-e5f6-7890-abcd-000000000003",
+    "estado": "EXPIRADA",
+    "fechaCreacion": 1756483200000,
+    "fechaLimiteRespuesta": 1756915200000,
+    "version": 0
+  },
+  {
+    "idSolicitud": "SOL-JARDIN",
+    "idPublicacion": "PUB-JARDIN01",
+    "idSolicitante": "a1b2c3d4-e5f6-7890-abcd-000000000001",
+    "estado": "RECHAZADA",
+    "fechaCreacion": 1756300000000,
+    "fechaLimiteRespuesta": 1756732000000,
+    "version": 1
+  }
+]

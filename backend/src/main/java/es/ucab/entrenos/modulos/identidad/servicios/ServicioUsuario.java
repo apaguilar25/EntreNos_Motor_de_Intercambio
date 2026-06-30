@@ -21,14 +21,16 @@ public class ServicioUsuario {
 
     private final IRepositorioUsuario repositorioUsuario;
     private final IRepositorioCorreoPermitido repositorioCorreoPermitido;
+    private final ServicioHabilidad servicioHabilidad;
     private final BCryptPasswordEncoder encriptador;
 
     // El capital semilla definido en el ERS
     private static final float CAPITAL_SEMILLA_INICIAL = 50.0f;
 
-    public ServicioUsuario(IRepositorioUsuario repositorioUsuario, IRepositorioCorreoPermitido repositorioCorreoPermitido) {
+    public ServicioUsuario(IRepositorioUsuario repositorioUsuario, IRepositorioCorreoPermitido repositorioCorreoPermitido, ServicioHabilidad servicioHabilidad) {
         this.repositorioUsuario = repositorioUsuario;
         this.repositorioCorreoPermitido = repositorioCorreoPermitido;
+        this.servicioHabilidad = servicioHabilidad;
         this.encriptador = new BCryptPasswordEncoder();
     }
 
@@ -143,6 +145,7 @@ public class ServicioUsuario {
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
 
         verificarUsuarioActivo(usuario);
+        validarCategoriaEnCatalogoMaestro(habilidadBase.getCategoria());
 
         HabilidadOfrecida nuevaOferta = new HabilidadOfrecida(habilidadBase, precioCreditos, descripcionServicio);
         usuario.agregarHabilidadOfrecida(nuevaOferta);
@@ -156,11 +159,20 @@ public class ServicioUsuario {
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
 
         verificarUsuarioActivo(usuario);
+        validarCategoriaEnCatalogoMaestro(necesidadBase.getCategoria());
 
         NecesidadRegistrada nuevaNecesidad = new NecesidadRegistrada(necesidadBase, descripcionCondiciones);
         usuario.agregarNecesidad(nuevaNecesidad);
         guardar(usuario);
         return nuevaNecesidad;
+    }
+
+    private void validarCategoriaEnCatalogoMaestro(String categoria) {
+        boolean existe = servicioHabilidad.obtenerTodas().stream()
+                .anyMatch(h -> h.getCategoria().equalsIgnoreCase(categoria.trim()));
+        if (!existe) {
+            throw new IllegalArgumentException("La categoría '" + categoria + "' no existe en el catálogo maestro de habilidades.");
+        }
     }
 
     // Carga/Actualización de la Foto de Perfil
