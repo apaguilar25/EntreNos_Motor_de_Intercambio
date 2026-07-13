@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Image as ImageIcon } from 'lucide-react';
+import { ToastContext } from '../contextos/ToastContext';
+import { useContext } from 'react';
 
 const Publish = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialType = searchParams.get('type') || 'oferta';
+  const { addToast } = useContext(ToastContext);
 
   const [type, setType] = useState(initialType);
   const [title, setTitle] = useState('');
@@ -97,7 +100,7 @@ const Publish = () => {
             className="btn-primary" 
             style={{ flex: 1, padding: '0.75rem', borderRadius: '0.5rem' }}
             onClick={() => {
-              alert('Publicación creada (Mock)');
+              addToast('Publicación creada (Mock)', 'success');
               navigate(-1);
             }}
           >

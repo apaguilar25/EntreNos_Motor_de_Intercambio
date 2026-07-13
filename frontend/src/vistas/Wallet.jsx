@@ -1,10 +1,12 @@
 import React, { useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AppContext } from '../App';
+import { ToastContext } from '../contextos/ToastContext';
 import { Wallet as WalletIcon, ArrowUpRight, ArrowDownRight, Clock, X, Star, AlertTriangle, Image as ImageIcon, CheckCircle } from 'lucide-react';
 
 const Wallet = () => {
   const { user, setBalance, controladorPerfil } = useContext(AppContext);
+  const { addToast } = useContext(ToastContext);
   const [selectedTx, setSelectedTx] = useState(null);
   
   // States for Modals
@@ -186,7 +188,7 @@ const Wallet = () => {
                 setSelectedTx(null);
                 setRating(0);
                 // Aquí simularíamos abrir el pop-up de medalla desbloqueada si aplicara
-                alert("¡Gracias por calificar! Se ha liberado el pago.");
+                addToast("¡Gracias por calificar! Se ha liberado el pago.", "success");
               }}
               disabled={rating === 0}
             >
@@ -227,7 +229,7 @@ const Wallet = () => {
                 setTransactions(transactions.map(t => t.id === selectedTx.id ? { ...t, status: 'Bajo Revisión' } : t));
                 setShowFraudModal(false);
                 setSelectedTx(null);
-                alert("Incidencia reportada. El equipo de soporte lo revisará pronto.");
+                addToast("Incidencia reportada. El equipo de soporte lo revisará pronto.", "success");
               }}
             >
               Enviar Reporte

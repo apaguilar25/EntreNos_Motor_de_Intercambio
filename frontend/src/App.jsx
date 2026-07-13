@@ -17,6 +17,11 @@ import { ControladorGamificacion } from './controladores/ControladorGamificacion
 import { ServicioAdministrador } from './servicios_api/ServicioAdministrador';
 import { ControladorAdministrador } from './controladores/ControladorAdministrador';
 
+// Contexto de Notificaciones Toast y Confirm
+import { ToastProvider } from './contextos/ToastContext';
+import { ConfirmProvider } from './contextos/ConfirmContext';
+import ToastContainer from './componentes/ToastContainer';
+
 // Vistas
 import IniciarSesion from './vistas/IniciarSesion';
 import PlantillaPrincipal from './vistas/PlantillaPrincipal';
@@ -96,9 +101,12 @@ function App() {
   };
 
   return (
-    <AppContext.Provider value={contextValue}>
-      <Router>
-        <Routes>
+    <ConfirmProvider>
+      <ToastProvider>
+        <AppContext.Provider value={contextValue}>
+        <Router>
+          <ToastContainer />
+          <Routes>
           <Route path="/login" element={<IniciarSesion />} />
           <Route path="/onboarding" element={user ? <CatalogOnboarding /> : <Navigate to="/login" />} />
           <Route path="/" element={user ? <PlantillaPrincipal /> : <Navigate to="/login" />}>
@@ -117,6 +125,8 @@ function App() {
         </Routes>
       </Router>
     </AppContext.Provider>
+    </ToastProvider>
+    </ConfirmProvider>
   );
 }
 

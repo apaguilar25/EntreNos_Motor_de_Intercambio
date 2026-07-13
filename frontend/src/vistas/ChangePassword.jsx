@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Lock } from 'lucide-react';
+import { ToastContext } from '../contextos/ToastContext';
+import { useContext } from 'react';
 
 const ChangePassword = () => {
   const navigate = useNavigate();
+  const { addToast } = useContext(ToastContext);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -73,10 +76,10 @@ const ChangePassword = () => {
             style={{ flex: 1, padding: '0.75rem', borderRadius: '0.5rem' }}
             onClick={() => {
               if (newPassword && newPassword === confirmPassword) {
-                alert('Contraseña actualizada (Mock)');
+                addToast('Contraseña actualizada (Mock)', 'success');
                 navigate(-1);
               } else {
-                alert('Las contraseñas no coinciden o están vacías');
+                addToast('Las contraseñas no coinciden o están vacías', 'error');
               }
             }}
           >

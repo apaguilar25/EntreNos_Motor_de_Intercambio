@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, User as UserIcon, MessageSquare, CheckCircle, XCircle, Hammer, Clock, Package } from 'lucide-react';
+import { ToastContext } from '../contextos/ToastContext';
 
 const PostDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { addToast } = React.useContext(ToastContext);
   
   // Mock requests data for standard posts
   const [requests, setRequests] = useState([
@@ -31,13 +33,13 @@ const PostDetails = () => {
   const allocateWinner = (bidId) => {
     setBids(bids.map(b => b.id === bidId ? { ...b, status: 'accepted' } : { ...b, status: 'rejected' }));
     setAuctionStatus('FINALIZADA');
-    alert('¡Ganador adjudicado correctamente!');
+    addToast('¡Ganador adjudicado correctamente!', 'success');
   };
 
   const closeAuction = () => {
     setAuctionStatus('CANCELADA');
     setBids(bids.map(b => ({ ...b, status: 'rejected' })));
-    alert('Subasta cerrada/cancelada.');
+    addToast('Subasta cerrada/cancelada.', 'info');
   };
 
   if (id === '4') {

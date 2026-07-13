@@ -1,10 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
+import { ConfirmContext, useConfirm } from '../contextos/ConfirmContext';
 import { Star, ShieldCheck, Edit2, Trash2 } from 'lucide-react';
 
 const Profile = () => {
   const { user, controladorPerfil, controladorSubasta, controladorGamificacion } = useContext(AppContext);
+  const { confirm } = useConfirm();
   const navigate = useNavigate();
   
   const [userProfile, setUserProfile] = useState(null);
@@ -99,7 +101,8 @@ const Profile = () => {
   }, [user, controladorPerfil, controladorSubasta]);
 
   const handleCancelRequest = async (idSolicitud) => {
-    if (!window.confirm("¿Estás seguro que deseas cancelar esta solicitud? Los créditos serán devueltos a tu monedero.")) return;
+    const isConfirmed = await confirm("Cancelar Solicitud", "¿Estás seguro que deseas cancelar esta solicitud? Los créditos serán devueltos a tu monedero.");
+    if (!isConfirmed) return;
     try {
       const res = await fetch(`http://localhost:8080/api/solicitudes/${idSolicitud}/cancelar`, {
         method: 'POST',
@@ -120,7 +123,8 @@ const Profile = () => {
   };
 
   const handleAdjudicar = async (oferta) => {
-    if (!window.confirm("¿Confirmas adjudicar este postor como el ganador? Esta acción no se puede deshacer.")) return;
+    const isConfirmed = await confirm("Adjudicar Ganador", "¿Confirmas adjudicar este postor como el ganador? Esta acción no se puede deshacer.");
+    if (!isConfirmed) return;
     try {
       const res = await controladorSubasta.adjudicarGanador(oferta.idSubasta, oferta.idPropuesta);
       if (res) {
@@ -218,7 +222,8 @@ const Profile = () => {
   };
 
   const handleDelete = async (type, idInstancia) => {
-    if (!window.confirm("¿Estás seguro que deseas eliminar esta publicación? Esta acción no se puede deshacer.")) return;
+    const isConfirmed = await confirm("Eliminar Publicación", "¿Estás seguro que deseas eliminar esta publicación? Esta acción no se puede deshacer.");
+    if (!isConfirmed) return;
     try {
       let res;
       if (type === 'oferta') {

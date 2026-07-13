@@ -1,9 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Filter, Bell, Trash2, Check, X } from 'lucide-react';
 import { AppContext } from '../App';
+import { ToastContext } from '../contextos/ToastContext';
+import { ConfirmContext, useConfirm } from '../contextos/ConfirmContext';
 
 const Notifications = () => {
   const { user, controladorNotificacion, controladorSubasta } = useContext(AppContext);
+  const { addToast } = useContext(ToastContext);
+  const { confirm } = useConfirm();
   const [filter, setFilter] = useState('Todas');
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,7 +31,8 @@ const Notifications = () => {
   }, [user]);
 
   const handleDelete = async (idNotificacion) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar esta notificación?')) {
+    const isConfirmed = await confirm('Eliminar Notificación', '¿Estás seguro de que deseas eliminar esta notificación?');
+    if (isConfirmed) {
       const success = await controladorNotificacion.eliminarNotificacion(idNotificacion);
       if (success) {
         setNotifications(prev => prev.filter(n => n.idNotificacion !== idNotificacion));
@@ -46,7 +51,7 @@ const Notifications = () => {
       await controladorNotificacion.eliminarNotificacion(notificacion.idNotificacion);
       fetchNotifications();
     } catch (error) {
-      alert('Error al responder a la solicitud. Revisa si tienes saldo o si la publicación sigue vigente.');
+      addToast('Error al responder a la solicitud. Revisa si tienes saldo o si la publicación sigue vigente.', 'error');
     }
   };
 
