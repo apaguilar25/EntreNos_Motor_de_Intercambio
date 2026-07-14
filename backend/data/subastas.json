@@ -10,7 +10,7 @@
     ],
     "fechaInicio": "2026-06-15T20:25:11.6801178",
     "fechaFinalizacionLicitacion": "2026-06-22T20:25:11.6791139",
-    "estado": "ACTIVA",
+    "estado": "CANCELADA",
     "propuestas": [
       {
         "idPropuesta": "PROP-055172",
@@ -33,6 +33,78 @@
           "https://ejemplo.com/libros.jpg"
         ],
         "fechaPropuesta": "2026-06-15T20:26:38.2641723"
+      }
+    ],
+    "propietarioConfirmoEntrega": false,
+    "ganadorConfirmoEntrega": false,
+    "version": 3
+  },
+  {
+    "id": "SUB-7CA8FB54",
+    "idPropietario": "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
+    "nombreActivo": "dsf",
+    "descripcion": "sdfsdf",
+    "estadoFisico": "USADO",
+    "imagenesUrls": [
+      "/ruta/foto1.jpg"
+    ],
+    "fechaInicio": "2026-07-13T18:50:22.2275709",
+    "fechaFinalizacionLicitacion": "2026-07-14T18:50:22.2255667",
+    "estado": "ACTIVA",
+    "propuestas": [
+      {
+        "idPropuesta": "PROP-A27A27",
+        "idSubasta": "SUB-7CA8FB54",
+        "idPostor": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+        "bienesOfrecidos": [
+          {
+            "nombre": "Pasta",
+            "cantidad": 1
+          }
+        ],
+        "descripcion": "sdfsfdsfd",
+        "estadoPropuesta": "EN_EVALUACION",
+        "estadoFisico": "USADO",
+        "imagenesUrls": [
+          "http://dummy.img/evidence.jpg"
+        ],
+        "fechaPropuesta": "2026-07-13T18:50:50.6515857"
+      }
+    ],
+    "propietarioConfirmoEntrega": false,
+    "ganadorConfirmoEntrega": false,
+    "version": 1
+  },
+  {
+    "id": "SUB-8B328C68",
+    "idPropietario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "nombreActivo": "zxczxc",
+    "descripcion": "zxczxc",
+    "estadoFisico": "REPARADO",
+    "imagenesUrls": [
+      "/ruta/foto1.jpg"
+    ],
+    "fechaInicio": "2026-07-13T18:55:40.8284632",
+    "fechaFinalizacionLicitacion": "2026-07-23T18:55:40.8284632",
+    "estado": "ACTIVA",
+    "propuestas": [
+      {
+        "idPropuesta": "PROP-24FE0F",
+        "idSubasta": "SUB-8B328C68",
+        "idPostor": "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
+        "bienesOfrecidos": [
+          {
+            "nombre": "Pasta",
+            "cantidad": 1
+          }
+        ],
+        "descripcion": "zxczc",
+        "estadoPropuesta": "EN_EVALUACION",
+        "estadoFisico": "NUEVO",
+        "imagenesUrls": [
+          "http://dummy.img/evidence.jpg"
+        ],
+        "fechaPropuesta": "2026-07-13T18:55:49.1458637"
       }
     ],
     "propietarioConfirmoEntrega": false,

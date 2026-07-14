@@ -298,4 +298,124 @@
   "fechaCreacion" : 1781734396839,
   "idReferencia" : "SOL-16C77788",
   "idReferenciaAuxiliar" : "PUB-D9EBD342"
+}, {
+  "idNotificacion" : "15014c0d-c666-487a-a3ed-968928c66f1f",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "84e724bf-624b-4141-9357-df7da92e61eb",
+  "mensaje" : "Tu subasta terminó. Tienes propuestas pendientes.",
+  "tipo" : "SUBASTA_POR_REVISAR",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1783707203984,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "980aaa38-6652-4e50-82e9-f425802c1d37",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "2f0c416a-2948-4d3c-9390-6242b700a711",
+  "mensaje" : "Subasta cancelada por inactividad del dueño. No hubo ganador.",
+  "tipo" : "SUBASTA_CANCELADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1783707204052,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "74908d7c-f007-4cdb-9937-cea58ac9980d",
+  "idRemitente" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "Super Administrador quiere contratar tu servicio: Clases de Yoga",
+  "tipo" : "NUEVA_SOLICITUD_ENTRANTE",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1783980053346,
+  "idReferencia" : "SOL-6557F3D4",
+  "idReferenciaAuxiliar" : "PUB-6C4481D0"
+}, {
+  "idNotificacion" : "20fb1032-8f29-4e77-999f-bf1c0255aa98",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Has ofertado exitosamente por: Clases de Yoga. Esperando respuesta del proveedor.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1783980053410,
+  "idReferencia" : "SOL-6557F3D4",
+  "idReferenciaAuxiliar" : "PUB-6C4481D0"
+}, {
+  "idNotificacion" : "3442308d-97c6-4731-8667-e4f35a9023c6",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Has ofertado exitosamente por: Electricidad. Esperando respuesta del proveedor.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1783981531538,
+  "idReferencia" : "SOL-E561252B",
+  "idReferenciaAuxiliar" : "PUB-E08227C0"
+}, {
+  "idNotificacion" : "49eebbdd-64de-4498-8099-5302e0b996d6",
+  "idRemitente" : "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Tu solicitud para Electricidad fue ACEPTADA. Se retuvieron 0 creditos.",
+  "tipo" : "ESTADO_SOLICITUD_CAMBIADO",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1783982129714,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "63044068-a862-443b-8352-52ad2b2f4985",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Datos de contacto del ofertante Usuario Prueba: Correo: prueba@alameda.com — Teléfono: +58414000999",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1783982129726,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "d90ed90c-9dd3-45ca-98a5-4e987ceb7600",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
+  "mensaje" : "Datos de contacto del demandante Super Administrador: Correo: admin@alameda.com — Teléfono: 0000000000",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1783982129733,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "3733a98d-c3c1-43fd-9ddb-ef5dd0215af2",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Electricidad\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1783982163081,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "7e37ba03-825d-4aee-9544-3492cbfb33e7",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Electricidad\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1783982163086,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "7ca46ef6-1387-442b-a42e-c11b4ef7de79",
+  "idRemitente" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "idDestinatario" : "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
+  "mensaje" : "Super Administrador ha hecho una oferta en tu subasta: dsf",
+  "tipo" : "NUEVA_OFERTA_SUBASTA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1783983050663,
+  "idReferencia" : "SUB-7CA8FB54",
+  "idReferenciaAuxiliar" : "PROP-A27A27"
+}, {
+  "idNotificacion" : "3cfb3399-3edd-45d1-b6df-b0ffc0f07e44",
+  "idRemitente" : "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Usuario Prueba ha hecho una oferta en tu subasta: zxczxc",
+  "tipo" : "NUEVA_OFERTA_SUBASTA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1783983349148,
+  "idReferencia" : "SUB-8B328C68",
+  "idReferenciaAuxiliar" : "PROP-24FE0F"
 } ]

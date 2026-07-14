@@ -48,5 +48,27 @@
     "precioCreditos": 2,
     "disponible": true,
     "version": 0
+  },
+  {
+    "idPublicacion": "PUB-132C8A36",
+    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Soporte Técnico / Computación",
+    "descripcion": "dsfsf",
+    "precioCreditos": 3,
+    "disponible": true,
+    "idInstanciaCatalogo": "d64ef049-787b-43e6-866e-e519f05adc72",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-AEB35851",
+    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Electricidad",
+    "descripcion": "sdfsf",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "d73f756b-8a86-43f0-b552-70f60441e9e4",
+    "version": 0
   }
 ]

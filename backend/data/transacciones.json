@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "idTransaccion": "TX-B3CC7296",
+    "idPublicacion": "PUB-E08227C0",
+    "idOfertante": "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
+    "idDemandante": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "estado": "EN_DISPUTA",
+    "creditosRetenidos": 0,
+    "confirmacionOfertante": false,
+    "confirmacionDemandante": false,
+    "fechaCreacion": 1783982129709,
+    "idIncidencia": "INC-E64F8B5F",
+    "version": 1
+  }
+]

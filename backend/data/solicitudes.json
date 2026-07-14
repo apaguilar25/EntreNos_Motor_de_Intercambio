@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "idSolicitud": "SOL-6557F3D4",
+    "idPublicacion": "PUB-6C4481D0",
+    "idSolicitante": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "estado": "PENDIENTE",
+    "fechaCreacion": 1783980053342,
+    "fechaLimiteRespuesta": 1784412053342,
+    "version": 0
+  },
+  {
+    "idSolicitud": "SOL-E561252B",
+    "idPublicacion": "PUB-E08227C0",
+    "idSolicitante": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "estado": "ACEPTADA",
+    "fechaCreacion": 1783981531495,
+    "fechaLimiteRespuesta": 1784413531495,
+    "version": 1
+  }
+]

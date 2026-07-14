@@ -64,16 +64,35 @@
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
     "contrasenaHash": "$2a$10$8Wf3ABToBcPb548r/M3BruD0/u5HZeiXVuV0QwfjbUmI5Qz1/Z7ze",
-    "version": 1,
+    "version": 5,
     "monedero": {
-      "creditosDisponibles": 0.0,
+      "creditosDisponibles": 50.0,
       "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
-      "completado": false,
-      "habilidadesOfrecidas": [],
-      "necesidadesRegistradas": []
+      "completado": true,
+      "habilidadesOfrecidas": [
+        {
+          "idInstancia": "d64ef049-787b-43e6-866e-e519f05adc72",
+          "habilidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "precioCreditos": 3,
+          "descripcionServicio": "dsfsf"
+        }
+      ],
+      "necesidadesRegistradas": [
+        {
+          "idInstancia": "d73f756b-8a86-43f0-b552-70f60441e9e4",
+          "necesidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "descripcionCondiciones": "sdfsf"
+        }
+      ]
     },
     "estado": "ACTIVO",
     "intentosFallidos": 0,
