@@ -106,12 +106,33 @@ public class ControladorTransaccion {
         }
     }
 
+    @GetMapping("/{id}/incidencia")
+    public ResponseEntity<?> obtenerIncidencia(@PathVariable String id) {
+        return servicioPublicacion.obtenerIncidenciaPorTransaccion(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    @PostMapping("/{id}/cancelar-reporte")
+    public ResponseEntity<?> cancelarReporte(@PathVariable String id,
+                                              @RequestBody ReportarIncidenciaRequestDTO dto) {
+        try {
+            Incidencia incidencia = servicioPublicacion.cancelarReporte(id,
+                    dto.getIdUsuario(), dto.getDescripcion());
+            return ResponseEntity.ok(incidencia);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(java.util.Map.of("error", e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(java.util.Map.of("error", e.getMessage()));
+        }
+    }
+
     @PostMapping("/{id}/reportar-incidencia")
     public ResponseEntity<?> reportarIncidencia(@PathVariable String id,
-                                                 @RequestBody ReportarIncidenciaRequestDTO dto) {
+                                                  @RequestBody ReportarIncidenciaRequestDTO dto) {
         try {
             Incidencia incidencia = servicioPublicacion.reportarIncidencia(id,
-                    dto.getIdUsuario(), dto.getDescripcion(), dto.getUrlEvidencia());
+                    dto.getIdUsuario(), dto.getDescripcion(), dto.getUrlEvidencia(), dto.getFotosEvidencia());
             return ResponseEntity.ok(incidencia);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(java.util.Map.of("error", e.getMessage()));
@@ -122,10 +143,10 @@ public class ControladorTransaccion {
 
     @PostMapping("/{id}/defender-incidencia")
     public ResponseEntity<?> defenderIncidencia(@PathVariable String id,
-                                                 @RequestBody ReportarIncidenciaRequestDTO dto) {
+                                                  @RequestBody ReportarIncidenciaRequestDTO dto) {
         try {
             Incidencia incidencia = servicioPublicacion.defenderIncidencia(id,
-                    dto.getIdUsuario(), dto.getDescripcion(), dto.getUrlEvidencia());
+                    dto.getIdUsuario(), dto.getDescripcion(), dto.getUrlEvidencia(), dto.getFotosEvidencia());
             return ResponseEntity.ok(incidencia);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(java.util.Map.of("error", e.getMessage()));

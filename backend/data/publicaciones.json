@@ -70,5 +70,49 @@
     "disponible": true,
     "idInstanciaCatalogo": "d73f756b-8a86-43f0-b552-70f60441e9e4",
     "version": 0
+  },
+  {
+    "idPublicacion": "PUB-A78D7873",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Plomería",
+    "descripcion": "Arreglo de tuberías y grifos",
+    "precioCreditos": 5,
+    "disponible": true,
+    "idInstanciaCatalogo": "8d7f912a-ec1b-4cd7-9ae6-3934047e6f9b",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-4C8E891B",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Soporte Técnico / Computación",
+    "descripcion": "Reparación de computadoras y soporte técnico",
+    "precioCreditos": 8,
+    "disponible": true,
+    "idInstanciaCatalogo": "9263f552-eb3c-40b4-9ad3-2034799e9e4c",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-37DC4A29",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Limpieza del Hogar",
+    "descripcion": "Necesito ayuda con limpieza general de mi apartamento una vez por semana",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "d15d4ffe-e679-4f1c-9c1d-d4f2fee33e01",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-45693065",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Limpieza del Hogar",
+    "descripcion": "Ayuda pa la casa",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "767d19b6-0fe1-4068-9223-c73304860b55",
+    "version": 0
   }
 ]

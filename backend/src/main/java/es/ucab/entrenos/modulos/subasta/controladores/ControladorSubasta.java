@@ -53,25 +53,49 @@ public class ControladorSubasta {
 
     @PostMapping("/{idSubasta}/ganador/{idPropuesta}")
     public ResponseEntity<?> adjudicarGanador(@AuthenticationPrincipal String idPropietario, @PathVariable String idSubasta, @PathVariable String idPropuesta) {
-        return ResponseEntity.ok(servicioSubasta.adjudicarGanador(idPropietario, idSubasta, idPropuesta));
+        try {
+            return ResponseEntity.ok(servicioSubasta.adjudicarGanador(idPropietario, idSubasta, idPropuesta));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", e.getMessage()));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+        }
     }
 
     @PostMapping("/{idSubasta}/cancelar")
     public ResponseEntity<?> cancelarSubasta(@AuthenticationPrincipal String idPropietario, @PathVariable String idSubasta) {
-        servicioSubasta.cancelarSubastaManual(idPropietario, idSubasta);
-        return ResponseEntity.ok(Map.of("mensaje", "La subasta ha sido cancelada exitosamente."));
+        try {
+            servicioSubasta.cancelarSubastaManual(idPropietario, idSubasta);
+            return ResponseEntity.ok(Map.of("mensaje", "La subasta ha sido cancelada exitosamente."));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", e.getMessage()));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+        }
     }
 
     @PutMapping("/{idSubasta}")
     public ResponseEntity<?> modificarSubasta(@AuthenticationPrincipal String idPropietario, @PathVariable String idSubasta, @RequestBody Map<String, String> payload) {
-        String nuevaDescripcion = payload.get("descripcion");
-        servicioSubasta.modificarSubasta(idPropietario, idSubasta, nuevaDescripcion);
-        return ResponseEntity.ok(Map.of("mensaje", "La subasta ha sido modificada exitosamente."));
+        try {
+            String nuevaDescripcion = payload.get("descripcion");
+            servicioSubasta.modificarSubasta(idPropietario, idSubasta, nuevaDescripcion);
+            return ResponseEntity.ok(Map.of("mensaje", "La subasta ha sido modificada exitosamente."));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", e.getMessage()));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+        }
     }
 
     @DeleteMapping("/{idSubasta}")
     public ResponseEntity<?> eliminarSubasta(@AuthenticationPrincipal String idPropietario, @PathVariable String idSubasta) {
-        servicioSubasta.cancelarSubastaManual(idPropietario, idSubasta);
-        return ResponseEntity.ok(Map.of("mensaje", "La subasta ha sido eliminada exitosamente."));
+        try {
+            servicioSubasta.cancelarSubastaManual(idPropietario, idSubasta);
+            return ResponseEntity.ok(Map.of("mensaje", "La subasta ha sido eliminada exitosamente."));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", e.getMessage()));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+        }
     }
 }

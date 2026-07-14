@@ -29,6 +29,62 @@
     "esVecinoDestacado": false
   },
   {
+    "id": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "nombre": "Carlos Prueba",
+    "correoElectronico": "carlos.prueba@alameda.com",
+    "telefono": "04121234567",
+    "contrasenaHash": "$2a$10$R6RQB0b5z0a2l9nCjfyyoucImOV4zo0jaRgJK640NqKq67fmocOnG",
+    "version": 10,
+    "monedero": {
+      "creditosDisponibles": 50.0,
+      "creditosComprometidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": true,
+      "habilidadesOfrecidas": [
+        {
+          "idInstancia": "8d7f912a-ec1b-4cd7-9ae6-3934047e6f9b",
+          "habilidadBase": {
+            "id": "HAB-001",
+            "categoria": "Plomería"
+          },
+          "precioCreditos": 5,
+          "descripcionServicio": "Arreglo de tuberías y grifos"
+        },
+        {
+          "idInstancia": "9263f552-eb3c-40b4-9ad3-2034799e9e4c",
+          "habilidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "precioCreditos": 8,
+          "descripcionServicio": "Reparación de computadoras y soporte técnico"
+        }
+      ],
+      "necesidadesRegistradas": [
+        {
+          "idInstancia": "d15d4ffe-e679-4f1c-9c1d-d4f2fee33e01",
+          "necesidadBase": {
+            "id": "HAB-004",
+            "categoria": "Limpieza del Hogar"
+          },
+          "descripcionCondiciones": "Necesito ayuda con limpieza general de mi apartamento una vez por semana"
+        }
+      ]
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "MIEMBRO_COMUNIDAD",
+    "esVecinoDestacado": false
+  },
+  {
     "id": "610b0b73-746c-4d2a-88b7-c90778427553",
     "nombre": "Bob Demandante",
     "correoElectronico": "bob.cache@alameda.com",
@@ -64,7 +120,7 @@
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
     "contrasenaHash": "$2a$10$8Wf3ABToBcPb548r/M3BruD0/u5HZeiXVuV0QwfjbUmI5Qz1/Z7ze",
-    "version": 5,
+    "version": 11,
     "monedero": {
       "creditosDisponibles": 50.0,
       "creditosComprometidos": 0.0,

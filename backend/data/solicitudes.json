@@ -16,5 +16,23 @@
     "fechaCreacion": 1783981531495,
     "fechaLimiteRespuesta": 1784413531495,
     "version": 1
+  },
+  {
+    "idSolicitud": "SOL-AB50A62B",
+    "idPublicacion": "PUB-AEB35851",
+    "idSolicitante": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "estado": "ACEPTADA",
+    "fechaCreacion": 1784004403602,
+    "fechaLimiteRespuesta": 1784436403602,
+    "version": 1
+  },
+  {
+    "idSolicitud": "SOL-9DA5DE0B",
+    "idPublicacion": "PUB-37DC4A29",
+    "idSolicitante": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "estado": "ACEPTADA",
+    "fechaCreacion": 1784050491601,
+    "fechaLimiteRespuesta": 1784482491601,
+    "version": 1
   }
 ]

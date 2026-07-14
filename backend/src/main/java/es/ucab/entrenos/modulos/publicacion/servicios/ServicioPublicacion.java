@@ -432,13 +432,26 @@ public class ServicioPublicacion {
         return obtenerRecomendadas(idUsuario);
     }
 
+    public Optional<Incidencia> obtenerIncidenciaPorTransaccion(String idTransaccion) {
+        return repositorioIncidencia.obtenerTodas().stream()
+                .filter(i -> i.getIdTransaccion().equals(idTransaccion))
+                .findFirst();
+    }
+
     public Incidencia reportarIncidencia(String idTransaccion, String idUsuario, String descripcion, String urlEvidencia) {
+        return reportarIncidencia(idTransaccion, idUsuario, descripcion, urlEvidencia, null);
+    }
+
+    public Incidencia reportarIncidencia(String idTransaccion, String idUsuario, String descripcion, String urlEvidencia, List<String> fotosEvidencia) {
         Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
                 .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada: " + idTransaccion));
+        if (!t.getIdOfertante().equals(idUsuario) && !t.getIdDemandante().equals(idUsuario)) {
+            throw new IllegalArgumentException("No eres parte de esta transacción.");
+        }
         if (descripcion == null || descripcion.trim().length() < 20) {
             throw new IllegalArgumentException("La descripción del incidente debe tener al menos 20 caracteres.");
         }
-        Incidencia incidencia = new Incidencia(idTransaccion, idUsuario, descripcion, urlEvidencia);
+        Incidencia incidencia = new Incidencia(idTransaccion, idUsuario, descripcion, urlEvidencia, fotosEvidencia);
         repositorioIncidencia.guardar(incidencia);
         t.asignarIncidencia(incidencia.getIdIncidencia());
         repositorioTransaccion.guardar(t);
@@ -456,6 +469,10 @@ public class ServicioPublicacion {
     }
 
     public Incidencia defenderIncidencia(String idTransaccion, String idUsuario, String descripcion, String urlEvidencia) {
+        return defenderIncidencia(idTransaccion, idUsuario, descripcion, urlEvidencia, null);
+    }
+
+    public Incidencia defenderIncidencia(String idTransaccion, String idUsuario, String descripcion, String urlEvidencia, List<String> fotosEvidencia) {
         Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
                 .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada: " + idTransaccion));
         if (!t.getIdOfertante().equals(idUsuario) && !t.getIdDemandante().equals(idUsuario)) {
@@ -478,6 +495,7 @@ public class ServicioPublicacion {
         incidencia.setIdUsuarioDefensor(idUsuario);
         incidencia.setDescripcionDefensa(descripcion);
         incidencia.setUrlEvidenciaDefensa(urlEvidencia);
+        incidencia.setFotosEvidenciaDefensa(fotosEvidencia != null ? fotosEvidencia : new ArrayList<>());
         repositorioIncidencia.guardar(incidencia);
         Publicacion pub = obtenerPublicacionPorId(t.getIdPublicacion())
                 .orElseThrow(() -> new IllegalArgumentException("Publicacion no encontrada."));
@@ -578,6 +596,45 @@ public class ServicioPublicacion {
                     TipoNotificacion.ALERTA_SISTEMA);
         }
         return cancelacion;
+    }
+
+    public Incidencia cancelarReporte(String idTransaccion, String idUsuario, String motivo) {
+        Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
+                .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada: " + idTransaccion));
+        if (t.getIdIncidencia() == null) {
+            throw new IllegalStateException("No hay una incidencia activa en esta transacción.");
+        }
+        Incidencia incidencia = repositorioIncidencia.obtenerPorId(t.getIdIncidencia())
+                .orElseThrow(() -> new IllegalStateException("La incidencia asociada no existe."));
+        if (!incidencia.getIdUsuarioReportante().equals(idUsuario)) {
+            throw new IllegalArgumentException("Solo el reportante original puede cancelar el reporte.");
+        }
+        if (!incidencia.getEstado().equals("ABIERTA")) {
+            throw new IllegalStateException("Esta incidencia ya ha sido resuelta o cancelada.");
+        }
+        if (motivo == null || motivo.trim().length() < 10) {
+            throw new IllegalArgumentException("Debes proporcionar una razón de al menos 10 caracteres.");
+        }
+
+        incidencia.setEstado("CANCELADA");
+        repositorioIncidencia.guardar(incidencia);
+
+        t.setIdIncidencia(null);
+        if (t.getEstado() == EstadoTransaccion.EN_DISPUTA) {
+            t.setEstado(EstadoTransaccion.INICIADA);
+        }
+        repositorioTransaccion.guardar(t);
+
+        String contraparte = t.getIdOfertante().equals(idUsuario) ? t.getIdDemandante() : t.getIdOfertante();
+        Publicacion pub = obtenerPublicacionPorId(t.getIdPublicacion()).orElse(null);
+        String nombreServicio = pub != null ? pub.getNombreServicio() : "Servicio";
+
+        servicioNotificacion.enviarNotificacion(idUsuario, contraparte,
+                "El reporte de incidencia en \"" + nombreServicio + "\" ha sido cancelado. Motivo: " + motivo
+                        + ". Si consideras que el reporte fue injustificado, puedes iniciar una nueva incidencia.",
+                TipoNotificacion.ALERTA_SISTEMA);
+
+        return incidencia;
     }
 
     private void procesarCancelacionAceptada(Transaccion t) {

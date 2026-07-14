@@ -78,6 +78,7 @@ es\ucab\entrenos\modulos\gamificacion\repositorios\IRepositorioLogro.class
 es\ucab\entrenos\modulos\identidad\dtos\NuevaNecesidadIndividualDTO.class
 es\ucab\entrenos\modulos\publicacion\controladores\ControladorPublicacion.class
 es\ucab\entrenos\modulos\subasta\controladores\ControladorPropuesta.class
+es\ucab\entrenos\modulos\publicacion\dtos\CancelarRequestDTO.class
 es\ucab\entrenos\modulos\identidad\servicios\ServicioCatalogo.class
 es\ucab\entrenos\modulos\publicacion\modelos\Cancelacion.class
 es\ucab\entrenos\modulos\gamificacion\repositorios\IRepositorioPodio.class

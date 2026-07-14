@@ -7,11 +7,13 @@ export class ServicioAdministrador {
         return await this.clienteHttp.get('/admin/incidencias');
     }
 
-    async resolverIncidencia(idIncidencia, idUsuarioGanadorCreditos, sancionarOfertante, sancionarDemandante) {
+    async resolverIncidencia(idIncidencia, idUsuarioGanadorCreditos, sancionarOfertante, sancionarDemandante, sancionarReportante, sancionarDefensor) {
         return await this.clienteHttp.post(`/admin/incidencias/${idIncidencia}/resolver`, {
             idUsuarioGanadorCreditos,
             sancionarOfertante,
-            sancionarDemandante
+            sancionarDemandante,
+            sancionarReportante,
+            sancionarDefensor
         });
     }
 

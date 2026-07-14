@@ -104,6 +104,10 @@ public class ServicioSubasta {
                 throw new SecurityException("Solo el creador de la subasta puede elegir al ganador.");
             }
 
+            if (subasta.getEstado() == EstadoSubasta.ACTIVA) {
+                subasta.cerrarFaseLicitacion();
+            }
+
             subasta.adjudicarGanador(idPropuesta);
             subasta.incrementarVersion();
             repositorioSubasta.guardar(subasta);

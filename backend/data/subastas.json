@@ -86,7 +86,8 @@
     ],
     "fechaInicio": "2026-07-13T18:55:40.8284632",
     "fechaFinalizacionLicitacion": "2026-07-23T18:55:40.8284632",
-    "estado": "ACTIVA",
+    "estado": "ADJUDICADA_INTERCAMBIO_PENDIENTE",
+    "idPropuestaGanadora": "PROP-24FE0F",
     "propuestas": [
       {
         "idPropuesta": "PROP-24FE0F",
@@ -109,6 +110,23 @@
     ],
     "propietarioConfirmoEntrega": false,
     "ganadorConfirmoEntrega": false,
-    "version": 1
+    "version": 2
+  },
+  {
+    "id": "SUB-6B4CB950",
+    "idPropietario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "nombreActivo": "adsasd",
+    "descripcion": "U",
+    "estadoFisico": "USADO",
+    "imagenesUrls": [
+      "/ruta/foto1.jpg"
+    ],
+    "fechaInicio": "2026-07-13T20:38:51.7151525",
+    "fechaFinalizacionLicitacion": "2026-07-14T20:38:51.7141512",
+    "estado": "CANCELADA",
+    "propuestas": [],
+    "propietarioConfirmoEntrega": false,
+    "ganadorConfirmoEntrega": false,
+    "version": 2
   }
 ]

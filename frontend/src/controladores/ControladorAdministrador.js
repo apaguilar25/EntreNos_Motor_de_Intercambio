@@ -12,9 +12,9 @@ export class ControladorAdministrador {
         }
     }
 
-    async resolverIncidencia(idIncidencia, idUsuarioGanadorCreditos, sancionarOfertante, sancionarDemandante) {
+    async resolverIncidencia(idIncidencia, idUsuarioGanadorCreditos, sancionarOfertante, sancionarDemandante, sancionarReportante, sancionarDefensor) {
         try {
-            await this.servicioAdministrador.resolverIncidencia(idIncidencia, idUsuarioGanadorCreditos, sancionarOfertante, sancionarDemandante);
+            await this.servicioAdministrador.resolverIncidencia(idIncidencia, idUsuarioGanadorCreditos, sancionarOfertante, sancionarDemandante, sancionarReportante, sancionarDefensor);
         } catch (error) {
             console.error("Error resolviendo incidencia:", error);
             throw error;

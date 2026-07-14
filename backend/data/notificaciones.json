@@ -409,13 +409,183 @@
   "idReferencia" : "SUB-7CA8FB54",
   "idReferenciaAuxiliar" : "PROP-A27A27"
 }, {
-  "idNotificacion" : "3cfb3399-3edd-45d1-b6df-b0ffc0f07e44",
-  "idRemitente" : "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
-  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
-  "mensaje" : "Usuario Prueba ha hecho una oferta en tu subasta: zxczxc",
-  "tipo" : "NUEVA_OFERTA_SUBASTA",
+  "idNotificacion" : "f68e5a37-3e60-4580-82b2-1d592b545564",
+  "idRemitente" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "idDestinatario" : "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
+  "mensaje" : "¡Felicidades! Tu propuesta ha sido elegida como ganadora.",
+  "tipo" : "SUBASTA_GANADA",
   "estadoLectura" : false,
-  "fechaCreacion" : 1783983349148,
+  "fechaCreacion" : 1783989442082,
   "idReferencia" : "SUB-8B328C68",
-  "idReferenciaAuxiliar" : "PROP-24FE0F"
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "b029ed9a-2313-4cfb-aaa0-a8217387be73",
+  "idRemitente" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "idDestinatario" : "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
+  "mensaje" : "El reporte de incidencia en \"Servicio\" ha sido cancelado. Motivo: dfdsfsfdsdfsdfsd. Si consideras que el reporte fue injustificado, puedes iniciar una nueva incidencia.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1783989456879,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "fa406add-2a70-4586-a63e-d40a552372cf",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Has ofertado exitosamente por: Electricidad. Esperando respuesta del proveedor.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784004403709,
+  "idReferencia" : "SOL-AB50A62B",
+  "idReferenciaAuxiliar" : "PUB-AEB35851"
+}, {
+  "idNotificacion" : "70c41f08-a497-4a42-b9ed-911e2030fa7f",
+  "idRemitente" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Tu solicitud para Electricidad fue ACEPTADA. Se retuvieron 0 creditos.",
+  "tipo" : "ESTADO_SOLICITUD_CAMBIADO",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784004420780,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "ae93f646-dd9b-4638-95a9-9618f2beed31",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Datos de contacto del ofertante Super Administrador: Correo: admin@alameda.com — Teléfono: 0000000000",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784004420795,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "cfbaa562-ecab-4756-8ddb-a08f5e76cb40",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Datos de contacto del demandante Carlos Prueba: Correo: carlos.prueba@alameda.com — Teléfono: 04121234567",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784004420809,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "01bd0d8c-a1e4-4c2a-b6c8-e564003ed664",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Electricidad\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784004455717,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "05720d07-d0a3-45dd-b2e3-fcbf9da589f0",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Electricidad\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784004455722,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "ece32e38-6af1-47e4-9526-4835fb211ace",
+  "idRemitente" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "El reporte de incidencia en \"Electricidad\" ha sido cancelado. Motivo: dadasdasdasdasdadasdasdasdadasdasdasd. Si consideras que el reporte fue injustificado, puedes iniciar una nueva incidencia.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784004804341,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "3f7980a8-d7f6-4402-9cd6-e718981e4f8c",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Electricidad\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784004971882,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "bbe4bb41-7fb0-409f-b623-29eea510c464",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Electricidad\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784004971888,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "f1491dc7-405b-46f1-9b09-1eb1976e16d7",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Electricidad\". El intercambio ha sido marcado bajo revisión. Ambas partes han reportado; el equipo revisará ambas versiones.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784047304834,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "a5554f6c-97f3-4085-9473-af31bcc1bf8a",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Electricidad\". El intercambio ha sido marcado bajo revisión. Ambas partes han reportado; el equipo revisará ambas versiones.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784047304890,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "921fb08e-9822-41bd-9d31-f5cdc2386931",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Has ofertado exitosamente por: Limpieza del Hogar. Esperando respuesta del proveedor.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784050491628,
+  "idReferencia" : "SOL-9DA5DE0B",
+  "idReferenciaAuxiliar" : "PUB-37DC4A29"
+}, {
+  "idNotificacion" : "07df462b-a23a-49ec-ba1e-e957700960e7",
+  "idRemitente" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Tu solicitud para Limpieza del Hogar fue ACEPTADA. Se retuvieron 0 creditos.",
+  "tipo" : "ESTADO_SOLICITUD_CAMBIADO",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784050495135,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "71bb11ba-8feb-47f8-8072-60c2050c8304",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Datos de contacto del ofertante Carlos Prueba: Correo: carlos.prueba@alameda.com — Teléfono: 04121234567",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784050495145,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "69f6ce73-16bc-404d-865d-f94f0d5312fb",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Datos de contacto del demandante Super Administrador: Correo: admin@alameda.com — Teléfono: 0000000000",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784050495149,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "84b2962b-6584-4b14-990f-1e94f17a7145",
+  "idRemitente" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "El usuario implicado ha presentado su defensa para la incidencia en: Electricidad",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784050524007,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
 } ]

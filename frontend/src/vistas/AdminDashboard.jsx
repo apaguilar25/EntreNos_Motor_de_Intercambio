@@ -10,11 +10,17 @@ function AdminDashboard() {
     const [incidencias, setIncidencias] = useState([]);
     const [usuarios, setUsuarios] = useState([]);
     const [usersMap, setUsersMap] = useState({});
+    const [transaccionesMap, setTransaccionesMap] = useState({});
     const [correos, setCorreos] = useState([]);
     const [nuevoCorreo, setNuevoCorreo] = useState('');
 
-    // Modal state for Disputa
-    const [modalDisputa, setModalDisputa] = useState({ isOpen: false, data: null, ganador: '', sancionarO: false, sancionarD: false });
+    // Modal state for Reportes
+    const [modalReportes, setModalReportes] = useState({
+        isOpen: false, incidencia: null, transaccion: null,
+        seleccion: null, sancionarReportante: false,
+        mostrarDisclaimer: false,
+        reclamanteExpandido: false, reclamadoExpandido: false
+    });
     // Modal state for Creditos
     const [modalCreditos, setModalCreditos] = useState({ isOpen: false, idUsuario: null, cantidad: '' });
 
@@ -35,6 +41,15 @@ function AdminDashboard() {
             const map = {};
             (usrs || []).forEach(u => map[u.id] = u.nombre);
             setUsersMap(map);
+
+            const txRes = await fetch('http://localhost:8080/api/transacciones');
+            if (txRes.ok) {
+                const txs = await txRes.json();
+                const txMap = {};
+                (txs || []).forEach(tx => txMap[tx.idTransaccion] = tx);
+                setTransaccionesMap(txMap);
+            }
+
             const crs = await controladorAdministrador.cargarCorreosPermitidos();
             setCorreos(crs || []);
         } catch (error) {
@@ -42,34 +57,58 @@ function AdminDashboard() {
         }
     };
 
-    const handleResolverClick = (incidencia) => {
-        setModalDisputa({
-            isOpen: true,
-            data: incidencia,
-            ganador: '',
-            sancionarO: false,
-            sancionarD: false
+    const cerrarModal = () => {
+        setModalReportes({ isOpen: false, incidencia: null, transaccion: null, seleccion: null, sancionarReportante: false, mostrarDisclaimer: false, reclamanteExpandido: false, reclamadoExpandido: false });
+    };
+
+    const handleResolverClick = async (incidencia) => {
+        const tx = transaccionesMap[incidencia.idTransaccion] || null;
+        setModalReportes({
+            isOpen: true, incidencia, transaccion: tx,
+            seleccion: null, sancionarReportante: false,
+            mostrarDisclaimer: false,
+            reclamanteExpandido: false, reclamadoExpandido: false
         });
     };
 
-    const confirmResolver = async () => {
-        if (!modalDisputa.ganador) {
-            addToast("Debes seleccionar un usuario ganador o indicar 'empate'.", "error");
+    const handleSeleccionarGanador = (lado) => {
+        setModalReportes({ ...modalReportes, seleccion: modalReportes.seleccion === lado ? null : lado, mostrarDisclaimer: false });
+    };
+
+    const confirmResolucion = async () => {
+        if (!modalReportes.seleccion) {
+            addToast("Debes seleccionar un ganador haciendo clic en el cuadrado verde de una de las partes.", "error");
             return;
         }
+        if (!modalReportes.mostrarDisclaimer) {
+            setModalReportes({ ...modalReportes, mostrarDisclaimer: true });
+            return;
+        }
+        const inc = modalReportes.incidencia;
+        const tx = modalReportes.transaccion;
+        const esReclamante = modalReportes.seleccion === 'reclamante';
+        const idGanador = esReclamante ? inc.idUsuarioReportante : inc.idUsuarioDefensor;
+        const sancionarReportante = esReclamante ? false : modalReportes.sancionarReportante;
+        const sancionarDefensor = esReclamante ? true : false;
+
         try {
             await controladorAdministrador.resolverIncidencia(
-                modalDisputa.data.idIncidencia, 
-                modalDisputa.ganador, 
-                modalDisputa.sancionarO, 
-                modalDisputa.sancionarD
+                inc.idIncidencia, idGanador,
+                false, false, sancionarReportante, sancionarDefensor
             );
             addToast("Incidencia resuelta exitosamente.", "success");
-            setModalDisputa({ isOpen: false, data: null, ganador: '', sancionarO: false, sancionarD: false });
+            cerrarModal();
             cargarDatos();
         } catch (error) {
             addToast("Error: " + error.message, "error");
         }
+    };
+
+    const getRol = (idUsuario, tx) => {
+        if (!tx) return '';
+        if (idUsuario === tx.idOfertante) return 'Ofertante';
+        if (idUsuario === tx.idDemandante) return 'Demandante';
+        return '';
     };
 
     const handleAgregarCorreo = async () => {
@@ -130,6 +169,16 @@ function AdminDashboard() {
         return <div>Acceso denegado. Solo administradores.</div>;
     }
 
+    const inc = modalReportes.incidencia;
+    const tx = modalReportes.transaccion;
+    const rolReclamante = inc && tx ? getRol(inc.idUsuarioReportante, tx) : '';
+    const rolReclamado = inc && tx && inc.idUsuarioDefensor ? getRol(inc.idUsuarioDefensor, tx) : '';
+    const esReclamante = () => modalReportes.seleccion === 'reclamante';
+    const esReclamado = () => modalReportes.seleccion === 'reclamado';
+    const reclamanteFotos = inc ? (inc.fotosEvidencia || []) : [];
+    const reclamadoFotos = inc ? (inc.fotosEvidenciaDefensa || []) : [];
+    const tieneDefensa = inc && inc.descripcionDefensa && inc.descripcionDefensa.trim().length > 0;
+
     return (
         <div className="admin-dashboard">
             <h1>Panel de Administración</h1>
@@ -149,7 +198,8 @@ function AdminDashboard() {
                                     <tr>
                                         <th>ID</th>
                                         <th>Transacción</th>
-                                        <th>Estado</th>
+                                        <th>Estado Transacción</th>
+                                        <th>Estado Incidencia</th>
                                         <th>Reportante</th>
                                         <th>Defensor</th>
                                         <th>Descripción</th>
@@ -161,9 +211,10 @@ function AdminDashboard() {
                                         <tr key={inc.idIncidencia}>
                                             <td>{inc.idIncidencia}</td>
                                             <td>{inc.idTransaccion}</td>
+                                            <td>{(transaccionesMap[inc.idTransaccion]?.estado) || 'N/A'}</td>
                                             <td>{inc.estado}</td>
-                                            <td>{usersMap[inc.idUsuarioReportante] || inc.idUsuarioReportante} <br/><a href={inc.urlEvidencia} target="_blank" rel="noreferrer">Evidencia</a></td>
-                                            <td>{inc.idUsuarioDefensor ? (usersMap[inc.idUsuarioDefensor] || inc.idUsuarioDefensor) : 'N/A'} {inc.urlEvidenciaDefensa ? <a href={inc.urlEvidenciaDefensa} target="_blank" rel="noreferrer">Evidencia</a> : ''}</td>
+                                            <td>{usersMap[inc.idUsuarioReportante] || inc.idUsuarioReportante}</td>
+                                            <td>{inc.idUsuarioDefensor ? (usersMap[inc.idUsuarioDefensor] || inc.idUsuarioDefensor) : 'N/A'}</td>
                                             <td>{inc.descripcion}</td>
                                             <td>
                                                 {inc.estado === 'ABIERTA' && (
@@ -205,7 +256,10 @@ function AdminDashboard() {
                                         <td>
                                             <button style={{ marginRight: '0.5rem', marginBottom: '0.5rem' }} className="btn-primary" onClick={() => handleModificarCreditosClick(u.id)}>Modificar Créditos</button>
                                             {u.reportesFraudeValidados > 0 && (
-                                                <button className="btn-primary" style={{ backgroundColor: 'var(--color-orange-600)' }} onClick={() => handlePerdonar(u.id)}>Perdonar Faltas</button>
+                                                <button className="btn-primary" style={{ backgroundColor: 'var(--color-orange-600)', marginRight: '0.5rem', marginBottom: '0.5rem' }} onClick={() => handlePerdonar(u.id)}>Perdonar Faltas</button>
+                                            )}
+                                            {u.estado === 'SUSPENDIDO_FRAUDE' && (
+                                                <button className="btn-primary" style={{ backgroundColor: 'var(--color-purple-600)' }} onClick={() => handlePerdonar(u.id)}>Desbloquear Cuenta</button>
                                             )}
                                         </td>
                                     </tr>
@@ -233,44 +287,114 @@ function AdminDashboard() {
                 )}
             </div>
 
-            {/* Modals */}
-            {modalDisputa.isOpen && (
-                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-                    <div style={{ backgroundColor: 'var(--bg-primary)', padding: '2rem', borderRadius: '1rem', width: '90%', maxWidth: '500px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
-                        <h2 style={{ marginTop: 0, color: 'var(--color-green-700)' }}>Resolución de Disputa</h2>
-                        <p style={{ color: 'var(--text-secondary)' }}>Selecciona al ganador de la disputa y las sanciones correspondientes.</p>
-                        
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Usuario Ganador:</label>
-                            <select 
-                                style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)' }}
-                                value={modalDisputa.ganador} 
-                                onChange={(e) => setModalDisputa({ ...modalDisputa, ganador: e.target.value })}
-                            >
-                                <option value="">-- Selecciona un ganador --</option>
-                                <option value={modalDisputa.data?.idUsuarioReportante}>Reportante: {usersMap[modalDisputa.data?.idUsuarioReportante] || modalDisputa.data?.idUsuarioReportante}</option>
-                                {modalDisputa.data?.idUsuarioDefensor && (
-                                    <option value={modalDisputa.data?.idUsuarioDefensor}>Defensor: {usersMap[modalDisputa.data?.idUsuarioDefensor] || modalDisputa.data?.idUsuarioDefensor}</option>
+            {/* Modal de Gestión de Reportes */}
+            {modalReportes.isOpen && inc && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }} onClick={cerrarModal}>
+                    <div style={{ backgroundColor: 'var(--bg-primary)', padding: '2rem', borderRadius: '1rem', width: '90%', maxWidth: '600px', maxHeight: '80vh', overflowY: 'auto', boxShadow: '0 10px 25px rgba(0,0,0,0.2)', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
+                        {/* X button */}
+                        <button onClick={cerrarModal} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-tertiary)', lineHeight: 1 }}>×</button>
+
+                        <h2 style={{ marginTop: 0, color: 'var(--color-green-700)', marginBottom: '1.5rem' }}>Gestión de Reportes</h2>
+
+                        {/* Reclamante card */}
+                        <div style={{ marginBottom: '1rem' }}>
+                            <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>Reclamante <span style={{ fontWeight: 'normal', color: 'var(--text-tertiary)' }}>({rolReclamante || 'Desconocido'})</span></h4>
+                            <div style={{ border: '2px solid var(--border-color)', borderRadius: '5%', padding: '0.75rem', display: 'flex', alignItems: 'flex-start', gap: '0.75rem', flexWrap: 'nowrap' }}>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <button onClick={() => setModalReportes({ ...modalReportes, reclamanteExpandido: !modalReportes.reclamanteExpandido })} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '0.85rem' }}>
+                                        <span style={{ display: 'inline-block', transition: 'transform 0.2s', transform: modalReportes.reclamanteExpandido ? 'rotate(90deg)' : 'rotate(0deg)' }}>▶</span>
+                                        {usersMap[inc.idUsuarioReportante] || inc.idUsuarioReportante}
+                                    </button>
+                                    {modalReportes.reclamanteExpandido && (
+                                        <div style={{ marginTop: '0.5rem', paddingLeft: '1.5rem' }}>
+                                            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0 0 0.5rem 0' }}>{inc.descripcion}</p>
+                                            {reclamanteFotos.length > 0 && (
+                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                                    {reclamanteFotos.map((foto, idx) => (
+                                                        <img key={idx} src={foto} alt={`Evidencia ${idx + 1}`} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '0.25rem', cursor: 'pointer' }} onClick={() => window.open(foto, '_blank')} />
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                                <button onClick={() => handleSeleccionarGanador('reclamante')} style={{ flexShrink: 0, width: '40px', height: '40px', borderRadius: '10%', border: '2px solid var(--color-green-700)', backgroundColor: esReclamante() ? 'var(--color-green-700)' : 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}>
+                                    {esReclamante() && <span style={{ color: '#fff', fontSize: '1.2rem' }}>✓</span>}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Reclamado card */}
+                        <div style={{ marginBottom: '1rem' }}>
+                            <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>Reclamado <span style={{ fontWeight: 'normal', color: 'var(--text-tertiary)' }}>({rolReclamado || 'Desconocido'})</span></h4>
+                            <div style={{ border: '2px solid var(--border-color)', borderRadius: '5%', padding: '0.75rem', display: 'flex', alignItems: 'flex-start', gap: '0.75rem', flexWrap: 'nowrap' }}>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    {inc.idUsuarioDefensor ? (
+                                        <>
+                                            <button onClick={() => setModalReportes({ ...modalReportes, reclamadoExpandido: !modalReportes.reclamadoExpandido })} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--text-primary)', fontWeight: 'bold', fontSize: '0.85rem' }}>
+                                                <span style={{ display: 'inline-block', transition: 'transform 0.2s', transform: modalReportes.reclamadoExpandido ? 'rotate(90deg)' : 'rotate(0deg)' }}>▶</span>
+                                                {usersMap[inc.idUsuarioDefensor] || inc.idUsuarioDefensor}
+                                            </button>
+                                            {modalReportes.reclamadoExpandido && (
+                                                <div style={{ marginTop: '0.5rem', paddingLeft: '1.5rem' }}>
+                                                    {tieneDefensa ? (
+                                                        <>
+                                                            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: '0 0 0.5rem 0' }}>{inc.descripcionDefensa}</p>
+                                                            {reclamadoFotos.length > 0 && (
+                                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                                                    {reclamadoFotos.map((foto, idx) => (
+                                                                        <img key={idx} src={foto} alt={`Defensa ${idx + 1}`} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '0.25rem', cursor: 'pointer' }} onClick={() => window.open(foto, '_blank')} />
+                                                                    ))}
+                                                                </div>
+                                                            )}
+                                                        </>
+                                                    ) : (
+                                                        <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', fontStyle: 'italic', margin: 0 }}>El reclamado no ha adjuntado una defensa</p>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', fontStyle: 'italic', margin: 0, padding: '0.25rem' }}>El reclamado no ha adjuntado una defensa</p>
+                                    )}
+                                </div>
+                                {inc.idUsuarioDefensor && (
+                                    <button onClick={() => handleSeleccionarGanador('reclamado')} style={{ flexShrink: 0, width: '40px', height: '40px', borderRadius: '10%', border: '2px solid var(--color-green-700)', backgroundColor: esReclamado() ? 'var(--color-green-700)' : 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}>
+                                        {esReclamado() && <span style={{ color: '#fff', fontSize: '1.2rem' }}>✓</span>}
+                                    </button>
                                 )}
-                            </select>
+                            </div>
                         </div>
 
-                        <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                                <input type="checkbox" checked={modalDisputa.sancionarD} onChange={(e) => setModalDisputa({ ...modalDisputa, sancionarD: e.target.checked })} />
-                                <span>Sancionar Reportante por Fraude (Suma falta)</span>
-                            </label>
-                            {modalDisputa.data?.idUsuarioDefensor && (
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                                    <input type="checkbox" checked={modalDisputa.sancionarO} onChange={(e) => setModalDisputa({ ...modalDisputa, sancionarO: e.target.checked })} />
-                                    <span>Sancionar Defensor por Fraude (Suma falta)</span>
+                        {/* Checkbox de sanción (solo cuando se selecciona Reclamado) */}
+                        {esReclamado() && (
+                            <div style={{ marginBottom: '1rem', padding: '0.5rem 0.75rem', backgroundColor: '#fff3cd', border: '1px solid #ffc107', borderRadius: '0.5rem' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.85rem' }}>
+                                    <input type="checkbox" checked={modalReportes.sancionarReportante} onChange={(e) => setModalReportes({ ...modalReportes, sancionarReportante: e.target.checked })} />
+                                    <span>Sancionar al Reclamante por reporte falso (Suma falta)</span>
                                 </label>
-                            )}
-                        </div>
+                                <p style={{ margin: '0.25rem 0 0 1.5rem', fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
+                                    Activa esta casilla si consideras que la queja del Reclamante fue maliciosa, falsa o con intención explícita de engaño.
+                                </p>
+                            </div>
+                        )}
 
+                        {/* Disclaimer */}
+                        {modalReportes.mostrarDisclaimer && (
+                            <div style={{ marginBottom: '1rem', padding: '0.75rem', backgroundColor: '#f8f9fa', border: '1px solid #dee2e6', borderRadius: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                                {esReclamante() ? (
+                                    <p style={{ margin: 0 }}><strong>Consecuencias:</strong> Al elegir al Reclamante como ganador, los créditos retenidos serán liberados a su favor. El Reclamado recibirá <strong>1 falta por fraude</strong> (sanción automática). Al acumular 2 faltas, el usuario será suspendido.</p>
+                                ) : (
+                                    <p style={{ margin: 0 }}><strong>Consecuencias:</strong> Al elegir al Reclamado como ganador, los créditos retenidos serán devueltos o liberados según corresponda.{modalReportes.sancionarReportante ? ' El Reclamante recibirá 1 falta por reporte falso.' : ' No se aplicarán sanciones a menos que actives la casilla de sanción por reporte falso.'}</p>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Botones */}
                         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-                            <button className="btn-primary" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)' }} onClick={() => setModalDisputa({ isOpen: false, data: null, ganador: '', sancionarO: false, sancionarD: false })}>Cancelar</button>
-                            <button className="btn-primary" style={{ backgroundColor: 'var(--color-green-700)', color: '#fff' }} onClick={confirmResolver}>Confirmar Resolución</button>
+                            <button className="btn-primary" style={{ backgroundColor: 'var(--color-green-700)', color: '#fff', opacity: modalReportes.seleccion ? 1 : 0.5, cursor: modalReportes.seleccion ? 'pointer' : 'not-allowed' }} disabled={!modalReportes.seleccion} onClick={confirmResolucion}>
+                                {modalReportes.mostrarDisclaimer ? 'Confirmar Resolución' : 'Confirmar Elección'}
+                            </button>
                         </div>
                     </div>
                 </div>

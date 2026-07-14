@@ -91,11 +91,13 @@ public class ControladorAdministrador {
             String idUsuarioGanador = (String) request.get("idUsuarioGanadorCreditos");
             Boolean sancionarOfertante = (Boolean) request.get("sancionarOfertante");
             Boolean sancionarDemandante = (Boolean) request.get("sancionarDemandante");
+            Boolean sancionarReportante = (Boolean) request.get("sancionarReportante");
+            Boolean sancionarDefensor = (Boolean) request.get("sancionarDefensor");
 
             if (sancionarOfertante == null) sancionarOfertante = false;
             if (sancionarDemandante == null) sancionarDemandante = false;
 
-            servicioAdministrador.resolverIncidencia(idAdministrador, idIncidencia, idUsuarioGanador, sancionarOfertante, sancionarDemandante);
+            servicioAdministrador.resolverIncidencia(idAdministrador, idIncidencia, idUsuarioGanador, sancionarOfertante, sancionarDemandante, sancionarReportante, sancionarDefensor);
             return ResponseEntity.ok("Incidencia resuelta exitosamente.");
 
         } catch (SecurityException e) {
