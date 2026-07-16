@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Image as ImageIcon } from 'lucide-react';
 import { AppContext } from '../App';
+import { ToastContext } from '../contextos/ToastContext';
 
 const CreateAuction = () => {
   const navigate = useNavigate();
   const { user, controladorSubasta } = React.useContext(AppContext);
+  const { addToast } = React.useContext(ToastContext);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [duration, setDuration] = useState('1');
@@ -104,11 +106,11 @@ const CreateAuction = () => {
             style={{ flex: 1, padding: '0.75rem', borderRadius: '0.5rem', backgroundColor: 'var(--accent-warning)', color: '#fff' }}
             onClick={async () => {
               if(!title || !description) {
-                alert("Por favor llena el título y la descripción.");
+                addToast("Por favor llena el título y la descripción.", "error");
                 return;
               }
               if(!hasPhoto) {
-                alert("Debes subir al menos una foto del activo.");
+                addToast("Debes subir al menos una foto del activo.", "error");
                 return;
               }
               
@@ -125,13 +127,13 @@ const CreateAuction = () => {
                 
                 const res = await controladorSubasta.crearSubasta(payload);
                 if (res) {
-                  alert('Subasta creada con éxito.');
+                  addToast('Subasta creada con éxito.', 'success', '/notifications');
                   navigate(-1);
                 } else {
-                  alert('Error al crear la subasta');
+                  addToast('Error al crear la subasta', 'error');
                 }
               } catch (error) {
-                alert('Error de red al crear subasta');
+                addToast('Error de red al crear subasta', 'error');
               }
             }}
           >

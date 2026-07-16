@@ -1,6 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { AppContext } from '../App';
+import { ToastContext } from '../contextos/ToastContext';
+import { ConfirmContext, useConfirm } from '../contextos/ConfirmContext';
 import { ArrowLeft, User as UserIcon, Package, MessageSquare } from 'lucide-react';
 
 const MakeRequest = () => {
@@ -9,6 +11,8 @@ const MakeRequest = () => {
   const [searchParams] = useSearchParams();
   const type = searchParams.get('type') || 'oferta'; // oferta, demanda, subasta
   const { user, balance, setBalance, controladorSubasta, controladorMuro } = useContext(AppContext);
+  const { addToast } = useContext(ToastContext);
+  const { confirm } = useConfirm();
 
   const [message, setMessage] = useState('');
   const [items, setItems] = useState('');
@@ -84,19 +88,19 @@ const MakeRequest = () => {
       });
 
       if (!hasSelection) {
-        alert('Debes seleccionar al menos un bien para la puja.');
+        addToast('Debes seleccionar al menos un bien para la puja.', 'error');
         return;
       }
       if (!validQuantity) {
-        alert('Debes indicar una cantidad válida para los bienes seleccionados.');
+        addToast('Debes indicar una cantidad válida para los bienes seleccionados.', 'error');
         return;
       }
       if (!offerImage) {
-        alert('Es obligatorio adjuntar una imagen como evidencia visual física de los productos.');
+        addToast('Es obligatorio adjuntar una imagen como evidencia visual física de los productos.', 'error');
         return;
       }
       if (!message) {
-        alert('Debes escribir una descripción para tu oferta.');
+        addToast('Debes escribir una descripción para tu oferta.', 'error');
         return;
       }
 
@@ -124,27 +128,27 @@ const MakeRequest = () => {
           throw new Error('Error al enviar la oferta.');
         }
 
-        alert('¡Oferta enviada con éxito!');
+        addToast('¡Oferta enviada con éxito!', 'success', '/notifications');
         navigate(-1);
       } catch (error) {
-        alert(error.message);
+        addToast(error.message, 'error');
       }
     } else {
       if (!message) {
-        alert('Debes escribir un mensaje.');
+        addToast('Debes escribir un mensaje.', 'error');
         return;
       }
       
       // Validación de insolvencia (HU2)
       if (balance < cost) {
-        alert(`Error: Fondos insuficientes. Tienes ${balance} cr pero la solicitud cuesta ${cost} cr.`);
+        addToast(`Error: Fondos insuficientes. Tienes ${balance} cr pero la solicitud cuesta ${cost} cr.`, 'error');
         return;
       }
 
       if (showInterestPrompt) {
-        const addInterest = window.confirm("¿Deseas añadir esta categoría a tus intereses para recibir mejores sugerencias?");
+        const addInterest = await confirm("Añadir Interés", "¿Deseas añadir esta categoría a tus intereses para recibir mejores sugerencias?");
         if (addInterest) {
-          alert("Categoría añadida a tus intereses.");
+          addToast("Categoría añadida a tus intereses.", 'info');
         }
       }
 
@@ -162,10 +166,10 @@ const MakeRequest = () => {
           setBalance(prev => prev - cost);
         }
 
-        alert('¡Solicitud enviada con éxito!');
+        addToast('¡Solicitud enviada con éxito!', 'success', '/notifications');
         navigate(-1);
       } catch (error) {
-        alert(error.message);
+        addToast(error.message, 'error');
       }
     }
   };

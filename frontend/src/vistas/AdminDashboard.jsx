@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '../App';
+import { ToastContext } from '../contextos/ToastContext';
 import './AdminDashboard.css';
 
 function AdminDashboard() {
@@ -16,10 +17,8 @@ function AdminDashboard() {
     const [modalDisputa, setModalDisputa] = useState({ isOpen: false, data: null, ganador: '', sancionarO: false, sancionarD: false });
     // Modal state for Creditos
     const [modalCreditos, setModalCreditos] = useState({ isOpen: false, idUsuario: null, cantidad: '' });
-    // Modal state for Alerts
-    const [modalAlert, setModalAlert] = useState({ isOpen: false, message: '' });
 
-    const showAlert = (message) => setModalAlert({ isOpen: true, message });
+    const { addToast } = useContext(ToastContext);
 
     useEffect(() => {
         if (user && user.rol === 'ADMINISTRADOR') {
@@ -55,7 +54,7 @@ function AdminDashboard() {
 
     const confirmResolver = async () => {
         if (!modalDisputa.ganador) {
-            showAlert("Debes seleccionar un usuario ganador o indicar 'empate'.");
+            addToast("Debes seleccionar un usuario ganador o indicar 'empate'.", "error");
             return;
         }
         try {
@@ -65,36 +64,36 @@ function AdminDashboard() {
                 modalDisputa.sancionarO, 
                 modalDisputa.sancionarD
             );
-            showAlert("Incidencia resuelta exitosamente.");
+            addToast("Incidencia resuelta exitosamente.", "success");
             setModalDisputa({ isOpen: false, data: null, ganador: '', sancionarO: false, sancionarD: false });
             cargarDatos();
         } catch (error) {
-            showAlert("Error: " + error.message);
+            addToast("Error: " + error.message, "error");
         }
     };
 
     const handleAgregarCorreo = async () => {
         if (!nuevoCorreo.endsWith('@alameda.com')) {
-            showAlert("El correo debe terminar en @alameda.com");
+            addToast("El correo debe terminar en @alameda.com", "error");
             return;
         }
         try {
             await controladorAdministrador.agregarCorreo(nuevoCorreo);
             setNuevoCorreo('');
-            showAlert("Correo agregado con éxito.");
+            addToast("Correo agregado con éxito.", "success");
             cargarDatos();
         } catch (error) {
-            showAlert("Error al agregar correo.");
+            addToast("Error al agregar correo.", "error");
         }
     };
 
     const handleEliminarCorreo = async (correo) => {
         try {
             await controladorAdministrador.eliminarCorreo(correo);
-            showAlert("Correo eliminado exitosamente.");
+            addToast("Correo eliminado exitosamente.", "success");
             cargarDatos();
         } catch (error) {
-            showAlert("Error al eliminar correo.");
+            addToast("Error al eliminar correo.", "error");
         }
     };
 
@@ -104,26 +103,26 @@ function AdminDashboard() {
 
     const confirmModificarCreditos = async () => {
         if (modalCreditos.cantidad === '') {
-            showAlert("Debes ingresar una cantidad.");
+            addToast("Debes ingresar una cantidad.", "error");
             return;
         }
         try {
             await controladorAdministrador.modificarCreditos(modalCreditos.idUsuario, parseFloat(modalCreditos.cantidad));
-            showAlert("Créditos actualizados con éxito.");
+            addToast("Créditos actualizados con éxito.", "success");
             setModalCreditos({ isOpen: false, idUsuario: null, cantidad: '' });
             cargarDatos();
         } catch (error) {
-            showAlert("Error actualizando créditos.");
+            addToast("Error actualizando créditos.", "error");
         }
     };
 
     const handlePerdonar = async (idUsuario) => {
         try {
             await controladorAdministrador.perdonarFaltas(idUsuario);
-            showAlert("Faltas perdonadas exitosamente.");
+            addToast("Faltas perdonadas exitosamente.", "success");
             cargarDatos();
         } catch (error) {
-            showAlert("Error al perdonar faltas.");
+            addToast("Error al perdonar faltas.", "error");
         }
     };
 
@@ -300,15 +299,6 @@ function AdminDashboard() {
                 </div>
             )}
 
-            {modalAlert.isOpen && (
-                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100 }}>
-                    <div style={{ backgroundColor: 'var(--bg-primary)', padding: '2rem', borderRadius: '1rem', width: '90%', maxWidth: '400px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)', textAlign: 'center' }}>
-                        <h3 style={{ marginTop: 0, color: 'var(--text-primary)' }}>Aviso</h3>
-                        <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>{modalAlert.message}</p>
-                        <button className="btn-primary" style={{ backgroundColor: 'var(--color-green-700)', color: '#fff', width: '100%' }} onClick={() => setModalAlert({ isOpen: false, message: '' })}>Aceptar</button>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

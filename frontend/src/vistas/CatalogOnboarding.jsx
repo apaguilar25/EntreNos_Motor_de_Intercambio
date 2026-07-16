@@ -1,10 +1,12 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
+import { ToastContext } from '../contextos/ToastContext';
 
 const CatalogOnboarding = () => {
   const navigate = useNavigate();
   const { user, setHasCatalog, setBalance, hasCatalog, controladorPerfil } = useContext(AppContext);
+  const { addToast } = useContext(ToastContext);
 
   const [skills, setSkills] = useState({});
   const [needs, setNeeds] = useState({});
@@ -68,7 +70,7 @@ const CatalogOnboarding = () => {
     });
 
     if (!valid) {
-      alert('Por favor, completa la información (Precio/Descripción) de todas las opciones marcadas.');
+      addToast('Por favor, completa la información (Precio/Descripción) de todas las opciones marcadas.', 'error');
       return;
     }
 
@@ -100,15 +102,15 @@ const CatalogOnboarding = () => {
 
       if (!hasCatalog) {
         setBalance(prev => prev + 20);
-        alert('¡Felicidades! Has configurado tu catálogo por primera vez y recibido 20 créditos de Capital Semilla.');
+        addToast('¡Felicidades! Has configurado tu catálogo por primera vez y recibido 20 créditos de Capital Semilla.', 'success', '/profile');
       } else {
-        alert('Catálogo actualizado exitosamente.');
+        addToast('Catálogo actualizado exitosamente.', 'success', '/profile');
       }
       
       setHasCatalog(true);
       navigate('/profile'); // Redirige al perfil para que vea los cambios
     } catch (err) {
-      alert(err.message);
+      addToast(err.message, 'error');
     }
   };
 
