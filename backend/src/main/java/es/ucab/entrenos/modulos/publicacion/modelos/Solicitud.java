@@ -10,6 +10,7 @@ public class Solicitud {
     private EstadoSolicitud estado;
     private long fechaCreacion;
     private long fechaLimiteRespuesta;
+    private int precioOfertado;
     private int version;
 
     private static final long PLAZO_RESPUESTA_MS = 5L * 24 * 60 * 60 * 1000;
@@ -17,6 +18,15 @@ public class Solicitud {
     public Solicitud() {}
 
     public Solicitud(String idPublicacion, String idSolicitante) {
+        this.idSolicitud = "SOL-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        this.idPublicacion = idPublicacion;
+        this.idSolicitante = idSolicitante;
+        this.estado = EstadoSolicitud.PENDIENTE;
+        this.fechaCreacion = System.currentTimeMillis();
+        this.fechaLimiteRespuesta = System.currentTimeMillis() + PLAZO_RESPUESTA_MS;
+    }
+
+    public Solicitud(String idPublicacion, String idSolicitante, int precioOfertado) {
         this.idSolicitud = "SOL-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         this.idPublicacion = idPublicacion;
         this.idSolicitante = idSolicitante;
@@ -82,6 +92,9 @@ public class Solicitud {
 
     public long getFechaLimiteRespuesta() { return fechaLimiteRespuesta; }
     public void setFechaLimiteRespuesta(long fechaLimiteRespuesta) { this.fechaLimiteRespuesta = fechaLimiteRespuesta; }
+
+    public int getPrecioOfertado() { return precioOfertado; }
+    public void setPrecioOfertado(int precioOfertado) { this.precioOfertado = precioOfertado; }
 
     public int getVersion() { return version; }
     public void setVersion(int version) { this.version = version; }

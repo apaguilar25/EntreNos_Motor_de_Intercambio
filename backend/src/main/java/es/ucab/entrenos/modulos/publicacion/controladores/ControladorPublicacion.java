@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.util.List;
 @RestController
 @RequestMapping("/api/publicaciones")
@@ -19,6 +20,12 @@ public class ControladorPublicacion {
     public ControladorPublicacion(ServicioPublicacion servicioPublicacion) {
         this.servicioPublicacion = servicioPublicacion;
     }
+    // --- SSE Muro en Tiempo Real ---
+    @GetMapping("/stream")
+    public SseEmitter streamMuro() {
+        return servicioPublicacion.suscribirMuro();
+    }
+
     // --- Endpoints de Publicación ---
     @GetMapping
     public ResponseEntity<List<PublicacionResponseDTO>> obtenerPublicaciones(

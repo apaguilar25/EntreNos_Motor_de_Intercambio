@@ -59,7 +59,7 @@ const Wallet = () => {
         <div className="card" style={{ backgroundColor: 'var(--bg-warning-soft)', color: 'var(--text-on-warning-soft)', border: 'none' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', opacity: 0.9 }}>
             <Clock size={20} />
-            <span style={{ fontSize: '1.125rem', fontWeight: '500' }}>Créditos Retenidos</span>
+            <span style={{ fontSize: '1.125rem', fontWeight: '500' }}>Créditos Comprometidos</span>
           </div>
           <div style={{ fontSize: '3rem', fontWeight: 'bold' }}>
             {retainedBalance} <span style={{ fontSize: '1.5rem', fontWeight: 'normal', opacity: 0.8 }}>cr</span>

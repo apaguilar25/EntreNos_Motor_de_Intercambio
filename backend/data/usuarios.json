@@ -1,12 +1,12 @@
 [
   {
-    "id": "1e23aaab-4619-4ddd-a6f3-ba08e16b3912",
-    "nombre": "Super Administrador",
-    "correoElectronico": "admin@alameda.com",
-    "telefono": "0000000000",
-    "descripcionPersonal": "Administrador general de la comunidad",
-    "contrasenaHash": "$2a$10$VQIlhZfqRnrB/1jCtGsfTeawSzvXfQrLt/aVFtcakd/JoHnf92WwC",
-    "version": 4,
+    "id": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "nombre": "Ana Ofertante",
+    "correoElectronico": "ana.cache@alameda.com",
+    "telefono": "+58414000901",
+    "descripcionPersonal": "Test cache",
+    "contrasenaHash": "$2a$10$7kL2JJjDZbkGf7hwaZGnIenjT/9dw9/Xf/eRCOOWwnbyaqIpZ7hIG",
+    "version": 1,
     "monedero": {
       "creditosDisponibles": 0.0,
       "creditosComprometidos": 0.0,
@@ -25,125 +25,92 @@
     "urlFotoPerfil": "default.png",
     "promedioCalificacion": 0.0,
     "cantidadCalificaciones": 0,
-    "rol": "ADMINISTRADOR",
+    "rol": "MIEMBRO_COMUNIDAD",
     "esVecinoDestacado": false
   },
   {
-    "id": "14a5f94a-c35f-434a-82eb-d687e9b2d618",
-    "nombre": "Ana García",
-    "correoElectronico": "ana.garcia@alameda.com",
-    "telefono": "+584141111111",
-    "descripcionPersonal": "Profesora de yoga y amante de la cocina italiana",
-    "contrasenaHash": "$2a$10$xDGMamLnGz/l7g1jKC8Pk.oJ8amZP6KoZN3EUoIK4y7nfn4m27RIm",
-    "version": 2,
-    "monedero": {
-      "creditosDisponibles": 100.0,
-      "creditosComprometidos": 13.0,
-      "creditosPorLogros": 5.0
-    },
-    "catalogo": {
-      "completado": true,
-      "habilidadesOfrecidas": [
-        {
-          "idInstancia": "h-yoga-0001-4000-8000-000000000001",
-          "habilidadBase": {
-            "id": "hab-yoga",
-            "categoria": "Yoga"
-          },
-          "precioCreditos": 2,
-          "descripcionServicio": "Clases de yoga para principiantes y nivel intermedio"
-        },
-        {
-          "idInstancia": "h-cocina-0001-4000-8000-000000000001",
-          "habilidadBase": {
-            "id": "hab-cocina",
-            "categoria": "Cocina Italiana"
-          },
-          "precioCreditos": 3,
-          "descripcionServicio": "Enseño a preparar platos tradicionales italianos"
-        }
-      ],
-      "necesidadesRegistradas": [
-        {
-          "idInstancia": "n-prog-0001-4000-8000-000000000001",
-          "necesidadBase": {
-            "id": "nec-prog",
-            "categoria": "Programación Web"
-          },
-          "descripcionCondiciones": "Necesito ayuda con fundamentos de HTML, CSS y JavaScript"
-        },
-        {
-          "idInstancia": "n-ingles-0001-4000-8000-000000000001",
-          "necesidadBase": {
-            "id": "nec-ingles",
-            "categoria": "Inglés Conversacional"
-          },
-          "descripcionCondiciones": "Busco practicar inglés conversacional una vez por semana"
-        }
-      ]
-    },
-    "estado": "ACTIVO",
-    "intentosFallidos": 0,
-    "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
-    "reportesFraudeValidados": 0,
-    "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 4.5,
-    "cantidadCalificaciones": 8,
-    "rol": "MIEMBRO_COMUNIDAD",
-    "esVecinoDestacado": true
-  },
-  {
-    "id": "eb2dd112-8d4e-4f62-836b-46e145e22d2c",
-    "nombre": "María Rodríguez",
-    "correoElectronico": "maria.rodriguez@alameda.com",
-    "telefono": "+584143333333",
-    "descripcionPersonal": "Profesora de inglés y apasionada por la mecánica",
-    "contrasenaHash": "$2a$10$5x3vl9kLJSEZlhvz./5A0u6.ko8jqhE1zB1okZyiQ1XUk9x.n.ACq",
-    "version": 0,
+    "id": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "nombre": "Carlos Prueba",
+    "correoElectronico": "carlos.prueba@alameda.com",
+    "telefono": "04121234567",
+    "contrasenaHash": "$2a$10$R6RQB0b5z0a2l9nCjfyyoucImOV4zo0jaRgJK640NqKq67fmocOnG",
+    "version": 25,
     "monedero": {
       "creditosDisponibles": 50.0,
       "creditosComprometidos": 0.0,
-      "creditosPorLogros": 15.0
+      "creditosPorLogros": 0.0
     },
     "catalogo": {
       "completado": true,
       "habilidadesOfrecidas": [
         {
-          "idInstancia": "h-ingles-0001-4000-8000-000000000003",
+          "idInstancia": "8d7f912a-ec1b-4cd7-9ae6-3934047e6f9b",
           "habilidadBase": {
-            "id": "hab-ingles",
-            "categoria": "Inglés Conversacional"
+            "id": "HAB-001",
+            "categoria": "Plomería"
           },
-          "precioCreditos": 2,
-          "descripcionServicio": "Clases de inglés conversacional para todos los niveles"
+          "precioCreditos": 5,
+          "descripcionServicio": "Arreglo de tuberías y grifos"
         },
         {
-          "idInstancia": "h-mecanica-0001-4000-8000-000000000003",
+          "idInstancia": "9263f552-eb3c-40b4-9ad3-2034799e9e4c",
           "habilidadBase": {
-            "id": "hab-mecanica",
-            "categoria": "Mecánica de Bicicletas"
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
           },
-          "precioCreditos": 3,
-          "descripcionServicio": "Reparación y mantenimiento básico de bicicletas"
+          "precioCreditos": 8,
+          "descripcionServicio": "Reparación de computadoras y soporte técnico"
+        },
+        {
+          "idInstancia": "543a77cf-c4be-44c5-801b-bf27ba46a826",
+          "habilidadBase": {
+            "id": "HAB-003",
+            "categoria": "Carpintería"
+          },
+          "precioCreditos": 4,
+          "descripcionServicio": "sadadadasd"
         }
       ],
       "necesidadesRegistradas": [
         {
-          "idInstancia": "n-cocina-0001-4000-8000-000000000003",
+          "idInstancia": "d15d4ffe-e679-4f1c-9c1d-d4f2fee33e01",
           "necesidadBase": {
-            "id": "nec-cocina",
-            "categoria": "Cocina Italiana"
+            "id": "HAB-004",
+            "categoria": "Limpieza del Hogar"
           },
-          "descripcionCondiciones": "Quiero aprender a cocinar pasta y pizza desde cero"
+          "descripcionCondiciones": "Necesito ayuda con limpieza general de mi apartamento una vez por semana"
         },
         {
-          "idInstancia": "n-piano-0001-4000-8000-000000000003",
+          "idInstancia": "fe44b59f-4d9f-414c-83ff-9b2f4c1a8d1e",
           "necesidadBase": {
-            "id": "nec-piano",
-            "categoria": "Piano Clásico"
+            "id": "HAB-002",
+            "categoria": "Electricidad"
           },
-          "descripcionCondiciones": "Busco profesor de piano para empezar desde cero"
+          "descripcionCondiciones": "ffssfsfds"
+        },
+        {
+          "idInstancia": "7ad32b3e-907c-4f4a-9260-fd9fe6b14bad",
+          "necesidadBase": {
+            "id": "HAB-001",
+            "categoria": "Plomería"
+          },
+          "descripcionCondiciones": "saasfasfasfasfasfasf"
+        },
+        {
+          "idInstancia": "af050134-9d95-477e-b078-056e3b7f37ce",
+          "necesidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "descripcionCondiciones": "Necesito este servicio porque mi computadora se dañó"
+        },
+        {
+          "idInstancia": "9e1dfee4-6034-4fbf-be41-30f06cb12666",
+          "necesidadBase": {
+            "id": "HAB-003",
+            "categoria": "Carpintería"
+          },
+          "descripcionCondiciones": "NEcesito que me arreglen la silla"
         }
       ]
     },
@@ -153,64 +120,28 @@
     "primerIntentoFallidoMillis": 0,
     "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 4.8,
-    "cantidadCalificaciones": 12,
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
     "rol": "MIEMBRO_COMUNIDAD",
-    "esVecinoDestacado": true
+    "esVecinoDestacado": false
   },
   {
-    "id": "21785cf5-c265-456b-84c1-b8a889894b27",
-    "nombre": "Pedro Martínez",
-    "correoElectronico": "pedro.martinez@alameda.com",
-    "telefono": "+584144444444",
-    "descripcionPersonal": "Jardinero y electricista con experiencia",
-    "contrasenaHash": "$2a$10$qlTO46MbjQKFZLkNMXv/2e1e72Hy0YOGeWWKn/19qGYBbIMolKwoC",
+    "id": "610b0b73-746c-4d2a-88b7-c90778427553",
+    "nombre": "Bob Demandante",
+    "correoElectronico": "bob.cache@alameda.com",
+    "telefono": "+58414000902",
+    "descripcionPersonal": "Test cache",
+    "contrasenaHash": "$2a$10$mH4pnjCJpKNyqslU51xe0O62AXiBqmU9V5Ad0vcdQcsgqZTnMojk2",
     "version": 0,
     "monedero": {
-      "creditosDisponibles": 30.0,
-      "creditosComprometidos": 8.0,
+      "creditosDisponibles": 0.0,
+      "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
       "completado": false,
-      "habilidadesOfrecidas": [
-        {
-          "idInstancia": "h-jardin-0001-4000-8000-000000000004",
-          "habilidadBase": {
-            "id": "hab-jardin",
-            "categoria": "Jardinería"
-          },
-          "precioCreditos": 2,
-          "descripcionServicio": "Servicios de jardinería: poda, siembra y diseño de jardines"
-        },
-        {
-          "idInstancia": "h-elect-0001-4000-8000-000000000004",
-          "habilidadBase": {
-            "id": "hab-elect",
-            "categoria": "Electricidad Básica"
-          },
-          "precioCreditos": 4,
-          "descripcionServicio": "Reparaciones eléctricas básicas: instalaciones y arreglos"
-        }
-      ],
-      "necesidadesRegistradas": [
-        {
-          "idInstancia": "n-prog2-0001-4000-8000-000000000004",
-          "necesidadBase": {
-            "id": "nec-prog2",
-            "categoria": "Programación Web"
-          },
-          "descripcionCondiciones": "Necesito crear una página web para mi negocio de jardinería"
-        },
-        {
-          "idInstancia": "n-guitarra-0001-4000-8000-000000000004",
-          "necesidadBase": {
-            "id": "nec-guitarra",
-            "categoria": "Guitarra Acústica"
-          },
-          "descripcionCondiciones": "Busco clases de guitarra acústica para principiantes"
-        }
-      ]
+      "habilidadesOfrecidas": [],
+      "necesidadesRegistradas": []
     },
     "estado": "ACTIVO",
     "intentosFallidos": 0,
@@ -218,62 +149,71 @@
     "primerIntentoFallidoMillis": 0,
     "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 3.9,
-    "cantidadCalificaciones": 3,
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
     "rol": "MIEMBRO_COMUNIDAD",
     "esVecinoDestacado": false
   },
   {
-    "id": "f551477f-6cb5-4abe-b204-928c24d11d7c",
-    "nombre": "Carlos López",
-    "correoElectronico": "carlos.lopez@alameda.com",
-    "telefono": "+584142222222",
-    "descripcionPersonal": "Desarrollador web y músico aficionado",
-    "contrasenaHash": "$2a$10$/XREdINRA8fNJlRzOyjbIeHU0iOhCx94d0vvF8BPuPILaMBLCd36u",
-    "version": 0,
+    "id": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "nombre": "Super Administrador",
+    "correoElectronico": "admin@alameda.com",
+    "telefono": "0000000000",
+    "descripcionPersonal": "Administrador general de la comunidad",
+    "contrasenaHash": "$2a$10$8Wf3ABToBcPb548r/M3BruD0/u5HZeiXVuV0QwfjbUmI5Qz1/Z7ze",
+    "version": 24,
     "monedero": {
-      "creditosDisponibles": 75.0,
-      "creditosComprometidos": 5.0,
-      "creditosPorLogros": 10.0
+      "creditosDisponibles": 50.0,
+      "creditosComprometidos": 8.0,
+      "creditosPorLogros": 0.0
     },
     "catalogo": {
       "completado": true,
       "habilidadesOfrecidas": [
         {
-          "idInstancia": "h-prog-0001-4000-8000-000000000002",
+          "idInstancia": "d64ef049-787b-43e6-866e-e519f05adc72",
           "habilidadBase": {
-            "id": "hab-prog",
-            "categoria": "Programación Web"
-          },
-          "precioCreditos": 4,
-          "descripcionServicio": "Clases de desarrollo web full-stack (HTML, CSS, JavaScript, Java)"
-        },
-        {
-          "idInstancia": "h-piano-0001-4000-8000-000000000002",
-          "habilidadBase": {
-            "id": "hab-piano",
-            "categoria": "Piano Clásico"
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
           },
           "precioCreditos": 3,
-          "descripcionServicio": "Clases de piano clásico nivel básico e intermedio"
+          "descripcionServicio": "dsfsf"
+        },
+        {
+          "idInstancia": "010a502c-807d-4cad-a330-2c203f66f3c6",
+          "habilidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "precioCreditos": 4,
+          "descripcionServicio": "dgsgsdgsdgsdgsgdsd"
+        },
+        {
+          "idInstancia": "233ccb2e-cc7a-4ea6-8582-89fba7ef8895",
+          "habilidadBase": {
+            "id": "HAB-003",
+            "categoria": "Carpintería"
+          },
+          "precioCreditos": 4,
+          "descripcionServicio": "Puedo arreglar sillas"
         }
       ],
       "necesidadesRegistradas": [
         {
-          "idInstancia": "n-yoga-0001-4000-8000-000000000002",
+          "idInstancia": "d73f756b-8a86-43f0-b552-70f60441e9e4",
           "necesidadBase": {
-            "id": "nec-yoga",
-            "categoria": "Yoga"
+            "id": "HAB-002",
+            "categoria": "Electricidad"
           },
-          "descripcionCondiciones": "Busco clases de yoga para mejorar mi flexibilidad"
+          "descripcionCondiciones": "sdfsf"
         },
         {
-          "idInstancia": "n-mecanica-0001-4000-8000-000000000002",
+          "idInstancia": "023d4941-b316-4768-a34c-5bb9d465a886",
           "necesidadBase": {
-            "id": "nec-mecanica",
-            "categoria": "Mecánica de Bicicletas"
+            "id": "HAB-004",
+            "categoria": "Limpieza del Hogar"
           },
-          "descripcionCondiciones": "Necesito ayuda para reparar y mantener mi bicicleta"
+          "descripcionCondiciones": "blh´´oj´poúi´pi"
         }
       ]
     },
@@ -283,9 +223,9 @@
     "primerIntentoFallidoMillis": 0,
     "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 4.2,
-    "cantidadCalificaciones": 5,
-    "rol": "MIEMBRO_COMUNIDAD",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "ADMINISTRADOR",
     "esVecinoDestacado": false
   }
 ]

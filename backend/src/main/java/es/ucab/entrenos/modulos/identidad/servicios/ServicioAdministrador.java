@@ -47,6 +47,10 @@ public class ServicioAdministrador {
     }
 
     public void resolverIncidencia(String idAdministrador, String idIncidencia, String idUsuarioGanadorCreditos, boolean sancionarOfertante, boolean sancionarDemandante) {
+        resolverIncidencia(idAdministrador, idIncidencia, idUsuarioGanadorCreditos, sancionarOfertante, sancionarDemandante, false, false);
+    }
+
+    public void resolverIncidencia(String idAdministrador, String idIncidencia, String idUsuarioGanadorCreditos, boolean sancionarOfertante, boolean sancionarDemandante, Boolean sancionarReportante, Boolean sancionarDefensor) {
         verificarPermisosAdmin(idAdministrador);
 
         Incidencia incidencia = repositorioIncidencia.obtenerPorId(idIncidencia)
@@ -74,7 +78,27 @@ public class ServicioAdministrador {
             throw new IllegalArgumentException("El ganador debe ser el ofertante o el demandante de la transacción.");
         }
 
-        // Sancionar
+        // Mapear sancionarReportante/sancionarDefensor a ofertante/demandante
+        if (sancionarReportante != null && sancionarReportante) {
+            String idReportante = incidencia.getIdUsuarioReportante();
+            if (idReportante.equals(t.getIdOfertante())) {
+                ofertante.registrarReporteFraudeValidado();
+            } else if (idReportante.equals(t.getIdDemandante())) {
+                demandante.registrarReporteFraudeValidado();
+            }
+        }
+        if (sancionarDefensor != null && sancionarDefensor) {
+            String idDefensor = incidencia.getIdUsuarioDefensor();
+            if (idDefensor != null) {
+                if (idDefensor.equals(t.getIdOfertante())) {
+                    ofertante.registrarReporteFraudeValidado();
+                } else if (idDefensor.equals(t.getIdDemandante())) {
+                    demandante.registrarReporteFraudeValidado();
+                }
+            }
+        }
+
+        // Sancionar (legado)
         if (sancionarOfertante) {
             ofertante.registrarReporteFraudeValidado();
         }

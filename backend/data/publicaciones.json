@@ -1,14 +1,156 @@
-﻿[
-  {"idPublicacion":"PUB-YOGA0001","idUsuario":"14a5f94a-c35f-434a-82eb-d687e9b2d618","tipoPublicacion":"HABILIDAD","nombreServicio":"Clases de Yoga","descripcion":"Clases de yoga para principiantes y nivel intermedio, incluye sesiones de meditacion guiada","precioCreditos":2,"disponible":true,"idInstanciaCatalogo":"h-yoga-0001-4000-8000-000000000001","version":0},
-  {"idPublicacion":"PUB-COCINA01","idUsuario":"14a5f94a-c35f-434a-82eb-d687e9b2d618","tipoPublicacion":"HABILIDAD","nombreServicio":"Cocina Italiana","descripcion":"Enseno a preparar pasta fresca, pizza napolitana y postres italianos tradicionales","precioCreditos":3,"disponible":true,"idInstanciaCatalogo":"h-cocina-0001-4000-8000-000000000001","version":0},
-  {"idPublicacion":"PUB-PROG0001","idUsuario":"f551477f-6cb5-4abe-b204-928c24d11d7c","tipoPublicacion":"HABILIDAD","nombreServicio":"Programacion Web","descripcion":"Clases de desarrollo web full-stack: HTML, CSS, JavaScript, React y Java Spring Boot","precioCreditos":4,"disponible":true,"idInstanciaCatalogo":"h-prog-0001-4000-8000-000000000002","version":0},
-  {"idPublicacion":"PUB-PIANO01","idUsuario":"f551477f-6cb5-4abe-b204-928c24d11d7c","tipoPublicacion":"HABILIDAD","nombreServicio":"Clases de Piano","descripcion":"Clases de piano clasico desde nivel basico hasta intermedio, teoria musical incluida","precioCreditos":3,"disponible":true,"idInstanciaCatalogo":"h-piano-0001-4000-8000-000000000002","version":0},
-  {"idPublicacion":"PUB-INGLES01","idUsuario":"eb2dd112-8d4e-4f62-836b-46e145e22d2c","tipoPublicacion":"HABILIDAD","nombreServicio":"Ingles Conversacional","descripcion":"Clases de ingles conversacional para todos los niveles, preparacion para examenes internacionales","precioCreditos":2,"disponible":true,"idInstanciaCatalogo":"h-ingles-0001-4000-8000-000000000003","version":0},
-  {"idPublicacion":"PUB-MECANICA","idUsuario":"eb2dd112-8d4e-4f62-836b-46e145e22d2c","tipoPublicacion":"HABILIDAD","nombreServicio":"Mecanica de Bicicletas","descripcion":"Reparacion y mantenimiento basico de bicicletas: frenos, cambios, ruedas y lubricacion","precioCreditos":3,"disponible":true,"idInstanciaCatalogo":"h-mecanica-0001-4000-8000-000000000003","version":0},
-  {"idPublicacion":"PUB-JARDIN01","idUsuario":"21785cf5-c265-456b-84c1-b8a889894b27","tipoPublicacion":"HABILIDAD","nombreServicio":"Jardineria","descripcion":"Servicios de jardineria: poda de arboles, siembra de plantas ornamentales y diseno de jardines","precioCreditos":2,"disponible":true,"idInstanciaCatalogo":"h-jardin-0001-4000-8000-000000000004","version":0},
-  {"idPublicacion":"PUB-ELECTRI","idUsuario":"21785cf5-c265-456b-84c1-b8a889894b27","tipoPublicacion":"HABILIDAD","nombreServicio":"Electricidad Basica","descripcion":"Reparaciones electricas domiciliarias: instalacion de lamparas, tomacorrientes y cableado basico","precioCreditos":4,"disponible":true,"idInstanciaCatalogo":"h-elect-0001-4000-8000-000000000004","version":0},
-  {"idPublicacion":"PUB-ANPROG","idUsuario":"14a5f94a-c35f-434a-82eb-d687e9b2d618","tipoPublicacion":"NECESIDAD","nombreServicio":"Clases de Programacion Web","descripcion":"Busco alguien que me ensene fundamentos de HTML, CSS y JavaScript para crear mi sitio web","precioCreditos":2,"disponible":true,"idInstanciaCatalogo":null,"version":0},
-  {"idPublicacion":"PUB-CANYOGA","idUsuario":"f551477f-6cb5-4abe-b204-928c24d11d7c","tipoPublicacion":"NECESIDAD","nombreServicio":"Clases de Yoga","descripcion":"Busco instructor de yoga para mejorar mi flexibilidad y reducir el estres laboral","precioCreditos":1,"disponible":true,"idInstanciaCatalogo":null,"version":0},
-  {"idPublicacion":"PUB-MACOCIN","idUsuario":"eb2dd112-8d4e-4f62-836b-46e145e22d2c","tipoPublicacion":"NECESIDAD","nombreServicio":"Clases de Cocina Italiana","descripcion":"Quiero aprender a cocinar pasta fresca, pizza y platos tipicos italianos desde cero","precioCreditos":1,"disponible":true,"idInstanciaCatalogo":null,"version":0},
-  {"idPublicacion":"PUB-PEGUITA","idUsuario":"21785cf5-c265-456b-84c1-b8a889894b27","tipoPublicacion":"NECESIDAD","nombreServicio":"Clases de Guitarra Acustica","descripcion":"Busco profesor de guitarra acustica para aprender desde cero, disponibilidad los fines de semana","precioCreditos":2,"disponible":true,"idInstanciaCatalogo":null,"version":0}
+[
+  {
+    "idPublicacion": "PUB-132C8A36",
+    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Soporte Técnico / Computación",
+    "descripcion": "dsfsf",
+    "precioCreditos": 3,
+    "disponible": true,
+    "idInstanciaCatalogo": "d64ef049-787b-43e6-866e-e519f05adc72",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-AEB35851",
+    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Electricidad",
+    "descripcion": "sdfsf",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "d73f756b-8a86-43f0-b552-70f60441e9e4",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-A78D7873",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Plomería",
+    "descripcion": "Arreglo de tuberías y grifos",
+    "precioCreditos": 5,
+    "disponible": true,
+    "idInstanciaCatalogo": "8d7f912a-ec1b-4cd7-9ae6-3934047e6f9b",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-4C8E891B",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Soporte Técnico / Computación",
+    "descripcion": "Reparación de computadoras y soporte técnico",
+    "precioCreditos": 8,
+    "disponible": true,
+    "idInstanciaCatalogo": "9263f552-eb3c-40b4-9ad3-2034799e9e4c",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-37DC4A29",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Limpieza del Hogar",
+    "descripcion": "Necesito ayuda con limpieza general de mi apartamento una vez por semana",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "d15d4ffe-e679-4f1c-9c1d-d4f2fee33e01",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-45693065",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Limpieza del Hogar",
+    "descripcion": "Ayuda pa la casa",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "767d19b6-0fe1-4068-9223-c73304860b55",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-C5D087F1",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Carpintería",
+    "descripcion": "sadadadasd",
+    "precioCreditos": 4,
+    "disponible": true,
+    "idInstanciaCatalogo": "543a77cf-c4be-44c5-801b-bf27ba46a826",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-8F554014",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Electricidad",
+    "descripcion": "ffssfsfds",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "fe44b59f-4d9f-414c-83ff-9b2f4c1a8d1e",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-D1EF25F7",
+    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Limpieza del Hogar",
+    "descripcion": "blh´´oj´poúi´pi",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "023d4941-b316-4768-a34c-5bb9d465a886",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-53774C9E",
+    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Electricidad",
+    "descripcion": "dgsgsdgsdgsdgsgdsd",
+    "precioCreditos": 4,
+    "disponible": true,
+    "idInstanciaCatalogo": "010a502c-807d-4cad-a330-2c203f66f3c6",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-42711448",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Plomería",
+    "descripcion": "saasfasfasfasfasfasf",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "7ad32b3e-907c-4f4a-9260-fd9fe6b14bad",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-9461BFF5",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Soporte Técnico / Computación",
+    "descripcion": "Necesito este servicio porque mi computadora se dañó",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "af050134-9d95-477e-b078-056e3b7f37ce",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-CDCBD6A4",
+    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Carpintería",
+    "descripcion": "Puedo arreglar sillas",
+    "precioCreditos": 4,
+    "disponible": true,
+    "idInstanciaCatalogo": "233ccb2e-cc7a-4ea6-8582-89fba7ef8895",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-E88CF0B1",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Carpintería",
+    "descripcion": "NEcesito que me arreglen la silla",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "9e1dfee4-6034-4fbf-be41-30f06cb12666",
+    "version": 0
+  }
 ]

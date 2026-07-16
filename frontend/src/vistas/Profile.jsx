@@ -21,13 +21,53 @@ const Profile = () => {
 
   // Modal Reporte
   const [reportModalOpen, setReportModalOpen] = useState(false);
-  const [reportData, setReportData] = useState({ idPublicacion: '', idUsuarioInvolucrado: '', descripcionProblema: '', fotosEvidenciaBase64: [] });
+  const [reportData, setReportData] = useState({ idPublicacion: '', idUsuarioInvolucrado: '', descripcionProblema: '', fotosEvidenciaBase64: [], esDemandante: false });
+
+  // Mapa de incidencias por transacción
+  const [incidenciasMap, setIncidenciasMap] = useState({});
+
+  // Modal Apelar Reporte (defensa)
+  const [appealModalOpen, setAppealModalOpen] = useState(false);
+  const [appealData, setAppealData] = useState({ idTransaccion: '', descripcion: '', fotosEvidenciaBase64: [] });
+
+  // Modal Cancelar Reporte
+  const [cancelReportModalOpen, setCancelReportModalOpen] = useState(false);
+  const [cancelReportData, setCancelReportData] = useState({ idTransaccion: '', motivo: '' });
 
   // Modal Edición
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editType, setEditType] = useState(''); // 'oferta', 'necesidad', 'subasta'
   const [editData, setEditData] = useState({ idInstancia: '', descripcion: '', precio: 0, titulo: '' });
 
+
+  const loadTransactionsAndIncidencias = async () => {
+    if (!user?.id) return;
+    const transResponse = await fetch(`http://localhost:8080/api/transacciones`);
+    let userTrans = [];
+    if (transResponse.ok) {
+      const transData = await transResponse.json();
+      userTrans = transData.filter(t =>
+        (t.idDemandante === user.id || t.idOfertante === user.id) &&
+        t.estado !== 'RECHAZADA' && t.estado !== 'CANCELADA'
+      );
+      setTransacciones(userTrans);
+    }
+    const incMap = {};
+    if (userTrans) {
+      for (const tx of userTrans) {
+        if (tx.estado === 'EN_DISPUTA') {
+          try {
+            const incRes = await fetch(`http://localhost:8080/api/transacciones/${tx.idTransaccion}/incidencia`);
+            if (incRes.ok) {
+              const inc = await incRes.json();
+              incMap[tx.idTransaccion] = inc;
+            }
+          } catch (e) { /* ignore */ }
+        }
+      }
+    }
+    setIncidenciasMap(incMap);
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -43,15 +83,7 @@ const Profile = () => {
         const auctionsData = await controladorSubasta.obtenerMisSubastas();
         setMyAuctions(auctionsData);
 
-        const transResponse = await fetch(`http://localhost:8080/api/transacciones`);
-        if (transResponse.ok) {
-          const transData = await transResponse.json();
-          const userTrans = transData.filter(t => 
-            (t.idDemandante === user.id || t.idOfertante === user.id) &&
-            t.estado !== 'RECHAZADA' && t.estado !== 'CANCELADA'
-          );
-          setTransacciones(userTrans);
-        }
+        await loadTransactionsAndIncidencias();
 
         if (controladorGamificacion) {
           const logrosData = await controladorGamificacion.obtenerLogros(user.id);
@@ -70,7 +102,11 @@ const Profile = () => {
             });
           }
           if (sentData) {
-            sentData.forEach(s => { ids.add(s.idUsuarioDefensor); ids.add(s.idUsuarioReportante); }); // Para incidencias si hubiere
+            sentData.forEach(s => {
+              ids.add(s.idUsuarioDefensor);
+              ids.add(s.idUsuarioReportante);
+              if (s.idReceptor) ids.add(s.idReceptor);
+            });
           }
           
           const uMap = {};
@@ -147,22 +183,161 @@ const Profile = () => {
     }
 
     try {
+      const fotos = reportData.fotosEvidenciaBase64.length > 0 ? reportData.fotosEvidenciaBase64 : [];
       const res = await fetch(`http://localhost:8080/api/transacciones/${reportData.idPublicacion}/reportar-incidencia`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           idUsuario: user.id,
           descripcion: reportData.descripcionProblema,
-          urlEvidencia: "N/A"
+          urlEvidencia: fotos.length > 0 ? fotos[0] : "N/A",
+          fotosEvidencia: fotos
         })
       });
       if (res.ok) {
         setAlertMessage("Incidencia reportada con éxito. Nuestro equipo la revisará.");
         setReportModalOpen(false);
-        setReportData({ idPublicacion: '', idUsuarioInvolucrado: '', descripcionProblema: '', fotosEvidenciaBase64: [] });
+        setReportData({ idPublicacion: '', idUsuarioInvolucrado: '', descripcionProblema: '', fotosEvidenciaBase64: [], esDemandante: false });
+        await loadTransactionsAndIncidencias();
       } else {
         const errorData = await res.json();
         setAlertMessage(errorData.error || "Error al reportar");
+      }
+    } catch (err) {
+      setAlertMessage("Error de conexión");
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const promises = files.map(file => new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (ev) => resolve(ev.target.result);
+      reader.readAsDataURL(file);
+    }));
+    Promise.all(promises).then(base64Files => {
+      setReportData({ ...reportData, fotosEvidenciaBase64: [...reportData.fotosEvidenciaBase64, ...base64Files] });
+    });
+  };
+
+  const removeFile = (index) => {
+    const updated = reportData.fotosEvidenciaBase64.filter((_, i) => i !== index);
+    setReportData({ ...reportData, fotosEvidenciaBase64: updated });
+  };
+
+  const handleAppealSubmit = async (e) => {
+    e.preventDefault();
+    if (appealData.descripcion.length < 20) {
+      setAlertMessage("La descripción de la apelación debe tener al menos 20 caracteres.");
+      return;
+    }
+    try {
+      const fotos = appealData.fotosEvidenciaBase64.length > 0 ? appealData.fotosEvidenciaBase64 : [];
+      const res = await fetch(`http://localhost:8080/api/transacciones/${appealData.idTransaccion}/defender-incidencia`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idUsuario: user.id,
+          descripcion: appealData.descripcion,
+          urlEvidencia: fotos.length > 0 ? fotos[0] : "N/A",
+          fotosEvidencia: fotos
+        })
+      });
+      if (res.ok) {
+        setAlertMessage("Apelación enviada con éxito. El administrador revisará tu defensa.");
+        setAppealModalOpen(false);
+        setAppealData({ idTransaccion: '', descripcion: '', fotosEvidenciaBase64: [] });
+        await loadTransactionsAndIncidencias();
+      } else {
+        const errorData = await res.json();
+        setAlertMessage(errorData.error || "Error al enviar apelación");
+      }
+    } catch (err) {
+      setAlertMessage("Error de conexión");
+    }
+  };
+
+  const handleAppealFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const promises = files.map(file => new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (ev) => resolve(ev.target.result);
+      reader.readAsDataURL(file);
+    }));
+    Promise.all(promises).then(base64Files => {
+      setAppealData({ ...appealData, fotosEvidenciaBase64: [...appealData.fotosEvidenciaBase64, ...base64Files] });
+    });
+  };
+
+  const removeAppealFile = (index) => {
+    const updated = appealData.fotosEvidenciaBase64.filter((_, i) => i !== index);
+    setAppealData({ ...appealData, fotosEvidenciaBase64: updated });
+  };
+
+  const handleCancelarReporte = async (e) => {
+    e.preventDefault();
+    if (cancelReportData.motivo.length < 10) {
+      setAlertMessage("Debes proporcionar una razón de al menos 10 caracteres.");
+      return;
+    }
+    try {
+      const res = await fetch(`http://localhost:8080/api/transacciones/${cancelReportData.idTransaccion}/cancelar-reporte`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idUsuario: user.id,
+          descripcion: cancelReportData.motivo,
+          urlEvidencia: "N/A"
+        })
+      });
+      if (res.ok) {
+        setAlertMessage("Reporte cancelado exitosamente. La contraparte ha sido notificada.");
+        setCancelReportModalOpen(false);
+        setCancelReportData({ idTransaccion: '', motivo: '' });
+        await loadTransactionsAndIncidencias();
+      } else {
+        const errorData = await res.json();
+        setAlertMessage(errorData.error || "Error al cancelar el reporte");
+      }
+    } catch (err) {
+      setAlertMessage("Error de conexión");
+    }
+  };
+
+  const handleConfirmEntrega = async (idTransaccion) => {
+    const isConfirmed = await confirm("Confirmar Entrega", "¿Confirmas que has entregado el servicio/producto al demandante? Esta acción no se puede deshacer.");
+    if (!isConfirmed) return;
+    try {
+      const res = await fetch(`http://localhost:8080/api/transacciones/${idTransaccion}/confirmar-ofertante`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (res.ok) {
+        setAlertMessage("Entrega confirmada con éxito.");
+        await loadTransactionsAndIncidencias();
+      } else {
+        const errorData = await res.json();
+        setAlertMessage(errorData.error || "Error al confirmar entrega");
+      }
+    } catch (err) {
+      setAlertMessage("Error de conexión");
+    }
+  };
+
+  const handleConfirmRecepcion = async (idTransaccion) => {
+    const isConfirmed = await confirm("Confirmar Recepción", "¿Confirmas que has recibido el servicio/producto del ofertante? Esta acción no se puede deshacer.");
+    if (!isConfirmed) return;
+    try {
+      const res = await fetch(`http://localhost:8080/api/transacciones/${idTransaccion}/confirmar-demandante`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (res.ok) {
+        setAlertMessage("Recepción confirmada con éxito.");
+        await loadTransactionsAndIncidencias();
+      } else {
+        const errorData = await res.json();
+        setAlertMessage(errorData.error || "Error al confirmar recepción");
       }
     } catch (err) {
       setAlertMessage("Error de conexión");
@@ -198,9 +373,10 @@ const Profile = () => {
           body: JSON.stringify({ idInstancia: editData.idInstancia, descripcionCondiciones: editData.descripcion })
         });
       } else if (editType === 'subasta') {
+        const token = sessionStorage.getItem('entreNosToken');
         res = await fetch(`http://localhost:8080/api/subastas/${editData.idInstancia}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
           body: JSON.stringify({ descripcion: editData.descripcion })
         });
       }
@@ -231,7 +407,8 @@ const Profile = () => {
       } else if (type === 'necesidad') {
         res = await fetch(`http://localhost:8080/api/usuarios/${user.id}/necesidades/${idInstancia}`, { method: 'DELETE' });
       } else if (type === 'subasta') {
-        res = await fetch(`http://localhost:8080/api/subastas/${idInstancia}`, { method: 'DELETE' });
+        const token = sessionStorage.getItem('entreNosToken');
+        res = await fetch(`http://localhost:8080/api/subastas/${idInstancia}`, { method: 'DELETE', headers: { ...(token ? { 'Authorization': `Bearer ${token}` } : {}) } });
       }
 
       if (res.ok) {
@@ -391,15 +568,19 @@ const Profile = () => {
                     )}
                     <button onClick={() => handleDelete('subasta', auction.id)} style={{ background: 'transparent', border: 'none', color: 'var(--color-red-600)', cursor: 'pointer' }}><Trash2 size={16} /></button>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', paddingRight: '4rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', paddingRight: '4rem' }}>
                     <h4 style={{ margin: 0 }}>{auction.nombreActivo}</h4>
                     <span style={{ 
                       padding: '0.25rem 0.5rem', 
                       borderRadius: '1rem', 
                       fontSize: '0.75rem', 
                       fontWeight: 'bold',
-                      backgroundColor: auction.estado === 'ACTIVA' ? 'var(--color-yellow-100)' : 'var(--color-green-100)',
-                      color: auction.estado === 'ACTIVA' ? 'var(--color-orange-600)' : 'var(--color-green-700)'
+                      maxWidth: '160px',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      backgroundColor: auction.estado === 'ACTIVA' || auction.estado === 'ESPERANDO_DECISION' ? 'var(--color-yellow-100)' : 'var(--color-green-100)',
+                      color: auction.estado === 'ACTIVA' || auction.estado === 'ESPERANDO_DECISION' ? 'var(--color-orange-600)' : 'var(--color-green-700)'
                     }}>
                       {auction.estado}
                     </span>
@@ -494,43 +675,102 @@ const Profile = () => {
               </div>
             ) : (
               transacciones.map((tx, index) => (
-                <div key={index} style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <h4 style={{ marginBottom: '0.25rem', fontSize: '1rem' }}>Tx: {tx.idTransaccion}</h4>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Publicación: {pubsMap[tx.idPublicacion] || tx.idPublicacion} • Costo: {tx.creditosComprometidos || tx.precioFinal || 0} cr</p>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                      {tx.idDemandante === user.id ? `Tú eres el Solicitante (Contraparte: ${usersMap[tx.idOfertante] || tx.idOfertante})` : `Tú eres el Proveedor (Contraparte: ${usersMap[tx.idDemandante] || tx.idDemandante})`}
-                    </p>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <span style={{ 
-                      padding: '0.25rem 0.5rem', 
-                      borderRadius: '1rem', 
-                      fontSize: '0.75rem', 
-                      fontWeight: 'bold',
-                      backgroundColor: tx.estado === 'PENDIENTE' || tx.estado === 'INICIADA' ? 'var(--color-yellow-100)' : tx.estado === 'FINALIZADA' ? 'var(--color-green-100)' : 'var(--color-red-100)',
-                      color: tx.estado === 'PENDIENTE' || tx.estado === 'INICIADA' ? 'var(--color-orange-600)' : tx.estado === 'FINALIZADA' ? 'var(--color-green-700)' : 'var(--color-red-600)'
-                    }}>
-                      {tx.estado}
-                    </span>
-                    {(tx.estado === 'PENDIENTE' || tx.estado === 'INICIADA') && (
-                      <button 
-                        style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                        onClick={() => {
-                          const contraparteId = tx.idDemandante === user.id ? tx.idOfertante : tx.idDemandante;
-                          setReportData({ 
-                            ...reportData, 
-                            idPublicacion: tx.idTransaccion,
-                            tituloPublicacion: pubsMap[tx.idPublicacion] || tx.idPublicacion, 
-                            idUsuarioInvolucrado: contraparteId,
-                            nombreContraparte: usersMap[contraparteId] || contraparteId
-                          });
-                          setReportModalOpen(true);
-                        }}
-                      >
-                        Reportar Problema
-                      </button>
-                    )}
+                <div key={index} style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <h4 style={{ marginBottom: '0.25rem', fontSize: '1rem' }}>Tx: {tx.idTransaccion}</h4>
+                      <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Publicación: {pubsMap[tx.idPublicacion] || tx.idPublicacion} • Costo: {tx.creditosComprometidos || tx.precioFinal || 0} cr</p>
+                      <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                        {tx.idDemandante === user.id ? `Tú eres el Solicitante (Contraparte: ${usersMap[tx.idOfertante] || tx.idOfertante})` : `Tú eres el Proveedor (Contraparte: ${usersMap[tx.idDemandante] || tx.idDemandante})`}
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
+                      <span style={{ 
+                        padding: '0.25rem 0.5rem', 
+                        borderRadius: '1rem', 
+                        fontSize: '0.75rem', 
+                        fontWeight: 'bold',
+                        backgroundColor: tx.estado === 'PENDIENTE' || tx.estado === 'INICIADA' ? 'var(--color-yellow-100)' : tx.estado === 'FINALIZADA' ? 'var(--color-green-100)' : 'var(--color-red-100)',
+                        color: tx.estado === 'PENDIENTE' || tx.estado === 'INICIADA' ? 'var(--color-orange-600)' : tx.estado === 'FINALIZADA' ? 'var(--color-green-700)' : 'var(--color-red-600)'
+                      }}>
+                        {tx.estado}
+                      </span>
+                      {(tx.estado === 'PENDIENTE' || tx.estado === 'INICIADA') && (
+                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          {tx.idOfertante === user.id && !tx.entregado && (
+                            <button
+                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-blue-600)', color: 'var(--color-blue-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                              onClick={() => handleConfirmEntrega(tx.idTransaccion)}
+                            >
+                              Confirmar Entrega
+                            </button>
+                          )}
+                          {tx.idDemandante === user.id && !tx.recibido && (
+                            <button
+                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-blue-600)', color: 'var(--color-blue-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                              onClick={() => handleConfirmRecepcion(tx.idTransaccion)}
+                            >
+                              Confirmar Recepción
+                            </button>
+                          )}
+                          {tx.entregado && tx.idOfertante === user.id && (
+                            <span style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-700)', borderRadius: '0.25rem', fontWeight: 'bold' }}>
+                              Entrega Confirmada
+                            </span>
+                          )}
+                          {tx.recibido && tx.idDemandante === user.id && (
+                            <span style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-700)', borderRadius: '0.25rem', fontWeight: 'bold' }}>
+                              Recepción Confirmada
+                            </span>
+                          )}
+                          {tx.idDemandante === user.id && (
+                            <button 
+                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                              onClick={() => {
+                                const contraparteId = tx.idOfertante;
+                                setReportData({ 
+                                  ...reportData, 
+                                  idPublicacion: tx.idTransaccion,
+                                  tituloPublicacion: pubsMap[tx.idPublicacion] || tx.idPublicacion, 
+                                  idUsuarioInvolucrado: contraparteId,
+                                  nombreContraparte: usersMap[contraparteId] || contraparteId,
+                                  esDemandante: true
+                                });
+                                setReportModalOpen(true);
+                              }}
+                            >
+                              Reportar Incidencia
+                            </button>
+                          )}
+                        </div>
+                      )}
+                      {tx.estado === 'EN_DISPUTA' && (() => {
+                        const inc = incidenciasMap[tx.idTransaccion];
+                        const soyReportante = inc && inc.idUsuarioReportante === user.id;
+                        const yaDefendi = inc && inc.idUsuarioDefensor === user.id;
+                        if (soyReportante) {
+                          return (
+                            <button key="cancelar" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                              onClick={() => { setCancelReportData({ idTransaccion: tx.idTransaccion, motivo: '' }); setCancelReportModalOpen(true); }}>
+                              Cancelar Reporte
+                            </button>
+                          );
+                        } else if (yaDefendi) {
+                          return (
+                            <span key="defendido" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-700)', borderRadius: '0.25rem', fontWeight: 'bold' }}>
+                              Defensa Enviada
+                            </span>
+                          );
+                        } else {
+                          return (
+                            <button key="defenderse" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-green-700)', color: 'var(--color-green-700)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                              onClick={() => { setAppealData({ idTransaccion: tx.idTransaccion, descripcion: '', fotosEvidenciaBase64: [] }); setAppealModalOpen(true); }}>
+                              Defenderse
+                            </button>
+                          );
+                        }
+                      })()}
+                    </div>
                   </div>
                 </div>
               ))
@@ -561,14 +801,92 @@ const Profile = () => {
                 />
               </div>
               <div>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Evidencia visual (Opcional)</label>
-                <div style={{ border: '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '2rem', textAlign: 'center', color: 'var(--text-tertiary)' }}>
-                  <p>Sube fotos del problema aquí</p>
-                </div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Evidencia visual {reportData.esDemandante && <span style={{ fontWeight: 'normal', color: 'var(--text-tertiary)' }}>(Opcional — Adjunta fotos del problema)</span>}</label>
+                <input type="file" accept="image/*" multiple onChange={handleFileChange} style={{ width: '100%', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)' }} />
+                {reportData.fotosEvidenciaBase64.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
+                    {reportData.fotosEvidenciaBase64.map((foto, idx) => (
+                      <div key={idx} style={{ position: 'relative', width: '80px', height: '80px' }}>
+                        <img src={foto} alt={`Evidencia ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.25rem' }} />
+                        <button type="button" onClick={() => removeFile(idx)} style={{ position: 'absolute', top: '-6px', right: '-6px', width: '20px', height: '20px', borderRadius: '50%', border: 'none', backgroundColor: 'var(--color-red-600)', color: '#fff', fontSize: '0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>×</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <button type="button" onClick={() => setReportModalOpen(false)} style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}>Cancelar</button>
                 <button type="submit" className="btn-primary" style={{ flex: 1, padding: '0.75rem' }}>Enviar Reporte</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {cancelReportModalOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
+            <h3 style={{ marginBottom: '1rem' }}>Cancelar Reporte de Incidencia</h3>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+              Al cancelar el reporte, la contraparte será notificada y podrá iniciar su propia incidencia si lo considera necesario.
+            </p>
+            <form onSubmit={handleCancelarReporte} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Motivo de la cancelación</label>
+                <textarea 
+                  value={cancelReportData.motivo}
+                  onChange={(e) => setCancelReportData({ ...cancelReportData, motivo: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', resize: 'vertical' }}
+                  rows={4}
+                  placeholder="Explica por qué deseas cancelar el reporte..."
+                  required
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                <button type="button" onClick={() => setCancelReportModalOpen(false)} style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}>Volver</button>
+                <button type="submit" className="btn-primary" style={{ flex: 1, padding: '0.75rem' }}>Confirmar Cancelación</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {appealModalOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
+            <h3 style={{ marginBottom: '1rem' }}>Defenderse</h3>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+              El demandante ha reportado una incidencia en esta transacción. Presenta tu defensa explicando tu versión de los hechos. El administrador revisará ambos lados y tomará una decisión.
+            </p>
+            <form onSubmit={handleAppealSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Descripción de tu defensa</label>
+                <textarea
+                  value={appealData.descripcion}
+                  onChange={(e) => setAppealData({ ...appealData, descripcion: e.target.value })}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', resize: 'vertical' }}
+                  rows={4}
+                  placeholder="Explica tu versión de lo ocurrido..."
+                  required
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Evidencia visual <span style={{ fontWeight: 'normal', color: 'var(--text-tertiary)' }}>(Opcional — Adjunta fotos que respalden tu defensa)</span></label>
+                <input type="file" accept="image/*" multiple onChange={handleAppealFileChange} style={{ width: '100%', padding: '0.5rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)' }} />
+                {appealData.fotosEvidenciaBase64.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
+                    {appealData.fotosEvidenciaBase64.map((foto, idx) => (
+                      <div key={idx} style={{ position: 'relative', width: '80px', height: '80px' }}>
+                        <img src={foto} alt={`Defensa ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.25rem' }} />
+                        <button type="button" onClick={() => removeAppealFile(idx)} style={{ position: 'absolute', top: '-6px', right: '-6px', width: '20px', height: '20px', borderRadius: '50%', border: 'none', backgroundColor: 'var(--color-red-600)', color: '#fff', fontSize: '0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}>×</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                <button type="button" onClick={() => setAppealModalOpen(false)} style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}>Cancelar</button>
+                <button type="submit" className="btn-primary" style={{ flex: 1, padding: '0.75rem' }}>Enviar Defensa</button>
               </div>
             </form>
           </div>

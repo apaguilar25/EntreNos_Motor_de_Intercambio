@@ -1,16 +1,16 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { AppContext } from '../App';
 import { ToastContext } from '../contextos/ToastContext';
 import { ConfirmContext, useConfirm } from '../contextos/ConfirmContext';
-import { ArrowLeft, User as UserIcon, Package, MessageSquare } from 'lucide-react';
+import { ArrowLeft, User as UserIcon, Package, MessageSquare, Coins } from 'lucide-react';
 
 const MakeRequest = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const type = searchParams.get('type') || 'oferta'; // oferta, demanda, subasta
-  const { user, balance, setBalance, controladorSubasta, controladorMuro } = useContext(AppContext);
+  const { user, balance, setBalance, controladorSubasta, controladorMuro, controladorPerfil } = useContext(AppContext);
   const { addToast } = useContext(ToastContext);
   const { confirm } = useConfirm();
 
@@ -18,6 +18,8 @@ const MakeRequest = () => {
   const [items, setItems] = useState('');
   const [showInterestPrompt, setShowInterestPrompt] = useState(true);
   const [estadoFisico, setEstadoFisico] = useState('NUEVO');
+  const [offeredPrice, setOfferedPrice] = useState(null);
+  const [priceFromCatalog, setPriceFromCatalog] = useState(null);
 
   // Mock JSON items
   const availableGoods = [
@@ -77,6 +79,27 @@ const MakeRequest = () => {
   } : (postData[type] || postData.oferta);
 
   const cost = parseInt(data.price) || 0;
+
+  // Cargar catálogo para auto-detectar precio si ofrece servicio que ya tiene en su catálogo
+  useEffect(() => {
+    const loadCatalog = async () => {
+      if (type !== 'necesidad' || !user?.id || !titleUrl) return;
+      try {
+        const perfil = await controladorPerfil.obtenerDatosPerfil(user.id);
+        const habs = perfil.habilidadesOfrecidas || [];
+        const match = habs.find(h =>
+          h.habilidadBase?.categoria?.toLowerCase() === (titleUrl || '').toLowerCase()
+        );
+        if (match) {
+          setPriceFromCatalog(match.precioCreditos);
+          setOfferedPrice(match.precioCreditos);
+        }
+      } catch (e) {
+        console.error('Error cargando catálogo:', e);
+      }
+    };
+    loadCatalog();
+  }, [type, user, titleUrl]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -138,11 +161,18 @@ const MakeRequest = () => {
         addToast('Debes escribir un mensaje.', 'error');
         return;
       }
-      
-      // Validación de insolvencia (HU2)
-      if (balance < cost) {
-        addToast(`Error: Fondos insuficientes. Tienes ${balance} cr pero la solicitud cuesta ${cost} cr.`, 'error');
-        return;
+
+      if (type === 'necesidad') {
+        if (offeredPrice === null || offeredPrice < 0) {
+          addToast('Debes indicar el precio que deseas cobrar por tu servicio.', 'error');
+          return;
+        }
+      } else {
+        // Validación de insolvencia solo para ofertas (el solicitante paga)
+        if (balance < cost) {
+          addToast(`Error: Fondos insuficientes. Tienes ${balance} cr pero la solicitud cuesta ${cost} cr.`, 'error');
+          return;
+        }
       }
 
       if (showInterestPrompt) {
@@ -155,14 +185,15 @@ const MakeRequest = () => {
       // Enviar solicitud al backend
       try {
         const idUsuario = user?.id || 'user-123';
-        const response = await controladorMuro.solicitarServicio(id, idUsuario);
+        const precioFinal = type === 'necesidad' ? offeredPrice : undefined;
+        const response = await controladorMuro.solicitarServicio(id, idUsuario, precioFinal);
 
         if (!response || response.error) {
           throw new Error(response?.error || 'Error al enviar la solicitud.');
         }
 
-        // Descontar saldo localmente para reflejar el backend
-        if (cost > 0) {
+        // Descontar saldo localmente solo para ofertas (el solicitante paga)
+        if (type !== 'necesidad' && cost > 0) {
           setBalance(prev => prev - cost);
         }
 
@@ -278,18 +309,48 @@ const MakeRequest = () => {
                 </div>
               </>
             ) : (
-              <div>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: '500' }}>
-                  <MessageSquare size={16} /> Mensaje
-                </label>
-                <textarea 
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Escribe un mensaje detallando tu disponibilidad o condiciones..."
-                  rows={5}
-                  style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', resize: 'vertical' }}
-                />
-              </div>
+              <>
+                {type === 'necesidad' && (
+                  <div>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: '500' }}>
+                      <Coins size={16} /> Tus créditos a cobrar
+                    </label>
+                    {priceFromCatalog !== null ? (
+                      <>
+                        <input 
+                          type="number" min="0"
+                          value={offeredPrice}
+                          disabled
+                          style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }}
+                        />
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.25rem' }}>
+                          Precio desde tu catálogo
+                        </p>
+                      </>
+                    ) : (
+                      <input 
+                        type="number" min="0"
+                        value={offeredPrice || ''}
+                        onChange={e => setOfferedPrice(Number(e.target.value))}
+                        placeholder="Ej: 5"
+                        style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }}
+                      />
+                    )}
+                  </div>
+                )}
+                <div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: '500' }}>
+                    <MessageSquare size={16} /> Mensaje
+                  </label>
+                  <textarea 
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Escribe un mensaje detallando tu disponibilidad o condiciones..."
+                    rows={5}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', resize: 'vertical' }}
+                  />
+                </div>
+              </>
             )}
 
             <button type="submit" className="btn-primary" style={{ marginTop: '1rem', padding: '0.75rem' }}>

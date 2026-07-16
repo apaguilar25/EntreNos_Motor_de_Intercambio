@@ -1,66 +1,186 @@
-﻿[
+[
   {
-    "id": "SUB-YOGA",
-    "idPropietario": "14a5f94a-c35f-434a-82eb-d687e9b2d618",
-    "nombreActivo": "Esterilla de Yoga profesional",
-    "descripcion": "Esterilla de yoga Manduka Pro, color morado, 6mm de grosor. Incluye correa de transporte.",
+    "id": "SUB-2620424A",
+    "idPropietario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "nombreActivo": "qrqrq",
+    "descripcion": "wqrqr",
     "estadoFisico": "USADO",
-    "imagenesUrls": ["https://ejemplo.com/esterilla1.jpg"],
-    "fechaInicio": "2026-06-25T10:00:00",
-    "fechaFinalizacionLicitacion": "2026-07-10T10:00:00",
+    "imagenesUrls": [
+      "/ruta/foto1.jpg"
+    ],
+    "fechaInicio": "2026-07-15T23:27:23.3601577",
+    "fechaFinalizacionLicitacion": "2026-07-20T23:27:23.3571482",
     "estado": "ACTIVA",
-    "idPropuestaGanadora": null,
     "propuestas": [],
     "propietarioConfirmoEntrega": false,
     "ganadorConfirmoEntrega": false,
     "version": 0
   },
   {
-    "id": "SUB-GUITARRA",
-    "idPropietario": "f551477f-6cb5-4abe-b204-928c24d11d7c",
-    "nombreActivo": "Guitarra ac\u00fastica Yamaha",
-    "descripcion": "Guitarra ac\u00fastica Yamaha F310, cuerdas de acero, incluye funda y afinador.",
+    "id": "SUB-5A909735",
+    "idPropietario": "84e724bf-624b-4141-9357-df7da92e61eb",
+    "nombreActivo": "Bicicleta Montaña Rodada 29",
+    "descripcion": "Bicicleta en buen estado, ideal para rutas de montaña",
     "estadoFisico": "USADO",
-    "imagenesUrls": ["https://ejemplo.com/guitarra1.jpg"],
-    "fechaInicio": "2026-06-20T15:30:00",
-    "fechaFinalizacionLicitacion": "2026-07-05T15:30:00",
-    "estado": "ACTIVA",
-    "idPropuestaGanadora": null,
-    "propuestas": [],
+    "imagenesUrls": [
+      "https://ejemplo.com/bici1.jpg"
+    ],
+    "fechaInicio": "2026-06-15T20:25:11.6801178",
+    "fechaFinalizacionLicitacion": "2026-06-22T20:25:11.6791139",
+    "estado": "CANCELADA",
+    "propuestas": [
+      {
+        "idPropuesta": "PROP-055172",
+        "idSubasta": "SUB-5A909735",
+        "idPostor": "2f0c416a-2948-4d3c-9390-6242b700a711",
+        "bienesOfrecidos": [
+          {
+            "nombre": "Libros de programación",
+            "cantidad": 3
+          },
+          {
+            "nombre": "Curso online de Java",
+            "cantidad": 1
+          }
+        ],
+        "descripcion": "Ofrezco libros de programación y un curso online",
+        "estadoPropuesta": "EN_EVALUACION",
+        "estadoFisico": "NUEVO",
+        "imagenesUrls": [
+          "https://ejemplo.com/libros.jpg"
+        ],
+        "fechaPropuesta": "2026-06-15T20:26:38.2641723"
+      }
+    ],
     "propietarioConfirmoEntrega": false,
     "ganadorConfirmoEntrega": false,
-    "version": 0
+    "version": 3
   },
   {
-    "id": "SUB-HERRAMIENTAS",
-    "idPropietario": "eb2dd112-8d4e-4f62-836b-46e145e22d2c",
-    "nombreActivo": "Kit de herramientas el\u00e9ctricas",
-    "descripcion": "Taladro inal\u00e1mbrico Black+Decker + accesorios. Como nuevo, usado solo una vez.",
-    "estadoFisico": "NUEVO",
-    "imagenesUrls": ["https://ejemplo.com/herramientas1.jpg"],
-    "fechaInicio": "2026-06-28T09:00:00",
-    "fechaFinalizacionLicitacion": "2026-07-12T09:00:00",
-    "estado": "ACTIVA",
-    "idPropuestaGanadora": null,
-    "propuestas": [],
+    "id": "SUB-42E97AFE",
+    "idPropietario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "nombreActivo": "qwrqwr",
+    "descripcion": "qrqwrqwrq",
+    "estadoFisico": "USADO",
+    "imagenesUrls": [
+      "/ruta/foto1.jpg"
+    ],
+    "fechaInicio": "2026-07-15T23:27:45.5560887",
+    "fechaFinalizacionLicitacion": "2026-08-04T23:27:45.5555954",
+    "estado": "ADJUDICADA_INTERCAMBIO_PENDIENTE",
+    "idPropuestaGanadora": "PROP-8F2336",
+    "propuestas": [
+      {
+        "idPropuesta": "PROP-8F2336",
+        "idSubasta": "SUB-42E97AFE",
+        "idPostor": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+        "bienesOfrecidos": [
+          {
+            "nombre": "Pasta",
+            "cantidad": 1
+          }
+        ],
+        "descripcion": "sdgdagsdgagagafafasfasfasfafa",
+        "estadoPropuesta": "EN_EVALUACION",
+        "estadoFisico": "NUEVO",
+        "imagenesUrls": [
+          "http://dummy.img/evidence.jpg"
+        ],
+        "fechaPropuesta": "2026-07-15T23:28:14.0016405"
+      }
+    ],
     "propietarioConfirmoEntrega": false,
     "ganadorConfirmoEntrega": false,
-    "version": 0
+    "version": 2
   },
   {
-    "id": "SUB-LIBROS",
-    "idPropietario": "21785cf5-c265-456b-84c1-b8a889894b27",
-    "nombreActivo": "Libros de jardiner\u00eda",
-    "descripcion": "Lote de 5 libros sobre jardiner\u00eda, paisajismo y bot\u00e1nica b\u00e1sica. En perfecto estado.",
+    "id": "SUB-7CA8FB54",
+    "idPropietario": "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
+    "nombreActivo": "dsf",
+    "descripcion": "sdfsdf",
     "estadoFisico": "USADO",
-    "imagenesUrls": ["https://ejemplo.com/libros1.jpg"],
-    "fechaInicio": "2026-06-22T11:00:00",
-    "fechaFinalizacionLicitacion": "2026-07-08T11:00:00",
-    "estado": "ACTIVA",
-    "idPropuestaGanadora": null,
+    "imagenesUrls": [
+      "/ruta/foto1.jpg"
+    ],
+    "fechaInicio": "2026-07-13T18:50:22.2275709",
+    "fechaFinalizacionLicitacion": "2026-07-14T18:50:22.2255667",
+    "estado": "ESPERANDO_DECISION",
+    "propuestas": [
+      {
+        "idPropuesta": "PROP-A27A27",
+        "idSubasta": "SUB-7CA8FB54",
+        "idPostor": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+        "bienesOfrecidos": [
+          {
+            "nombre": "Pasta",
+            "cantidad": 1
+          }
+        ],
+        "descripcion": "sdfsfdsfd",
+        "estadoPropuesta": "EN_EVALUACION",
+        "estadoFisico": "USADO",
+        "imagenesUrls": [
+          "http://dummy.img/evidence.jpg"
+        ],
+        "fechaPropuesta": "2026-07-13T18:50:50.6515857"
+      }
+    ],
+    "propietarioConfirmoEntrega": false,
+    "ganadorConfirmoEntrega": false,
+    "version": 2
+  },
+  {
+    "id": "SUB-8B328C68",
+    "idPropietario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "nombreActivo": "zxczxc",
+    "descripcion": "zxczxc",
+    "estadoFisico": "REPARADO",
+    "imagenesUrls": [
+      "/ruta/foto1.jpg"
+    ],
+    "fechaInicio": "2026-07-13T18:55:40.8284632",
+    "fechaFinalizacionLicitacion": "2026-07-23T18:55:40.8284632",
+    "estado": "ADJUDICADA_INTERCAMBIO_PENDIENTE",
+    "idPropuestaGanadora": "PROP-24FE0F",
+    "propuestas": [
+      {
+        "idPropuesta": "PROP-24FE0F",
+        "idSubasta": "SUB-8B328C68",
+        "idPostor": "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
+        "bienesOfrecidos": [
+          {
+            "nombre": "Pasta",
+            "cantidad": 1
+          }
+        ],
+        "descripcion": "zxczc",
+        "estadoPropuesta": "EN_EVALUACION",
+        "estadoFisico": "NUEVO",
+        "imagenesUrls": [
+          "http://dummy.img/evidence.jpg"
+        ],
+        "fechaPropuesta": "2026-07-13T18:55:49.1458637"
+      }
+    ],
+    "propietarioConfirmoEntrega": false,
+    "ganadorConfirmoEntrega": false,
+    "version": 2
+  },
+  {
+    "id": "SUB-6B4CB950",
+    "idPropietario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "nombreActivo": "adsasd",
+    "descripcion": "U",
+    "estadoFisico": "USADO",
+    "imagenesUrls": [
+      "/ruta/foto1.jpg"
+    ],
+    "fechaInicio": "2026-07-13T20:38:51.7151525",
+    "fechaFinalizacionLicitacion": "2026-07-14T20:38:51.7141512",
+    "estado": "CANCELADA",
     "propuestas": [],
     "propietarioConfirmoEntrega": false,
     "ganadorConfirmoEntrega": false,
-    "version": 0
+    "version": 2
   }
 ]

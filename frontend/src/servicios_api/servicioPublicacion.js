@@ -21,11 +21,13 @@ export class ServicioPublicacion {
     }
   }
 
-  async solicitar(idPublicacion, idUsuario) {
+  async solicitar(idPublicacion, idUsuario, precioOfertado) {
     try {
-      return await this.clienteHttp.post(`/publicaciones/${idPublicacion}/solicitar`, {
-        idUsuario
-      });
+      const body = { idUsuario };
+      if (precioOfertado !== undefined && precioOfertado !== null) {
+        body.precioOfertado = precioOfertado;
+      }
+      return await this.clienteHttp.post(`/publicaciones/${idPublicacion}/solicitar`, body);
     } catch (error) {
       console.error('Error enviando solicitud:', error);
       throw error;
@@ -62,5 +64,13 @@ export class ServicioPublicacion {
       console.error('Error cancelando solicitud:', error);
       throw error;
     }
+  }
+
+  async confirmarOfertante(idTransaccion) {
+    return await this.clienteHttp.post(`/transacciones/${idTransaccion}/confirmar-ofertante`);
+  }
+
+  async confirmarDemandante(idTransaccion) {
+    return await this.clienteHttp.post(`/transacciones/${idTransaccion}/confirmar-demandante`);
   }
 }

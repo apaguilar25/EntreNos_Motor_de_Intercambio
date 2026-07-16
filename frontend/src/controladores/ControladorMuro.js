@@ -33,9 +33,9 @@ export class ControladorMuro {
     }
   }
 
-  async solicitarServicio(idPublicacion, idUsuario) {
+  async solicitarServicio(idPublicacion, idUsuario, precioOfertado) {
     try {
-      return await this.servicioPublicacion.solicitar(idPublicacion, idUsuario);
+      return await this.servicioPublicacion.solicitar(idPublicacion, idUsuario, precioOfertado);
     } catch (error) {
       console.error('Error en ControladorMuro al solicitar servicio:', error);
       throw error;
