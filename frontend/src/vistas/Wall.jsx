@@ -9,6 +9,7 @@ const Wall = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [tab, setTab] = useState('explorar'); // 'explorar' o 'parati'
+  const [filterType, setFilterType] = useState('all'); // 'all', 'oferta', 'necesidad'
   const [posts, setPosts] = useState([]);
   const [podio, setPodio] = useState([]);
   const [showPodio, setShowPodio] = useState(true);
@@ -61,7 +62,13 @@ const Wall = () => {
       
       if (controladorGamificacion) {
         const podioData = await controladorGamificacion.obtenerPodio();
-        setPodio(podioData || []);
+        let podiumList = [];
+        if (podioData && !Array.isArray(podioData)) {
+          podiumList = podioData.proveedorElite || [];
+        } else if (Array.isArray(podioData)) {
+          podiumList = podioData;
+        }
+        setPodio(podiumList.slice(0, 3));
       }
 
       if (controladorPerfil && user) {
@@ -107,6 +114,14 @@ const Wall = () => {
     document.addEventListener('visibilitychange', onVisible);
     return () => document.removeEventListener('visibilitychange', onVisible);
   }, [fetchPosts]);
+
+  const filteredPosts = posts.filter(post => {
+    if (filterType === 'all') return true;
+    const isOferta = post.type === 'oferta' || post.type === 'habilidad';
+    if (filterType === 'oferta') return isOferta;
+    if (filterType === 'necesidad') return post.type === 'necesidad' || post.type === 'demanda';
+    return true;
+  });
 
   return (
     <div className="animate-in">
@@ -202,8 +217,16 @@ const Wall = () => {
               flexDirection: 'column',
               gap: '0.5rem'
             }}>
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center' }}>
-                Faltan por agregar categorías (Definición Backend)
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                  <input type="radio" name="filterType" value="all" checked={filterType === 'all'} onChange={(e) => setFilterType(e.target.value)} /> Todas
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                  <input type="radio" name="filterType" value="oferta" checked={filterType === 'oferta'} onChange={(e) => setFilterType(e.target.value)} /> Ofertas
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                  <input type="radio" name="filterType" value="necesidad" checked={filterType === 'necesidad'} onChange={(e) => setFilterType(e.target.value)} /> Necesidades
+                </label>
               </div>
             </div>
           )}
@@ -214,10 +237,10 @@ const Wall = () => {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {loading && <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: '2rem' }}>Cargando publicaciones del Muro...</p>}
           {error && <p style={{ textAlign: 'center', color: 'var(--color-red-600)', padding: '2rem' }}>{error}</p>}
-          {!loading && !error && posts.length === 0 && (
+          {!loading && !error && filteredPosts.length === 0 && (
              <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: '2rem' }}>No hay publicaciones en este momento.</p>
           )}
-        {!loading && posts.map((post, index) => (
+        {!loading && filteredPosts.map((post, index) => (
           <div key={post.id} className="card interactive-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', animationDelay: `${index * 0.1}s` }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>

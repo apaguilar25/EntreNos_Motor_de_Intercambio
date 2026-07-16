@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
 import { ConfirmContext, useConfirm } from '../contextos/ConfirmContext';
@@ -38,10 +39,12 @@ const Profile = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editType, setEditType] = useState(''); // 'oferta', 'necesidad', 'subasta'
   const [editData, setEditData] = useState({ idInstancia: '', descripcion: '', precio: 0, titulo: '' });
-
+  const [sectionModalOpen, setSectionModalOpen] = useState(null);
+  const [txFilter, setTxFilter] = useState('TODAS');
+  const [sentFilter, setSentFilter] = useState('TODAS');
 
   const loadTransactionsAndIncidencias = async () => {
-    if (!user?.id) return;
+    if (!user?.id) return [];
     const transResponse = await fetch(`http://localhost:8080/api/transacciones`);
     let userTrans = [];
     if (transResponse.ok) {
@@ -67,6 +70,7 @@ const Profile = () => {
       }
     }
     setIncidenciasMap(incMap);
+    return userTrans;
   };
 
   useEffect(() => {
@@ -83,7 +87,7 @@ const Profile = () => {
         const auctionsData = await controladorSubasta.obtenerMisSubastas();
         setMyAuctions(auctionsData);
 
-        await loadTransactionsAndIncidencias();
+        const fetchedUserTrans = await loadTransactionsAndIncidencias();
 
         if (controladorGamificacion) {
           const logrosData = await controladorGamificacion.obtenerLogros(user.id);
@@ -91,44 +95,32 @@ const Profile = () => {
         }
 
         try {
-          // Extraer todos los IDs únicos para mapear nombres
-          const ids = new Set();
-          if (userTrans) {
-            userTrans.forEach(t => { ids.add(t.idDemandante); ids.add(t.idOfertante); });
-          }
-          if (auctionsData) {
-            auctionsData.forEach(a => {
-              if (a.propuestas) a.propuestas.forEach(p => ids.add(p.idPostor));
-            });
-          }
-          if (sentData) {
-            sentData.forEach(s => {
-              ids.add(s.idUsuarioDefensor);
-              ids.add(s.idUsuarioReportante);
-              if (s.idReceptor) ids.add(s.idReceptor);
-            });
-          }
-          
-          const uMap = {};
-          for (const uId of ids) {
-             if (uId) {
-                const p = await controladorPerfil.obtenerDatosPerfil(uId);
-                uMap[uId] = p.nombre || uId;
-             }
-          }
-          setUsersMap(uMap);
           const resPubs = await fetch('http://localhost:8080/api/publicaciones');
+          let pMap = {};
           if (resPubs.ok) {
              const pubsData = await resPubs.json();
-             const pMap = {};
-             pubsData.forEach(p => pMap[p.idPublicacion] = p.nombreServicio);
+             pubsData.forEach(p => pMap[p.idPublicacion] = p);
              setPubsMap(pMap);
           }
+
+          // Construir mapa de usuarios directamente desde publicaciones (ya incluye nombreUsuario).
+          // Esto evita llamadas a /api/usuarios/{id} que generan errores 404 en el navegador,
+          // ya que el browser siempre registra errores HTTP de red aunque el JS los capture.
+          const uMap = {};
+          Object.values(pMap).forEach(p => {
+            if (p.idUsuario && p.nombreUsuario) {
+              uMap[p.idUsuario] = p.nombreUsuario;
+            }
+          });
+          // Nota: No se hacen llamadas extra a /api/usuarios/{id} para ningún ID adicional.
+          // Si un ID no está en la lista de publicaciones, se mostrará "Usuario" como fallback.
+
+          setUsersMap(uMap);
         } catch (e) {
-          console.error("Error fetching auxiliary data", e);
+          console.error('Error fetching auxiliary data', e);
         }
       } catch (err) {
-        console.error("Error cargando perfil", err);
+        console.error('Error cargando perfil', err);
       } finally {
         setLoading(false);
       }
@@ -137,7 +129,7 @@ const Profile = () => {
   }, [user, controladorPerfil, controladorSubasta]);
 
   const handleCancelRequest = async (idSolicitud) => {
-    const isConfirmed = await confirm("Cancelar Solicitud", "¿Estás seguro que deseas cancelar esta solicitud? Los créditos serán devueltos a tu monedero.");
+    const isConfirmed = await confirm('Cancelar Solicitud', '¿Estás seguro que deseas cancelar esta solicitud? Los créditos serán devueltos a tu monedero.');
     if (!isConfirmed) return;
     try {
       const res = await fetch(`http://localhost:8080/api/solicitudes/${idSolicitud}/cancelar`, {
@@ -483,303 +475,381 @@ const Profile = () => {
         </div>
       </div>
 
+      
       <div className="responsive-grid">
-        {/* Catálogo de Ofertas */}
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h3 style={{ fontSize: '1.25rem' }}>Mis Ofertas</h3>
-          </div>
-          <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {loading ? (
-              <p style={{ textAlign: 'center', color: 'var(--text-tertiary)' }}>Cargando...</p>
-            ) : (!userProfile?.ofertas || userProfile.ofertas.length === 0) ? (
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
-                No has registrado habilidades.
-              </div>
-            ) : (
-              userProfile.ofertas.map((hab, idx) => (
-                <div 
-                  key={idx}
-                  className="interactive-card" 
-                  style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', position: 'relative' }}
-                >
-                  <div style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', display: 'flex', gap: '0.5rem' }}>
-                    <button onClick={() => handleEditClick('oferta', hab)} style={{ background: 'transparent', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer' }}><Edit2 size={16} /></button>
-                    <button onClick={() => handleDelete('oferta', hab.idInstancia)} style={{ background: 'transparent', border: 'none', color: 'var(--color-red-600)', cursor: 'pointer' }}><Trash2 size={16} /></button>
-                  </div>
-                  <div style={{ fontWeight: '600', paddingRight: '3rem' }}>{hab.habilidadBase?.categoria || 'Servicio'}</div>
-                  <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{hab.descripcionServicio}</div>
-                  <div style={{ color: 'var(--accent-primary)', fontWeight: 'bold', fontSize: '0.875rem', marginTop: '0.25rem' }}>{hab.precioCreditos} cr</div>
-                </div>
-              ))
-            )}
-          </div>
+        {/* Resumen Ofertas */}
+        <div className="card interactive-card" onClick={() => setSectionModalOpen('ofertas')} style={{ cursor: 'pointer' }}>
+          <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Mis Ofertas</h3>
+          <p style={{ color: 'var(--text-secondary)' }}>{userProfile?.ofertas?.length || 0} registradas</p>
+          <span style={{ color: 'var(--accent-primary)', fontSize: '0.875rem', fontWeight: 'bold' }}>Ver Detalles &rarr;</span>
         </div>
 
-        {/* Catálogo de Necesidades */}
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h3 style={{ fontSize: '1.25rem' }}>Mis Necesidades</h3>
-          </div>
-          <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {loading ? (
-               <p style={{ textAlign: 'center', color: 'var(--text-tertiary)' }}>Cargando...</p>
-            ) : (!userProfile?.necesidades || userProfile.necesidades.length === 0) ? (
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
-                No hay necesidades registradas.
-              </div>
-            ) : (
-              userProfile.necesidades.map((nec, idx) => (
-                <div 
-                  key={idx}
-                  className="interactive-card" 
-                  style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', position: 'relative' }}
-                >
-                  <div style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', display: 'flex', gap: '0.5rem' }}>
-                    <button onClick={() => handleEditClick('necesidad', nec)} style={{ background: 'transparent', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer' }}><Edit2 size={16} /></button>
-                    <button onClick={() => handleDelete('necesidad', nec.idInstancia)} style={{ background: 'transparent', border: 'none', color: 'var(--color-red-600)', cursor: 'pointer' }}><Trash2 size={16} /></button>
-                  </div>
-                  <div style={{ fontWeight: '600', paddingRight: '3rem' }}>{nec.necesidadBase?.categoria || 'Necesidad'}</div>
-                  <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{nec.descripcionCondiciones}</div>
-                </div>
-              ))
-            )}
-          </div>
+        {/* Resumen Necesidades */}
+        <div className="card interactive-card" onClick={() => setSectionModalOpen('necesidades')} style={{ cursor: 'pointer' }}>
+          <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Mis Necesidades</h3>
+          <p style={{ color: 'var(--text-secondary)' }}>{userProfile?.necesidades?.length || 0} registradas</p>
+          <span style={{ color: 'var(--accent-primary)', fontSize: '0.875rem', fontWeight: 'bold' }}>Ver Detalles &rarr;</span>
         </div>
+        
+        {/* Resumen Subastas */}
+        <div className="card interactive-card" onClick={() => setSectionModalOpen('subastas')} style={{ cursor: 'pointer' }}>
+          <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Mis Subastas</h3>
+          <p style={{ color: 'var(--text-secondary)' }}>{myAuctions.length} activas</p>
+          <span style={{ color: 'var(--accent-primary)', fontSize: '0.875rem', fontWeight: 'bold' }}>Ver Detalles &rarr;</span>
+        </div>
+        
+        {/* Resumen Solicitudes */}
+        <div className="card interactive-card" onClick={() => setSectionModalOpen('enviadas')} style={{ cursor: 'pointer' }}>
+          <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Mis Ofertas Enviadas</h3>
+          <p style={{ color: 'var(--text-secondary)' }}>{sentRequests.length} pendientes</p>
+          <span style={{ color: 'var(--accent-primary)', fontSize: '0.875rem', fontWeight: 'bold' }}>Ver Detalles &rarr;</span>
+        </div>
+        
+        {/* Resumen Transacciones */}
+        <div className="card interactive-card" onClick={() => setSectionModalOpen('transacciones')} style={{ cursor: 'pointer' }}>
+          <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Transacciones Activas</h3>
+          <p style={{ color: 'var(--text-secondary)' }}>{transacciones.length} en curso</p>
+          <span style={{ color: 'var(--accent-primary)', fontSize: '0.875rem', fontWeight: 'bold' }}>Ver Detalles &rarr;</span>
+        </div>
+      </div>
 
-        {/* Catálogo de Subastas */}
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h3 style={{ fontSize: '1.25rem' }}>Mis Subastas</h3>
-          </div>
-          <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {loading ? (
-              <p style={{ textAlign: 'center', color: 'var(--text-tertiary)' }}>Cargando...</p>
-            ) : myAuctions.length === 0 ? (
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
-                No tienes subastas activas.
-              </div>
-            ) : (
-              myAuctions.map((auction, idx) => (
-                <div key={idx} className="interactive-card" style={{ padding: '1rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', position: 'relative' }}>
-                  <div style={{ position: 'absolute', top: '1rem', right: '1rem', display: 'flex', gap: '0.5rem' }}>
-                    {auction.estado !== 'CERRADA' && (
-                      <button onClick={() => handleEditClick('subasta', auction)} style={{ background: 'transparent', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer' }}><Edit2 size={16} /></button>
-                    )}
-                    <button onClick={() => handleDelete('subasta', auction.id)} style={{ background: 'transparent', border: 'none', color: 'var(--color-red-600)', cursor: 'pointer' }}><Trash2 size={16} /></button>
-                  </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', paddingRight: '4rem' }}>
-                    <h4 style={{ margin: 0 }}>{auction.nombreActivo}</h4>
-                    <span style={{ 
-                      padding: '0.25rem 0.5rem', 
-                      borderRadius: '1rem', 
-                      fontSize: '0.75rem', 
-                      fontWeight: 'bold',
-                      maxWidth: '160px',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      backgroundColor: auction.estado === 'ACTIVA' || auction.estado === 'ESPERANDO_DECISION' ? 'var(--color-yellow-100)' : 'var(--color-green-100)',
-                      color: auction.estado === 'ACTIVA' || auction.estado === 'ESPERANDO_DECISION' ? 'var(--color-orange-600)' : 'var(--color-green-700)'
-                    }}>
-                      {auction.estado}
-                    </span>
-                  </div>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{auction.descripcion}</p>
-                  
-                  {auction.propuestas && auction.propuestas.length > 0 && (
-                    <div style={{ marginTop: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '0.5rem' }}>
-                      <h5 style={{ fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Pujas Recibidas:</h5>
-                      {auction.propuestas.map((of, i) => (
-                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem', backgroundColor: 'var(--bg-secondary)', borderRadius: '0.25rem', marginBottom: '0.5rem' }}>
-                          <div>
-                            <span style={{ fontWeight: 'bold', fontSize: '0.875rem' }}>De: {usersMap[of.idPostor] || of.idPostor}</span>
-                            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                              Bienes: {of.bienesOfrecidos?.map(b => `${b.cantidad}x ${b.nombre}`).join(', ')}
-                            </div>
-                          </div>
-                          {(auction.estado === 'ACTIVA' || auction.estado === 'ESPERANDO_DECISION') && (
-                            <button 
-                              className="btn-primary" 
-                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--color-green-700)', color: '#fff' }}
-                              onClick={() => handleAdjudicar({ idSubasta: auction.id, idPropuesta: of.idPropuesta })}
-                            >
-                              Adjudicar
-                            </button>
-                          )}
-                          {of.esGanadora && (
-                            <span style={{ color: 'var(--color-green-700)', fontWeight: 'bold', fontSize: '0.75rem' }}>¡GANADORA!</span>
-                          )}
-                        </div>
-                      ))}
+      {sectionModalOpen && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 900, padding: '1rem' }}>
+          <div className="card animate-in" style={{ width: '100%', maxWidth: '800px', maxHeight: '90vh', overflowY: 'auto', position: 'relative', padding: '2rem' }}>
+            <button 
+              onClick={() => setSectionModalOpen(null)} 
+              style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-tertiary)' }}
+            >
+              &times;
+            </button>
+
+            {sectionModalOpen === 'ofertas' && (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h2 style={{ fontSize: '1.25rem' }}>Mis Ofertas</h2>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {loading ? (
+                    <p style={{ textAlign: 'center', color: 'var(--text-tertiary)' }}>Cargando...</p>
+                  ) : (!userProfile?.ofertas || userProfile.ofertas.length === 0) ? (
+                    <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
+                      No has registrado habilidades.
                     </div>
+                  ) : (
+                    userProfile.ofertas.map((hab, idx) => (
+                      <div 
+                        key={idx}
+                        className="interactive-card" 
+                        style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', position: 'relative' }}
+                      >
+                        <div style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', display: 'flex', gap: '0.5rem' }}>
+                          <button onClick={() => handleEditClick('oferta', hab)} style={{ background: 'transparent', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer' }}><Edit2 size={16} /></button>
+                          <button onClick={() => handleDelete('oferta', hab.idInstancia)} style={{ background: 'transparent', border: 'none', color: 'var(--color-red-600)', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                        </div>
+                        <div style={{ fontWeight: '600', paddingRight: '3rem' }}>{hab.habilidadBase?.categoria || 'Servicio'}</div>
+                        <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{hab.descripcionServicio}</div>
+                        <div style={{ color: 'var(--accent-primary)', fontWeight: 'bold', fontSize: '0.875rem', marginTop: '0.25rem' }}>{hab.precioCreditos}</div>
+                      </div>
+                    ))
                   )}
                 </div>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* Historial de Ofertas Enviadas (HU5) */}
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h3 style={{ fontSize: '1.25rem' }}>Mis Ofertas Enviadas</h3>
-          </div>
-          <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {sentRequests.length === 0 ? (
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
-                No tienes ofertas activas.
               </div>
-            ) : (
-              sentRequests.map((req, index) => (
-                <div key={index} style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <h4 style={{ marginBottom: '0.25rem', fontSize: '1rem' }}>{req.nombreServicio}</h4>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>A: {usersMap[req.idReceptor] || req.idReceptor} • Costo: {req.precioCreditos} cr</p>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <span style={{ 
-                      padding: '0.25rem 0.5rem', 
-                      borderRadius: '1rem', 
-                      fontSize: '0.75rem', 
-                      fontWeight: 'bold',
-                      backgroundColor: req.estado === 'PENDIENTE' ? 'var(--color-yellow-100)' : req.estado === 'ACEPTADA' ? 'var(--color-green-100)' : 'var(--color-red-100)',
-                      color: req.estado === 'PENDIENTE' ? 'var(--color-orange-600)' : req.estado === 'ACEPTADA' ? 'var(--color-green-700)' : 'var(--color-red-600)'
-                    }}>
-                      {req.estado}
-                    </span>
-                    {req.estado === 'PENDIENTE' && (
-                      <button 
-                        style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-red-600)', color: 'var(--color-red-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                        onClick={() => handleCancelRequest(req.idSolicitud)}
-                      >
-                        Cancelar
-                      </button>
-                    )}
-                  </div>
+            )}
+
+            {sectionModalOpen === 'necesidades' && (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h2 style={{ fontSize: '1.25rem' }}>Mis Necesidades</h2>
                 </div>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* Historial de Transacciones */}
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h3 style={{ fontSize: '1.25rem' }}>Mis Transacciones Activas</h3>
-          </div>
-          <div className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {transacciones.length === 0 ? (
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
-                No tienes transacciones activas.
-              </div>
-            ) : (
-              transacciones.map((tx, index) => (
-                <div key={index} style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <div>
-                      <h4 style={{ marginBottom: '0.25rem', fontSize: '1rem' }}>Tx: {tx.idTransaccion}</h4>
-                      <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Publicación: {pubsMap[tx.idPublicacion] || tx.idPublicacion} • Costo: {tx.creditosComprometidos || tx.precioFinal || 0} cr</p>
-                      <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                        {tx.idDemandante === user.id ? `Tú eres el Solicitante (Contraparte: ${usersMap[tx.idOfertante] || tx.idOfertante})` : `Tú eres el Proveedor (Contraparte: ${usersMap[tx.idDemandante] || tx.idDemandante})`}
-                      </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {loading ? (
+                     <p style={{ textAlign: 'center', color: 'var(--text-tertiary)' }}>Cargando...</p>
+                  ) : (!userProfile?.necesidades || userProfile.necesidades.length === 0) ? (
+                    <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
+                      No hay necesidades registradas.
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
-                      <span style={{ 
-                        padding: '0.25rem 0.5rem', 
-                        borderRadius: '1rem', 
-                        fontSize: '0.75rem', 
-                        fontWeight: 'bold',
-                        backgroundColor: tx.estado === 'PENDIENTE' || tx.estado === 'INICIADA' ? 'var(--color-yellow-100)' : tx.estado === 'FINALIZADA' ? 'var(--color-green-100)' : 'var(--color-red-100)',
-                        color: tx.estado === 'PENDIENTE' || tx.estado === 'INICIADA' ? 'var(--color-orange-600)' : tx.estado === 'FINALIZADA' ? 'var(--color-green-700)' : 'var(--color-red-600)'
-                      }}>
-                        {tx.estado}
-                      </span>
-                      {(tx.estado === 'PENDIENTE' || tx.estado === 'INICIADA') && (
-                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                          {tx.idOfertante === user.id && !tx.entregado && (
-                            <button
-                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-blue-600)', color: 'var(--color-blue-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                              onClick={() => handleConfirmEntrega(tx.idTransaccion)}
+                  ) : (
+                    userProfile.necesidades.map((nec, idx) => (
+                      <div 
+                        key={idx}
+                        className="interactive-card" 
+                        style={{ padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', position: 'relative' }}
+                      >
+                        <div style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', display: 'flex', gap: '0.5rem' }}>
+                          <button onClick={() => handleEditClick('necesidad', nec)} style={{ background: 'transparent', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer' }}><Edit2 size={16} /></button>
+                          <button onClick={() => handleDelete('necesidad', nec.idInstancia)} style={{ background: 'transparent', border: 'none', color: 'var(--color-red-600)', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                        </div>
+                        <div style={{ fontWeight: '600', paddingRight: '3rem' }}>{nec.necesidadBase?.categoria || 'Necesidad'}</div>
+                        <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{nec.descripcionCondiciones}</div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
+            {sectionModalOpen === 'subastas' && (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h2 style={{ fontSize: '1.25rem' }}>Mis Subastas</h2>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {loading ? (
+                    <p style={{ textAlign: 'center', color: 'var(--text-tertiary)' }}>Cargando...</p>
+                  ) : myAuctions.length === 0 ? (
+                    <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
+                      No tienes subastas activas.
+                    </div>
+                  ) : (
+                    myAuctions.map((auction, idx) => (
+                      <div key={idx} className="interactive-card" style={{ padding: '1rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', position: 'relative' }}>
+                        <div style={{ position: 'absolute', top: '1rem', right: '1rem', display: 'flex', gap: '0.5rem' }}>
+                          {auction.estado !== 'CERRADA' && (
+                            <button onClick={() => handleEditClick('subasta', auction)} style={{ background: 'transparent', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer' }}><Edit2 size={16} /></button>
+                          )}
+                          <button onClick={() => handleDelete('subasta', auction.id)} style={{ background: 'transparent', border: 'none', color: 'var(--color-red-600)', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', paddingRight: '4rem' }}>
+                          <h4 style={{ margin: 0 }}>{auction.nombreActivo}</h4>
+                          <span style={{ 
+                            padding: '0.25rem 0.5rem', 
+                            borderRadius: '1rem', 
+                            fontSize: '0.75rem', 
+                            fontWeight: 'bold',
+                            maxWidth: '160px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            backgroundColor: auction.estado === 'ACTIVA' || auction.estado === 'ESPERANDO_DECISION' ? 'var(--color-yellow-100)' : 'var(--color-green-100)',
+                            color: auction.estado === 'ACTIVA' || auction.estado === 'ESPERANDO_DECISION' ? 'var(--color-orange-600)' : 'var(--color-green-700)'
+                          }}>
+                            {auction.estado}
+                          </span>
+                        </div>
+                        <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{auction.descripcion}</p>
+                        
+                        {auction.propuestas && auction.propuestas.length > 0 && (
+                          <div style={{ marginTop: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '0.5rem' }}>
+                            <h5 style={{ fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Pujas Recibidas:</h5>
+                            {auction.propuestas.map((of, i) => (
+                              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem', backgroundColor: 'var(--bg-secondary)', borderRadius: '0.25rem', marginBottom: '0.5rem' }}>
+                                <div>
+                                  <span style={{ fontWeight: 'bold', fontSize: '0.875rem' }}>De: {usersMap[of.idPostor] || of.idPostor}</span>
+                                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                                    Bienes: {of.bienesOfrecidos?.map(b => `${b.cantidad}x ${b.nombre}`).join(', ')}
+                                  </div>
+                                </div>
+                                {(auction.estado === 'ACTIVA' || auction.estado === 'ESPERANDO_DECISION') && (
+                                  <button 
+                                    className="btn-primary" 
+                                    style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--color-green-700)', color: '#fff' }}
+                                    onClick={() => handleAdjudicar({ idSubasta: auction.id, idPropuesta: of.idPropuesta })}
+                                  >
+                                    Adjudicar
+                                  </button>
+                                )}
+                                {of.esGanadora && (
+                                  <span style={{ color: 'var(--color-green-700)', fontWeight: 'bold', fontSize: '0.75rem' }}>¡GANADORA!</span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
+            {sectionModalOpen === 'enviadas' && (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h2 style={{ fontSize: '1.25rem' }}>Mis Ofertas Enviadas</h2>
+                  <select value={sentFilter} onChange={(e) => setSentFilter(e.target.value)} style={{ padding: '0.25rem', borderRadius: '0.25rem', border: '1px solid var(--border-color)', outline: 'none', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+                    <option value="TODAS">Todas</option>
+                    <option value="PENDIENTE">Pendiente</option>
+                    <option value="ACEPTADA">Aceptada</option>
+                    <option value="RECHAZADA">Rechazada</option>
+                  </select>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {sentRequests.filter(req => sentFilter === 'TODAS' || req.estado === sentFilter).length === 0 ? (
+                    <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
+                      No tienes ofertas activas.
+                    </div>
+                  ) : (
+                    sentRequests.filter(req => sentFilter === 'TODAS' || req.estado === sentFilter).map((req, index) => (
+                      <div key={index} style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                          <h4 style={{ marginBottom: '0.25rem', fontSize: '1rem' }}>{pubsMap[req.idPublicacion]?.nombreServicio || req.idPublicacion}</h4>
+                          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>A: {usersMap[pubsMap[req.idPublicacion]?.idUsuario] || pubsMap[req.idPublicacion]?.idUsuario || 'Usuario'} • Costo: {req.precioOfertado}</p>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                          <span style={{ 
+                            padding: '0.25rem 0.5rem', 
+                            borderRadius: '1rem', 
+                            fontSize: '0.75rem', 
+                            fontWeight: 'bold',
+                            backgroundColor: req.estado === 'PENDIENTE' ? 'var(--color-yellow-100)' : req.estado === 'ACEPTADA' ? 'var(--color-green-100)' : 'var(--color-red-100)',
+                            color: req.estado === 'PENDIENTE' ? 'var(--color-orange-600)' : req.estado === 'ACEPTADA' ? 'var(--color-green-700)' : 'var(--color-red-600)'
+                          }}>
+                            {req.estado}
+                          </span>
+                          {req.estado === 'PENDIENTE' && (
+                            <button 
+                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-red-600)', color: 'var(--color-red-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                              onClick={() => handleCancelRequest(req.idSolicitud)}
                             >
-                              Confirmar Entrega
+                              Cancelar
                             </button>
                           )}
-                          {tx.idDemandante === user.id && !tx.recibido && (
-                            <button
-                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-blue-600)', color: 'var(--color-blue-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                              onClick={() => handleConfirmRecepcion(tx.idTransaccion)}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
+            {sectionModalOpen === 'transacciones' && (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h2 style={{ fontSize: '1.25rem' }}>Mis Transacciones Activas</h2>
+                  <select value={txFilter} onChange={(e) => setTxFilter(e.target.value)} style={{ padding: '0.25rem', borderRadius: '0.25rem', border: '1px solid var(--border-color)', outline: 'none', marginLeft: '1rem', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+                    <option value="TODAS">Todas</option>
+                    <option value="INICIADA">Iniciada</option>
+                    <option value="PENDIENTE">Pendiente</option>
+                    <option value="FINALIZADA">Finalizada</option>
+                    <option value="EN_DISPUTA">En Disputa</option>
+                  </select>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {transacciones.filter(tx => txFilter === 'TODAS' || tx.estado === txFilter).length === 0 ? (
+                    <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
+                      No tienes transacciones activas.
+                    </div>
+                  ) : (
+                    transacciones.filter(tx => txFilter === 'TODAS' || tx.estado === txFilter).map((tx, index) => (
+                      <div key={index} style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div>
+                            <h4 style={{ marginBottom: '0.25rem', fontSize: '1rem' }}>Tx: {tx.idTransaccion.split('-')[0].toUpperCase()}</h4>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
+                              Publicación: {pubsMap[tx.idPublicacion]?.nombreServicio || tx.idPublicacion} • Costo: {tx.creditosRetenidos > 0 ? tx.creditosRetenidos : (pubsMap[tx.idPublicacion]?.precioCreditos ?? '—')} créditos<br/>
+                              Tú eres el {tx.idDemandante === user.id ? 'Solicitante' : 'Proveedor'} (Contraparte: {usersMap[tx.idDemandante === user.id ? tx.idOfertante : tx.idDemandante] || 'Usuario'})
+                            </p>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <span style={{ 
+                              padding: '0.25rem 0.5rem', 
+                              borderRadius: '1rem', 
+                              fontSize: '0.75rem', 
+                              fontWeight: 'bold',
+                              backgroundColor: tx.estado === 'INICIADA' || tx.estado === 'PENDIENTE' ? 'var(--color-yellow-100)' : tx.estado === 'FINALIZADA' ? 'var(--color-green-100)' : 'var(--color-red-100)',
+                              color: tx.estado === 'INICIADA' || tx.estado === 'PENDIENTE' ? 'var(--color-orange-600)' : tx.estado === 'FINALIZADA' ? 'var(--color-green-700)' : 'var(--color-red-600)'
+                            }}>
+                              {tx.estado}
+                            </span>
+                          </div>
+                        </div>
+                        <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                          {tx.estado === 'INICIADA' && (
+                            <button 
+                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--accent-primary)', color: 'var(--accent-primary)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                              onClick={() => handleUpdateTxState(tx.idTransaccion, 'PENDIENTE')}
                             >
                               Confirmar Recepción
                             </button>
                           )}
-                          {tx.entregado && tx.idOfertante === user.id && (
-                            <span style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-700)', borderRadius: '0.25rem', fontWeight: 'bold' }}>
-                              Entrega Confirmada
-                            </span>
-                          )}
-                          {tx.recibido && tx.idDemandante === user.id && (
-                            <span style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-700)', borderRadius: '0.25rem', fontWeight: 'bold' }}>
-                              Recepción Confirmada
-                            </span>
-                          )}
-                          {tx.idDemandante === user.id && (
+                          {tx.estado === 'PENDIENTE' && tx.idDemandante !== user.id && (
                             <button 
-                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                              onClick={() => {
-                                const contraparteId = tx.idOfertante;
-                                setReportData({ 
-                                  ...reportData, 
-                                  idPublicacion: tx.idTransaccion,
-                                  tituloPublicacion: pubsMap[tx.idPublicacion] || tx.idPublicacion, 
-                                  idUsuarioInvolucrado: contraparteId,
-                                  nombreContraparte: usersMap[contraparteId] || contraparteId,
-                                  esDemandante: true
-                                });
-                                setReportModalOpen(true);
-                              }}
+                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--accent-primary)', border: 'none', color: '#fff', borderRadius: '0.25rem', cursor: 'pointer' }}
+                              onClick={() => handleUpdateTxState(tx.idTransaccion, 'FINALIZADA')}
                             >
-                              Reportar Incidencia
+                              Validar Finalización
                             </button>
                           )}
+                          {(tx.estado === 'INICIADA' || tx.estado === 'PENDIENTE') && (
+                            <div>
+                              {tx.idOfertante === user.id && (
+                                <button 
+                                  style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                                  onClick={() => {
+                                    const contraparteId = tx.idDemandante;
+                                    setReportData({ 
+                                      ...reportData, 
+                                      idPublicacion: tx.idTransaccion,
+                                      tituloPublicacion: pubsMap[tx.idPublicacion]?.nombreServicio || tx.idPublicacion,
+                                      idUsuarioInvolucrado: contraparteId,
+                                      nombreContraparte: usersMap[contraparteId] || contraparteId,
+                                      esDemandante: false
+                                    });
+                                    setReportModalOpen(true);
+                                  }}
+                                >
+                                  Reportar Incidencia
+                                </button>
+                              )}
+                              {tx.idDemandante === user.id && (
+                                <button 
+                                  style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                                  onClick={() => {
+                                    const contraparteId = tx.idOfertante;
+                                    setReportData({ 
+                                      ...reportData, 
+                                      idPublicacion: tx.idTransaccion,
+                                      tituloPublicacion: pubsMap[tx.idPublicacion] || tx.idPublicacion, 
+                                      idUsuarioInvolucrado: contraparteId,
+                                      nombreContraparte: usersMap[contraparteId] || contraparteId,
+                                      esDemandante: true
+                                    });
+                                    setReportModalOpen(true);
+                                  }}
+                                >
+                                  Reportar Incidencia
+                                </button>
+                              )}
+                            </div>
+                          )}
+                          {tx.estado === 'EN_DISPUTA' && (() => {
+                            const inc = incidenciasMap[tx.idTransaccion];
+                            const soyReportante = inc && inc.idUsuarioReportante === user.id;
+                            const yaDefendi = inc && inc.idUsuarioDefensor === user.id;
+                            if (soyReportante) {
+                              return (
+                                <button key="cancelar" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                                  onClick={() => { setCancelReportData({ idTransaccion: tx.idTransaccion, motivo: '' }); setCancelReportModalOpen(true); }}>
+                                  Cancelar Reporte
+                                </button>
+                              );
+                            } else if (yaDefendi) {
+                              return (
+                                <span key="defendido" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-700)', borderRadius: '0.25rem', fontWeight: 'bold' }}>
+                                  Defensa Enviada
+                                </span>
+                              );
+                            } else {
+                              return (
+                                <button key="defenderse" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-green-700)', color: 'var(--color-green-700)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                                  onClick={() => { setAppealData({ idTransaccion: tx.idTransaccion, descripcion: '', fotosEvidenciaBase64: [] }); setAppealModalOpen(true); }}>
+                                  Defenderse
+                                </button>
+                              );
+                            }
+                          })()}
                         </div>
-                      )}
-                      {tx.estado === 'EN_DISPUTA' && (() => {
-                        const inc = incidenciasMap[tx.idTransaccion];
-                        const soyReportante = inc && inc.idUsuarioReportante === user.id;
-                        const yaDefendi = inc && inc.idUsuarioDefensor === user.id;
-                        if (soyReportante) {
-                          return (
-                            <button key="cancelar" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                              onClick={() => { setCancelReportData({ idTransaccion: tx.idTransaccion, motivo: '' }); setCancelReportModalOpen(true); }}>
-                              Cancelar Reporte
-                            </button>
-                          );
-                        } else if (yaDefendi) {
-                          return (
-                            <span key="defendido" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-700)', borderRadius: '0.25rem', fontWeight: 'bold' }}>
-                              Defensa Enviada
-                            </span>
-                          );
-                        } else {
-                          return (
-                            <button key="defenderse" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-green-700)', color: 'var(--color-green-700)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                              onClick={() => { setAppealData({ idTransaccion: tx.idTransaccion, descripcion: '', fotosEvidenciaBase64: [] }); setAppealModalOpen(true); }}>
-                              Defenderse
-                            </button>
-                          );
-                        }
-                      })()}
-                    </div>
-                  </div>
+                      </div>
+                    ))
+                  )}
                 </div>
-              ))
+              </div>
             )}
           </div>
         </div>
-      </div>
+      , document.body)}
 
-      {reportModalOpen && (
+      {reportModalOpen && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div className="card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
             <h3 style={{ marginBottom: '1rem' }}>Reportar Incidencia</h3>
@@ -812,7 +882,7 @@ const Profile = () => {
                       </div>
                     ))}
                   </div>
-                )}
+      , document.body)}
               </div>
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <button type="button" onClick={() => setReportModalOpen(false)} style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}>Cancelar</button>
@@ -823,7 +893,7 @@ const Profile = () => {
         </div>
       )}
 
-      {cancelReportModalOpen && (
+      {cancelReportModalOpen && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div className="card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
             <h3 style={{ marginBottom: '1rem' }}>Cancelar Reporte de Incidencia</h3>
@@ -849,9 +919,9 @@ const Profile = () => {
             </form>
           </div>
         </div>
-      )}
+      , document.body)}
 
-      {appealModalOpen && (
+      {appealModalOpen && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div className="card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
             <h3 style={{ marginBottom: '1rem' }}>Defenderse</h3>
@@ -882,7 +952,7 @@ const Profile = () => {
                       </div>
                     ))}
                   </div>
-                )}
+      , document.body)}
               </div>
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <button type="button" onClick={() => setAppealModalOpen(false)} style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}>Cancelar</button>
@@ -893,7 +963,7 @@ const Profile = () => {
         </div>
       )}
 
-      {editModalOpen && (
+      {editModalOpen && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div className="card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
             <h3 style={{ marginBottom: '1rem' }}>{editType === 'subasta' ? 'Modificar Subasta' : 'Modificar Publicación'}</h3>
@@ -923,7 +993,7 @@ const Profile = () => {
                     required
                   />
                 </div>
-              )}
+      , document.body)}
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <button type="button" onClick={() => setEditModalOpen(false)} style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}>Cancelar</button>
                 <button type="submit" className="btn-primary" style={{ flex: 1, padding: '0.75rem' }}>Guardar Cambios</button>
