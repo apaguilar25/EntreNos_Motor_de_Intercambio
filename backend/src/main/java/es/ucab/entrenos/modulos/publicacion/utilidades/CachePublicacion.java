@@ -14,24 +14,21 @@ import java.util.stream.Collectors;
 public class CachePublicacion {
 
     private static final Logger log = LoggerFactory.getLogger(CachePublicacion.class);
-    private static final int MAX_SIZE = 10;
-
-    private volatile List<PublicacionResponseDTO> top10 = Collections.emptyList();
+    private volatile List<PublicacionResponseDTO> cache = Collections.emptyList();
 
     public void actualizar(List<PublicacionResponseDTO> todas) {
         List<PublicacionResponseDTO> nuevo = todas.stream()
                 .sorted(Comparator.comparingDouble(
                         PublicacionResponseDTO::getReputacionUsuario)
                 .reversed())
-                .limit(MAX_SIZE)
                 .collect(Collectors.collectingAndThen(Collectors.toList(),
                         Collections::unmodifiableList));
-        this.top10 = nuevo;
+        this.cache = nuevo;
         log.debug("CachePublicacion actualizada con {} publicaciones", nuevo.size());
     }
 
-    public List<PublicacionResponseDTO> getTop10() {
-        return top10;
+    public List<PublicacionResponseDTO> getTodas() {
+        return cache;
     }
 
     public void refrescar(List<PublicacionResponseDTO> todas) {

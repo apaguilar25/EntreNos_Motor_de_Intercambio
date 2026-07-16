@@ -1,55 +1,5 @@
 [
   {
-    "idPublicacion": "PUB-6C4481D0",
-    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
-    "tipoPublicacion": "HABILIDAD",
-    "nombreServicio": "Clases de Yoga",
-    "descripcion": "Clases de yoga para principiantes",
-    "precioCreditos": 2,
-    "disponible": true,
-    "version": 0
-  },
-  {
-    "idPublicacion": "PUB-2F687B5B",
-    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
-    "tipoPublicacion": "HABILIDAD",
-    "nombreServicio": "Masajes Relajantes",
-    "descripcion": "Masajes de espalda y cuello",
-    "precioCreditos": 3,
-    "disponible": true,
-    "version": 0
-  },
-  {
-    "idPublicacion": "PUB-997EECCA",
-    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
-    "tipoPublicacion": "HABILIDAD",
-    "nombreServicio": "Clases de Piano",
-    "descripcion": "Clases de piano nivel básico",
-    "precioCreditos": 4,
-    "disponible": true,
-    "version": 0
-  },
-  {
-    "idPublicacion": "PUB-89221E86",
-    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
-    "tipoPublicacion": "HABILIDAD",
-    "nombreServicio": "Cuidado de Mascotas",
-    "descripcion": "Paseo y cuidado de perros y gatos",
-    "precioCreditos": 1,
-    "disponible": true,
-    "version": 0
-  },
-  {
-    "idPublicacion": "PUB-DD479444",
-    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
-    "tipoPublicacion": "HABILIDAD",
-    "nombreServicio": "Clases de Cocina",
-    "descripcion": "Cocina italiana básica",
-    "precioCreditos": 2,
-    "disponible": true,
-    "version": 0
-  },
-  {
     "idPublicacion": "PUB-132C8A36",
     "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
     "tipoPublicacion": "HABILIDAD",
@@ -113,6 +63,94 @@
     "precioCreditos": 0,
     "disponible": true,
     "idInstanciaCatalogo": "767d19b6-0fe1-4068-9223-c73304860b55",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-C5D087F1",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Carpintería",
+    "descripcion": "sadadadasd",
+    "precioCreditos": 4,
+    "disponible": true,
+    "idInstanciaCatalogo": "543a77cf-c4be-44c5-801b-bf27ba46a826",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-8F554014",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Electricidad",
+    "descripcion": "ffssfsfds",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "fe44b59f-4d9f-414c-83ff-9b2f4c1a8d1e",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-D1EF25F7",
+    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Limpieza del Hogar",
+    "descripcion": "blh´´oj´poúi´pi",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "023d4941-b316-4768-a34c-5bb9d465a886",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-53774C9E",
+    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Electricidad",
+    "descripcion": "dgsgsdgsdgsdgsgdsd",
+    "precioCreditos": 4,
+    "disponible": true,
+    "idInstanciaCatalogo": "010a502c-807d-4cad-a330-2c203f66f3c6",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-42711448",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Plomería",
+    "descripcion": "saasfasfasfasfasfasf",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "7ad32b3e-907c-4f4a-9260-fd9fe6b14bad",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-9461BFF5",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Soporte Técnico / Computación",
+    "descripcion": "Necesito este servicio porque mi computadora se dañó",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "af050134-9d95-477e-b078-056e3b7f37ce",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-CDCBD6A4",
+    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Carpintería",
+    "descripcion": "Puedo arreglar sillas",
+    "precioCreditos": 4,
+    "disponible": true,
+    "idInstanciaCatalogo": "233ccb2e-cc7a-4ea6-8582-89fba7ef8895",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-E88CF0B1",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Carpintería",
+    "descripcion": "NEcesito que me arreglen la silla",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "9e1dfee4-6034-4fbf-be41-30f06cb12666",
     "version": 0
   }
 ]

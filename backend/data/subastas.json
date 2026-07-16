@@ -1,5 +1,22 @@
 [
   {
+    "id": "SUB-2620424A",
+    "idPropietario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "nombreActivo": "qrqrq",
+    "descripcion": "wqrqr",
+    "estadoFisico": "USADO",
+    "imagenesUrls": [
+      "/ruta/foto1.jpg"
+    ],
+    "fechaInicio": "2026-07-15T23:27:23.3601577",
+    "fechaFinalizacionLicitacion": "2026-07-20T23:27:23.3571482",
+    "estado": "ACTIVA",
+    "propuestas": [],
+    "propietarioConfirmoEntrega": false,
+    "ganadorConfirmoEntrega": false,
+    "version": 0
+  },
+  {
     "id": "SUB-5A909735",
     "idPropietario": "84e724bf-624b-4141-9357-df7da92e61eb",
     "nombreActivo": "Bicicleta Montaña Rodada 29",
@@ -40,6 +57,43 @@
     "version": 3
   },
   {
+    "id": "SUB-42E97AFE",
+    "idPropietario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "nombreActivo": "qwrqwr",
+    "descripcion": "qrqwrqwrq",
+    "estadoFisico": "USADO",
+    "imagenesUrls": [
+      "/ruta/foto1.jpg"
+    ],
+    "fechaInicio": "2026-07-15T23:27:45.5560887",
+    "fechaFinalizacionLicitacion": "2026-08-04T23:27:45.5555954",
+    "estado": "ADJUDICADA_INTERCAMBIO_PENDIENTE",
+    "idPropuestaGanadora": "PROP-8F2336",
+    "propuestas": [
+      {
+        "idPropuesta": "PROP-8F2336",
+        "idSubasta": "SUB-42E97AFE",
+        "idPostor": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+        "bienesOfrecidos": [
+          {
+            "nombre": "Pasta",
+            "cantidad": 1
+          }
+        ],
+        "descripcion": "sdgdagsdgagagafafasfasfasfafa",
+        "estadoPropuesta": "EN_EVALUACION",
+        "estadoFisico": "NUEVO",
+        "imagenesUrls": [
+          "http://dummy.img/evidence.jpg"
+        ],
+        "fechaPropuesta": "2026-07-15T23:28:14.0016405"
+      }
+    ],
+    "propietarioConfirmoEntrega": false,
+    "ganadorConfirmoEntrega": false,
+    "version": 2
+  },
+  {
     "id": "SUB-7CA8FB54",
     "idPropietario": "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
     "nombreActivo": "dsf",
@@ -50,7 +104,7 @@
     ],
     "fechaInicio": "2026-07-13T18:50:22.2275709",
     "fechaFinalizacionLicitacion": "2026-07-14T18:50:22.2255667",
-    "estado": "ACTIVA",
+    "estado": "ESPERANDO_DECISION",
     "propuestas": [
       {
         "idPropuesta": "PROP-A27A27",
@@ -73,7 +127,7 @@
     ],
     "propietarioConfirmoEntrega": false,
     "ganadorConfirmoEntrega": false,
-    "version": 1
+    "version": 2
   },
   {
     "id": "SUB-8B328C68",

@@ -16,71 +16,97 @@ const Wall = () => {
   const [error, setError] = useState(null);
   const [sentRequests, setSentRequests] = useState(new Set());
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setLoading(true);
-        let mappedPosts = [];
+  const fetchPosts = React.useCallback(async () => {
+    try {
+      setLoading(true);
+      let mappedPosts = [];
+      
+      if (tab === 'explorar') {
+        const data = await controladorMuro.obtenerPublicaciones(searchTerm);
+        mappedPosts = data.map((item, index) => ({
+          id: item.idPublicacion || index,
+          type: item.tipoPublicacion ? item.tipoPublicacion.toLowerCase() : 'oferta',
+          user: item.nombreUsuario || 'Usuario Desconocido',
+          userId: item.idUsuario,
+          reputation: item.reputacionUsuario || 0,
+          title: item.nombreServicio || 'Sin título',
+          description: item.descripcion || '',
+          price: item.precioCreditos || 0,
+          timeAgo: 'reciente'
+        }));
+      } else if (tab === 'parati') {
+        const userId = user?.id || 'USR-1001';
+        const data = await controladorMuro.obtenerRecomendadas(userId);
         
-        if (tab === 'explorar') {
-          const data = await controladorMuro.obtenerPublicaciones(searchTerm);
-          mappedPosts = data.map((item, index) => ({
-            id: item.idPublicacion || index,
-            type: item.tipoPublicacion ? item.tipoPublicacion.toLowerCase() : 'oferta',
-            user: item.nombreUsuario || 'Usuario Desconocido',
-            userId: item.idUsuario,
-            reputation: item.reputacionUsuario || 0,
-            title: item.nombreServicio || 'Sin título',
-            description: item.descripcion || '',
-            price: item.precioCreditos || 0,
-            timeAgo: 'reciente'
-          }));
-        } else if (tab === 'parati') {
-          const userId = user?.id || 'USR-1001';
-          const data = await controladorMuro.obtenerRecomendadas(userId);
-          
-          mappedPosts = data.map((item, index) => {
-            const pub = item.publicacion;
-            return {
-              id: pub.idPublicacion || index,
-              type: pub.tipoPublicacion ? pub.tipoPublicacion.toLowerCase() : 'oferta',
-              user: pub.nombreUsuario || 'Usuario Desconocido',
-              userId: pub.idUsuario,
-              reputation: pub.reputacionUsuario || 0,
-              title: pub.nombreServicio || 'Sin título',
-              description: pub.descripcion || '',
-              price: pub.precioCreditos || 0,
-              timeAgo: 'reciente',
-              isMatch: true,
-              matchReason: item.tipoCoincidencia
-            };
-          });
-        }
-        
-        mappedPosts = mappedPosts.filter(post => post.userId !== (user?.id || 'USR-1001'));
-        setPosts(mappedPosts);
-        
-        if (controladorGamificacion) {
-          const podioData = await controladorGamificacion.obtenerPodio();
-          setPodio(podioData || []);
-        }
-
-        if (controladorPerfil && user) {
-          const sols = await controladorPerfil.obtenerSolicitudesEnviadas(user.id);
-          setSentRequests(new Set(sols.map(s => s.idPublicacion)));
-        }
-
-        setError(null);
-      } catch (err) {
-        console.error(err);
-        setError('No se pudo conectar con el servidor.');
-      } finally {
-        setLoading(false);
+        mappedPosts = data.map((item, index) => {
+          const pub = item.publicacion;
+          return {
+            id: pub.idPublicacion || index,
+            type: pub.tipoPublicacion ? pub.tipoPublicacion.toLowerCase() : 'oferta',
+            user: pub.nombreUsuario || 'Usuario Desconocido',
+            userId: pub.idUsuario,
+            reputation: pub.reputacionUsuario || 0,
+            title: pub.nombreServicio || 'Sin título',
+            description: pub.descripcion || '',
+            price: pub.precioCreditos || 0,
+            timeAgo: 'reciente',
+            isMatch: true,
+            matchReason: item.tipoCoincidencia
+          };
+        });
       }
+      
+      mappedPosts = mappedPosts.filter(post => post.userId !== (user?.id || 'USR-1001'));
+      setPosts(mappedPosts);
+      
+      if (controladorGamificacion) {
+        const podioData = await controladorGamificacion.obtenerPodio();
+        setPodio(podioData || []);
+      }
+
+      if (controladorPerfil && user) {
+        const sols = await controladorPerfil.obtenerSolicitudesEnviadas(user.id);
+        setSentRequests(new Set(sols.map(s => s.idPublicacion)));
+      }
+
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError('No se pudo conectar con el servidor.');
+    } finally {
+      setLoading(false);
+    }
+  }, [searchTerm, controladorMuro, user, tab, controladorGamificacion, controladorPerfil]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
+
+  // SSE: suscripción a cambios del muro en tiempo real
+  useEffect(() => {
+    const eventSource = new EventSource('http://localhost:8080/api/publicaciones/stream');
+
+    eventSource.addEventListener('actualizar', () => {
+      fetchPosts();
+    });
+
+    eventSource.onerror = () => {
+      eventSource.close();
     };
 
-    fetchPosts();
-  }, [searchTerm, controladorMuro, user, tab]);
+    return () => {
+      eventSource.close();
+    };
+  }, [fetchPosts]);
+
+  // Refresh al volver a la pestaña (por si hubo cambios mientras no se recibía SSE)
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') fetchPosts();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, [fetchPosts]);
 
   return (
     <div className="animate-in">
@@ -228,12 +254,14 @@ const Wall = () => {
                 <p style={{ color: 'var(--text-secondary)' }}>{post.description}</p>
               </div>
               
-              <div style={{ textAlign: 'right' }}>
-                <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--accent-primary)' }}>
-                  {post.price} 
-                  <span style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontWeight: 'normal' }}> cr</span>
-                </span>
-              </div>
+              {post.price > 0 && (
+                <div style={{ textAlign: 'right' }}>
+                  <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--accent-primary)' }}>
+                    {post.price} 
+                    <span style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontWeight: 'normal' }}> cr</span>
+                  </span>
+                </div>
+              )}
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-color)', paddingTop: '1rem' }}>

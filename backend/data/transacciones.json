@@ -22,7 +22,6 @@
     "confirmacionDemandante": false,
     "fechaCreacion": 1784004420766,
     "idIncidencia": "INC-B12B26EB",
-    "idContraIncidencia": "INC-4623334F",
     "version": 5
   },
   {
@@ -30,11 +29,48 @@
     "idPublicacion": "PUB-37DC4A29",
     "idOfertante": "f871e1d2-671e-4ea2-a19d-c1393805569c",
     "idDemandante": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
-    "estado": "PENDIENTE",
+    "estado": "EN_DISPUTA",
     "creditosRetenidos": 0,
     "confirmacionOfertante": false,
     "confirmacionDemandante": false,
     "fechaCreacion": 1784050495130,
+    "idIncidencia": "INC-83D3E65C",
+    "version": 1
+  },
+  {
+    "idTransaccion": "TX-B87E1FC9",
+    "idPublicacion": "PUB-9461BFF5",
+    "idOfertante": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "idDemandante": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "estado": "PENDIENTE",
+    "creditosRetenidos": 0,
+    "confirmacionOfertante": false,
+    "confirmacionDemandante": false,
+    "fechaCreacion": 1784220614624,
+    "version": 0
+  },
+  {
+    "idTransaccion": "TX-AE74E9E0",
+    "idPublicacion": "PUB-E88CF0B1",
+    "idOfertante": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "idDemandante": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "estado": "PENDIENTE",
+    "creditosRetenidos": 0,
+    "confirmacionOfertante": false,
+    "confirmacionDemandante": false,
+    "fechaCreacion": 1784222249476,
+    "version": 0
+  },
+  {
+    "idTransaccion": "TX-49CC6A2A",
+    "idPublicacion": "PUB-4C8E891B",
+    "idOfertante": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "idDemandante": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "estado": "PENDIENTE",
+    "creditosRetenidos": 0,
+    "confirmacionOfertante": false,
+    "confirmacionDemandante": false,
+    "fechaCreacion": 1784231722736,
     "version": 0
   }
 ]

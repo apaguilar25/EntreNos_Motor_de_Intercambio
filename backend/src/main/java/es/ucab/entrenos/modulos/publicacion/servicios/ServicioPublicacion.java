@@ -28,6 +28,9 @@ import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioPublicacion
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioTransaccion;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioSolicitud;
 import es.ucab.entrenos.modulos.publicacion.modelos.Solicitud;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import java.io.IOException;
+import java.util.concurrent.CopyOnWriteArrayList;
 import es.ucab.entrenos.modulos.publicacion.utilidades.CachePublicacion;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -55,6 +58,26 @@ public class ServicioPublicacion {
 
     @org.springframework.beans.factory.annotation.Autowired
     private CachePublicacion cachePublicacion;
+
+    private final CopyOnWriteArrayList<SseEmitter> emisoresMuro = new CopyOnWriteArrayList<>();
+
+    public SseEmitter suscribirMuro() {
+        SseEmitter emitter = new SseEmitter(0L);
+        emisoresMuro.add(emitter);
+        emitter.onCompletion(() -> emisoresMuro.remove(emitter));
+        emitter.onTimeout(() -> emisoresMuro.remove(emitter));
+        return emitter;
+    }
+
+    private void notificarCambioMuro() {
+        for (SseEmitter e : emisoresMuro) {
+            try {
+                e.send(SseEmitter.event().name("actualizar").data(""));
+            } catch (IOException ex) {
+                emisoresMuro.remove(e);
+            }
+        }
+    }
 
     public ServicioPublicacion(IRepositorioPublicacion repositorioPublicacion,
                                IRepositorioTransaccion repositorioTransaccion,
@@ -86,6 +109,7 @@ public class ServicioPublicacion {
         publicacion.setDisponible(true);
         repositorioPublicacion.guardar(publicacion);
         refrescarCache();
+        notificarCambioMuro();
         return toResponseDTO(publicacion);
     }
 
@@ -97,6 +121,7 @@ public class ServicioPublicacion {
         pub.setDescripcion(descripcion);
         repositorioPublicacion.guardar(pub);
         refrescarCache();
+        notificarCambioMuro();
         return pub;
     }
 
@@ -115,7 +140,7 @@ public class ServicioPublicacion {
 
     public List<PublicacionResponseDTO> obtenerPublicacionesFiltradas(String tipo, String servicio) {
         if (tipo == null && servicio == null) {
-            return cachePublicacion.getTop10();
+            return cachePublicacion.getTodas();
         }
         return repositorioPublicacion.obtenerTodas().stream()
                 .filter(p -> tipo == null || tipo.isEmpty() || p.getTipoPublicacion().equalsIgnoreCase(tipo))
@@ -224,6 +249,7 @@ public class ServicioPublicacion {
     public void guardarPublicacion(Publicacion publicacion) {
         repositorioPublicacion.guardar(publicacion);
         refrescarCache();
+        notificarCambioMuro();
     }
 
     public List<PublicacionResponseDTO> obtenerPublicacionesPorUsuario(String idUsuario) {
@@ -240,6 +266,7 @@ public class ServicioPublicacion {
         if (removido) {
             repositorioPublicacion.guardarTodas(todas);
             refrescarCache();
+            notificarCambioMuro();
         }
         return removido;
     }
@@ -254,6 +281,7 @@ public class ServicioPublicacion {
         if (removido) {
             repositorioPublicacion.guardarTodas(todas);
             refrescarCache();
+            notificarCambioMuro();
         }
         return removido;
     }

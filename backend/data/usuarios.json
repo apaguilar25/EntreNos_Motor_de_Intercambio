@@ -34,7 +34,7 @@
     "correoElectronico": "carlos.prueba@alameda.com",
     "telefono": "04121234567",
     "contrasenaHash": "$2a$10$R6RQB0b5z0a2l9nCjfyyoucImOV4zo0jaRgJK640NqKq67fmocOnG",
-    "version": 10,
+    "version": 25,
     "monedero": {
       "creditosDisponibles": 50.0,
       "creditosComprometidos": 0.0,
@@ -60,6 +60,15 @@
           },
           "precioCreditos": 8,
           "descripcionServicio": "Reparación de computadoras y soporte técnico"
+        },
+        {
+          "idInstancia": "543a77cf-c4be-44c5-801b-bf27ba46a826",
+          "habilidadBase": {
+            "id": "HAB-003",
+            "categoria": "Carpintería"
+          },
+          "precioCreditos": 4,
+          "descripcionServicio": "sadadadasd"
         }
       ],
       "necesidadesRegistradas": [
@@ -70,6 +79,38 @@
             "categoria": "Limpieza del Hogar"
           },
           "descripcionCondiciones": "Necesito ayuda con limpieza general de mi apartamento una vez por semana"
+        },
+        {
+          "idInstancia": "fe44b59f-4d9f-414c-83ff-9b2f4c1a8d1e",
+          "necesidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "descripcionCondiciones": "ffssfsfds"
+        },
+        {
+          "idInstancia": "7ad32b3e-907c-4f4a-9260-fd9fe6b14bad",
+          "necesidadBase": {
+            "id": "HAB-001",
+            "categoria": "Plomería"
+          },
+          "descripcionCondiciones": "saasfasfasfasfasfasf"
+        },
+        {
+          "idInstancia": "af050134-9d95-477e-b078-056e3b7f37ce",
+          "necesidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "descripcionCondiciones": "Necesito este servicio porque mi computadora se dañó"
+        },
+        {
+          "idInstancia": "9e1dfee4-6034-4fbf-be41-30f06cb12666",
+          "necesidadBase": {
+            "id": "HAB-003",
+            "categoria": "Carpintería"
+          },
+          "descripcionCondiciones": "NEcesito que me arreglen la silla"
         }
       ]
     },
@@ -120,10 +161,10 @@
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
     "contrasenaHash": "$2a$10$8Wf3ABToBcPb548r/M3BruD0/u5HZeiXVuV0QwfjbUmI5Qz1/Z7ze",
-    "version": 11,
+    "version": 24,
     "monedero": {
       "creditosDisponibles": 50.0,
-      "creditosComprometidos": 0.0,
+      "creditosComprometidos": 8.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -137,6 +178,24 @@
           },
           "precioCreditos": 3,
           "descripcionServicio": "dsfsf"
+        },
+        {
+          "idInstancia": "010a502c-807d-4cad-a330-2c203f66f3c6",
+          "habilidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "precioCreditos": 4,
+          "descripcionServicio": "dgsgsdgsdgsdgsgdsd"
+        },
+        {
+          "idInstancia": "233ccb2e-cc7a-4ea6-8582-89fba7ef8895",
+          "habilidadBase": {
+            "id": "HAB-003",
+            "categoria": "Carpintería"
+          },
+          "precioCreditos": 4,
+          "descripcionServicio": "Puedo arreglar sillas"
         }
       ],
       "necesidadesRegistradas": [
@@ -147,6 +206,14 @@
             "categoria": "Electricidad"
           },
           "descripcionCondiciones": "sdfsf"
+        },
+        {
+          "idInstancia": "023d4941-b316-4768-a34c-5bb9d465a886",
+          "necesidadBase": {
+            "id": "HAB-004",
+            "categoria": "Limpieza del Hogar"
+          },
+          "descripcionCondiciones": "blh´´oj´poúi´pi"
         }
       ]
     },

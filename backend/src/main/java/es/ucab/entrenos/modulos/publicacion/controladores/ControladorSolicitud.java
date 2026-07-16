@@ -25,7 +25,7 @@ public class ControladorSolicitud {
     public ResponseEntity<?> solicitar(@PathVariable String idPublicacion,
                                        @RequestBody SolicitudRequestDTO dto) {
         try {
-            Solicitud solicitud = servicioSolicitud.solicitar(idPublicacion, dto.getIdUsuario());
+            Solicitud solicitud = servicioSolicitud.solicitar(idPublicacion, dto.getIdUsuario(), dto.getPrecioOfertado());
             return ResponseEntity.status(HttpStatus.CREATED).body(solicitud);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(java.util.Map.of("error", e.getMessage()));

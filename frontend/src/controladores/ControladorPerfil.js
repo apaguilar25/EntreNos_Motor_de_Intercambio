@@ -48,4 +48,12 @@ export class ControladorPerfil {
       throw error;
     }
   }
+
+  async confirmarOfertante(idTransaccion) {
+    return await this.servicioPublicacion.confirmarOfertante(idTransaccion);
+  }
+
+  async confirmarDemandante(idTransaccion) {
+    return await this.servicioPublicacion.confirmarDemandante(idTransaccion);
+  }
 }

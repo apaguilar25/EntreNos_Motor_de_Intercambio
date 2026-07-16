@@ -588,4 +588,184 @@
   "fechaCreacion" : 1784050524007,
   "idReferencia" : null,
   "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "fbe22fe9-090d-41eb-8d75-cebfdabf726b",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
+  "mensaje" : "Tu subasta terminó. Tienes propuestas pendientes.",
+  "tipo" : "SUBASTA_POR_REVISAR",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784167902371,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "2632af9a-a8cf-416f-8012-d46e1f600bd5",
+  "idRemitente" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "¡Felicidades! Tu propuesta ha sido elegida como ganadora.",
+  "tipo" : "SUBASTA_GANADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784172541240,
+  "idReferencia" : "SUB-42E97AFE",
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "cdad06e8-d51f-4a90-a8ac-1eb22b61ed7d",
+  "idRemitente" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Super Administrador quiere contratar tu servicio: Electricidad",
+  "tipo" : "NUEVA_SOLICITUD_ENTRANTE",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784216797293,
+  "idReferencia" : "SOL-0EBB0E2A",
+  "idReferenciaAuxiliar" : "PUB-8F554014"
+}, {
+  "idNotificacion" : "fe63a91c-bb90-426e-9aa2-2583e3cf6f21",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Has ofertado exitosamente por: Electricidad. Esperando respuesta del proveedor.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784216797337,
+  "idReferencia" : "SOL-0EBB0E2A",
+  "idReferenciaAuxiliar" : "PUB-8F554014"
+}, {
+  "idNotificacion" : "a05c669e-aa85-475f-a649-d14e9d9e626b",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Has ofertado exitosamente por: Soporte Técnico / Computación. Esperando respuesta del proveedor.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784220600906,
+  "idReferencia" : "SOL-444F44D2",
+  "idReferenciaAuxiliar" : "PUB-9461BFF5"
+}, {
+  "idNotificacion" : "60b3d55a-06db-4995-8d0e-c539499f1b2d",
+  "idRemitente" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Tu solicitud para Soporte Técnico / Computación fue ACEPTADA. Se retuvieron 0 creditos.",
+  "tipo" : "ESTADO_SOLICITUD_CAMBIADO",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784220614627,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "5a66d09a-c523-4845-9b3e-632aa0f04670",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Datos de contacto del ofertante Carlos Prueba: Correo: carlos.prueba@alameda.com — Teléfono: 04121234567",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784220614636,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "5ee94438-134b-4428-b2fb-d49075e514f9",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Datos de contacto del demandante Super Administrador: Correo: admin@alameda.com — Teléfono: 0000000000",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784220614644,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "a8f16458-54be-4e79-8e44-839fbcb3ad4b",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Has ofertado exitosamente por: Carpintería. Esperando respuesta del proveedor.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784222235988,
+  "idReferencia" : "SOL-1FABA1AF",
+  "idReferenciaAuxiliar" : "PUB-E88CF0B1"
+}, {
+  "idNotificacion" : "def39bbe-fc6e-4a8a-b63c-ed593e814708",
+  "idRemitente" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Tu solicitud para Carpintería fue ACEPTADA. Se retuvieron 0 creditos.",
+  "tipo" : "ESTADO_SOLICITUD_CAMBIADO",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784222249484,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "f69ed7e8-e85c-4059-82c8-65a4a67a6b53",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Datos de contacto del ofertante Carlos Prueba: Correo: carlos.prueba@alameda.com — Teléfono: 04121234567",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784222249490,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "294d8fc4-2475-4847-b57a-c58a6459a47b",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Datos de contacto del demandante Super Administrador: Correo: admin@alameda.com — Teléfono: 0000000000",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784222249496,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "30dbce1b-4860-4854-98a7-e0dc0a654272",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Limpieza del Hogar\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784230463226,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "8656da86-46ff-4b45-bd60-4990dc1da052",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Limpieza del Hogar\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784230463290,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "a99dfb80-7e6b-4754-bf8e-7c7b7b636c1f",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Has ofertado exitosamente por: Soporte Técnico / Computación. Esperando respuesta del proveedor.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784231700240,
+  "idReferencia" : "SOL-170F5A98",
+  "idReferenciaAuxiliar" : "PUB-4C8E891B"
+}, {
+  "idNotificacion" : "b0eddef6-f60e-49a4-bb33-e94f6633208f",
+  "idRemitente" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Tu solicitud para Soporte Técnico / Computación fue ACEPTADA. Se retuvieron 0 creditos.",
+  "tipo" : "ESTADO_SOLICITUD_CAMBIADO",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784231722747,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "9b500bb1-fdd9-457d-a15b-35ca70be5235",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "mensaje" : "Datos de contacto del ofertante Carlos Prueba: Correo: carlos.prueba@alameda.com — Teléfono: 04121234567",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784231722763,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "9a46e20d-5004-4d56-b13b-a242c63c3a4e",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Datos de contacto del demandante Super Administrador: Correo: admin@alameda.com — Teléfono: 0000000000",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784231722769,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
 } ]

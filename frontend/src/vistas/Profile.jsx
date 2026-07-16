@@ -304,6 +304,46 @@ const Profile = () => {
     }
   };
 
+  const handleConfirmEntrega = async (idTransaccion) => {
+    const isConfirmed = await confirm("Confirmar Entrega", "¿Confirmas que has entregado el servicio/producto al demandante? Esta acción no se puede deshacer.");
+    if (!isConfirmed) return;
+    try {
+      const res = await fetch(`http://localhost:8080/api/transacciones/${idTransaccion}/confirmar-ofertante`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (res.ok) {
+        setAlertMessage("Entrega confirmada con éxito.");
+        await loadTransactionsAndIncidencias();
+      } else {
+        const errorData = await res.json();
+        setAlertMessage(errorData.error || "Error al confirmar entrega");
+      }
+    } catch (err) {
+      setAlertMessage("Error de conexión");
+    }
+  };
+
+  const handleConfirmRecepcion = async (idTransaccion) => {
+    const isConfirmed = await confirm("Confirmar Recepción", "¿Confirmas que has recibido el servicio/producto del ofertante? Esta acción no se puede deshacer.");
+    if (!isConfirmed) return;
+    try {
+      const res = await fetch(`http://localhost:8080/api/transacciones/${idTransaccion}/confirmar-demandante`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (res.ok) {
+        setAlertMessage("Recepción confirmada con éxito.");
+        await loadTransactionsAndIncidencias();
+      } else {
+        const errorData = await res.json();
+        setAlertMessage(errorData.error || "Error al confirmar recepción");
+      }
+    } catch (err) {
+      setAlertMessage("Error de conexión");
+    }
+  };
+
   const handleEditClick = (type, item) => {
     setEditType(type);
     if (type === 'oferta') {
@@ -656,23 +696,53 @@ const Profile = () => {
                         {tx.estado}
                       </span>
                       {(tx.estado === 'PENDIENTE' || tx.estado === 'INICIADA') && (
-                        <button 
-                          style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                          onClick={() => {
-                            const contraparteId = tx.idDemandante === user.id ? tx.idOfertante : tx.idDemandante;
-                            setReportData({ 
-                              ...reportData, 
-                              idPublicacion: tx.idTransaccion,
-                              tituloPublicacion: pubsMap[tx.idPublicacion] || tx.idPublicacion, 
-                              idUsuarioInvolucrado: contraparteId,
-                              nombreContraparte: usersMap[contraparteId] || contraparteId,
-                              esDemandante: tx.idDemandante === user.id
-                            });
-                            setReportModalOpen(true);
-                          }}
-                        >
-                          Reportar Incidencia
-                        </button>
+                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          {tx.idOfertante === user.id && !tx.entregado && (
+                            <button
+                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-blue-600)', color: 'var(--color-blue-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                              onClick={() => handleConfirmEntrega(tx.idTransaccion)}
+                            >
+                              Confirmar Entrega
+                            </button>
+                          )}
+                          {tx.idDemandante === user.id && !tx.recibido && (
+                            <button
+                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-blue-600)', color: 'var(--color-blue-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                              onClick={() => handleConfirmRecepcion(tx.idTransaccion)}
+                            >
+                              Confirmar Recepción
+                            </button>
+                          )}
+                          {tx.entregado && tx.idOfertante === user.id && (
+                            <span style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-700)', borderRadius: '0.25rem', fontWeight: 'bold' }}>
+                              Entrega Confirmada
+                            </span>
+                          )}
+                          {tx.recibido && tx.idDemandante === user.id && (
+                            <span style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-700)', borderRadius: '0.25rem', fontWeight: 'bold' }}>
+                              Recepción Confirmada
+                            </span>
+                          )}
+                          {tx.idDemandante === user.id && (
+                            <button 
+                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                              onClick={() => {
+                                const contraparteId = tx.idOfertante;
+                                setReportData({ 
+                                  ...reportData, 
+                                  idPublicacion: tx.idTransaccion,
+                                  tituloPublicacion: pubsMap[tx.idPublicacion] || tx.idPublicacion, 
+                                  idUsuarioInvolucrado: contraparteId,
+                                  nombreContraparte: usersMap[contraparteId] || contraparteId,
+                                  esDemandante: true
+                                });
+                                setReportModalOpen(true);
+                              }}
+                            >
+                              Reportar Incidencia
+                            </button>
+                          )}
+                        </div>
                       )}
                       {tx.estado === 'EN_DISPUTA' && (() => {
                         const inc = incidenciasMap[tx.idTransaccion];
@@ -693,9 +763,9 @@ const Profile = () => {
                           );
                         } else {
                           return (
-                            <button key="apelar" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-green-700)', color: 'var(--color-green-700)', borderRadius: '0.25rem', cursor: 'pointer' }}
+                            <button key="defenderse" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-green-700)', color: 'var(--color-green-700)', borderRadius: '0.25rem', cursor: 'pointer' }}
                               onClick={() => { setAppealData({ idTransaccion: tx.idTransaccion, descripcion: '', fotosEvidenciaBase64: [] }); setAppealModalOpen(true); }}>
-                              Apelar Reporte
+                              Defenderse
                             </button>
                           );
                         }
@@ -784,9 +854,9 @@ const Profile = () => {
       {appealModalOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div className="card" style={{ width: '90%', maxWidth: '500px', padding: '2rem' }}>
-            <h3 style={{ marginBottom: '1rem' }}>Apelar Reporte</h3>
+            <h3 style={{ marginBottom: '1rem' }}>Defenderse</h3>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-              La otra parte ha reportado una incidencia en esta transacción. Presenta tu defensa explicando tu versión de los hechos.
+              El demandante ha reportado una incidencia en esta transacción. Presenta tu defensa explicando tu versión de los hechos. El administrador revisará ambos lados y tomará una decisión.
             </p>
             <form onSubmit={handleAppealSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>

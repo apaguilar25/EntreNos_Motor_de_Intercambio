@@ -16,7 +16,7 @@ const Layout = () => {
     { to: "/", icon: <Home size={20} />, label: "Muro" },
     { to: "/auctions", icon: <Gavel size={20} />, label: "Subastas" },
     { to: "/profile", icon: <User size={20} />, label: "Perfil" },
-    { to: "/wallet", icon: <Wallet size={20} />, label: `Billetera (${balance})` },
+    { to: "/wallet", icon: <Wallet size={20} />, label: `Billetera (${balance} cr)` },
     { to: "/notifications", icon: <Bell size={20} />, label: "Notificaciones" }
   ];
 

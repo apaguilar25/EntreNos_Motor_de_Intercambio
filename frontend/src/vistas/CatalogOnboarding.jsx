@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
 import { ToastContext } from '../contextos/ToastContext';
@@ -8,19 +8,27 @@ const CatalogOnboarding = () => {
   const { user, setHasCatalog, setBalance, hasCatalog, controladorPerfil } = useContext(AppContext);
   const { addToast } = useContext(ToastContext);
 
+  const [categorias, setCategorias] = useState([]);
   const [skills, setSkills] = useState({});
   const [needs, setNeeds] = useState({});
+  const [loadingCat, setLoadingCat] = useState(true);
 
-  const availableSkills = [
-    { id: 'HAB-005', label: 'Soporte Técnico / Computación' },
-    { id: 'HAB-001', label: 'Plomería' },
-    { id: 'HAB-003', label: 'Carpintería' },
-  ];
-
-  const availableNeeds = [
-    { id: 'HAB-002', label: 'Electricidad' },
-    { id: 'HAB-004', label: 'Limpieza del Hogar' },
-  ];
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      try {
+        const res = await fetch('http://localhost:8080/api/habilidades');
+        if (res.ok) {
+          const data = await res.json();
+          setCategorias(data);
+        }
+      } catch (e) {
+        console.error('Error al cargar categorías:', e);
+      } finally {
+        setLoadingCat(false);
+      }
+    };
+    fetchCategorias();
+  }, []);
 
   const handleSkillChange = (id, checked) => {
     if (checked) {
@@ -74,7 +82,6 @@ const CatalogOnboarding = () => {
       return;
     }
 
-    // Formatear para el Backend (ConfiguracionCatalogoRequestDTO)
     const ofertasArreglo = Object.keys(skills).map(id => {
       return {
         idHabilidadCategoria: id,
@@ -96,23 +103,27 @@ const CatalogOnboarding = () => {
         necesidades: necesidadesArreglo
       });
 
-      if (!response && response !== null) { // Dependiendo de lo que retorne el backend
-        throw new Error("Error guardando el catálogo en el servidor.");
-      }
-
       if (!hasCatalog) {
         setBalance(prev => prev + 20);
         addToast('¡Felicidades! Has configurado tu catálogo por primera vez y recibido 20 créditos de Capital Semilla.', 'success', '/profile');
       } else {
         addToast('Catálogo actualizado exitosamente.', 'success', '/profile');
       }
-      
+
       setHasCatalog(true);
-      navigate('/profile'); // Redirige al perfil para que vea los cambios
+      navigate('/profile');
     } catch (err) {
       addToast(err.message, 'error');
     }
   };
+
+  if (loadingCat) {
+    return (
+      <div className="animate-in" style={{ maxWidth: '800px', margin: '2rem auto', padding: '0 1rem', textAlign: 'center' }}>
+        <p style={{ color: 'var(--text-tertiary)' }}>Cargando categorías disponibles...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-in" style={{ maxWidth: '800px', margin: '2rem auto', padding: '0 1rem' }}>
@@ -120,99 +131,126 @@ const CatalogOnboarding = () => {
         <h2 style={{ marginBottom: '0.5rem' }}>{hasCatalog ? 'Editar Catálogo' : 'Configura tu Catálogo de Servicios'}</h2>
         {!hasCatalog && (
           <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
-            Selecciona las habilidades que puedes ofrecer a la comunidad y las necesidades que requieres. 
+            Selecciona las habilidades que puedes ofrecer a la comunidad y las necesidades que requieres.
             <strong> ¡Al completar tu catálogo por primera vez recibirás 20 créditos como capital semilla!</strong>
           </p>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-          {/* Habilidades */}
-          <div>
-            <h3 style={{ marginBottom: '1rem', color: 'var(--color-green-700)', backgroundColor: 'var(--color-green-100)', padding: '0.5rem', borderRadius: '0.5rem' }}>Habilidades (Lo que ofreces)</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {availableSkills.map(skill => (
-                <div key={skill.id} style={{ border: '1px solid var(--border-color)', padding: '1rem', borderRadius: '0.5rem' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: '500' }}>
-                    <input 
-                      type="checkbox" 
-                      checked={!!skills[skill.id]}
-                      onChange={(e) => handleSkillChange(skill.id, e.target.checked)}
-                    />
-                    {skill.label}
-                  </label>
-                  
-                  {skills[skill.id] && (
-                    <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', animation: 'fadeIn 0.2s ease-out' }}>
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Precio (Créditos)</label>
-                        <input 
-                          type="number" 
-                          value={skills[skill.id].price}
-                          onChange={(e) => updateSkill(skill.id, 'price', e.target.value)}
-                          placeholder="Ej: 50"
-                          style={{ width: '100%', padding: '0.5rem', borderRadius: '0.25rem', border: '1px solid var(--border-color)' }}
-                        />
-                      </div>
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Descripción</label>
-                        <textarea 
-                          value={skills[skill.id].description}
-                          onChange={(e) => updateSkill(skill.id, 'description', e.target.value)}
-                          placeholder="Describe brevemente el servicio..."
-                          rows={2}
-                          style={{ width: '100%', padding: '0.5rem', borderRadius: '0.25rem', border: '1px solid var(--border-color)', resize: 'vertical' }}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Necesidades */}
-          <div>
-            <h3 style={{ marginBottom: '1rem', color: 'var(--color-orange-600)', backgroundColor: 'var(--color-yellow-100)', padding: '0.5rem', borderRadius: '0.5rem' }}>Necesidades (Lo que buscas)</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {availableNeeds.map(need => (
-                <div key={need.id} style={{ border: '1px solid var(--border-color)', padding: '1rem', borderRadius: '0.5rem' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: '500' }}>
-                    <input 
-                      type="checkbox" 
-                      checked={!!needs[need.id]}
-                      onChange={(e) => handleNeedChange(need.id, e.target.checked)}
-                    />
-                    {need.label}
-                  </label>
-                  
-                  {needs[need.id] && (
-                    <div style={{ marginTop: '1rem', animation: 'fadeIn 0.2s ease-out' }}>
-                      <label style={{ display: 'block', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Condiciones / Detalles</label>
-                      <textarea 
-                        value={needs[need.id].description}
-                        onChange={(e) => updateNeed(need.id, e.target.value)}
-                        placeholder="Especifica algún requerimiento especial..."
-                        rows={2}
-                        style={{ width: '100%', padding: '0.5rem', borderRadius: '0.25rem', border: '1px solid var(--border-color)', resize: 'vertical' }}
+        {categorias.length === 0 ? (
+          <p style={{ color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '2rem' }}>
+            No hay categorías disponibles en este momento.
+          </p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {categorias.map(cat => {
+              const isSelected = !!skills[cat.id] || !!needs[cat.id];
+              const isHovered = false;
+              return (
+              <div key={cat.id} className="interactive-card" style={{
+                border: isSelected ? '2px solid var(--color-green-700)' : '1px solid var(--border-color)',
+                padding: '1rem', borderRadius: '0.5rem',
+                transition: 'border-color 0.2s, box-shadow 0.2s',
+                cursor: 'default',
+                boxShadow: isSelected ? '0 0 0 1px rgba(4, 120, 87, 0.1)' : 'none'
+              }}
+              onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.borderColor = 'var(--color-green-100)'; }}
+              onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.borderColor = 'var(--border-color)'; }}
+              >
+                <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '0.75rem', color: 'var(--text-primary)' }}>{cat.categoria}</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  {/* Ofrecer */}
+                  <div style={{
+                    padding: '0.5rem', borderRadius: '0.375rem',
+                    backgroundColor: skills[cat.id] ? 'var(--color-green-50)' : 'transparent',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseEnter={(e) => { if (!skills[cat.id]) e.currentTarget.style.backgroundColor = 'var(--color-green-50)'; }}
+                  onMouseLeave={(e) => { if (!skills[cat.id]) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                  >
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={!!skills[cat.id]}
+                        onChange={(e) => handleSkillChange(cat.id, e.target.checked)}
+                        style={{ accentColor: 'var(--color-green-700)', width: '16px', height: '16px', cursor: 'pointer' }}
                       />
-                    </div>
-                  )}
+                      <span style={{ color: 'var(--color-green-700)', fontWeight: '600', fontSize: '0.9rem' }}>Ofrecer este servicio</span>
+                    </label>
+                    {skills[cat.id] && (
+                      <div style={{ marginTop: '0.75rem', marginLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', animation: 'fadeIn 0.2s ease-out' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                          <label style={{ fontSize: '0.875rem', whiteSpace: 'nowrap', fontWeight: '500' }}>Precio (Créditos):</label>
+                          <input
+                            type="number"
+                            value={skills[cat.id].price}
+                            onChange={(e) => updateSkill(cat.id, 'price', e.target.value)}
+                            placeholder="Ej: 50"
+                            style={{ width: '120px', padding: '0.4rem 0.6rem', borderRadius: '0.375rem', border: '1px solid var(--color-green-100)', outline: 'none', fontSize: '0.875rem', transition: 'border-color 0.2s, box-shadow 0.2s' }}
+                            onFocus={(e) => { e.target.style.borderColor = 'var(--color-green-700)'; e.target.style.boxShadow = '0 0 0 2px rgba(4, 120, 87, 0.2)'; }}
+                            onBlur={(e) => { e.target.style.borderColor = 'var(--color-green-100)'; e.target.style.boxShadow = 'none'; }}
+                          />
+                        </div>
+                        <textarea
+                          value={skills[cat.id].description}
+                          onChange={(e) => updateSkill(cat.id, 'description', e.target.value)}
+                          placeholder="Describe brevemente el servicio que ofreces..."
+                          rows={2}
+                          style={{ width: '100%', padding: '0.5rem 0.6rem', borderRadius: '0.375rem', border: '1px solid var(--color-green-100)', outline: 'none', fontSize: '0.875rem', resize: 'vertical', transition: 'border-color 0.2s, box-shadow 0.2s' }}
+                          onFocus={(e) => { e.target.style.borderColor = 'var(--color-green-700)'; e.target.style.boxShadow = '0 0 0 2px rgba(4, 120, 87, 0.2)'; }}
+                          onBlur={(e) => { e.target.style.borderColor = 'var(--color-green-100)'; e.target.style.boxShadow = 'none'; }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  {/* Solicitar */}
+                  <div style={{
+                    padding: '0.5rem', borderRadius: '0.375rem',
+                    backgroundColor: needs[cat.id] ? 'var(--color-green-50)' : 'transparent',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseEnter={(e) => { if (!needs[cat.id]) e.currentTarget.style.backgroundColor = 'var(--color-green-50)'; }}
+                  onMouseLeave={(e) => { if (!needs[cat.id]) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                  >
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={!!needs[cat.id]}
+                        onChange={(e) => handleNeedChange(cat.id, e.target.checked)}
+                        style={{ accentColor: 'var(--color-green-700)', width: '16px', height: '16px', cursor: 'pointer' }}
+                      />
+                      <span style={{ color: 'var(--color-green-700)', fontWeight: '600', fontSize: '0.9rem' }}>Necesito este servicio</span>
+                    </label>
+                    {needs[cat.id] && (
+                      <div style={{ marginTop: '0.75rem', marginLeft: '1.5rem', animation: 'fadeIn 0.2s ease-out' }}>
+                        <textarea
+                          value={needs[cat.id].description}
+                          onChange={(e) => updateNeed(cat.id, e.target.value)}
+                          placeholder="Describe qué necesitas..."
+                          rows={2}
+                          style={{ width: '100%', padding: '0.5rem 0.6rem', borderRadius: '0.375rem', border: '1px solid var(--color-green-100)', outline: 'none', fontSize: '0.875rem', resize: 'vertical', transition: 'border-color 0.2s, box-shadow 0.2s' }}
+                          onFocus={(e) => { e.target.style.borderColor = 'var(--color-green-700)'; e.target.style.boxShadow = '0 0 0 2px rgba(4, 120, 87, 0.2)'; }}
+                          onBlur={(e) => { e.target.style.borderColor = 'var(--color-green-100)'; e.target.style.boxShadow = 'none'; }}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
-              ))}
-            </div>
+              </div>
+              );
+            })}
           </div>
-        </div>
+        )}
 
         <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--border-color)', paddingTop: '1rem' }}>
           {!hasCatalog ? (
-            <button 
+            <button
               style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontWeight: '500' }}
               onClick={() => navigate('/')}
             >
               Más tarde
             </button>
           ) : (
-            <button 
+            <button
               style={{ background: 'transparent', border: '1px solid var(--border-color)', color: 'var(--text-primary)', padding: '0.5rem 1rem', borderRadius: '0.5rem', cursor: 'pointer' }}
               onClick={() => navigate(-1)}
             >
