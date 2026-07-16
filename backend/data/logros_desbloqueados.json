@@ -1,1 +1,22 @@
-﻿[]
+[
+  {
+    "idLogro": "INICIADOR_RED",
+    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "fechaDesbloqueo": 1782656770786
+  },
+  {
+    "idLogro": "INICIADOR_RED",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "fechaDesbloqueo": 1782389778312
+  },
+  {
+    "idLogro": "INICIADOR_RED",
+    "idUsuario": "610b0b73-746c-4d2a-88b7-c90778427553",
+    "fechaDesbloqueo": 1782748756207
+  },
+  {
+    "idLogro": "POLIMATA",
+    "idUsuario": "23b7289e-d883-4e97-8b62-9fa0ec806e6d",
+    "fechaDesbloqueo": 1784063494364
+  }
+]

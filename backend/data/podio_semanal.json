@@ -1,9 +1,9 @@
 {
-  "idPodio": "PD-167AE2EC",
-  "fechaInicioSemana": 1780964628250,
-  "fechaFinSemana": 1781569428250,
-  "fechaCalculo": 1781569428261,
-  "proveedorEliteServicios": 0,
-  "motorEconomiaTransacciones": 0,
-  "embajadorCalidadPromedio": 0.0
+  "idPodio": "PD-FA1B478D",
+  "fechaInicioSemana": 1783555200000,
+  "fechaFinSemana": 1784160000000,
+  "fechaCalculo": 1784160001000,
+  "proveedorEliteServicios": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "motorEconomiaTransacciones": "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "embajadorCalidadPromedio": 4.9
 }

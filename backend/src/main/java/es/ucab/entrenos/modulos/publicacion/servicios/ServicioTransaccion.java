@@ -166,7 +166,7 @@ public class ServicioTransaccion {
         if (descripcion == null || descripcion.trim().length() < 20) {
             throw new IllegalArgumentException("La descripción del incidente debe tener al menos 20 caracteres.");
         }
-        Incidencia incidencia = new Incidencia(idTransaccion, idUsuario, descripcion, urlEvidencia);
+        Incidencia incidencia = new Incidencia(idTransaccion, idUsuario, descripcion, urlEvidencia, null);
         repositorioIncidencia.guardar(incidencia);
         t.asignarIncidencia(incidencia.getIdIncidencia());
         repositorioTransaccion.guardar(t);

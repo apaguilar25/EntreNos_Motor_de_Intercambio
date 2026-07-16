@@ -1,1 +1,66 @@
-﻿[]
+[
+  {
+    "idTransaccion": "TX-00000001",
+    "calificacion": 5,
+    "comentario": "Excelente trabajo, dejó todo funcionando perfectamente. Muy profesional y puntual.",
+    "idAutor": "610b0b73-746c-4d2a-88b7-c90778427553",
+    "idTarget": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "fechaCreacion": 1783218022350
+  },
+  {
+    "idTransaccion": "TX-00000001",
+    "calificacion": 5,
+    "comentario": "Cliente muy respetuoso, pago puntual y trato agradable.",
+    "idAutor": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "idTarget": "610b0b73-746c-4d2a-88b7-c90778427553",
+    "fechaCreacion": 1782691443874
+  },
+  {
+    "idTransaccion": "TX-00000002",
+    "calificacion": 4,
+    "comentario": "Buen servicio, diagnosticó el problema rápido. Le faltó un poco de comunicación.",
+    "idAutor": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "idTarget": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "fechaCreacion": 1783363184406
+  },
+  {
+    "idTransaccion": "TX-00000002",
+    "calificacion": 5,
+    "comentario": "Excelente cliente, muy amable y paciente.",
+    "idAutor": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "idTarget": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "fechaCreacion": 1782609126487
+  },
+  {
+    "idTransaccion": "TX-00000003",
+    "calificacion": 5,
+    "comentario": "Las clases de yoga son increíbles. Ana es muy profesional y paciente. Recomendada.",
+    "idAutor": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "idTarget": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "fechaCreacion": 1782772260775
+  },
+  {
+    "idTransaccion": "TX-00000003",
+    "calificacion": 5,
+    "comentario": "Excelente alumno, con muchas ganas de aprender. Una experiencia muy grata.",
+    "idAutor": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "idTarget": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "fechaCreacion": 1783208399284
+  },
+  {
+    "idTransaccion": "TX-00000004",
+    "calificacion": 4,
+    "comentario": "Buen trabajo en el jardín, quedó muy bonito. Llegó un poco tarde pero el resultado final fue bueno.",
+    "idAutor": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "idTarget": "610b0b73-746c-4d2a-88b7-c90778427553",
+    "fechaCreacion": 1783079053866
+  },
+  {
+    "idTransaccion": "TX-00000004",
+    "calificacion": 5,
+    "comentario": "Muy buena comunicación, todo claro desde el principio.",
+    "idAutor": "610b0b73-746c-4d2a-88b7-c90778427553",
+    "idTarget": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "fechaCreacion": 1782925679742
+  }
+]

@@ -1,92 +1,68 @@
 [
   {
-    "id": "SUB-2620424A",
+    "id": "SUB-00000004",
     "idPropietario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
-    "nombreActivo": "qrqrq",
-    "descripcion": "wqrqr",
+    "nombreActivo": "Taladro Eléctrico Black+Decker",
+    "descripcion": "Taladro percutor inalámbrico, 18V, incluye batería y cargador. Poco uso.",
     "estadoFisico": "USADO",
     "imagenesUrls": [
-      "/ruta/foto1.jpg"
+      "/ruta/taladro1.jpg"
     ],
-    "fechaInicio": "2026-07-15T23:27:23.3601577",
-    "fechaFinalizacionLicitacion": "2026-07-20T23:27:23.3571482",
-    "estado": "ACTIVA",
+    "fechaInicio": "2026-06-16T21:23:41.623",
+    "fechaFinalizacionLicitacion": "2026-06-23T21:23:41.623",
+    "estado": "CANCELADA",
     "propuestas": [],
     "propietarioConfirmoEntrega": false,
     "ganadorConfirmoEntrega": false,
-    "version": 0
+    "version": 2
   },
   {
-    "id": "SUB-5A909735",
-    "idPropietario": "84e724bf-624b-4141-9357-df7da92e61eb",
-    "nombreActivo": "Bicicleta Montaña Rodada 29",
-    "descripcion": "Bicicleta en buen estado, ideal para rutas de montaña",
+    "id": "SUB-00000003",
+    "idPropietario": "23b7289e-d883-4e97-8b62-9fa0ec806e6d",
+    "nombreActivo": "Lote de 10 Libros de Programación",
+    "descripcion": "Colección de libros de JavaScript, Python, Java, bases de datos y algoritmos. Todos en excelente estado.",
     "estadoFisico": "USADO",
     "imagenesUrls": [
-      "https://ejemplo.com/bici1.jpg"
+      "/ruta/libros1.jpg"
     ],
-    "fechaInicio": "2026-06-15T20:25:11.6801178",
-    "fechaFinalizacionLicitacion": "2026-06-22T20:25:11.6791139",
-    "estado": "CANCELADA",
-    "propuestas": [
-      {
-        "idPropuesta": "PROP-055172",
-        "idSubasta": "SUB-5A909735",
-        "idPostor": "2f0c416a-2948-4d3c-9390-6242b700a711",
-        "bienesOfrecidos": [
-          {
-            "nombre": "Libros de programación",
-            "cantidad": 3
-          },
-          {
-            "nombre": "Curso online de Java",
-            "cantidad": 1
-          }
-        ],
-        "descripcion": "Ofrezco libros de programación y un curso online",
-        "estadoPropuesta": "EN_EVALUACION",
-        "estadoFisico": "NUEVO",
-        "imagenesUrls": [
-          "https://ejemplo.com/libros.jpg"
-        ],
-        "fechaPropuesta": "2026-06-15T20:26:38.2641723"
-      }
-    ],
-    "propietarioConfirmoEntrega": false,
-    "ganadorConfirmoEntrega": false,
-    "version": 3
-  },
-  {
-    "id": "SUB-42E97AFE",
-    "idPropietario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
-    "nombreActivo": "qwrqwr",
-    "descripcion": "qrqwrqwrq",
-    "estadoFisico": "USADO",
-    "imagenesUrls": [
-      "/ruta/foto1.jpg"
-    ],
-    "fechaInicio": "2026-07-15T23:27:45.5560887",
-    "fechaFinalizacionLicitacion": "2026-08-04T23:27:45.5555954",
+    "fechaInicio": "2026-06-26T21:23:41.623",
+    "fechaFinalizacionLicitacion": "2026-07-03T21:23:41.623",
     "estado": "ADJUDICADA_INTERCAMBIO_PENDIENTE",
-    "idPropuestaGanadora": "PROP-8F2336",
+    "idPropuestaGanadora": "PROP-00000004",
     "propuestas": [
       {
-        "idPropuesta": "PROP-8F2336",
-        "idSubasta": "SUB-42E97AFE",
-        "idPostor": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+        "idPropuesta": "PROP-00000004",
+        "idPostor": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
         "bienesOfrecidos": [
           {
-            "nombre": "Pasta",
+            "nombre": "Clases de piano (4 sesiones)",
             "cantidad": 1
           }
         ],
-        "descripcion": "sdgdagsdgagagafafasfasfasfafa",
+        "descripcion": "Ofrezco 4 clases de piano clásico",
         "estadoPropuesta": "EN_EVALUACION",
         "estadoFisico": "NUEVO",
         "imagenesUrls": [
-          "http://dummy.img/evidence.jpg"
+          "http://dummy.img/piano.jpg"
         ],
-        "fechaPropuesta": "2026-07-15T23:28:14.0016405"
+        "fechaPropuesta": "2026-06-28T21:23:41.623"
+      },
+      {
+        "idPropuesta": "PROP-00000005",
+        "idPostor": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+        "bienesOfrecidos": [
+          {
+            "nombre": "Soporte técnico por 3 meses",
+            "cantidad": 1
+          }
+        ],
+        "descripcion": "Te doy soporte técnico completo por 3 meses para cualquier equipo de tu hogar",
+        "estadoPropuesta": "EN_EVALUACION",
+        "estadoFisico": "NUEVO",
+        "imagenesUrls": [
+          "http://dummy.img/soporte.jpg"
+        ],
+        "fechaPropuesta": "2026-06-29T21:23:41.623"
       }
     ],
     "propietarioConfirmoEntrega": false,
@@ -94,35 +70,53 @@
     "version": 2
   },
   {
-    "id": "SUB-7CA8FB54",
-    "idPropietario": "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
-    "nombreActivo": "dsf",
-    "descripcion": "sdfsdf",
+    "id": "SUB-00000002",
+    "idPropietario": "610b0b73-746c-4d2a-88b7-c90778427553",
+    "nombreActivo": "Bicicleta de Montaña 29\"",
+    "descripcion": "Bicicleta Specialized Rockhopper, año 2022, rodada 29, cambios Shimano, frenos de disco. Buen estado general, solo usada 10 veces.",
     "estadoFisico": "USADO",
     "imagenesUrls": [
-      "/ruta/foto1.jpg"
+      "/ruta/bici1.jpg",
+      "/ruta/bici2.jpg"
     ],
-    "fechaInicio": "2026-07-13T18:50:22.2275709",
-    "fechaFinalizacionLicitacion": "2026-07-14T18:50:22.2255667",
-    "estado": "ESPERANDO_DECISION",
+    "fechaInicio": "2026-07-11T21:23:41.623",
+    "fechaFinalizacionLicitacion": "2026-07-21T21:23:41.623",
+    "estado": "ACTIVA",
     "propuestas": [
       {
-        "idPropuesta": "PROP-A27A27",
-        "idSubasta": "SUB-7CA8FB54",
-        "idPostor": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+        "idPropuesta": "PROP-00000003",
+        "idPostor": "23b7289e-d883-4e97-8b62-9fa0ec806e6d",
         "bienesOfrecidos": [
           {
-            "nombre": "Pasta",
+            "nombre": "Sitio web personalizado",
             "cantidad": 1
           }
         ],
-        "descripcion": "sdfsfdsfd",
+        "descripcion": "Te desarrollo un sitio web completo a tu medida (hasta 5 páginas)",
+        "estadoPropuesta": "EN_EVALUACION",
+        "estadoFisico": "NUEVO",
+        "imagenesUrls": [
+          "http://dummy.img/web.jpg"
+        ],
+        "fechaPropuesta": "2026-07-13T21:23:41.623"
+      },
+      {
+        "idPropuesta": "PROP-0B62FD",
+        "idSubasta": "SUB-00000002",
+        "idPostor": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+        "bienesOfrecidos": [
+          {
+            "nombre": "Aceite",
+            "cantidad": 1
+          }
+        ],
+        "descripcion": "fsdfsf",
         "estadoPropuesta": "EN_EVALUACION",
         "estadoFisico": "USADO",
         "imagenesUrls": [
           "http://dummy.img/evidence.jpg"
         ],
-        "fechaPropuesta": "2026-07-13T18:50:50.6515857"
+        "fechaPropuesta": "2026-07-16T18:39:48.4818989"
       }
     ],
     "propietarioConfirmoEntrega": false,
@@ -130,36 +124,55 @@
     "version": 2
   },
   {
-    "id": "SUB-8B328C68",
-    "idPropietario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
-    "nombreActivo": "zxczxc",
-    "descripcion": "zxczxc",
-    "estadoFisico": "REPARADO",
+    "id": "SUB-00000001",
+    "idPropietario": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "nombreActivo": "Guitarra Clásica Española",
+    "descripcion": "Guitarra española de segunda mano en buen estado, marca Alhambra, incluye funda. Cuerdas cambiadas recientemente.",
+    "estadoFisico": "USADO",
     "imagenesUrls": [
-      "/ruta/foto1.jpg"
+      "/ruta/guitarra1.jpg"
     ],
-    "fechaInicio": "2026-07-13T18:55:40.8284632",
-    "fechaFinalizacionLicitacion": "2026-07-23T18:55:40.8284632",
-    "estado": "ADJUDICADA_INTERCAMBIO_PENDIENTE",
-    "idPropuestaGanadora": "PROP-24FE0F",
+    "fechaInicio": "2026-07-04T21:23:41.622",
+    "fechaFinalizacionLicitacion": "2026-07-18T21:23:41.623",
+    "estado": "ACTIVA",
     "propuestas": [
       {
-        "idPropuesta": "PROP-24FE0F",
-        "idSubasta": "SUB-8B328C68",
-        "idPostor": "fc0e6b95-f393-48be-b444-adfc0c94cf2e",
+        "idPropuesta": "PROP-00000001",
+        "idPostor": "23b7289e-d883-4e97-8b62-9fa0ec806e6d",
         "bienesOfrecidos": [
           {
-            "nombre": "Pasta",
+            "nombre": "Clases de guitarra (5 sesiones)",
             "cantidad": 1
           }
         ],
-        "descripcion": "zxczc",
+        "descripcion": "Ofrezco 5 clases de guitarra personalizadas para intercambiar por la guitarra",
         "estadoPropuesta": "EN_EVALUACION",
         "estadoFisico": "NUEVO",
         "imagenesUrls": [
-          "http://dummy.img/evidence.jpg"
+          "http://dummy.img/clases.jpg"
         ],
-        "fechaPropuesta": "2026-07-13T18:55:49.1458637"
+        "fechaPropuesta": "2026-07-06T21:23:41.623"
+      },
+      {
+        "idPropuesta": "PROP-00000002",
+        "idPostor": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+        "bienesOfrecidos": [
+          {
+            "nombre": "Reparación de tubería completa",
+            "cantidad": 1
+          },
+          {
+            "nombre": "Kit de herramientas básico",
+            "cantidad": 1
+          }
+        ],
+        "descripcion": "Ofrezco reparar toda la tubería de tu casa más un kit de herramientas",
+        "estadoPropuesta": "EN_EVALUACION",
+        "estadoFisico": "USADO",
+        "imagenesUrls": [
+          "http://dummy.img/herramientas.jpg"
+        ],
+        "fechaPropuesta": "2026-07-08T21:23:41.623"
       }
     ],
     "propietarioConfirmoEntrega": false,
@@ -167,20 +180,20 @@
     "version": 2
   },
   {
-    "id": "SUB-6B4CB950",
+    "id": "SUB-98C52AC4",
     "idPropietario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
-    "nombreActivo": "adsasd",
-    "descripcion": "U",
-    "estadoFisico": "USADO",
+    "nombreActivo": "Caminote Cherokee",
+    "descripcion": "Una camioneta nueva",
+    "estadoFisico": "NUEVO",
     "imagenesUrls": [
       "/ruta/foto1.jpg"
     ],
-    "fechaInicio": "2026-07-13T20:38:51.7151525",
-    "fechaFinalizacionLicitacion": "2026-07-14T20:38:51.7141512",
-    "estado": "CANCELADA",
+    "fechaInicio": "2026-07-16T18:40:14.3996225",
+    "fechaFinalizacionLicitacion": "2026-07-21T18:40:14.3971015",
+    "estado": "ACTIVA",
     "propuestas": [],
     "propietarioConfirmoEntrega": false,
     "ganadorConfirmoEntrega": false,
-    "version": 2
+    "version": 0
   }
 ]
