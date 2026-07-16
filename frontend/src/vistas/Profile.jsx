@@ -41,100 +41,105 @@ const Profile = () => {
 
 
   const loadTransactionsAndIncidencias = async () => {
-    if (!user?.id) return;
-    const transResponse = await fetch(`http://localhost:8080/api/transacciones`);
-    let userTrans = [];
-    if (transResponse.ok) {
-      const transData = await transResponse.json();
-      userTrans = transData.filter(t =>
-        (t.idDemandante === user.id || t.idOfertante === user.id) &&
-        t.estado !== 'RECHAZADA' && t.estado !== 'CANCELADA'
-      );
-      setTransacciones(userTrans);
-    }
-    const incMap = {};
-    if (userTrans) {
-      for (const tx of userTrans) {
-        if (tx.estado === 'EN_DISPUTA') {
-          try {
-            const incRes = await fetch(`http://localhost:8080/api/transacciones/${tx.idTransaccion}/incidencia`);
-            if (incRes.ok) {
-              const inc = await incRes.json();
-              incMap[tx.idTransaccion] = inc;
-            }
-          } catch (e) { /* ignore */ }
-        }
+  if (!user?.id) return []; // Retornar un array vacío si no hay usuario
+  const transResponse = await fetch(`http://localhost:8080/api/transacciones`);
+  let userTrans = [];
+  if (transResponse.ok) {
+    const transData = await transResponse.json();
+    userTrans = transData.filter(t =>
+      (t.idDemandante === user.id || t.idOfertante === user.id) &&
+      t.estado !== 'RECHAZADA' && t.estado !== 'CANCELADA'
+    );
+    setTransacciones(userTrans);
+  }
+  
+  const incMap = {};
+  if (userTrans && userTrans.length > 0) {
+    for (const tx of userTrans) {
+      if (tx.estado === 'EN_DISPUTA') {
+        try {
+          const incRes = await fetch(`http://localhost:8080/api/transacciones/${tx.idTransaccion}/incidencia`);
+          if (incRes.ok) {
+            const inc = await incRes.json();
+            incMap[tx.idTransaccion] = inc;
+          }
+        } catch (e) { /* ignore */ }
       }
     }
-    setIncidenciasMap(incMap);
-  };
+  }
+  setIncidenciasMap(incMap);
+  
+  return userTrans; // <--- AGREGAMOS ESTE RETURN para poder usarlo en el useEffect
+};
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      if (!user?.id) return;
-      try {
-        setLoading(true);
-        const data = await controladorPerfil.obtenerDatosPerfil(user.id);
-        setUserProfile(data);
-        
-        const sentData = await controladorPerfil.obtenerSolicitudesEnviadas(user.id);
-        setSentRequests(sentData);
-        
-        const auctionsData = await controladorSubasta.obtenerMisSubastas();
-        setMyAuctions(auctionsData);
+  const fetchProfile = async () => {
+    if (!user?.id) return;
+    try {
+      setLoading(true);
+      const data = await controladorPerfil.obtenerDatosPerfil(user.id);
+      setUserProfile(data);
+      
+      const sentData = await controladorPerfil.obtenerSolicitudesEnviadas(user.id);
+      setSentRequests(sentData);
+      
+      const auctionsData = await controladorSubasta.obtenerMisSubastas();
+      setMyAuctions(auctionsData);
 
-        await loadTransactionsAndIncidencias();
+      // Guardamos las transacciones retornadas en una variable accesible aquí
+      const activeTransactions = await loadTransactionsAndIncidencias(); 
 
-        if (controladorGamificacion) {
-          const logrosData = await controladorGamificacion.obtenerLogros(user.id);
-          setLogros(logrosData || []);
-        }
-
-        try {
-          // Extraer todos los IDs únicos para mapear nombres
-          const ids = new Set();
-          if (userTrans) {
-            userTrans.forEach(t => { ids.add(t.idDemandante); ids.add(t.idOfertante); });
-          }
-          if (auctionsData) {
-            auctionsData.forEach(a => {
-              if (a.propuestas) a.propuestas.forEach(p => ids.add(p.idPostor));
-            });
-          }
-          if (sentData) {
-            sentData.forEach(s => {
-              ids.add(s.idUsuarioDefensor);
-              ids.add(s.idUsuarioReportante);
-              if (s.idReceptor) ids.add(s.idReceptor);
-            });
-          }
-          
-          const uMap = {};
-          for (const uId of ids) {
-             if (uId) {
-                const p = await controladorPerfil.obtenerDatosPerfil(uId);
-                uMap[uId] = p.nombre || uId;
-             }
-          }
-          setUsersMap(uMap);
-          const resPubs = await fetch('http://localhost:8080/api/publicaciones');
-          if (resPubs.ok) {
-             const pubsData = await resPubs.json();
-             const pMap = {};
-             pubsData.forEach(p => pMap[p.idPublicacion] = p.nombreServicio);
-             setPubsMap(pMap);
-          }
-        } catch (e) {
-          console.error("Error fetching auxiliary data", e);
-        }
-      } catch (err) {
-        console.error("Error cargando perfil", err);
-      } finally {
-        setLoading(false);
+      if (controladorGamificacion) {
+        const logrosData = await controladorGamificacion.obtenerLogros(user.id);
+        setLogros(logrosData || []);
       }
-    };
-    fetchProfile();
-  }, [user, controladorPerfil, controladorSubasta]);
+
+      try {
+        const ids = new Set();
+        // Usamos activeTransactions en lugar de la variable inexistente userTrans
+        if (activeTransactions) { 
+          activeTransactions.forEach(t => { ids.add(t.idDemandante); ids.add(t.idOfertante); });
+        }
+        if (auctionsData) {
+          auctionsData.forEach(a => {
+            if (a.propuestas) a.propuestas.forEach(p => ids.add(p.idPostor));
+          });
+        }
+        if (sentData) {
+          sentData.forEach(s => {
+            ids.add(s.idUsuarioDefensor);
+            ids.add(s.idUsuarioReportante);
+            if (s.idReceptor) ids.add(s.idReceptor);
+          });
+        }
+        
+        const uMap = {};
+        for (const uId of ids) {
+           if (uId) {
+              const p = await controladorPerfil.obtenerDatosPerfil(uId);
+              uMap[uId] = p.nombre || uId;
+           }
+        }
+        setUsersMap(uMap);
+        
+        const resPubs = await fetch('http://localhost:8080/api/publicaciones');
+        if (resPubs.ok) {
+           const pubsData = await resPubs.json();
+           const pMap = {};
+           pubsData.forEach(p => pMap[p.idPublicacion] = p.nombreServicio);
+           setPubsMap(pMap);
+        }
+      } catch (e) {
+        console.error("Error fetching auxiliary data", e);
+      }
+    } catch (err) {
+      console.error("Error cargando perfil", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchProfile();
+}, [user, controladorPerfil, controladorSubasta]);
 
   const handleCancelRequest = async (idSolicitud) => {
     const isConfirmed = await confirm("Cancelar Solicitud", "¿Estás seguro que deseas cancelar esta solicitud? Los créditos serán devueltos a tu monedero.");

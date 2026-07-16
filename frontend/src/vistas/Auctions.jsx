@@ -50,10 +50,9 @@ const Auctions = () => {
     <div className="animate-in">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h2>Motor de Subastas de Activos</h2>
-        <button className="btn-primary" style={{ backgroundColor: 'var(--accent-warning)', color: '#fff' }} onClick={() => navigate('/create-auction')}>Crear Subasta</button>
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <button className="btn-primary" style={{ backgroundColor: 'var(--accent-warning)', color: '#1f2937' }} onClick={() => navigate('/create-auction')}>Crear Subasta</button>      
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         {loading ? (
             <p style={{ textAlign: 'center', color: 'var(--text-tertiary)' }}>Cargando subastas...</p>
         ) : auctions.length === 0 ? (

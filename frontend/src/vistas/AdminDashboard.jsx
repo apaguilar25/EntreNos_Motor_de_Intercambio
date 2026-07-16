@@ -116,6 +116,8 @@ function AdminDashboard() {
             addToast("El correo debe terminar en @alameda.com", "error");
             return;
         }
+        const confirmar = window.confirm("¿Estás seguro de que deseas permitir el registro de este correo?");
+        if (!confirmar) return;
         try {
             await controladorAdministrador.agregarCorreo(nuevoCorreo);
             setNuevoCorreo('');
@@ -127,6 +129,8 @@ function AdminDashboard() {
     };
 
     const handleEliminarCorreo = async (correo) => {
+        const confirmar = window.confirm("¿Estás seguro de que deseas eliminar este correo?");
+        if (!confirmar) return;
         try {
             await controladorAdministrador.eliminarCorreo(correo);
             addToast("Correo eliminado exitosamente.", "success");

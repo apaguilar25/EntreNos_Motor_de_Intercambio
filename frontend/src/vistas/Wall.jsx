@@ -156,9 +156,8 @@ const Wall = () => {
         <div style={{ position: 'relative' }}>
           <button 
             className="card interactive-card" 
-            style={{ padding: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}
-            onClick={() => setShowFilters(!showFilters)}
-          >
+            style={{ padding: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, color: 'var(--text-primary)' }}
+            onClick={() => setShowFilters(!showFilters)}>
             <Filter size={20} />
             <span>Filtros</span>
             <ChevronDown size={16} />
