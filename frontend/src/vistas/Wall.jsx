@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Filter, Star, ChevronDown, Trophy, Sparkles, Medal, AlertCircle } from 'lucide-react';
 import { AppContext } from '../App';
+import Pagination from '../componentes/ui/Pagination';
 
 const Wall = () => {
   const navigate = useNavigate();
@@ -17,6 +18,12 @@ const Wall = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sentRequests, setSentRequests] = useState(new Set());
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset page when tab or filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [tab, filterType, searchTerm]);
 
   const fetchPosts = React.useCallback(async () => {
     try {
@@ -285,7 +292,17 @@ const Wall = () => {
           {!loading && !error && filteredPosts.length === 0 && (
              <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: '2rem' }}>No hay publicaciones en este momento.</p>
           )}
-        {!loading && filteredPosts.map((post, index) => (
+          
+          {!loading && !error && filteredPosts.length > 0 && (
+            <Pagination 
+              currentPage={currentPage} 
+              totalItems={filteredPosts.length} 
+              pageSize={5} 
+              onPageChange={setCurrentPage} 
+            />
+          )}
+
+        {!loading && filteredPosts.slice((currentPage - 1) * 5, currentPage * 5).map((post, index) => (
           <div key={post.id} className="card interactive-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', animationDelay: `${index * 0.1}s` }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
