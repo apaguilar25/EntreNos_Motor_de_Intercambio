@@ -185,7 +185,7 @@ public class ServicioTransaccion {
                         + "\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
                 TipoNotificacion.ALERTA_SISTEMA);
         return incidencia;
-    }
+    };
 
     public Incidencia defenderIncidencia(String idTransaccion, String idUsuario, String descripcion, String urlEvidencia) {
         Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
