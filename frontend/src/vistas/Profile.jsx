@@ -23,6 +23,10 @@ const Profile = () => {
 
   // Modal Reporte
   const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [transaccionDetalleModalOpen, setTransaccionDetalleModalOpen] = useState(false);
+  const [selectedTxDetalle, setSelectedTxDetalle] = useState(null);
+  const [cancelTransaccionModalOpen, setCancelTransaccionModalOpen] = useState(false);
+  const [cancelMotivoSeleccionado, setCancelMotivoSeleccionado] = useState('');
   const [reportData, setReportData] = useState({ idPublicacion: '', idUsuarioInvolucrado: '', descripcionProblema: '', fotosEvidenciaBase64: [], esDemandante: false });
 
   // Mapa de incidencias por transacción
@@ -506,7 +510,7 @@ const Profile = () => {
         
         {/* Resumen Solicitudes */}
         <div className="card interactive-card" onClick={() => setSectionModalOpen('enviadas')} style={{ cursor: 'pointer' }}>
-          <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Mis Ofertas Enviadas</h3>
+          <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Mis Solicitudes Enviadas</h3>
           <p style={{ color: 'var(--text-secondary)' }}>{sentRequests.length} pendientes</p>
           <span style={{ color: 'var(--accent-primary)', fontSize: '0.875rem', fontWeight: 'bold' }}>Ver Detalles &rarr;</span>
         </div>
@@ -674,7 +678,7 @@ const Profile = () => {
             {sectionModalOpen === 'enviadas' && (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                  <h2 style={{ fontSize: '1.25rem' }}>Mis Ofertas Enviadas</h2>
+                  <h2 style={{ fontSize: '1.25rem' }}>Mis Solicitudes Enviadas</h2>
                   <select value={sentFilter} onChange={(e) => { setSentFilter(e.target.value); setCurrentPage(1); }} style={{ padding: '0.25rem', borderRadius: '0.25rem', border: '1px solid var(--border-color)', outline: 'none', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
                     <option value="TODAS">Todas</option>
                     <option value="PENDIENTE">Pendiente</option>

@@ -46,6 +46,22 @@ const Notifications = () => {
     }
   };
 
+  const handleAceptarCancelacion = async (notif) => {
+    try {
+      // Logic for accepting cancellation
+      addToast('Cancelación aceptada exitosamente. Se han devuelto los créditos.', 'success');
+      setNotifications(prev => prev.filter(n => n.id !== notif.id));
+    } catch (error) {
+      addToast('Error al aceptar cancelación', 'error');
+    }
+  };
+
+  const handleRechazarCancelacion = (notif) => {
+    // We navigate to profile or open report modal directly
+    addToast('Cancelación rechazada. Puedes reportar incidencia desde tu perfil.', 'info');
+    setNotifications(prev => prev.filter(n => n.id !== notif.id));
+  };
+
   const handleResponderSolicitud = async (notificacion, aceptar) => {
     try {
       await controladorNotificacion.responderSolicitud(
@@ -125,6 +141,27 @@ const Notifications = () => {
                 </div>
               </div>
               <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem' }}>
+                                {notif.tipo === 'CANCELACION_TRANSACCION_SOLICITADA' && (
+                  <>
+                    <button 
+                      className="btn btn-primary" 
+                      style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+                      onClick={() => handleAceptarCancelacion(notif)}
+                      title="Aceptar Cancelación"
+                    >
+                      Aceptar
+                    </button>
+                    <button 
+                      className="btn" 
+                      style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', backgroundColor: 'var(--color-red-600)', color: '#fff' }}
+                      onClick={() => handleRechazarCancelacion(notif)}
+                      title="Rechazar y Reportar"
+                    >
+                      Rechazar
+                    </button>
+                  </>
+                )}
+
                 {notif.tipo === 'NUEVA_SOLICITUD_ENTRANTE' && (
                   <>
                     <button 

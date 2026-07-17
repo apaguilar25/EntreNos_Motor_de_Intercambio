@@ -1,40 +1,21 @@
 [
   {
-    "id": "c3894fd7-bf09-43e1-a939-8a05a92bcff2",
-    "nombre": "Miguel",
-    "correoElectronico": "miguel@alameda.com",
-    "telefono": "04122206867",
-    "descripcionPersonal": "Me llamo miguel",
-    "contrasenaHash": "$2a$10$7pP9IRyG3bzA8LJjg/7SmeUR6RvwT1DV.BXj5IqOCnFocLyxwXpv2",
-    "version": 3,
+    "id": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "nombre": "Ana Ofertante",
+    "correoElectronico": "ana.cache@alameda.com",
+    "telefono": "+58414000901",
+    "descripcionPersonal": "Test cache",
+    "contrasenaHash": "$2a$10$7kL2JJjDZbkGf7hwaZGnIenjT/9dw9/Xf/eRCOOWwnbyaqIpZ7hIG",
+    "version": 1,
     "monedero": {
-      "creditosDisponibles": 50.0,
+      "creditosDisponibles": 0.0,
       "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
-      "completado": true,
-      "habilidadesOfrecidas": [
-        {
-          "idInstancia": "3994a4c6-9742-49ad-9c1b-100f9e8f8d59",
-          "habilidadBase": {
-            "id": "HAB-012",
-            "categoria": "Jardinería"
-          },
-          "precioCreditos": 3,
-          "descripcionServicio": "Soy buen jardinero"
-        }
-      ],
-      "necesidadesRegistradas": [
-        {
-          "idInstancia": "30f580db-659f-4890-8b25-ce54beb9808f",
-          "necesidadBase": {
-            "id": "HAB-013",
-            "categoria": "Electricidad Básica"
-          },
-          "descripcionCondiciones": "Quiero que me arreglen la luz"
-        }
-      ]
+      "completado": false,
+      "habilidadesOfrecidas": [],
+      "necesidadesRegistradas": []
     },
     "estado": "ACTIVO",
     "intentosFallidos": 0,
@@ -48,60 +29,12 @@
     "esVecinoDestacado": false
   },
   {
-    "id": "e561668f-1fa0-4622-a545-0e6a406b36be",
-    "nombre": "Ana Ofertante",
-    "correoElectronico": "ana.cache@alameda.com",
-    "telefono": "+58414000901",
-    "descripcionPersonal": "Test cache",
-    "contrasenaHash": "$2b$10$uWE5Kn7A2tgmvMQp7JOe5Oq4J3IFlKYNgvZQByCQ3IhafRcMYPQNa",
-    "version": 5,
-    "monedero": {
-      "creditosDisponibles": 50.0,
-      "creditosComprometidos": 0.0,
-      "creditosPorLogros": 0.0
-    },
-    "catalogo": {
-      "completado": true,
-      "habilidadesOfrecidas": [
-        {
-          "idInstancia": "a05710fd-ddab-4140-a339-14aee0693114",
-          "habilidadBase": {
-            "id": "HAB-001",
-            "categoria": "Plomería"
-          },
-          "precioCreditos": 4,
-          "descripcionServicio": "Soy Mario"
-        }
-      ],
-      "necesidadesRegistradas": [
-        {
-          "idInstancia": "084966fa-d9fa-4438-8d2d-9421df133a53",
-          "necesidadBase": {
-            "id": "HAB-002",
-            "categoria": "Electricidad"
-          },
-          "descripcionCondiciones": "Ayuda con la luz"
-        }
-      ]
-    },
-    "estado": "ACTIVO",
-    "intentosFallidos": 0,
-    "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
-    "reportesFraudeValidados": 0,
-    "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 5.0,
-    "cantidadCalificaciones": 3,
-    "rol": "MIEMBRO_COMUNIDAD",
-    "esVecinoDestacado": false
-  },
-  {
     "id": "f871e1d2-671e-4ea2-a19d-c1393805569c",
     "nombre": "Carlos Prueba",
     "correoElectronico": "carlos.prueba@alameda.com",
     "telefono": "04121234567",
-    "contrasenaHash": "$2b$10$uWE5Kn7A2tgmvMQp7JOe5Oq4J3IFlKYNgvZQByCQ3IhafRcMYPQNa",
-    "version": 26,
+    "contrasenaHash": "$2a$10$R6RQB0b5z0a2l9nCjfyyoucImOV4zo0jaRgJK640NqKq67fmocOnG",
+    "version": 25,
     "monedero": {
       "creditosDisponibles": 50.0,
       "creditosComprometidos": 0.0,
@@ -187,8 +120,8 @@
     "primerIntentoFallidoMillis": 0,
     "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 4.7,
-    "cantidadCalificaciones": 3,
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
     "rol": "MIEMBRO_COMUNIDAD",
     "esVecinoDestacado": false
   },
@@ -198,8 +131,8 @@
     "correoElectronico": "bob.cache@alameda.com",
     "telefono": "+58414000902",
     "descripcionPersonal": "Test cache",
-    "contrasenaHash": "$2b$10$uWE5Kn7A2tgmvMQp7JOe5Oq4J3IFlKYNgvZQByCQ3IhafRcMYPQNa",
-    "version": 5,
+    "contrasenaHash": "$2a$10$mH4pnjCJpKNyqslU51xe0O62AXiBqmU9V5Ad0vcdQcsgqZTnMojk2",
+    "version": 0,
     "monedero": {
       "creditosDisponibles": 0.0,
       "creditosComprometidos": 0.0,
@@ -210,14 +143,14 @@
       "habilidadesOfrecidas": [],
       "necesidadesRegistradas": []
     },
-    "estado": "BLOQUEADO_SEGURIDAD",
-    "intentosFallidos": 5,
-    "tiempoDesbloqueoMillis": 1784345303347,
-    "primerIntentoFallidoMillis": 1784258817093,
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
     "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 4.5,
-    "cantidadCalificaciones": 2,
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
     "rol": "MIEMBRO_COMUNIDAD",
     "esVecinoDestacado": false
   },
@@ -227,7 +160,7 @@
     "correoElectronico": "admin@alameda.com",
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
-    "contrasenaHash": "$2b$10$Lpv2lrJoHNTbeXzM7Z8GvOCSc59D62HiVLaiel2yHVUa238AL6Hte",
+    "contrasenaHash": "$2a$10$8Wf3ABToBcPb548r/M3BruD0/u5HZeiXVuV0QwfjbUmI5Qz1/Z7ze",
     "version": 40,
     "monedero": {
       "creditosDisponibles": 50.0,
@@ -290,8 +223,8 @@
     "primerIntentoFallidoMillis": 0,
     "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 4.5,
-    "cantidadCalificaciones": 3,
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
     "rol": "ADMINISTRADOR",
     "esVecinoDestacado": false
   }
