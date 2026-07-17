@@ -113,9 +113,14 @@ const Auctions = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--text-tertiary)'
+              color: 'var(--text-tertiary)',
+              overflow: 'hidden'
             }}>
-              [Imagen Activo]
+              {auction.imagenesUrls && auction.imagenesUrls.length > 0 && auction.imagenesUrls[0] ? (
+                <img src={auction.imagenesUrls[0]} alt={auction.nombreActivo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                'Sin imagen'
+              )}
             </div>
             
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>

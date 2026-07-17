@@ -47,4 +47,22 @@ export class ServicioSubasta {
       throw error;
     }
   }
+
+  async retirarPropuesta(idSubasta, idPropuesta) {
+    try {
+      return await this.clienteHttp.delete(`/subastas/${idSubasta}/propuestas/${idPropuesta}`);
+    } catch (error) {
+      console.error('Error retirando propuesta:', error);
+      throw error;
+    }
+  }
+
+  async obtenerHistorialPropuestas() {
+    try {
+      return await this.clienteHttp.get('/propuestas/historial');
+    } catch (error) {
+      console.error('Error obteniendo historial de propuestas:', error);
+      throw error;
+    }
+  }
 }

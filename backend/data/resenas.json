@@ -63,4 +63,20 @@
     "idTarget": "e561668f-1fa0-4622-a545-0e6a406b36be",
     "fechaCreacion": 1782925679742
   }
+  {
+    "idTransaccion": "TX-C5951189",
+    "calificacion": 5,
+    "comentario": "Ana hizo una excelente reparación de la tubería. Rápido, eficiente y dejó todo limpio. Muy recomendada.",
+    "idAutor": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "idTarget": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "fechaCreacion": 1784289442515
+  },
+  {
+    "idTransaccion": "TX-C5951189",
+    "calificacion": 5,
+    "comentario": "Carlos fue muy puntual y respetuoso. Pago sin problemas y todo fue muy cordial.",
+    "idAutor": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "idTarget": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "fechaCreacion": 1784289442516
+  }
 ]

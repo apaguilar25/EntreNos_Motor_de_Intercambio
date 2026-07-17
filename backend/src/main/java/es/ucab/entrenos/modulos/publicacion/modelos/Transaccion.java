@@ -67,11 +67,15 @@ public class Transaccion {
     }
 
     public void asignarIncidencia(String idIncidencia) {
-        if (this.estado != EstadoTransaccion.INICIADA && this.estado != EstadoTransaccion.PENDIENTE) {
-            throw new IllegalStateException("Solo se puede reportar una incidencia en transacciones PENDIENTES o INICIADAS.");
+        if (this.estado == EstadoTransaccion.FINALIZADA || this.estado == EstadoTransaccion.RECHAZADA) {
+            throw new IllegalStateException("No se puede reportar una incidencia en transacciones " + this.estado + ".");
         }
-        this.idIncidencia = idIncidencia;
-        this.estado = EstadoTransaccion.EN_DISPUTA;
+        if (this.estado != EstadoTransaccion.EN_DISPUTA) {
+            this.estado = EstadoTransaccion.EN_DISPUTA;
+        }
+        if (this.idIncidencia == null) {
+            this.idIncidencia = idIncidencia;
+        }
     }
 
     public String getIdTransaccion() { return idTransaccion; }

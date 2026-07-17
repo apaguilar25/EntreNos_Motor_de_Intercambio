@@ -83,10 +83,10 @@
     "telefono": "+58414000901",
     "descripcionPersonal": "Test cache",
     "contrasenaHash": "$2b$10$IAGzWmKl.7J6vmLCMW1w8OmKvhRXZ4Ib.630wlZKGe2MhInafqCaC",
-    "version": 8,
+    "version": 15,
     "monedero": {
-      "creditosDisponibles": 50.0,
-      "creditosComprometidos": 5.0,
+      "creditosDisponibles": 60.0,
+      "creditosComprometidos": 11.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -110,6 +110,14 @@
             "categoria": "Electricidad"
           },
           "descripcionCondiciones": "Ayuda con la luz"
+        },
+        {
+          "idInstancia": "d7624609-8f0e-4c9d-92bd-57fd3d93337b",
+          "necesidadBase": {
+            "id": "HAB-009",
+            "categoria": "Piano Clásico"
+          },
+          "descripcionCondiciones": "necesito aprender"
         }
       ]
     },
@@ -130,10 +138,10 @@
     "correoElectronico": "carlos.prueba@alameda.com",
     "telefono": "04121234567",
     "contrasenaHash": "$2b$10$IAGzWmKl.7J6vmLCMW1w8OmKvhRXZ4Ib.630wlZKGe2MhInafqCaC",
-    "version": 30,
+    "version": 39,
     "monedero": {
-      "creditosDisponibles": 50.0,
-      "creditosComprometidos": 4.0,
+      "creditosDisponibles": 42.0,
+      "creditosComprometidos": 7.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -165,25 +173,18 @@
           },
           "precioCreditos": 4,
           "descripcionServicio": "sadadadasd"
+        },
+        {
+          "idInstancia": "72afead2-a31e-422c-bcf1-1321cd3e462a",
+          "habilidadBase": {
+            "id": "HAB-009",
+            "categoria": "Piano Clásico"
+          },
+          "precioCreditos": 6,
+          "descripcionServicio": "Soy Lizst"
         }
       ],
       "necesidadesRegistradas": [
-        {
-          "idInstancia": "d15d4ffe-e679-4f1c-9c1d-d4f2fee33e01",
-          "necesidadBase": {
-            "id": "HAB-004",
-            "categoria": "Limpieza del Hogar"
-          },
-          "descripcionCondiciones": "Necesito ayuda con limpieza general de mi apartamento una vez por semana"
-        },
-        {
-          "idInstancia": "fe44b59f-4d9f-414c-83ff-9b2f4c1a8d1e",
-          "necesidadBase": {
-            "id": "HAB-002",
-            "categoria": "Electricidad"
-          },
-          "descripcionCondiciones": "ffssfsfds"
-        },
         {
           "idInstancia": "7ad32b3e-907c-4f4a-9260-fd9fe6b14bad",
           "necesidadBase": {
@@ -228,7 +229,7 @@
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
     "contrasenaHash": "$2b$10$0Qgrc9WcR89q2cJRlf2.dOCkP1nQe.Dt0ERcABExSfUooMK.C6FHO",
-    "version": 2,
+    "version": 3,
     "monedero": {
       "creditosDisponibles": 50.0,
       "creditosComprometidos": 8.0,

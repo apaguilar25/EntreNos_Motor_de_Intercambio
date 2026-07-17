@@ -427,5 +427,27 @@
     "disponible": true,
     "idInstanciaCatalogo": "084966fa-d9fa-4438-8d2d-9421df133a53",
     "version": 0
+  },
+  {
+    "idPublicacion": "PUB-836FD1AD",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Piano Clásico",
+    "descripcion": "Soy Lizst",
+    "precioCreditos": 6,
+    "disponible": true,
+    "idInstanciaCatalogo": "72afead2-a31e-422c-bcf1-1321cd3e462a",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-51E96CB8",
+    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Piano Clásico",
+    "descripcion": "necesito aprender",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "d7624609-8f0e-4c9d-92bd-57fd3d93337b",
+    "version": 0
   }
 ]

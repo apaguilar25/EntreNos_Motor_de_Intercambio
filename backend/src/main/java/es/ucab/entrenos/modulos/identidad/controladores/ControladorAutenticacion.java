@@ -1,5 +1,6 @@
 package es.ucab.entrenos.modulos.identidad.controladores;
 
+import es.ucab.entrenos.modulos.identidad.dtos.LoginRequestDTO;
 import es.ucab.entrenos.modulos.identidad.dtos.PerfilUsuarioResponseDTO;
 import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
 import es.ucab.entrenos.modulos.identidad.servicios.ServicioAutenticacion;
@@ -23,10 +24,10 @@ public class ControladorAutenticacion {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> iniciarSesion(@RequestBody Map<String, String> credenciales) {
+    public ResponseEntity<?> iniciarSesion(@RequestBody LoginRequestDTO request) {
         try {
-            String correo = credenciales.get("correoElectronico");
-            String contrasena = credenciales.get("contrasena");
+            String correo = request.getCorreoElectronico();
+            String contrasena = request.getContrasena();
 
             // 1. Validamos credenciales usando tu servicio core
             Usuario usuarioAutenticado = servicioAutenticacion.login(correo, contrasena);

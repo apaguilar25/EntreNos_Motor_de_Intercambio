@@ -1,10 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
 import { Image as ImageIcon } from 'lucide-react';
 
 const IniciarSesion = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const fotoInputRef = useRef(null);
   
   // Campos
   const [correoElectronico, setcorreoElectronico] = useState('');
@@ -12,6 +13,8 @@ const IniciarSesion = () => {
   const [nombre, setnombre] = useState('');
   const [telefono, settelefono] = useState('');
   const [descripcionPersonal, setdescripcionPersonal] = useState('');
+  const [fotoBase64, setFotoBase64] = useState('');
+  const [fotoPreview, setFotoPreview] = useState('');
   
   const [error, setError] = useState('');
 
@@ -35,7 +38,8 @@ const IniciarSesion = () => {
           correoElectronico, 
           contrasena,
           telefono, 
-          descripcionPersonal
+          descripcionPersonal,
+          foto: fotoBase64 || undefined
         });
       }
       
@@ -97,10 +101,29 @@ const IniciarSesion = () => {
           {!isLogin && (
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Foto de Perfil</label>
-              <div style={{ border: '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '1rem', textAlign: 'center', color: 'var(--text-tertiary)', cursor: 'pointer' }}>
-                <ImageIcon size={24} style={{ margin: '0 auto 0.5rem' }} />
-                <p style={{ fontSize: '0.875rem' }}>Subir foto</p>
-              </div>
+              <input type="file" accept="image/*" ref={fotoInputRef} style={{ display: 'none' }} onChange={(e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                  setFotoBase64(ev.target.result);
+                  setFotoPreview(ev.target.result);
+                };
+                reader.readAsDataURL(file);
+              }} />
+              {fotoPreview ? (
+                <div style={{ position: 'relative', display: 'inline-block' }}>
+                  <img src={fotoPreview} alt="Preview" style={{ width: '120px', height: '120px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--accent-primary)' }} />
+                  <button type="button" onClick={() => { setFotoBase64(''); setFotoPreview(''); if (fotoInputRef.current) fotoInputRef.current.value = ''; }}
+                    style={{ position: 'absolute', top: '-4px', right: '-4px', width: '24px', height: '24px', borderRadius: '50%', border: 'none', background: 'var(--color-red-600)', color: '#fff', cursor: 'pointer', fontSize: '14px', lineHeight: '24px', textAlign: 'center', padding: 0 }}
+                  >&times;</button>
+                </div>
+              ) : (
+                <div onClick={() => fotoInputRef.current?.click()} style={{ border: '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '1rem', textAlign: 'center', color: 'var(--text-tertiary)', cursor: 'pointer' }}>
+                  <ImageIcon size={24} style={{ margin: '0 auto 0.5rem' }} />
+                  <p style={{ fontSize: '0.875rem' }}>Subir foto</p>
+                </div>
+              )}
             </div>
           )}
 

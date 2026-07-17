@@ -128,9 +128,12 @@ public class ServicioSubasta {
             servicioNotificacion.eliminarNotificacionesPorReferencia(idPropietario, idSubasta);
 
             Usuario usuarioGanador = repositorioUsuario.buscarPorId(ganadora.getIdPostor()).get();
-            ContactoUsuarioDTO contacto = new ContactoUsuarioDTO(usuarioGanador.getNombre(), usuarioGanador.getCorreoElectronico(), usuarioGanador.getTelefono());
+            ContactoUsuarioDTO contactoGanador = new ContactoUsuarioDTO(usuarioGanador.getNombre(), usuarioGanador.getCorreoElectronico(), usuarioGanador.getTelefono());
 
-            return new AdjudicacionResponseDTO("¡Subasta adjudicada! Comunícate con el ganador.", subasta, contacto);
+            Usuario usuarioPropietario = repositorioUsuario.buscarPorId(subasta.getIdPropietario()).get();
+            ContactoUsuarioDTO contactoPropietario = new ContactoUsuarioDTO(usuarioPropietario.getNombre(), usuarioPropietario.getCorreoElectronico(), usuarioPropietario.getTelefono());
+
+            return new AdjudicacionResponseDTO("¡Subasta adjudicada! Comunícate con el ganador.", subasta, contactoGanador, contactoPropietario);
         } finally {
             candadoEscritura.unlock(); // SOLTAMOS EL CANDADO
         }

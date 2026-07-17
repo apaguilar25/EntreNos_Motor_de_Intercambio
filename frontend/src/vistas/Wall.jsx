@@ -281,7 +281,7 @@ const Wall = () => {
             onClick={() => setShowFilters(!showFilters)}
           >
             <Filter size={20} />
-            <span>Filtros</span>
+            <span style={{ color: 'var(--text-primary)' }}>Filtros</span>
             <ChevronDown size={16} />
           </button>
 
@@ -434,7 +434,7 @@ const Wall = () => {
                     )}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-warning)', fontSize: '0.75rem' }}>
-                    <Star size={12} fill="currentColor" /> {post.reputation}
+                    <Star size={12} fill="currentColor" /> {(post.reputation || 0).toFixed(1)}
                   </div>
                 </div>
               </div>
@@ -475,10 +475,13 @@ const Wall = () => {
               style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderBottom: showPodio.proveedor ? '1px solid var(--border-color)' : 'none', cursor: 'pointer', backgroundColor: 'var(--bg-secondary)', borderRadius: showPodio.proveedor ? '0.5rem 0.5rem 0 0' : '0.5rem' }}
               onClick={() => setShowPodio(p => ({ ...p, proveedor: !p.proveedor }))}
             >
-              <h3 style={{ fontSize: '1rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#F59E0B' }}>
-                <Trophy size={18} />
-                Proveedor Elite
-              </h3>
+              <div>
+                <h3 style={{ fontSize: '1rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#F59E0B' }}>
+                  <Trophy size={18} />
+                  Proveedor Elite
+                </h3>
+                <p style={{ margin: '0.25rem 0 0', fontSize: '0.7rem', color: 'var(--text-tertiary)', lineHeight: '1.3' }}>Usuarios con más servicios completados</p>
+              </div>
               <ChevronDown size={18} style={{ transform: showPodio.proveedor ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
             </div>
             {showPodio.proveedor && renderPodiumList(podio?.proveedorElite)}
@@ -490,10 +493,13 @@ const Wall = () => {
               style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderBottom: showPodio.motor ? '1px solid var(--border-color)' : 'none', cursor: 'pointer', backgroundColor: 'var(--bg-secondary)', borderRadius: showPodio.motor ? '0.5rem 0.5rem 0 0' : '0.5rem' }}
               onClick={() => setShowPodio(p => ({ ...p, motor: !p.motor }))}
             >
-              <h3 style={{ fontSize: '1rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10B981' }}>
-                <Sparkles size={18} />
-                Motor de la Economía
-              </h3>
+              <div>
+                <h3 style={{ fontSize: '1rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10B981' }}>
+                  <Sparkles size={18} />
+                  Motor de la Economía
+                </h3>
+                <p style={{ margin: '0.25rem 0 0', fontSize: '0.7rem', color: 'var(--text-tertiary)', lineHeight: '1.3' }}>Usuarios que más créditos han hecho circular</p>
+              </div>
               <ChevronDown size={18} style={{ transform: showPodio.motor ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
             </div>
             {showPodio.motor && renderPodiumList(podio?.motorEconomia)}
@@ -505,10 +511,13 @@ const Wall = () => {
               style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', borderBottom: showPodio.embajador ? '1px solid var(--border-color)' : 'none', cursor: 'pointer', backgroundColor: 'var(--bg-secondary)', borderRadius: showPodio.embajador ? '0.5rem 0.5rem 0 0' : '0.5rem' }}
               onClick={() => setShowPodio(p => ({ ...p, embajador: !p.embajador }))}
             >
-              <h3 style={{ fontSize: '1rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#3B82F6' }}>
-                <Medal size={18} />
-                Embajador de Calidad
-              </h3>
+              <div>
+                <h3 style={{ fontSize: '1rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#3B82F6' }}>
+                  <Medal size={18} />
+                  Embajador de Calidad
+                </h3>
+                <p style={{ margin: '0.25rem 0 0', fontSize: '0.7rem', color: 'var(--text-tertiary)', lineHeight: '1.3' }}>Usuarios con mejor reputación y reseñas</p>
+              </div>
               <ChevronDown size={18} style={{ transform: showPodio.embajador ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
             </div>
             {showPodio.embajador && renderPodiumList(podio?.embajadorCalidad)}

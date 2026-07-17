@@ -73,7 +73,8 @@ public class ControladorUsuario {
                     request.getCorreoElectronico(),
                     request.getTelefono(),
                     request.getDescripcionPersonal(),
-                    request.getContrasena()
+                    request.getContrasena(),
+                    request.getFoto()
             );
 
             PerfilUsuarioResponseDTO response = new PerfilUsuarioResponseDTO(nuevoUsuario);
