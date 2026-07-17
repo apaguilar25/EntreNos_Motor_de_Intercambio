@@ -1,7 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, Star, ChevronDown, Trophy, Sparkles, Medal, AlertCircle } from 'lucide-react';
+import { Search, Filter, Star, ChevronDown, Trophy, Sparkles, Medal, AlertCircle, Award, Users, ThumbsUp } from 'lucide-react';
 import { AppContext } from '../App';
+
+const PODIUM_META = {
+  proveedorElite: { icon: <Award size={16} />, label: 'Proveedor Elite', desc: 'Usuarios con mayor oferta de servicios en la comunidad.', color: '#b45309', bg: 'var(--color-orange-100)' },
+  motorEconomia: { icon: <ThumbsUp size={16} />, label: 'Motor de Economía', desc: 'Usuarios con mayor interacción y transacciones realizadas.', color: '#0369a1', bg: '#dbeafe' },
+  embajadorCalidad: { icon: <Medal size={16} />, label: 'Embajador de Calidad', desc: 'Usuarios con mejor reputación y reseñas positivas.', color: '#15803d', bg: '#dcfce7' }
+};
 
 const Wall = () => {
   const navigate = useNavigate();
@@ -11,8 +17,11 @@ const Wall = () => {
   const [tab, setTab] = useState('explorar'); // 'explorar' o 'parati'
   const [filterType, setFilterType] = useState('all'); // 'all', 'oferta', 'necesidad'
   const [posts, setPosts] = useState([]);
-  const [podio, setPodio] = useState([]);
+  const [podio, setPodio] = useState({ proveedorElite: [], motorEconomia: [], embajadorCalidad: [] });
   const [showPodio, setShowPodio] = useState(true);
+  const [showPodiumCat, setShowPodiumCat] = useState({ proveedorElite: true, motorEconomia: true, embajadorCalidad: true });
+  const [podiumUserIds, setPodiumUserIds] = useState(new Set());
+  const [podiumTooltip, setPodiumTooltip] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sentRequests, setSentRequests] = useState(new Set());
@@ -61,14 +70,18 @@ const Wall = () => {
       setPosts(mappedPosts);
       
       if (controladorGamificacion) {
-        const podioData = await controladorGamificacion.obtenerPodio();
-        let podiumList = [];
-        if (podioData && !Array.isArray(podioData)) {
-          podiumList = podioData.proveedorElite || [];
-        } else if (Array.isArray(podioData)) {
-          podiumList = podioData;
+        const raw = await controladorGamificacion.obtenerPodio();
+        if (raw && !Array.isArray(raw)) {
+          const safe = {
+            proveedorElite: raw.proveedorElite || [],
+            motorEconomia: raw.motorEconomia || [],
+            embajadorCalidad: raw.embajadorCalidad || []
+          };
+          setPodio(safe);
+          const ids = new Set();
+          [...safe.proveedorElite, ...safe.motorEconomia, ...safe.embajadorCalidad].forEach(u => ids.add(u.idUsuario));
+          setPodiumUserIds(ids);
         }
-        setPodio(podiumList.slice(0, 3));
       }
 
       if (controladorPerfil && user) {
@@ -303,6 +316,10 @@ const Wall = () => {
                     onMouseLeave={e => e.currentTarget.style.textDecorationColor = 'transparent'}
                   >
                     {post.user}
+                    {podiumUserIds.has(post.userId) && (
+                      <Trophy size={14} color="var(--color-orange-600)" style={{ cursor: 'pointer', marginLeft: '0.25rem' }}
+                        onClick={(e) => { e.stopPropagation(); setPodiumTooltip(post.userId); }} />
+                    )}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-warning)', fontSize: '0.75rem' }}>
                     <Star size={12} fill="currentColor" /> {post.reputation}
@@ -354,34 +371,83 @@ const Wall = () => {
               
               {showPodio && (
                 <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', margin: 0 }}>Usuarios destacados por sus aportes a la comunidad.</p>
-                  
-                  {podio && podio.length > 0 ? (
-                    podio.map((usr, index) => (
-                      <div key={usr.idUsuario} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: index === 0 ? 'var(--color-yellow-100)' : index === 1 ? 'var(--bg-tertiary)' : 'var(--color-orange-100)', color: index === 0 ? 'var(--color-orange-600)' : index === 1 ? 'var(--text-secondary)' : '#b45309', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 'bold' }}>
-                          {index + 1}
+                  {Object.keys(PODIUM_META).map(catKey => {
+                    const cat = PODIUM_META[catKey];
+                    const entries = (podio[catKey] || []).slice(0, 3);
+                    const isOpen = showPodiumCat[catKey];
+                    return (
+                      <div key={catKey} style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', overflow: 'hidden' }}>
+                        <div
+                          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0.75rem', cursor: 'pointer', backgroundColor: cat.bg }}
+                          onClick={() => setShowPodiumCat({ ...showPodiumCat, [catKey]: !isOpen })}
+                        >
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem', fontWeight: 'bold', color: cat.color }}>
+                            {cat.icon} {cat.label}
+                          </span>
+                          <ChevronDown size={14} style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s', color: cat.color }} />
                         </div>
-                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1rem' }}>
-                          {usr.nombreUsuario?.charAt(0)}
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: '0.875rem', fontWeight: '600' }}>{usr.nombreUsuario}</div>
-                          <div style={{ fontSize: '0.75rem', color: 'var(--accent-warning)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                            <Star size={10} fill="currentColor" /> {usr.reputacion}
+                        {isOpen && (
+                          <div style={{ padding: '0.5rem 0.75rem' }}>
+                            <p style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', margin: '0 0 0.5rem 0' }}>{cat.desc}</p>
+                            {entries.length > 0 ? entries.map((usr, idx) => (
+                              <div key={usr.idUsuario} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.3rem 0', borderBottom: idx < entries.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
+                                <div style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: idx === 0 ? 'var(--color-yellow-100)' : idx === 1 ? 'var(--bg-tertiary)' : 'var(--color-orange-100)', color: idx === 0 ? 'var(--color-orange-600)' : idx === 1 ? 'var(--text-secondary)' : '#b45309', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: 'bold' }}>
+                                  {idx + 1}
+                                </div>
+                                <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.75rem' }}>
+                                  {usr.nombreUsuario?.charAt(0)}
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                  <div style={{ fontSize: '0.8rem', fontWeight: '600' }}>{usr.nombreUsuario}</div>
+                                  <div style={{ fontSize: '0.65rem', color: 'var(--accent-warning)', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                                    <Star size={9} fill="currentColor" /> {usr.valor}
+                                  </div>
+                                </div>
+                              </div>
+                            )) : (
+                              <div style={{ textAlign: 'center', padding: '0.5rem 0', color: 'var(--text-tertiary)', fontSize: '0.75rem' }}>
+                                Sin datos esta semana
+                              </div>
+                            )}
                           </div>
-                        </div>
+                        )}
                       </div>
-                    ))
-                  ) : (
-                    <div style={{ textAlign: 'center', padding: '1rem 0', color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>
-                      Aún no hay usuarios en el podio esta semana.
-                    </div>
-                  )}
+                    );
+                  })}
                 </div>
               )}
             </div>
           </div>
+
+          {/* Tooltip modal for trophy click */}
+          {podiumTooltip && (
+            <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}
+              onClick={() => setPodiumTooltip(null)}>
+              <div style={{ background: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1.5rem', maxWidth: '320px', width: '90%', boxShadow: '0 8px 24px rgba(0,0,0,0.2)' }}
+                onClick={e => e.stopPropagation()}>
+                <h4 style={{ margin: '0 0 1rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem' }}>
+                  <Trophy size={18} color="var(--color-orange-600)" /> Podios alcanzados
+                </h4>
+                {Object.keys(PODIUM_META).filter(catKey => (podio[catKey] || []).some(u => u.idUsuario === podiumTooltip)).length === 0 ? (
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)' }}>Este usuario no está en ningún podio esta semana.</p>
+                ) : (
+                  Object.keys(PODIUM_META).filter(catKey => (podio[catKey] || []).some(u => u.idUsuario === podiumTooltip)).map(catKey => {
+                    const cat = PODIUM_META[catKey];
+                    return (
+                      <div key={catKey} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', padding: '0.5rem 0', borderBottom: '1px solid var(--border-color)' }}>
+                        <div style={{ color: cat.color, marginTop: '0.1rem' }}>{cat.icon}</div>
+                        <div>
+                          <div style={{ fontWeight: 'bold', fontSize: '0.85rem', color: cat.color }}>{cat.label}</div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{cat.desc}</div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+                <button className="btn-primary" style={{ marginTop: '1rem', width: '100%', padding: '0.4rem', fontSize: '0.85rem' }} onClick={() => setPodiumTooltip(null)}>Cerrar</button>
+              </div>
+            </div>
+          )}
       </div>
     </div>
   );

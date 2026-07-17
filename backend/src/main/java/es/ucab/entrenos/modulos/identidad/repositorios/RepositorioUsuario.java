@@ -46,7 +46,7 @@ public class RepositorioUsuario implements IRepositorioUsuario {
                         "admin@alameda.com",
                         "0000000000",
                         "Administrador general de la comunidad",
-                        new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder().encode("admin123")
+                        new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder().encode("contrasena123")
                 );
 
                 admin.setRol(es.ucab.entrenos.modulos.identidad.modelos.RolUsuario.ADMINISTRADOR);

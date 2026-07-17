@@ -1,9 +1,21 @@
 {
-  "idPodio": "PD-FA1B478D",
+  "idPodio": "PD-00000001",
   "fechaInicioSemana": 1783555200000,
   "fechaFinSemana": 1784160000000,
   "fechaCalculo": 1784160001000,
-  "proveedorEliteServicios": "f871e1d2-671e-4ea2-a19d-c1393805569c",
-  "motorEconomiaTransacciones": "e561668f-1fa0-4622-a545-0e6a406b36be",
-  "embajadorCalidadPromedio": 4.9
+  "proveedorElite": [
+    {"idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c", "nombreUsuario": "Carlos Pérez", "valor": 8.0},
+    {"idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be", "nombreUsuario": "Ana García", "valor": 6.0},
+    {"idUsuario": "610b0b73-746c-4d2a-88b7-c90778427553", "nombreUsuario": "Bob Martínez", "valor": 5.0}
+  ],
+  "motorEconomia": [
+    {"idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be", "nombreUsuario": "Ana García", "valor": 7.0},
+    {"idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c", "nombreUsuario": "Carlos Pérez", "valor": 5.0},
+    {"idUsuario": "610b0b73-746c-4d2a-88b7-c90778427553", "nombreUsuario": "Bob Martínez", "valor": 4.0}
+  ],
+  "embajadorCalidad": [
+    {"idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be", "nombreUsuario": "Ana García", "valor": 5.0},
+    {"idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c", "nombreUsuario": "Carlos Pérez", "valor": 4.8},
+    {"idUsuario": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589", "nombreUsuario": "Laura Medina", "valor": 4.5}
+  ]
 }

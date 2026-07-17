@@ -383,5 +383,27 @@
     "disponible": true,
     "idInstanciaCatalogo": "ef4ef20e-7f4a-491e-b75b-98cbc0c5997f",
     "version": 0
+  },
+  {
+    "idPublicacion": "PUB-44B5CB6B",
+    "idUsuario": "a106621d-54a1-4bf1-97a6-3c1251b72f3b",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Jardinería",
+    "descripcion": "sczxcczxczxc",
+    "precioCreditos": 4,
+    "disponible": true,
+    "idInstanciaCatalogo": "e86ac6cc-f7ca-4b06-a557-b5f9a9522b8f",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-8538D92D",
+    "idUsuario": "a106621d-54a1-4bf1-97a6-3c1251b72f3b",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Electricidad Básica",
+    "descripcion": "zxczczczxczc",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "94eb20b8-4e79-4809-92b0-e1713d34fe4f",
+    "version": 0
   }
 ]

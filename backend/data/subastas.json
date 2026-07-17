@@ -6,7 +6,7 @@
     "descripcion": "Taladro percutor inalámbrico, 18V, incluye batería y cargador. Poco uso.",
     "estadoFisico": "USADO",
     "imagenesUrls": [
-      "/ruta/taladro1.jpg"
+      "https://picsum.photos/seed/taladro/400/300"
     ],
     "fechaInicio": "2026-06-16T21:23:41.623",
     "fechaFinalizacionLicitacion": "2026-06-23T21:23:41.623",
@@ -23,7 +23,7 @@
     "descripcion": "Colección de libros de JavaScript, Python, Java, bases de datos y algoritmos. Todos en excelente estado.",
     "estadoFisico": "USADO",
     "imagenesUrls": [
-      "/ruta/libros1.jpg"
+      "https://picsum.photos/seed/libros/400/300"
     ],
     "fechaInicio": "2026-06-26T21:23:41.623",
     "fechaFinalizacionLicitacion": "2026-07-03T21:23:41.623",
@@ -76,8 +76,8 @@
     "descripcion": "Bicicleta Specialized Rockhopper, año 2022, rodada 29, cambios Shimano, frenos de disco. Buen estado general, solo usada 10 veces.",
     "estadoFisico": "USADO",
     "imagenesUrls": [
-      "/ruta/bici1.jpg",
-      "/ruta/bici2.jpg"
+      "https://picsum.photos/seed/bici1/400/300",
+      "https://picsum.photos/seed/bici2/400/300"
     ],
     "fechaInicio": "2026-07-11T21:23:41.623",
     "fechaFinalizacionLicitacion": "2026-07-21T21:23:41.623",
@@ -130,7 +130,7 @@
     "descripcion": "Guitarra española de segunda mano en buen estado, marca Alhambra, incluye funda. Cuerdas cambiadas recientemente.",
     "estadoFisico": "USADO",
     "imagenesUrls": [
-      "/ruta/guitarra1.jpg"
+      "https://picsum.photos/seed/guitarra/400/300"
     ],
     "fechaInicio": "2026-07-04T21:23:41.622",
     "fechaFinalizacionLicitacion": "2026-07-18T21:23:41.623",
@@ -186,7 +186,7 @@
     "descripcion": "Una camioneta nueva",
     "estadoFisico": "NUEVO",
     "imagenesUrls": [
-      "/ruta/foto1.jpg"
+      "https://picsum.photos/seed/camioneta/400/300"
     ],
     "fechaInicio": "2026-07-16T18:40:14.3996225",
     "fechaFinalizacionLicitacion": "2026-07-21T18:40:14.3971015",

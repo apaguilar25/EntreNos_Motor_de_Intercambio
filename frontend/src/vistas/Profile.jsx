@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
 import { ConfirmContext, useConfirm } from '../contextos/ConfirmContext';
-import { Star, ShieldCheck, Edit2, Trash2 } from 'lucide-react';
+import { Star, ShieldCheck, Edit2, Trash2, Trophy, Award, ThumbsUp, Medal, ChevronDown } from 'lucide-react';
 
 const Profile = () => {
   const { user, controladorPerfil, controladorSubasta, controladorGamificacion } = useContext(AppContext);
@@ -15,6 +15,8 @@ const Profile = () => {
   const [myAuctions, setMyAuctions] = useState([]);
   const [transacciones, setTransacciones] = useState([]);
   const [logros, setLogros] = useState([]);
+  const [podio, setPodio] = useState({ proveedorElite: [], motorEconomia: [], embajadorCalidad: [] });
+  const [podiumTooltip, setPodiumTooltip] = useState(false);
   const [loading, setLoading] = useState(true);
   const [usersMap, setUsersMap] = useState({});
   const [pubsMap, setPubsMap] = useState({});
@@ -92,6 +94,14 @@ const Profile = () => {
         if (controladorGamificacion) {
           const logrosData = await controladorGamificacion.obtenerLogros(user.id);
           setLogros(logrosData || []);
+          const raw = await controladorGamificacion.obtenerPodio();
+          if (raw && !Array.isArray(raw)) {
+            setPodio({
+              proveedorElite: raw.proveedorElite || [],
+              motorEconomia: raw.motorEconomia || [],
+              embajadorCalidad: raw.embajadorCalidad || []
+            });
+          }
         }
 
         try {
@@ -451,6 +461,10 @@ const Profile = () => {
           <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {user?.name || 'Usuario'}
             <ShieldCheck size={20} color="var(--accent-primary)" />
+            {Object.values(podio).some(list => list.some(u => u.idUsuario === user?.id)) && (
+              <Trophy size={20} color="var(--color-orange-600)" style={{ cursor: 'pointer' }}
+                onClick={() => setPodiumTooltip(true)} />
+            )}
           </h3>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>{user?.email || 'correo@plazaalameda.com'}</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
@@ -474,6 +488,37 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      {/* Podium tooltip modal */}
+      {podiumTooltip && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}
+          onClick={() => setPodiumTooltip(false)}>
+          <div style={{ background: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1.5rem', maxWidth: '320px', width: '90%', boxShadow: '0 8px 24px rgba(0,0,0,0.2)' }}
+            onClick={e => e.stopPropagation()}>
+            <h4 style={{ margin: '0 0 1rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem' }}>
+              <Trophy size={18} color="var(--color-orange-600)" /> Mis Podios
+            </h4>
+            {Object.entries({ proveedorElite: 'Proveedor Elite', motorEconomia: 'Motor de Economía', embajadorCalidad: 'Embajador de Calidad' }).filter(([key]) => (podio[key] || []).some(u => u.idUsuario === user?.id)).length === 0 ? (
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)' }}>Aún no estás en ningún podio esta semana.</p>
+            ) : (
+              Object.entries({ proveedorElite: 'Proveedor Elite', motorEconomia: 'Motor de Economía', embajadorCalidad: 'Embajador de Calidad' }).filter(([key]) => (podio[key] || []).some(u => u.idUsuario === user?.id)).map(([key, label]) => (
+                <div key={key} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', padding: '0.5rem 0', borderBottom: '1px solid var(--border-color)' }}>
+                  <div style={{ color: key === 'proveedorElite' ? '#b45309' : key === 'motorEconomia' ? '#0369a1' : '#15803d', marginTop: '0.1rem' }}>
+                    {key === 'proveedorElite' ? <Award size={16} /> : key === 'motorEconomia' ? <ThumbsUp size={16} /> : <Medal size={16} />}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 'bold', fontSize: '0.85rem' }}>{label}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                      {key === 'proveedorElite' ? 'Usuarios con mayor oferta de servicios en la comunidad.' : key === 'motorEconomia' ? 'Usuarios con mayor interacción y transacciones realizadas.' : 'Usuarios con mejor reputación y reseñas positivas.'}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+            <button className="btn-primary" style={{ marginTop: '1rem', width: '100%', padding: '0.4rem', fontSize: '0.85rem' }} onClick={() => setPodiumTooltip(false)}>Cerrar</button>
+          </div>
+        </div>
+      )}
 
       
       <div className="responsive-grid">

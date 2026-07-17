@@ -18,5 +18,15 @@
     "idLogro": "POLIMATA",
     "idUsuario": "23b7289e-d883-4e97-8b62-9fa0ec806e6d",
     "fechaDesbloqueo": 1784063494364
+  },
+  {
+    "idLogro": "MAESTRO_CONFIANZA",
+    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "fechaDesbloqueo": 1783900000000
+  },
+  {
+    "idLogro": "MAESTRO_CONFIANZA",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "fechaDesbloqueo": 1783850000000
   }
 ]

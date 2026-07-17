@@ -62,5 +62,53 @@
     "idAutor": "610b0b73-746c-4d2a-88b7-c90778427553",
     "idTarget": "e561668f-1fa0-4622-a545-0e6a406b36be",
     "fechaCreacion": 1782925679742
+  },
+  {
+    "idTransaccion": "TX-00000005",
+    "calificacion": 5,
+    "comentario": "Carlos hizo un trabajo excelente en la reparación. Muy recomendado.",
+    "idAutor": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
+    "idTarget": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "fechaCreacion": 1783750000000
+  },
+  {
+    "idTransaccion": "TX-00000005",
+    "calificacion": 5,
+    "comentario": "Profesional y eficiente. Resolvió el problema en minutos.",
+    "idAutor": "23b7289e-d883-4e97-8b62-9fa0ec806e6d",
+    "idTarget": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "fechaCreacion": 1783800000000
+  },
+  {
+    "idTransaccion": "TX-00000005",
+    "calificacion": 5,
+    "comentario": "Excelente servicio, volvería a contratar sin dudarlo.",
+    "idAutor": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "idTarget": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "fechaCreacion": 1783850000000
+  },
+  {
+    "idTransaccion": "TX-00000006",
+    "calificacion": 5,
+    "comentario": "Ana es una profesora increíble. Sus clases de yoga son transformadoras.",
+    "idAutor": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
+    "idTarget": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "fechaCreacion": 1783900000000
+  },
+  {
+    "idTransaccion": "TX-00000006",
+    "calificacion": 5,
+    "comentario": "Muy paciente y dedicada. Aprendí muchísimo en poco tiempo.",
+    "idAutor": "23b7289e-d883-4e97-8b62-9fa0ec806e6d",
+    "idTarget": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "fechaCreacion": 1783950000000
+  },
+  {
+    "idTransaccion": "TX-00000006",
+    "calificacion": 5,
+    "comentario": "La mejor profesora de yoga que he tenido. Muy recomendada.",
+    "idAutor": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "idTarget": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "fechaCreacion": 1784000000000
   }
 ]

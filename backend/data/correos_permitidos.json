@@ -28,5 +28,10 @@
     "id": "3adf9924-afa4-407b-8332-3aca42588ffe",
     "correo": "pedro@alameda.com",
     "fechaCreacion": 1781046840994
+  },
+  {
+    "id": "d7e8f901-23ab-4cde-8901-2345abcdef01",
+    "correo": "admin2@alameda.com",
+    "fechaCreacion": 1783000000000
   }
 ]
