@@ -5,8 +5,6 @@ public class EdicionOfertaDTO {
     private int precioCreditos;
     private String descripcionServicio;
 
-    // --- GETTERS Y SETTERS OBLIGATORIOS ---
-
     public String getIdInstancia() {
         return idInstancia;
     }

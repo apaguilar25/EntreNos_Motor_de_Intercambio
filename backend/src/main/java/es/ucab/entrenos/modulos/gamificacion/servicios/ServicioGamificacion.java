@@ -73,7 +73,7 @@ public class ServicioGamificacion {
     public List<LogroDesbloqueado> evaluarLogros(String idUsuario) {
         List<Logro> todosLosLogros = repositorioLogro.obtenerTodos().stream()
                 .filter(Logro::isActivo)
-                .collect(Collectors.toList());
+                .toList();
         List<LogroDesbloqueado> yaDesbloqueados = repositorioLogroDesbloqueado.obtenerPorUsuario(idUsuario);
         Set<String> idsDesbloqueados = yaDesbloqueados.stream()
                 .map(LogroDesbloqueado::getIdLogro)
@@ -95,16 +95,12 @@ public class ServicioGamificacion {
     }
 
     private boolean cumpleCriterio(String idUsuario, TipoCriterioLogro tipoCriterio) {
-        switch (tipoCriterio) {
-            case PRIMERA_TRANSACCION:
-                return cumplePrimeraTransaccion(idUsuario);
-            case MAESTRO_CONFIANZA:
-                return cumpleMaestroConfianza(idUsuario);
-            case POLIMATA:
-                return cumplePolimata(idUsuario);
-            default:
-                return false;
-        }
+        return switch (tipoCriterio) {
+            case PRIMERA_TRANSACCION -> cumplePrimeraTransaccion(idUsuario);
+            case MAESTRO_CONFIANZA -> cumpleMaestroConfianza(idUsuario);
+            case POLIMATA -> cumplePolimata(idUsuario);
+            default -> false;
+        };
     }
 
     private boolean cumplePrimeraTransaccion(String idUsuario) {
