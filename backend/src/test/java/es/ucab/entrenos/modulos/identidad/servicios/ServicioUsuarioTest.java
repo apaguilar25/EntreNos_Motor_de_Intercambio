@@ -27,7 +27,7 @@ class ServicioUsuarioTest {
     void debeRechazarCorreoConDominioInvalido() {
         // Actuar y Comprobar a la vez: Esperamos que lance un IllegalArgumentException
         IllegalArgumentException excepcion = assertThrows(IllegalArgumentException.class, () -> {
-            servicioUsuario.registrarUsuario("Juan", "juan@gmail.com", "04141234567", "Un tipo genial", "12345");
+            servicioUsuario.registrarUsuario("Juan", "juan@gmail.com", "04141234567", "Un tipo genial", "12345", null);
         }, "❌ Error: El sistema permitió registrar un usuario con un dominio de correo inválido (@gmail.com).");
 
         // Comprobamos que el mensaje de error sea el correcto según el ERS
@@ -50,7 +50,7 @@ class ServicioUsuarioTest {
 
         // Actuar y Comprobar
         assertThrows(CorreoDuplicadoException.class, () -> {
-            servicioUsuario.registrarUsuario("Pedro", "pedro@alameda.com", "04120000000", "Desc", "12345");
+            servicioUsuario.registrarUsuario("Pedro", "pedro@alameda.com", "04120000000", "Desc", "12345", null);
         }, "❌ Error: El sistema permitió registrar un usuario con un correo electrónico que ya existía en la base de datos.");
 
         // Mensaje de éxito si la excepción se lanza correctamente
@@ -66,7 +66,7 @@ class ServicioUsuarioTest {
         // Actuar y Comprobar
         assertThrows(RuntimeException.class, () -> {
             // Nota: Aquí el correo está bien (@alameda.com), pero el teléfono es el que causará el fallo
-            servicioUsuario.registrarUsuario("Ana", "ana@alameda.com", "04141234567", "Diseñadora", "12345");
+            servicioUsuario.registrarUsuario("Ana", "ana@alameda.com", "04141234567", "Diseñadora", "12345", null);
         }, "❌ Error: El sistema permitió registrar un usuario con un teléfono que ya existía.");
 
         // Mensaje de éxito

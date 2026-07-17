@@ -7,7 +7,7 @@ import { Star, ShieldCheck, Edit2, Trash2 } from 'lucide-react';
 import Pagination from '../componentes/ui/Pagination';
 
 const Profile = () => {
-  const { user, setUser, controladorPerfil, controladorSubasta, controladorGamificacion } = useContext(AppContext);
+  const { user, setUser, setBalance, controladorPerfil, controladorSubasta, controladorGamificacion } = useContext(AppContext);
   const { confirm } = useConfirm();
   const navigate = useNavigate();
   const location = useLocation();
@@ -60,6 +60,11 @@ const Profile = () => {
   // Mapa de incidencias por transacción
   const [incidenciasMap, setIncidenciasMap] = useState({});
 
+  // Modal Calificar
+  const [calificarModalOpen, setCalificarModalOpen] = useState(false);
+  const [calificacion, setCalificacion] = useState(0);
+  const [calificacionTxId, setCalificacionTxId] = useState(null);
+
   // Modal Apelar Reporte (defensa)
   const [appealModalOpen, setAppealModalOpen] = useState(false);
   const [appealData, setAppealData] = useState({ idTransaccion: '', descripcion: '', fotosEvidenciaBase64: [] });
@@ -67,6 +72,13 @@ const Profile = () => {
   // Modal Cancelar Reporte
   const [cancelReportModalOpen, setCancelReportModalOpen] = useState(false);
   const [cancelReportData, setCancelReportData] = useState({ idTransaccion: '', motivo: '' });
+
+  // Modal Adjudicar (contacto ganador)
+  const [adjudicarModalOpen, setAdjudicarModalOpen] = useState(false);
+  const [adjudicarData, setAdjudicarData] = useState(null);
+
+  // Historial de propuestas (pujas realizadas)
+  const [myProposals, setMyProposals] = useState([]);
 
   // Modal Edición
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -195,6 +207,9 @@ const Profile = () => {
         const auctionsData = await controladorSubasta.obtenerMisSubastas();
         setMyAuctions(auctionsData);
 
+        const proposalsData = await controladorSubasta.obtenerHistorialPropuestas();
+        setMyProposals(proposalsData);
+
         const fetchedUserTrans = await loadTransactionsAndIncidencias();
 
         if (controladorGamificacion) {
@@ -264,7 +279,11 @@ const Profile = () => {
     try {
       const res = await controladorSubasta.adjudicarGanador(oferta.idSubasta, oferta.idPropuesta);
       if (res) {
-        setAlertMessage("Ganador adjudicado con éxito. Subasta concluida.");
+        setAdjudicarData({
+          ganador: res.contactoGanador,
+          propietario: res.contactoPropietario
+        });
+        setAdjudicarModalOpen(true);
         const auctionsData = await controladorSubasta.obtenerMisSubastas();
         setMyAuctions(auctionsData);
       } else {
@@ -404,8 +423,19 @@ const Profile = () => {
     }
   };
 
+  const refreshSaldo = async () => {
+    if (!user?.id) return;
+    try {
+      const monedero = await controladorPerfil.obtenerSaldo(user.id);
+      setUser({ ...user, creditosDisponibles: monedero.creditosDisponibles, creditosComprometidos: monedero.creditosRetenidos });
+      setBalance(monedero.creditosDisponibles);
+    } catch (e) {
+      console.error("Error actualizando saldo", e);
+    }
+  };
+
   const handleConfirmEntrega = async (idTransaccion) => {
-    const isConfirmed = await confirm("Confirmar Entrega", "¿Confirmas que has entregado el servicio/producto al demandante? Esta acción no se puede deshacer.");
+    const isConfirmed = await confirm("Confirmar Entrega", "¿Estás seguro que quieres confirmar la finalización? Confirma que has entregado el servicio/producto al demandante. Esta acción no se puede deshacer.");
     if (!isConfirmed) return;
     try {
       const res = await fetch(`http://localhost:8080/api/transacciones/${idTransaccion}/confirmar-ofertante`, {
@@ -413,8 +443,13 @@ const Profile = () => {
         headers: { 'Content-Type': 'application/json' }
       });
       if (res.ok) {
+        const data = await res.json();
         setAlertMessage("Entrega confirmada con éxito.");
         await loadTransactionsAndIncidencias();
+        await refreshSaldo();
+        if (data?.transaccion?.estado === 'FINALIZADA') {
+          setAlertMessage("Transacción completada. El demandante ahora puede calificar el servicio.");
+        }
       } else {
         const errorData = await res.json();
         setAlertMessage(errorData.error || "Error al confirmar entrega");
@@ -425,7 +460,7 @@ const Profile = () => {
   };
 
   const handleConfirmRecepcion = async (idTransaccion) => {
-    const isConfirmed = await confirm("Confirmar Recepción", "¿Confirmas que has recibido el servicio/producto del ofertante? Esta acción no se puede deshacer.");
+    const isConfirmed = await confirm("Confirmar Recepción", "¿Estás seguro que quieres confirmar la finalización? Confirma que has recibido el servicio/producto del ofertante. Esta acción no se puede deshacer.");
     if (!isConfirmed) return;
     try {
       const res = await fetch(`http://localhost:8080/api/transacciones/${idTransaccion}/confirmar-demandante`, {
@@ -433,11 +468,42 @@ const Profile = () => {
         headers: { 'Content-Type': 'application/json' }
       });
       if (res.ok) {
+        const data = await res.json();
         setAlertMessage("Recepción confirmada con éxito.");
         await loadTransactionsAndIncidencias();
+        await refreshSaldo();
+        if (data?.transaccion?.estado === 'FINALIZADA') {
+          setCalificacionTxId(data.transaccion.idTransaccion);
+          setCalificacion(0);
+          setCalificarModalOpen(true);
+        }
       } else {
         const errorData = await res.json();
         setAlertMessage(errorData.error || "Error al confirmar recepción");
+      }
+    } catch (err) {
+      setAlertMessage("Error de conexión");
+    }
+  };
+
+  const handleCalificar = async () => {
+    if (calificacion < 1 || calificacion > 5) return;
+    try {
+      const res = await fetch(`http://localhost:8080/api/transacciones/${calificacionTxId}/calificar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idUsuario: user.id, calificacion })
+      });
+      if (res.ok) {
+        setAlertMessage("Calificación enviada con éxito. ¡Gracias por tu opinión!");
+        setCalificarModalOpen(false);
+        setCalificacion(0);
+        setCalificacionTxId(null);
+        await loadTransactionsAndIncidencias();
+        await refreshSaldo();
+      } else {
+        const errorData = await res.json();
+        setAlertMessage(errorData.error || "Error al calificar");
       }
     } catch (err) {
       setAlertMessage("Error de conexión");
@@ -635,6 +701,13 @@ const Profile = () => {
           <p style={{ color: 'var(--text-secondary)' }}>{transacciones.length} en curso</p>
           <span style={{ color: 'var(--accent-primary)', fontSize: '0.875rem', fontWeight: 'bold' }}>Ver Detalles &rarr;</span>
         </div>
+
+        {/* Resumen Pujas Realizadas */}
+        <div className="card interactive-card" onClick={() => setSectionModalOpen('pujas')} style={{ cursor: 'pointer' }}>
+          <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Pujas Realizadas</h3>
+          <p style={{ color: 'var(--text-secondary)' }}>{myProposals.length} registradas</p>
+          <span style={{ color: 'var(--accent-primary)', fontSize: '0.875rem', fontWeight: 'bold' }}>Ver Detalles &rarr;</span>
+        </div>
       </div>
 
       {sectionModalOpen && createPortal(
@@ -759,11 +832,18 @@ const Profile = () => {
                             <h5 style={{ fontSize: '0.875rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Pujas Recibidas:</h5>
                             {auction.propuestas.map((of, i) => (
                               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem', backgroundColor: 'var(--bg-secondary)', borderRadius: '0.25rem', marginBottom: '0.5rem' }}>
-                                <div>
+                                <div style={{ flex: 1 }}>
                                   <span style={{ fontWeight: 'bold', fontSize: '0.875rem' }}>De: {usersMap[of.idPostor] || of.idPostor}</span>
                                   <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                                     Bienes: {of.bienesOfrecidos?.map(b => `${b.cantidad}x ${b.nombre}`).join(', ')}
                                   </div>
+                                  {of.imagenesUrls && of.imagenesUrls.length > 0 && (
+                                    <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.25rem' }}>
+                                      {of.imagenesUrls.map((url, j) => (
+                                        <img key={j} src={url} alt={`Foto puja ${j+1}`} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '0.25rem', border: '1px solid var(--border-color)' }} />
+                                      ))}
+                                    </div>
+                                  )}
                                 </div>
                                 {(auction.estado === 'ACTIVA' || auction.estado === 'ESPERANDO_DECISION') && (
                                   <button 
@@ -891,6 +971,72 @@ const Profile = () => {
                       </div>
                     ))}
                     </>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {sectionModalOpen === 'pujas' && (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h2 style={{ fontSize: '1.25rem' }}>Pujas Realizadas</h2>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {myProposals.length === 0 ? (
+                    <div style={{ fontSize: '0.875rem', color: 'var(--text-tertiary)', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
+                      No has participado en subastas aún.
+                    </div>
+                  ) : (
+                    myProposals.map((prop, idx) => {
+                      const esRetirable = prop.estadoSubasta === 'ACTIVA';
+                      return (
+                        <div key={idx} style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <div>
+                              <h4 style={{ marginBottom: '0.25rem', fontSize: '1rem' }}>
+                                {prop.nombreActivo || 'Subasta'}
+                              </h4>
+                              <p style={{ color: 'var(--text-tertiary)', fontSize: '0.8rem', margin: '0 0 0.25rem' }}>
+                                {prop.bienesOfrecidos?.map(b => `${b.cantidad} x ${b.nombre}`).join(', ') || 'Sin bienes'}
+                              </p>
+                              <span style={{
+                                padding: '0.15rem 0.4rem', borderRadius: '0.25rem', fontSize: '0.7rem', fontWeight: 'bold',
+                                backgroundColor: prop.estadoPropuesta === 'EN_EVALUACION' ? 'var(--color-yellow-100)' : 'var(--color-green-100)',
+                                color: prop.estadoPropuesta === 'EN_EVALUACION' ? 'var(--color-orange-600)' : 'var(--color-green-700)'
+                              }}>
+                                {prop.estadoPropuesta || 'EN_EVALUACION'}
+                              </span>
+                              <span style={{ marginLeft: '0.5rem', padding: '0.15rem 0.4rem', borderRadius: '0.25rem', fontSize: '0.7rem', fontWeight: 'bold', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}>
+                                {prop.estadoSubasta}
+                              </span>
+                            </div>
+                            {esRetirable && (
+                              <button
+                                onClick={async () => {
+                                  const ok = await confirm("Retirar Puja", "¿Estás seguro de retirar tu puja? Esta acción no se puede deshacer.");
+                                  if (!ok) return;
+                                  try {
+                                    const r = await controladorSubasta.retirarPropuesta(prop.idSubasta, prop.idPropuesta);
+                                    if (r) {
+                                      setAlertMessage("Puja retirada con éxito.");
+                                      const p = await controladorSubasta.obtenerHistorialPropuestas();
+                                      setMyProposals(p);
+                                    } else {
+                                      setAlertMessage("Error al retirar la puja.");
+                                    }
+                                  } catch (e) {
+                                    setAlertMessage("Error de conexión.");
+                                  }
+                                }}
+                                style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem', backgroundColor: '#dc2626', color: '#fff', border: 'none', borderRadius: '0.25rem', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                              >
+                                Retirar Puja
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })
                   )}
                 </div>
               </div>
@@ -1112,52 +1258,152 @@ const Profile = () => {
               </div>
             </div>
 
-            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '2rem' }}>
-              El intercambio está en proceso. Una vez concluido el servicio, ambas partes deben confirmar su finalización para que se liberen los créditos correspondientes. Si ocurre algún problema, puedes reportar una incidencia o solicitar la cancelación.
-            </p>
+            {selectedTxDetalle.estado === 'FINALIZADA' ? (
+              <>
+                <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                  Esta transacción ha sido completada. Los créditos han sido transferidos al ofertante.
+                </p>
+                {selectedTxDetalle.idDemandante === user.id && !selectedTxDetalle.resena && (
+                  <button 
+                    className="btn-primary" 
+                    style={{ width: '100%', padding: '0.75rem' }}
+                    onClick={() => {
+                      setCalificacionTxId(selectedTxDetalle.idTransaccion);
+                      setCalificacion(0);
+                      setCalificarModalOpen(true);
+                    }}
+                  >
+                    Calificar Servicio
+                  </button>
+                )}
+                {selectedTxDetalle.idDemandante === user.id && selectedTxDetalle.resena && (
+                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                    Calificaste este servicio con {selectedTxDetalle.resena.calificacion} / 5 estrellas.
+                  </p>
+                )}
+              </>
+            ) : selectedTxDetalle.estado === 'RECHAZADA' ? (
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                Esta transacción fue cancelada.
+              </p>
+            ) : (
+              <>
+                <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '2rem' }}>
+                  {selectedTxDetalle.estado === 'PENDIENTE' || selectedTxDetalle.estado === 'INICIADA'
+                    ? 'Una vez concluido el servicio, confirma la finalización para liberar los créditos. Si ocurre algún problema, puedes reportar una incidencia o solicitar la cancelación.'
+                    : 'El intercambio está en proceso.'}
+                </p>
 
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                  {selectedTxDetalle.idOfertante === user.id && !selectedTxDetalle.confirmacionOfertante ? (
+                    <button 
+                      className="btn-primary" 
+                      style={{ flex: '1 1 auto', padding: '0.75rem' }}
+                      onClick={() => {
+                        handleConfirmEntrega(selectedTxDetalle.idTransaccion);
+                      }}
+                    >
+                      Confirmar Entrega
+                    </button>
+                  ) : selectedTxDetalle.idDemandante === user.id && !selectedTxDetalle.confirmacionDemandante ? (
+                    <button 
+                      className="btn-primary" 
+                      style={{ flex: '1 1 auto', padding: '0.75rem' }}
+                      onClick={() => {
+                        handleConfirmRecepcion(selectedTxDetalle.idTransaccion);
+                      }}
+                    >
+                      Confirmar Recepción
+                    </button>
+                  ) : (selectedTxDetalle.estado === 'PENDIENTE' || selectedTxDetalle.estado === 'INICIADA') ? (
+                    <button 
+                      className="btn-primary" 
+                      style={{ flex: '1 1 auto', padding: '0.75rem', opacity: 0.6, cursor: 'not-allowed' }}
+                      disabled
+                    >
+                      Esperando confirmación de la otra parte...
+                    </button>
+                  ) : null}
+
+                  {(selectedTxDetalle.estado === 'PENDIENTE' || selectedTxDetalle.estado === 'INICIADA' || selectedTxDetalle.estado === 'EN_DISPUTA') && (
+                    <button 
+                      className="btn-primary" 
+                      style={{ flex: '1 1 auto', padding: '0.75rem', backgroundColor: '#ea580c', color: '#fff', border: 'none' }}
+                      onClick={() => {
+                        const esDemandante = selectedTxDetalle.idDemandante === user.id;
+                        const contraparteId = esDemandante ? selectedTxDetalle.idOfertante : selectedTxDetalle.idDemandante;
+                        setReportData({
+                          ...reportData,
+                          idPublicacion: selectedTxDetalle.idTransaccion,
+                          tituloPublicacion: pubsMap[selectedTxDetalle.idPublicacion]?.nombreServicio || selectedTxDetalle.idPublicacion,
+                          idUsuarioInvolucrado: contraparteId,
+                          nombreContraparte: usersMap[contraparteId] || contraparteId,
+                          descripcionProblema: '',
+                          fotosEvidenciaBase64: [],
+                          esDemandante: esDemandante
+                        });
+                        setTransaccionDetalleModalOpen(false);
+                        setReportModalOpen(true);
+                      }}
+                    >
+                      Reportar Incidencia
+                    </button>
+                  )}
+
+                  {(selectedTxDetalle.estado === 'PENDIENTE' || selectedTxDetalle.estado === 'INICIADA') && (
+                    <button 
+                      className="btn-primary" 
+                      style={{ flex: '1 1 auto', padding: '0.75rem', backgroundColor: '#dc2626', color: '#fff', border: 'none' }}
+                      onClick={() => {
+                        setCancelTransaccionModalOpen(true);
+                        setTransaccionDetalleModalOpen(false);
+                      }}
+                    >
+                      Cancelar Transacción
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      , document.body)}
+
+      {calificarModalOpen && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="card" style={{ width: '90%', maxWidth: '400px', padding: '2rem', position: 'relative', textAlign: 'center' }}>
+            <button onClick={() => { setCalificarModalOpen(false); setCalificacion(0); }} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-tertiary)' }}>&times;</button>
+            <h3 style={{ marginBottom: '1rem' }}>Calificar Servicio</h3>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+              ¿Cómo calificas el servicio recibido?
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '2rem' }}>
+              {[1, 2, 3, 4, 5].map(star => (
+                <button
+                  key={star}
+                  onClick={() => setCalificacion(star)}
+                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '0.25rem' }}
+                >
+                  <Star size={36} fill={star <= calificacion ? '#f59e0b' : 'none'} color={star <= calificacion ? '#f59e0b' : 'var(--text-tertiary)'} />
+                </button>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: '1rem' }}>
               <button 
-                className="btn-primary" 
-                style={{ flex: '1 1 auto', padding: '0.75rem' }}
-                onClick={() => {
-                  handleUpdateTxState(selectedTxDetalle.idTransaccion, 'FINALIZADA')
-                  setTransaccionDetalleModalOpen(false);
-                }}
+                type="button" 
+                onClick={() => { setCalificarModalOpen(false); setCalificacion(0); }} 
+                style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}
               >
-                Confirmar Finalización
+                Cancelar
               </button>
               <button 
+                type="button" 
                 className="btn-primary" 
-                style={{ flex: '1 1 auto', padding: '0.75rem', backgroundColor: '#ea580c', color: '#fff', border: 'none' }}
-                onClick={() => {
-                  const esDemandante = selectedTxDetalle.idDemandante === user.id;
-                  const contraparteId = esDemandante ? selectedTxDetalle.idOfertante : selectedTxDetalle.idDemandante;
-                  setReportData({
-                    ...reportData,
-                    idPublicacion: selectedTxDetalle.idTransaccion,
-                    tituloPublicacion: pubsMap[selectedTxDetalle.idPublicacion]?.nombreServicio || selectedTxDetalle.idPublicacion,
-                    idUsuarioInvolucrado: contraparteId,
-                    nombreContraparte: usersMap[contraparteId] || contraparteId,
-                    descripcionProblema: '',
-                    fotosEvidenciaBase64: [],
-                    esDemandante: esDemandante
-                  });
-                  setTransaccionDetalleModalOpen(false);
-                  setReportModalOpen(true);
-                }}
+                style={{ flex: 1, padding: '0.75rem' }}
+                disabled={calificacion === 0}
+                onClick={handleCalificar}
               >
-                Reportar Incidencia
-              </button>
-              <button 
-                className="btn-primary" 
-                style={{ flex: '1 1 auto', padding: '0.75rem', backgroundColor: '#dc2626', color: '#fff', border: 'none' }}
-                onClick={() => {
-                  setCancelTransaccionModalOpen(true);
-                  setTransaccionDetalleModalOpen(false);
-                }}
-              >
-                Cancelar Transacción
+                Enviar Calificación
               </button>
             </div>
           </div>
@@ -1239,6 +1485,41 @@ const Profile = () => {
           </div>
         </div>
       , document.body)}
+
+      {/* Modal Adjudicar - Contactos */}
+      {adjudicarModalOpen && adjudicarData && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000 }}>
+          <div className="card animate-in" style={{ width: '90%', maxWidth: '440px', padding: '2rem' }}>
+            <button
+              onClick={() => { setAdjudicarModalOpen(false); setAdjudicarData(null); }}
+              style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-tertiary)' }}
+            >&times;</button>
+            <h3 style={{ marginBottom: '1.5rem', color: 'var(--text-primary)' }}>Subasta Adjudicada</h3>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+              A continuación los datos de contacto de las partes involucradas:
+            </p>
+
+            <div style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: 'var(--bg-secondary)', borderRadius: '0.5rem' }}>
+              <h4 style={{ marginBottom: '0.5rem', color: 'var(--accent-primary)', fontSize: '0.95rem' }}>Ganador</h4>
+              <p style={{ margin: '0 0 0.25rem', fontSize: '0.9rem', color: 'var(--text-primary)' }}><strong>Nombre:</strong> {adjudicarData.ganador.nombre}</p>
+              {adjudicarData.ganador.correoElectronico && <p style={{ margin: '0 0 0.25rem', fontSize: '0.9rem', color: 'var(--text-primary)' }}><strong>Correo:</strong> {adjudicarData.ganador.correoElectronico}</p>}
+              {adjudicarData.ganador.telefono && <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-primary)' }}><strong>Teléfono:</strong> {adjudicarData.ganador.telefono}</p>}
+            </div>
+
+            <div style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: 'var(--bg-secondary)', borderRadius: '0.5rem' }}>
+              <h4 style={{ marginBottom: '0.5rem', color: 'var(--accent-secondary)', fontSize: '0.95rem' }}>Propietario (Tú)</h4>
+              <p style={{ margin: '0 0 0.25rem', fontSize: '0.9rem', color: 'var(--text-primary)' }}><strong>Nombre:</strong> {adjudicarData.propietario.nombre}</p>
+              {adjudicarData.propietario.correoElectronico && <p style={{ margin: '0 0 0.25rem', fontSize: '0.9rem', color: 'var(--text-primary)' }}><strong>Correo:</strong> {adjudicarData.propietario.correoElectronico}</p>}
+              {adjudicarData.propietario.telefono && <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-primary)' }}><strong>Teléfono:</strong> {adjudicarData.propietario.telefono}</p>}
+            </div>
+
+            <button className="btn-primary" style={{ width: '100%', padding: '0.75rem' }} onClick={() => { setAdjudicarModalOpen(false); setAdjudicarData(null); }}>
+              Cerrar
+            </button>
+          </div>
+        </div>,
+        document.body
+      )}
 
       {/* Centralized Alert Modal */}
       {alertMessage && (

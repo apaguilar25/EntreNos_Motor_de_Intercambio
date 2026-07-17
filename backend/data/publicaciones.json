@@ -320,7 +320,7 @@
   },
   {
     "idPublicacion": "PUB-0000001E",
-    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "idUsuario": "d803abbd-3578-4119-84d6-a6edd5451dce",
     "tipoPublicacion": "HABILIDAD",
     "nombreServicio": "Soporte Técnico / Computación",
     "descripcion": "Soporte técnico básico para computadoras y redes",
@@ -331,7 +331,7 @@
   },
   {
     "idPublicacion": "PUB-0000001F",
-    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "idUsuario": "d803abbd-3578-4119-84d6-a6edd5451dce",
     "tipoPublicacion": "HABILIDAD",
     "nombreServicio": "Electricidad",
     "descripcion": "Reparaciones eléctricas del hogar",
@@ -342,7 +342,7 @@
   },
   {
     "idPublicacion": "PUB-00000020",
-    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "idUsuario": "d803abbd-3578-4119-84d6-a6edd5451dce",
     "tipoPublicacion": "HABILIDAD",
     "nombreServicio": "Carpintería",
     "descripcion": "Arreglo de sillas, mesas y muebles de madera",
@@ -353,7 +353,7 @@
   },
   {
     "idPublicacion": "PUB-00000021",
-    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "idUsuario": "d803abbd-3578-4119-84d6-a6edd5451dce",
     "tipoPublicacion": "NECESIDAD",
     "nombreServicio": "Electricidad",
     "descripcion": "Necesito cambiar varios tomacorrientes y un interruptor en mi casa",
@@ -364,7 +364,7 @@
   },
   {
     "idPublicacion": "PUB-00000022",
-    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "idUsuario": "d803abbd-3578-4119-84d6-a6edd5451dce",
     "tipoPublicacion": "NECESIDAD",
     "nombreServicio": "Limpieza del Hogar",
     "descripcion": "Limpieza general de mi apartamento de 2 habitaciones",
@@ -375,7 +375,7 @@
   },
   {
     "idPublicacion": "PUB-00000023",
-    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "idUsuario": "d803abbd-3578-4119-84d6-a6edd5451dce",
     "tipoPublicacion": "NECESIDAD",
     "nombreServicio": "Yoga",
     "descripcion": "Clases de yoga relajante después del trabajo",
@@ -426,6 +426,28 @@
     "precioCreditos": 0,
     "disponible": true,
     "idInstanciaCatalogo": "084966fa-d9fa-4438-8d2d-9421df133a53",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-836FD1AD",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Piano Clásico",
+    "descripcion": "Soy Lizst",
+    "precioCreditos": 6,
+    "disponible": true,
+    "idInstanciaCatalogo": "72afead2-a31e-422c-bcf1-1321cd3e462a",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-51E96CB8",
+    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Piano Clásico",
+    "descripcion": "necesito aprender",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "d7624609-8f0e-4c9d-92bd-57fd3d93337b",
     "version": 0
   }
 ]

@@ -40,7 +40,7 @@
   "idReferenciaAuxiliar" : null
 }, {
   "idNotificacion" : "cf91d866-6137-495a-9991-6a06ffbc5783",
-  "idRemitente" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "idRemitente" : "d803abbd-3578-4119-84d6-a6edd5451dce",
   "idDestinatario" : "610b0b73-746c-4d2a-88b7-c90778427553",
   "mensaje" : "Admin Principal ha hecho una oferta en tu subasta: Bicicleta de Montaña 29\"",
   "tipo" : "NUEVA_OFERTA_SUBASTA",
@@ -50,12 +50,282 @@
   "idReferenciaAuxiliar" : "PROP-0B62FD"
 }, {
   "idNotificacion" : "c8733b4d-6c75-4b4c-b6bd-84d6da4fc284",
-  "idRemitente" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "idRemitente" : "d803abbd-3578-4119-84d6-a6edd5451dce",
   "idDestinatario" : "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
   "mensaje" : "¡Felicidades! Tu propuesta ha sido elegida como ganadora.",
   "tipo" : "SUBASTA_GANADA",
   "estadoLectura" : false,
   "fechaCreacion" : 1784247519714,
   "idReferencia" : "SUB-98C52AC4",
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "b5000ca7-6f4d-4267-8671-72d70b7149c5",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "Has ofertado exitosamente por: Plomería por 5 créditos. Esperando respuesta del proveedor.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784277724586,
+  "idReferencia" : "SOL-EFB502E9",
+  "idReferenciaAuxiliar" : "PUB-00000001"
+}, {
+  "idNotificacion" : "c6a7104d-6f0d-4969-b3c4-b92aa98e396a",
+  "idRemitente" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "Tu solicitud para Plomería fue ACEPTADA. Se retuvieron 0 creditos.",
+  "tipo" : "ESTADO_SOLICITUD_CAMBIADO",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784277731086,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "7690797d-ffbb-45be-89b8-df2af1b78319",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "Datos de contacto del ofertante Carlos Prueba: Correo: carlos.prueba@alameda.com — Teléfono: 04121234567",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784277731091,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "694abd8e-458e-4dc0-b1f6-8b20a5fc6a02",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Datos de contacto del demandante Ana Ofertante: Correo: ana.cache@alameda.com — Teléfono: +58414000901",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784277731095,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "15003370-f145-4988-affd-75bebf31447b",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Electricidad Básica\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784277859091,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "722d4f50-aad2-40c0-886c-c8f3508d94e8",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Electricidad Básica\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784277859095,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "0639d620-1924-4b5b-96fb-4d597e50bf6e",
+  "idRemitente" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "El ofertante confirmó la entrega del servicio: Cocina Italiana",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784281062128,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "55ca81ae-1cb6-4cd7-928d-564a4bed5628",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "Recibiste 10 créditos por el servicio: Cocina Italiana",
+  "tipo" : "MOVIMIENTO_MONEDERO",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784281066058,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "5b3e9b47-3fff-46e4-933e-05d476bf05b1",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Se liberaron 10 créditos comprometidos por: Cocina Italiana",
+  "tipo" : "MOVIMIENTO_MONEDERO",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784281066067,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "894c7223-5064-4315-8e11-c4a662da285e",
+  "idRemitente" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "El demandante confirmó la recepción del servicio: Cocina Italiana",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784281066111,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "6c420ac1-768b-406d-bc86-e4c495c87753",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Has ofertado exitosamente por: Plomería por 4 créditos. Esperando respuesta del proveedor.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784283434709,
+  "idReferencia" : "SOL-6AE431D7",
+  "idReferenciaAuxiliar" : "PUB-484B9EC1"
+}, {
+  "idNotificacion" : "c8279a17-44ef-4fca-9def-8067adb9b53f",
+  "idRemitente" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Tu solicitud para Plomería fue ACEPTADA. Se retuvieron 0 creditos.",
+  "tipo" : "ESTADO_SOLICITUD_CAMBIADO",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784283442541,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "c886e163-7fbf-485a-8ef4-6ae87a817707",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Datos de contacto del ofertante Ana Ofertante: Correo: ana.cache@alameda.com — Teléfono: +58414000901",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784283442575,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "f5b6dc3c-792e-42da-ad2e-1c7a4a52c130",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "Datos de contacto del demandante Carlos Prueba: Correo: carlos.prueba@alameda.com — Teléfono: 04121234567",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784283442606,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "adfabff8-c3e3-4350-9b57-6890ba416ba9",
+  "idRemitente" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "El ofertante confirmó la entrega del servicio: Plomería",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784283458908,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "357c9886-0602-4d9e-8c53-a84bdaa7b6d2",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "Recibiste 0 créditos por el servicio: Plomería",
+  "tipo" : "MOVIMIENTO_MONEDERO",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784283487038,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "1bc72978-8977-488c-8cc6-26f817f1c0a6",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Se liberaron 0 créditos comprometidos por: Plomería",
+  "tipo" : "MOVIMIENTO_MONEDERO",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784283487052,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "db943865-8333-473d-9646-116fdea54ed7",
+  "idRemitente" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "El demandante confirmó la recepción del servicio: Plomería",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784283487104,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "790953be-7bd9-4764-a53e-b82792cc5061",
+  "idRemitente" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "¡Felicidades! Tu propuesta ha sido elegida como ganadora.",
+  "tipo" : "SUBASTA_GANADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784284284355,
+  "idReferencia" : "SUB-F7FBA4F7",
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "c43deb0c-61e8-41c6-bd92-27d5e89fab6d",
+  "idRemitente" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "idDestinatario" : "610b0b73-746c-4d2a-88b7-c90778427553",
+  "mensaje" : "Carlos Prueba quiere contratar servicio: Electricidad Básica por 7 créditos.",
+  "tipo" : "NUEVA_SOLICITUD_ENTRANTE",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784285118343,
+  "idReferencia" : "SOL-6116E3D2",
+  "idReferenciaAuxiliar" : "PUB-0000000E"
+}, {
+  "idNotificacion" : "6e7982e5-3349-422a-8f46-048447d26319",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Has ofertado exitosamente por: Electricidad Básica por 7 créditos. Esperando respuesta del proveedor.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784285118361,
+  "idReferencia" : "SOL-6116E3D2",
+  "idReferenciaAuxiliar" : "PUB-0000000E"
+}, {
+  "idNotificacion" : "a7b4249e-fd9d-4856-b9cb-99cd961e1d7d",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "Has ofertado exitosamente por: Piano Clásico por 6 créditos. Esperando respuesta del proveedor.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784285972522,
+  "idReferencia" : "SOL-B990771D",
+  "idReferenciaAuxiliar" : "PUB-836FD1AD"
+}, {
+  "idNotificacion" : "fe79e8bb-9e03-47b8-8c4b-89f115e3602e",
+  "idRemitente" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "Tu solicitud para Piano Clásico fue ACEPTADA. Se retuvieron 0 creditos.",
+  "tipo" : "ESTADO_SOLICITUD_CAMBIADO",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784285976525,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "1485bdc5-f556-4f68-a372-97023f1c25fa",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "Datos de contacto del ofertante Carlos Prueba: Correo: carlos.prueba@alameda.com — Teléfono: 04121234567",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784285976532,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "94eb698d-f9da-4b81-8e4c-833b4ae3b015",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Datos de contacto del demandante Ana Ofertante: Correo: ana.cache@alameda.com — Teléfono: +58414000901",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784285976538,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "2b83375f-81ae-475a-88b2-d3536a4aa039",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Piano Clásico\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784286056467,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "253acad0-f3f6-4136-953f-4c36b499ac77",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Piano Clásico\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784286056471,
+  "idReferencia" : null,
   "idReferenciaAuxiliar" : null
 } ]
