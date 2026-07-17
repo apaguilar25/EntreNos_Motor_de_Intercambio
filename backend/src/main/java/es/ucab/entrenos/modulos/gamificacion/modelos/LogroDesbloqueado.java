@@ -9,7 +9,7 @@ public class LogroDesbloqueado {
     private String idLogro;
     private long fechaDesbloqueo;
 
-
+    public LogroDesbloqueado() {}
 
     public LogroDesbloqueado(String idUsuario, String idLogro) {
         this.id = UUID.randomUUID().toString();
