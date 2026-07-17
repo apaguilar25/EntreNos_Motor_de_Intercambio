@@ -7,12 +7,39 @@ import { Star, ShieldCheck, Edit2, Trash2 } from 'lucide-react';
 import Pagination from '../componentes/ui/Pagination';
 
 const Profile = () => {
-  const { user, controladorPerfil, controladorSubasta, controladorGamificacion } = useContext(AppContext);
+  const { user, setUser, controladorPerfil, controladorSubasta, controladorGamificacion } = useContext(AppContext);
   const { confirm } = useConfirm();
   const navigate = useNavigate();
   const location = useLocation();
   
   const [userProfile, setUserProfile] = useState(null);
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64String = reader.result;
+        try {
+          const res = await fetch(`http://localhost:8080/api/usuarios/${user.id}/foto`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ urlFoto: base64String })
+          });
+          if (res.ok) {
+            setUser({ ...user, urlFotoPerfil: base64String });
+            setAlertMessage('Foto de perfil actualizada con éxito.');
+          } else {
+            setAlertMessage('Error al actualizar la foto de perfil.');
+          }
+        } catch (err) {
+          setAlertMessage('Error al conectar con el servidor.');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const [sentRequests, setSentRequests] = useState([]);
   const [myAuctions, setMyAuctions] = useState([]);
   const [transacciones, setTransacciones] = useState([]);
@@ -444,19 +471,28 @@ const Profile = () => {
       {/* Tarjeta de Identidad */}
       <div className="card" style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginBottom: '2rem' }}>
         <div style={{ 
-          width: '100px', 
-          height: '100px', 
-          borderRadius: '50%', 
-          backgroundColor: 'var(--accent-primary)',
-          color: '#fff',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '2.5rem',
-          fontWeight: 'bold'
-        }}>
-          {user?.name?.charAt(0).toUpperCase() || 'U'}
-        </div>
+            width: '100px', 
+            height: '100px', 
+            borderRadius: '50%', 
+            backgroundColor: 'var(--accent-primary)',
+            color: '#fff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '2.5rem',
+            fontWeight: 'bold',
+            overflow: 'hidden',
+            position: 'relative'
+          }}>
+
+            {user?.urlFotoPerfil && user.urlFotoPerfil !== 'default.png' ? (
+              <img src={user.urlFotoPerfil} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              user?.name?.charAt(0).toUpperCase() || 'U'
+            )}
+            <input type="file" accept="image/*" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} onChange={handleFileChange} title="Cambiar foto de perfil" />
+
+          </div>
         
         <div style={{ flex: 1 }}>
           <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -925,7 +961,11 @@ const Profile = () => {
                     type="number"
                     min="1"
                     value={editData.precio}
-                    onChange={(e) => setEditData({ ...editData, precio: Number(e.target.value) })}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      if (val > 0) setEditData({ ...editData, precio: val });
+                      else if (e.target.value === '') setEditData({ ...editData, precio: '' });
+                    }}
                     style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}
                     required
                   />

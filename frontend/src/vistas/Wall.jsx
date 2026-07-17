@@ -168,7 +168,7 @@ const Wall = () => {
               {index + 1}
             </div>
             <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1rem' }}>
-              {usr.nombreUsuario?.charAt(0)}
+              {usr.urlFotoPerfil && usr.urlFotoPerfil !== 'default.png' ? <img src={usr.urlFotoPerfil} alt={usr.nombreUsuario} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} /> : usr.nombreUsuario?.charAt(0)}
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: '0.875rem', fontWeight: '600', cursor: 'pointer' }} onClick={() => navigate('/user/' + usr.idUsuario)}>{usr.nombreUsuario}</div>
@@ -410,7 +410,7 @@ const Wall = () => {
                   onClick={() => post.userId === user?.id ? navigate('/profile') : navigate(`/user/${post.userId}`)}
                   style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontWeight: 'bold', cursor: 'pointer' }}
                 >
-                  {post.user.charAt(0)}
+                  {post.urlFotoPerfil && post.urlFotoPerfil !== 'default.png' ? <img src={post.urlFotoPerfil} alt={post.user} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} /> : post.user.charAt(0)}
                 </div>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
