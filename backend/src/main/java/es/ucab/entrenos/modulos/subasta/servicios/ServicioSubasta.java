@@ -82,6 +82,9 @@ public class ServicioSubasta {
         }
     }
 
+    
+
+
     public List<Subasta> listarSubastasActivas() {
         return repositorioSubasta.listarTodas().stream()
                 .filter(s -> s.getEstado() == EstadoSubasta.ACTIVA)
@@ -154,6 +157,20 @@ public class ServicioSubasta {
         } finally {
             candadoEscritura.unlock();
         }
+    }
+
+    public void retirarPuja(String idSubasta, String idUsuario) {
+        Subasta subasta = repositorioSubasta.buscarPorId(idSubasta)
+                .orElseThrow(() -> new IllegalArgumentException("Subasta no encontrada."));
+        if (subasta.getEstado() != es.ucab.entrenos.modulos.subasta.modelos.EstadoSubasta.ACTIVA) {
+            throw new IllegalStateException("La subasta ya no está activa, no puedes retirar tu puja.");
+        }
+        boolean removido = subasta.getPropuestas().removeIf(p -> p.getIdPostor().equals(idUsuario));
+        if (!removido) {
+            throw new IllegalArgumentException("No tienes ninguna puja en esta subasta.");
+        }
+        subasta.incrementarVersion();
+        repositorioSubasta.guardar(subasta);
     }
 
     public void cancelarSubastaManual(String idPropietario, String idSubasta) {

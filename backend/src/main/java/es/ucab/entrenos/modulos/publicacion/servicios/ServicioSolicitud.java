@@ -10,6 +10,9 @@ import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
 import es.ucab.entrenos.modulos.publicacion.modelos.Solicitud;
 import es.ucab.entrenos.modulos.publicacion.modelos.Transaccion;
 import es.ucab.entrenos.modulos.identidad.modelos.HabilidadOfrecida;
+import es.ucab.entrenos.modulos.identidad.modelos.NecesidadRegistrada;
+import es.ucab.entrenos.modulos.identidad.modelos.Habilidad;
+
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioSolicitud;
 import es.ucab.entrenos.modulos.publicacion.repositorios.IRepositorioTransaccion;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,7 @@ public class ServicioSolicitud {
     private final ServicioUsuario servicioUsuario;
     private final ServicioNotificacion servicioNotificacion;
     private final IRepositorioTransaccion repositorioTransaccion;
+    
 
     public ServicioSolicitud(IRepositorioSolicitud repositorioSolicitud,
                              ServicioPublicacion servicioPublicacion,
@@ -138,6 +142,33 @@ public class ServicioSolicitud {
             solicitante.incrementarVersion();
             servicioUsuario.guardar(solicitante);
         }
+        // Auto-update catalog
+        Usuario solicitanteUpdate = servicioUsuario.buscarPorId(idSolicitante).orElseThrow(() -> new IllegalArgumentException("Solicitante no encontrado."));
+        if (pub.getTipoPublicacion().equals("NECESIDAD")) {
+            // El solicitante esta ofreciendo el servicio
+            boolean tieneHabilidad = solicitanteUpdate.getHabilidadesOfrecidas().stream()
+                    .anyMatch(h -> h.getHabilidadBase().getCategoria().equalsIgnoreCase(pub.getNombreServicio()));
+            if (!tieneHabilidad) {
+                servicioUsuario.agregarHabilidadIndividual(
+                        idSolicitante, 
+                        new es.ucab.entrenos.modulos.identidad.modelos.Habilidad(java.util.UUID.randomUUID().toString(), pub.getNombreServicio()), 
+                        precioFinal, 
+                        "Agregado automáticamente al responder necesidad en el muro."
+                );
+            }
+        } else if (pub.getTipoPublicacion().equals("HABILIDAD")) {
+            // El solicitante esta demandando el servicio
+            boolean tieneNecesidad = solicitanteUpdate.getNecesidadesRegistradas().stream()
+                    .anyMatch(n -> n.getNecesidadBase().getCategoria().equalsIgnoreCase(pub.getNombreServicio()));
+            if (!tieneNecesidad) {
+                servicioUsuario.agregarNecesidadIndividual(
+                        idSolicitante, 
+                        new es.ucab.entrenos.modulos.identidad.modelos.Habilidad(java.util.UUID.randomUUID().toString(), pub.getNombreServicio()), 
+                        "Agregado automáticamente al solicitar habilidad en el muro."
+                );
+            }
+        }
+
 
         Solicitud solicitud = new Solicitud(idPublicacion, idSolicitante, precioFinal);
         repositorioSolicitud.guardar(solicitud);

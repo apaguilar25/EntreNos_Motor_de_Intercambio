@@ -40,6 +40,17 @@ export class ControladorAutenticacion {
       
       return hasCat ? '/' : '/onboarding';
     } catch (err) {
+      const txt = err.message || '';
+      const idx = txt.indexOf(': ');
+      if (idx !== -1) {
+        try {
+          const parsed = JSON.parse(txt.substring(idx + 2));
+          if (parsed.error) throw new Error(parsed.error);
+        } catch (e) {
+          if (e instanceof SyntaxError) { /* not JSON, use generic */ }
+          else throw e;
+        }
+      }
       throw new Error('Credenciales inválidas o error de conexión. Verifica tu correo y contraseña.');
     }
   }

@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { AppContext } from '../App';
 import { ToastContext } from '../contextos/ToastContext';
 import { ConfirmContext, useConfirm } from '../contextos/ConfirmContext';
-import { ArrowLeft, User as UserIcon, Package, MessageSquare, Coins, Star } from 'lucide-react';
+import { ArrowLeft, User as UserIcon, Package, MessageSquare, Coins } from 'lucide-react';
 
 const MakeRequest = () => {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ const MakeRequest = () => {
     { id: 4, name: 'Aceite' }
   ];
   const [selectedGoods, setSelectedGoods] = useState({});
-  const [offerImages, setOfferImages] = useState([]);
+  const [offerImage, setOfferImage] = useState(null);
 
 
   // Mock data based on type
@@ -118,8 +118,8 @@ const MakeRequest = () => {
         addToast('Debes indicar una cantidad válida para los bienes seleccionados.', 'error');
         return;
       }
-      if (offerImages.length === 0) {
-        addToast('Es obligatorio adjuntar al menos una imagen como evidencia visual física de los productos.', 'error');
+      if (!offerImage) {
+        addToast('Es obligatorio adjuntar una imagen como evidencia visual física de los productos.', 'error');
         return;
       }
       if (!message) {
@@ -142,7 +142,7 @@ const MakeRequest = () => {
           bienesOfrecidos: lineasPayload,
           descripcion: message,
           estadoFisico: estadoFisico,
-          imagenesUrls: offerImages
+          imagenesUrls: [offerImage]
         };
 
         const response = await controladorSubasta.hacerOferta(id, payload);
@@ -180,47 +180,15 @@ const MakeRequest = () => {
           const profile = await controladorPerfil.obtenerDatosPerfil(user.id);
           const currentCategory = data.title;
           
-          // Verificar si la categoría ya está en ofertas o necesidades del catálogo
+          // Verificar si la categoría ya está en intereses, ofertas o necesidades
           const inOfertas = profile?.ofertas?.some(o => o.habilidadBase?.categoria === currentCategory || currentCategory.includes(o.habilidadBase?.categoria));
           const inNecesidades = profile?.necesidades?.some(n => n.necesidadBase?.categoria === currentCategory || currentCategory.includes(n.necesidadBase?.categoria));
+          const inIntereses = profile?.intereses?.includes(currentCategory);
 
-          if (!inOfertas && !inNecesidades) {
-            const addToCatalog = await confirm("Añadir al Catálogo", `¿Deseas añadir "${currentCategory}" a tu catálogo de ${type === 'necesidad' ? 'ofertas' : 'necesidades'}?`);
-            if (addToCatalog) {
-              try {
-                const skillsRes = await fetch('http://localhost:8080/api/habilidades');
-                if (skillsRes.ok) {
-                  const allSkills = await skillsRes.json();
-                  const match = allSkills.find(s => s.categoria?.toLowerCase() === currentCategory.toLowerCase());
-                  if (match) {
-                    if (type === 'necesidad') {
-                      await fetch(`http://localhost:8080/api/usuarios/${user.id}/habilidades`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          idHabilidadCategoria: match.id,
-                          precioCreditos: offeredPrice || 0,
-                          descripcionServicio: `Ofrezco ${currentCategory.toLowerCase()}`
-                        })
-                      });
-                    } else {
-                      await fetch(`http://localhost:8080/api/usuarios/${user.id}/necesidades`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          idHabilidadCategoria: match.id,
-                          descripcionCondiciones: `Necesito ${currentCategory.toLowerCase()}`
-                        })
-                      });
-                    }
-                    addToast(`"${currentCategory}" añadida a tu catálogo.`, 'success');
-                  } else {
-                    addToast(`No se encontró la categoría "${currentCategory}" en el catálogo maestro.`, 'info');
-                  }
-                }
-              } catch (e) {
-                console.error('Error añadiendo al catálogo:', e);
-              }
+          if (!inOfertas && !inNecesidades && !inIntereses) {
+            const addInterest = await confirm("Añadir Interés", "¿Deseas añadir esta categoría a tus intereses para recibir mejores sugerencias?");
+            if (addInterest) {
+              addToast("Categoría añadida a tus intereses.", 'info');
             }
           }
         } catch (error) {
@@ -275,7 +243,7 @@ const MakeRequest = () => {
             </div>
             <div>
               <div style={{ fontWeight: 'bold' }}>{user?.name || 'Usuario Actual'}</div>
-              {user?.reputacionHistorica && <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Reputación: {(Number(user.reputacionHistorica) || 5).toFixed(1)} ⭐</div>}
+              <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Reputación: {user?.reputacion?.toFixed(1) || '5.0'} ⭐</div>
             </div>
           </div>
 
@@ -319,45 +287,27 @@ const MakeRequest = () => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Fotos de los Bienes (puedes subir varias)</label>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Imagen de la Oferta (Obligatorio)</label>
                   <label 
-                    style={{ border: offerImages.length > 0 ? '2px solid var(--accent-primary)' : '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '1rem', textAlign: 'center', color: offerImages.length > 0 ? 'var(--accent-primary)' : 'var(--text-tertiary)', cursor: 'pointer', backgroundColor: offerImages.length > 0 ? 'var(--bg-secondary)' : 'transparent', display: 'block' }}
+                    style={{ border: offerImage ? '2px solid var(--accent-primary)' : '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '1rem', textAlign: 'center', color: offerImage ? 'var(--accent-primary)' : 'var(--text-tertiary)', cursor: 'pointer', backgroundColor: offerImage ? 'var(--bg-secondary)' : 'transparent', display: 'block' }}
                   >
                     <input 
                       type="file" 
                       accept="image/*" 
-                      multiple
                       onChange={(e) => {
-                        const files = Array.from(e.target.files);
-                        if (files.length > 0) {
-                          const promises = files.map(file => new Promise((resolve) => {
-                            const reader = new FileReader();
-                            reader.onloadend = () => resolve(reader.result);
-                            reader.readAsDataURL(file);
-                          }));
-                          Promise.all(promises).then(results => {
-                            setOfferImages(prev => [...prev, ...results]);
-                          });
+                        const file = e.target.files[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => setOfferImage(reader.result);
+                          reader.readAsDataURL(file);
+                        } else {
+                          setOfferImage(null);
                         }
                       }}
                       style={{ display: 'none' }}
                     />
-                    <p>{offerImages.length > 0 ? `${offerImages.length} imagen(es) adjuntada(s) (Agregar más)` : 'Click para subir imágenes'}</p>
+                    <p>{offerImage ? 'Imagen adjuntada (Cambiar)' : 'Click para subir imagen'}</p>
                   </label>
-                  {offerImages.length > 0 && (
-                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
-                      {offerImages.map((img, i) => (
-                        <div key={i} style={{ position: 'relative', width: '60px', height: '60px' }}>
-                          <img src={img} alt={`Foto ${i+1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.25rem' }} />
-                          <button
-                            type="button"
-                            onClick={() => setOfferImages(prev => prev.filter((_, j) => j !== i))}
-                            style={{ position: 'absolute', top: '-4px', right: '-4px', width: '18px', height: '18px', borderRadius: '50%', background: 'var(--color-red-600)', color: '#fff', border: 'none', fontSize: '0.6rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
-                          >&times;</button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
 
                 <div>
@@ -446,7 +396,7 @@ const MakeRequest = () => {
             </div>
             <div>
               <div style={{ fontWeight: 'bold' }}>{data.owner}</div>
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Reputación: {(Number(data.reputation) || 0).toFixed(1)} ⭐</div>
+              <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Reputación: {data.reputation} ⭐</div>
             </div>
           </div>
 

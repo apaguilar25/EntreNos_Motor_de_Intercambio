@@ -49,7 +49,7 @@ public class ServicioAutenticacion {
 
             case BLOQUEADO_SEGURIDAD:
                 long horasSeguridad = (usuario.getTiempoDesbloqueoMillis() - System.currentTimeMillis()) / (1000 * 60 * 60);
-                throw new SecurityException("Cuenta bloqueada temporalmente por múltiples intentos fallidos. Intente nuevamente en " + (horasSeguridad + 1) + " horas.");
+                throw new SecurityException("Tu cuenta ha sido inhabilitada temporalmente por 5 intentos en menos de 3 minutos. Intente nuevamente en " + (horasSeguridad + 1) + " horas.");
 
             case ACTIVO:
                 // 3. VALIDACIÓN CRIPTOGRÁFICA DE LA CONTRASEÑA
