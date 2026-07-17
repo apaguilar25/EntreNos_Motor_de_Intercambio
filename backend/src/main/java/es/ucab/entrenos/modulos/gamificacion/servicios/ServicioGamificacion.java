@@ -1,5 +1,6 @@
 package es.ucab.entrenos.modulos.gamificacion.servicios;
 
+import es.ucab.entrenos.modulos.gamificacion.dtos.LogroDesbloqueadoResponseDTO;
 import es.ucab.entrenos.modulos.gamificacion.modelos.Logro;
 import es.ucab.entrenos.modulos.gamificacion.modelos.LogroDesbloqueado;
 import es.ucab.entrenos.modulos.gamificacion.modelos.TipoCriterioLogro;
@@ -36,6 +37,37 @@ public class ServicioGamificacion {
         this.repositorioTransaccion = repositorioTransaccion;
         this.servicioUsuario = servicioUsuario;
         this.servicioNotificacion = servicioNotificacion;
+    }
+
+    public List<LogroDesbloqueadoResponseDTO> obtenerLogrosPorUsuario(String idUsuario) {
+        // 1. Obtenemos los identificadores de los logros que el usuario ya desbloqueó
+        List<LogroDesbloqueado> desbloqueados = repositorioLogroDesbloqueado.obtenerPorUsuario(idUsuario);
+
+        // 2. Obtenemos el catálogo de logros activos para enriquecer la información
+        List<Logro> catalogoLogros = obtenerTodosLosLogros();
+
+        // 3. Mapeamos y fusionamos los datos
+        return desbloqueados.stream().map(desbloqueado -> {
+                    Logro detalleLogro = catalogoLogros.stream()
+                            .filter(l -> l.getIdLogro().equals(desbloqueado.getIdLogro()))
+                            .findFirst()
+                            .orElse(null);
+
+                    if (detalleLogro != null) {
+                        // NOTA: Si LogroDesbloqueado no tiene un getFechaDesbloqueo() explícito,
+                        // sustituye por la fecha que maneje tu entidad, o System.currentTimeMillis()
+                        return new LogroDesbloqueadoResponseDTO(
+                                detalleLogro.getIdLogro(),
+                                detalleLogro.getNombre(),
+                                detalleLogro.getDescripcion(),
+                                detalleLogro.getBonoCreditos(),
+                                desbloqueado.getFechaDesbloqueo()
+                        );
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull) // Evita nulos en caso de que un logro antiguo fuera eliminado del catálogo
+                .collect(Collectors.toList());
     }
 
     public List<LogroDesbloqueado> evaluarLogros(String idUsuario) {

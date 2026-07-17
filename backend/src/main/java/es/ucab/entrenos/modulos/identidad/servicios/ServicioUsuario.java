@@ -1,6 +1,8 @@
 package es.ucab.entrenos.modulos.identidad.servicios;
 
+import es.ucab.entrenos.modulos.identidad.dtos.PerfilPublicoDTO;
 import es.ucab.entrenos.modulos.identidad.excepciones.CorreoDuplicadoException;
+import es.ucab.entrenos.modulos.identidad.excepciones.RecursoNoEncontradoException;
 import es.ucab.entrenos.modulos.identidad.excepciones.TelefonoDuplicadoException;
 import es.ucab.entrenos.modulos.identidad.modelos.EstadoCuenta;
 import es.ucab.entrenos.modulos.identidad.modelos.Habilidad;
@@ -32,6 +34,14 @@ public class ServicioUsuario {
         this.repositorioCorreoPermitido = repositorioCorreoPermitido;
         this.servicioHabilidad = servicioHabilidad;
         this.encriptador = new BCryptPasswordEncoder();
+    }
+
+    public PerfilPublicoDTO obtenerPerfilPublico(String usuarioId) {
+        Usuario usuario = repositorioUsuario.buscarPorId(usuarioId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado con ID: " + usuarioId));
+
+        // Retornamos instanciando directamente el DTO con el modelo
+        return new PerfilPublicoDTO(usuario);
     }
 
     public Optional<Usuario> buscarPorId(String id) {

@@ -105,6 +105,7 @@ es\ucab\entrenos\modulos\publicacion\modelos\Incidencia.class
 es\ucab\entrenos\modulos\notificacion\repositorios\IRepositorioNotificacion.class
 es\ucab\entrenos\modulos\notificacion\repositorios\RepositorioNotificacion$2.class
 es\ucab\entrenos\modulos\reputacion\controladores\ControladorReputacion.class
+es\ucab\entrenos\modulos\subasta\dtos\SubastaResumenDTO.class
 es\ucab\entrenos\modulos\reputacion\repositorios\RepositorioReputacion.class
 es\ucab\entrenos\modulos\identidad\modelos\Usuario.class
 es\ucab\entrenos\nucleo\seguridad\jwt\ServicioJWT.class
@@ -115,6 +116,7 @@ es\ucab\entrenos\modulos\identidad\modelos\EstadoCuenta.class
 es\ucab\entrenos\modulos\publicacion\dtos\PublicacionResponseDTO.class
 es\ucab\entrenos\modulos\subasta\servicios\ServicioPropuesta.class
 es\ucab\entrenos\modulos\gamificacion\repositorios\RepositorioPodio.class
+es\ucab\entrenos\modulos\identidad\dtos\PerfilPublicoCompletoDTO.class
 es\ucab\entrenos\modulos\gamificacion\dtos\LogroEstadoDTO.class
 es\ucab\entrenos\modulos\identidad\dtos\EdicionNecesidadDTO.class
 es\ucab\entrenos\modulos\identidad\repositorios\RepositorioHabilidad$1.class
@@ -139,6 +141,7 @@ es\ucab\entrenos\modulos\subasta\modelos\BienOfrecido.class
 es\ucab\entrenos\modulos\reputacion\repositorios\RepositorioReputacion$1.class
 es\ucab\entrenos\nucleo\seguridad\configuracion\ConfiguracionSeguridad.class
 es\ucab\entrenos\modulos\identidad\modelos\RolUsuario.class
+es\ucab\entrenos\modulos\identidad\excepciones\RecursoNoEncontradoException.class
 es\ucab\entrenos\modulos\identidad\dtos\NuevaOfertaIndividualDTO.class
 es\ucab\entrenos\modulos\identidad\repositorios\IRepositorioHabilidad.class
 es\ucab\entrenos\modulos\publicacion\repositorios\IRepositorioTransaccion.class
@@ -147,6 +150,7 @@ es\ucab\entrenos\modulos\publicacion\repositorios\RepositorioPublicacion.class
 es\ucab\entrenos\modulos\identidad\dtos\ConfiguracionCatalogoRequestDTO$NecesidadDTO.class
 es\ucab\entrenos\modulos\identidad\dtos\ConfiguracionCatalogoRequestDTO.class
 es\ucab\entrenos\modulos\reputacion\servicios\ServicioReputacion.class
+es\ucab\entrenos\modulos\identidad\dtos\PerfilPublicoDTO.class
 es\ucab\entrenos\modulos\publicacion\modelos\EstadoTransaccion.class
 es\ucab\entrenos\modulos\publicacion\repositorios\RepositorioCancelacion.class
 es\ucab\entrenos\EntreNosApplication.class

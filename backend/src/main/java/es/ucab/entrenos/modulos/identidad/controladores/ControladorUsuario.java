@@ -1,5 +1,7 @@
 package es.ucab.entrenos.modulos.identidad.controladores;
 
+import es.ucab.entrenos.modulos.gamificacion.servicios.ServicioGamificacion;
+import es.ucab.entrenos.modulos.gamificacion.servicios.ServicioPodio;
 import es.ucab.entrenos.modulos.identidad.dtos.*;
 import es.ucab.entrenos.modulos.identidad.excepciones.CorreoDuplicadoException;
 import es.ucab.entrenos.modulos.identidad.excepciones.TelefonoDuplicadoException;
@@ -8,6 +10,9 @@ import es.ucab.entrenos.modulos.identidad.servicios.ServicioHabilidad;
 import es.ucab.entrenos.modulos.identidad.servicios.ServicioUsuario;
 import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
 import es.ucab.entrenos.modulos.publicacion.servicios.ServicioPublicacion;
+import es.ucab.entrenos.modulos.gamificacion.dtos.LogroDesbloqueadoResponseDTO;
+import es.ucab.entrenos.modulos.subasta.dtos.SubastaResumenDTO;
+import es.ucab.entrenos.modulos.subasta.servicios.ServicioSubasta;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,10 +31,24 @@ public class ControladorUsuario {
     private final ServicioHabilidad servicioHabilidad;
     private final ServicioPublicacion servicioPublicacion;
 
-    public ControladorUsuario(ServicioUsuario servicioUsuario, ServicioHabilidad servicioHabilidad, ServicioPublicacion servicioPublicacion) {
+    private final ServicioSubasta servicioSubasta;
+    private final ServicioGamificacion servicioGamificacion;
+    private final ServicioPodio servicioPodio;
+
+    public ControladorUsuario(
+            ServicioUsuario servicioUsuario,
+            ServicioHabilidad servicioHabilidad,
+            ServicioPublicacion servicioPublicacion,
+            ServicioSubasta servicioSubasta,
+            ServicioGamificacion servicioGamificacion,
+            ServicioPodio servicioPodio
+    ) {
         this.servicioUsuario = servicioUsuario;
         this.servicioHabilidad = servicioHabilidad;
         this.servicioPublicacion = servicioPublicacion;
+        this.servicioSubasta = servicioSubasta;
+        this.servicioGamificacion = servicioGamificacion;
+        this.servicioPodio = servicioPodio;
     }
 
     private void generarPublicacionDesdeCatalogo(Usuario usuario, String idInstancia, String tipo, Habilidad habilidadBase, String descripcion, int precio) {
@@ -221,6 +240,29 @@ public class ControladorUsuario {
         }
     }
 
+    @GetMapping("/{id}/perfil-publico")
+    public ResponseEntity<PerfilPublicoCompletoDTO> obtenerPerfilPublico(@PathVariable String id) {
+
+        // 1. Obtenemos los datos base de identidad
+        PerfilPublicoDTO perfilBasico = servicioUsuario.obtenerPerfilPublico(id);
+
+        // 2. Obtenemos información transversal
+        // NOTA: Ajusta los nombres de estos métodos ("obtenerSubastasPorUsuario", etc.)
+        // para que coincidan exactamente con cómo los llamaste dentro de tus servicios.
+        List<SubastaResumenDTO> misSubastas = servicioSubasta.obtenerSubastasPorUsuario(id);
+        List<LogroDesbloqueadoResponseDTO> misLogros = servicioGamificacion.obtenerLogrosPorUsuario(id);
+        boolean podio = servicioPodio.estaEnPodioSemanal(id);
+
+        // 3. Ensamblamos la respuesta completa
+        PerfilPublicoCompletoDTO perfilCompleto = new PerfilPublicoCompletoDTO(
+                perfilBasico,
+                misSubastas,
+                misLogros,
+                podio
+        );
+
+        return ResponseEntity.ok(perfilCompleto);
+    }
     // Agregar Habilidad a Usuario
     @PostMapping("/{id}/habilidades")
     public ResponseEntity<?> agregarHabilidadIndividual(
