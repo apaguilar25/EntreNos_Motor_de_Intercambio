@@ -72,7 +72,7 @@
   {
     "idSolicitud": "SOL-00000008",
     "idPublicacion": "PUB-00000015",
-    "idSolicitante": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "idSolicitante": "d803abbd-3578-4119-84d6-a6edd5451dce",
     "estado": "PENDIENTE",
     "fechaCreacion": 1784146279366,
     "fechaLimiteRespuesta": 1784578279366,
@@ -98,5 +98,15 @@
     "fechaLimiteRespuesta": 1784625944120,
     "precioOfertado": 0,
     "version": 0
+  },
+  {
+    "idSolicitud": "SOL-EFB502E9",
+    "idPublicacion": "PUB-00000001",
+    "idSolicitante": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "estado": "ACEPTADA",
+    "fechaCreacion": 1784277724560,
+    "fechaLimiteRespuesta": 1784709724560,
+    "precioOfertado": 0,
+    "version": 1
   }
 ]

@@ -320,7 +320,7 @@
   },
   {
     "idPublicacion": "PUB-0000001E",
-    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "idUsuario": "d803abbd-3578-4119-84d6-a6edd5451dce",
     "tipoPublicacion": "HABILIDAD",
     "nombreServicio": "Soporte Técnico / Computación",
     "descripcion": "Soporte técnico básico para computadoras y redes",
@@ -331,7 +331,7 @@
   },
   {
     "idPublicacion": "PUB-0000001F",
-    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "idUsuario": "d803abbd-3578-4119-84d6-a6edd5451dce",
     "tipoPublicacion": "HABILIDAD",
     "nombreServicio": "Electricidad",
     "descripcion": "Reparaciones eléctricas del hogar",
@@ -342,7 +342,7 @@
   },
   {
     "idPublicacion": "PUB-00000020",
-    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "idUsuario": "d803abbd-3578-4119-84d6-a6edd5451dce",
     "tipoPublicacion": "HABILIDAD",
     "nombreServicio": "Carpintería",
     "descripcion": "Arreglo de sillas, mesas y muebles de madera",
@@ -353,7 +353,7 @@
   },
   {
     "idPublicacion": "PUB-00000021",
-    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "idUsuario": "d803abbd-3578-4119-84d6-a6edd5451dce",
     "tipoPublicacion": "NECESIDAD",
     "nombreServicio": "Electricidad",
     "descripcion": "Necesito cambiar varios tomacorrientes y un interruptor en mi casa",
@@ -364,7 +364,7 @@
   },
   {
     "idPublicacion": "PUB-00000022",
-    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "idUsuario": "d803abbd-3578-4119-84d6-a6edd5451dce",
     "tipoPublicacion": "NECESIDAD",
     "nombreServicio": "Limpieza del Hogar",
     "descripcion": "Limpieza general de mi apartamento de 2 habitaciones",
@@ -375,7 +375,7 @@
   },
   {
     "idPublicacion": "PUB-00000023",
-    "idUsuario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "idUsuario": "d803abbd-3578-4119-84d6-a6edd5451dce",
     "tipoPublicacion": "NECESIDAD",
     "nombreServicio": "Yoga",
     "descripcion": "Clases de yoga relajante después del trabajo",

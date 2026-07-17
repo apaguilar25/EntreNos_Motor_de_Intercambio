@@ -49,7 +49,7 @@
       },
       {
         "idPropuesta": "PROP-00000005",
-        "idPostor": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+        "idPostor": "d803abbd-3578-4119-84d6-a6edd5451dce",
         "bienesOfrecidos": [
           {
             "nombre": "Soporte técnico por 3 meses",
@@ -103,7 +103,7 @@
       {
         "idPropuesta": "PROP-0B62FD",
         "idSubasta": "SUB-00000002",
-        "idPostor": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+        "idPostor": "d803abbd-3578-4119-84d6-a6edd5451dce",
         "bienesOfrecidos": [
           {
             "nombre": "Aceite",
@@ -181,7 +181,7 @@
   },
   {
     "id": "SUB-98C52AC4",
-    "idPropietario": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "idPropietario": "d803abbd-3578-4119-84d6-a6edd5451dce",
     "nombreActivo": "Caminote Cherokee",
     "descripcion": "Una camioneta nueva",
     "estadoFisico": "NUEVO",

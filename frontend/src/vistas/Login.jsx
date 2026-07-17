@@ -40,7 +40,7 @@ const Login = () => {
       }
       
       try {
-        const redirectPath = await controladorAutenticacion.iniciarSesion(correoElectronico, 'miclave2026'); // Si quieres entrar como admin cambia a admin2026
+        const redirectPath = await controladorAutenticacion.iniciarSesion(correoElectronico, 'Admin2026!'); // Cambia a 'miclave2026' para usuarios regulares
         navigate(redirectPath);
       } catch (err) {
         setError(err.message);

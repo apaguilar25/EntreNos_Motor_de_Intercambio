@@ -5,7 +5,7 @@
     "correoElectronico": "miguel@alameda.com",
     "telefono": "04122206867",
     "descripcionPersonal": "Me llamo miguel",
-    "contrasenaHash": "$2a$10$7pP9IRyG3bzA8LJjg/7SmeUR6RvwT1DV.BXj5IqOCnFocLyxwXpv2",
+    "contrasenaHash": "$2b$10$IAGzWmKl.7J6vmLCMW1w8OmKvhRXZ4Ib.630wlZKGe2MhInafqCaC",
     "version": 3,
     "monedero": {
       "creditosDisponibles": 50.0,
@@ -53,7 +53,7 @@
     "correoElectronico": "juan@alameda.com",
     "telefono": "1242424",
     "descripcionPersonal": "Me llamo Juan",
-    "contrasenaHash": "$2a$10$roZsKxRqDtJTwv.XDQxmuOK1Ue3Uy7SLOg6/OkPCcBVBG3q4Xf922",
+    "contrasenaHash": "$2b$10$IAGzWmKl.7J6vmLCMW1w8OmKvhRXZ4Ib.630wlZKGe2MhInafqCaC",
     "version": 0,
     "monedero": {
       "creditosDisponibles": 0.0,
@@ -82,11 +82,11 @@
     "correoElectronico": "ana.cache@alameda.com",
     "telefono": "+58414000901",
     "descripcionPersonal": "Test cache",
-    "contrasenaHash": "$2b$10$uWE5Kn7A2tgmvMQp7JOe5Oq4J3IFlKYNgvZQByCQ3IhafRcMYPQNa",
-    "version": 5,
+    "contrasenaHash": "$2b$10$IAGzWmKl.7J6vmLCMW1w8OmKvhRXZ4Ib.630wlZKGe2MhInafqCaC",
+    "version": 8,
     "monedero": {
       "creditosDisponibles": 50.0,
-      "creditosComprometidos": 0.0,
+      "creditosComprometidos": 5.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -129,8 +129,8 @@
     "nombre": "Carlos Prueba",
     "correoElectronico": "carlos.prueba@alameda.com",
     "telefono": "04121234567",
-    "contrasenaHash": "$2b$10$uWE5Kn7A2tgmvMQp7JOe5Oq4J3IFlKYNgvZQByCQ3IhafRcMYPQNa",
-    "version": 27,
+    "contrasenaHash": "$2b$10$IAGzWmKl.7J6vmLCMW1w8OmKvhRXZ4Ib.630wlZKGe2MhInafqCaC",
+    "version": 30,
     "monedero": {
       "creditosDisponibles": 50.0,
       "creditosComprometidos": 4.0,
@@ -222,42 +222,13 @@
     "esVecinoDestacado": false
   },
   {
-    "id": "610b0b73-746c-4d2a-88b7-c90778427553",
-    "nombre": "Bob Demandante",
-    "correoElectronico": "bob.cache@alameda.com",
-    "telefono": "+58414000902",
-    "descripcionPersonal": "Test cache",
-    "contrasenaHash": "$2b$10$uWE5Kn7A2tgmvMQp7JOe5Oq4J3IFlKYNgvZQByCQ3IhafRcMYPQNa",
-    "version": 5,
-    "monedero": {
-      "creditosDisponibles": 0.0,
-      "creditosComprometidos": 0.0,
-      "creditosPorLogros": 0.0
-    },
-    "catalogo": {
-      "completado": false,
-      "habilidadesOfrecidas": [],
-      "necesidadesRegistradas": []
-    },
-    "estado": "BLOQUEADO_SEGURIDAD",
-    "intentosFallidos": 5,
-    "tiempoDesbloqueoMillis": 1784345303347,
-    "primerIntentoFallidoMillis": 1784258817093,
-    "reportesFraudeValidados": 0,
-    "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 4.5,
-    "cantidadCalificaciones": 2,
-    "rol": "MIEMBRO_COMUNIDAD",
-    "esVecinoDestacado": false
-  },
-  {
-    "id": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "id": "d803abbd-3578-4119-84d6-a6edd5451dce",
     "nombre": "Super Administrador",
     "correoElectronico": "admin@alameda.com",
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
-    "contrasenaHash": "$2b$10$Lpv2lrJoHNTbeXzM7Z8GvOCSc59D62HiVLaiel2yHVUa238AL6Hte",
-    "version": 45,
+    "contrasenaHash": "$2b$10$0Qgrc9WcR89q2cJRlf2.dOCkP1nQe.Dt0ERcABExSfUooMK.C6FHO",
+    "version": 1,
     "monedero": {
       "creditosDisponibles": 50.0,
       "creditosComprometidos": 8.0,
@@ -313,15 +284,44 @@
         }
       ]
     },
-    "estado": "BLOQUEADO_SEGURIDAD",
-    "intentosFallidos": 5,
-    "tiempoDesbloqueoMillis": 1784356544545,
-    "primerIntentoFallidoMillis": 1784270128225,
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
     "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
     "promedioCalificacion": 4.5,
     "cantidadCalificaciones": 3,
     "rol": "ADMINISTRADOR",
+    "esVecinoDestacado": false
+  },
+  {
+    "id": "610b0b73-746c-4d2a-88b7-c90778427553",
+    "nombre": "Bob Demandante",
+    "correoElectronico": "bob.cache@alameda.com",
+    "telefono": "+58414000902",
+    "descripcionPersonal": "Test cache",
+    "contrasenaHash": "$2b$10$IAGzWmKl.7J6vmLCMW1w8OmKvhRXZ4Ib.630wlZKGe2MhInafqCaC",
+    "version": 5,
+    "monedero": {
+      "creditosDisponibles": 0.0,
+      "creditosComprometidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": false,
+      "habilidadesOfrecidas": [],
+      "necesidadesRegistradas": []
+    },
+    "estado": "BLOQUEADO_SEGURIDAD",
+    "intentosFallidos": 5,
+    "tiempoDesbloqueoMillis": 1784345303347,
+    "primerIntentoFallidoMillis": 1784258817093,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 4.5,
+    "cantidadCalificaciones": 2,
+    "rol": "MIEMBRO_COMUNIDAD",
     "esVecinoDestacado": false
   }
 ]
