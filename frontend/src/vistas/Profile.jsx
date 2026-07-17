@@ -14,7 +14,7 @@ const Profile = () => {
   
   const [userProfile, setUserProfile] = useState(null);
 
-  const handleFileChange = async (e) => {
+  const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -490,7 +490,7 @@ const Profile = () => {
             ) : (
               user?.name?.charAt(0).toUpperCase() || 'U'
             )}
-            <input type="file" accept="image/*" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} onChange={handleFileChange} title="Cambiar foto de perfil" />
+            <input type="file" accept="image/*" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} onChange={handleAvatarChange} title="Cambiar foto de perfil" />
 
           </div>
         
