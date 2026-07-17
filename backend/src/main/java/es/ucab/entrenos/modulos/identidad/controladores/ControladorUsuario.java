@@ -1,5 +1,6 @@
 package es.ucab.entrenos.modulos.identidad.controladores;
 
+import es.ucab.entrenos.modulos.gamificacion.dtos.LogroDesbloqueadoResponseDTO;
 import es.ucab.entrenos.modulos.gamificacion.servicios.ServicioGamificacion;
 import es.ucab.entrenos.modulos.gamificacion.servicios.ServicioPodio;
 import es.ucab.entrenos.modulos.identidad.dtos.*;
@@ -249,7 +250,7 @@ public class ControladorUsuario {
         // NOTA: Ajusta los nombres de estos métodos ("obtenerSubastasPorUsuario", etc.)
         // para que coincidan exactamente con cómo los llamaste dentro de tus servicios.
         List<SubastaResumenDTO> misSubastas = servicioSubasta.obtenerSubastasPorUsuario(id);
-        List<Object> misLogros = servicioGamificacion.obtenerLogrosPorUsuario(id);
+        List<LogroDesbloqueadoResponseDTO> misLogros = servicioGamificacion.obtenerLogrosPorUsuario(id);
         boolean podio = servicioPodio.estaEnPodioSemanal(id);
 
         // 3. Ensamblamos la respuesta completa
