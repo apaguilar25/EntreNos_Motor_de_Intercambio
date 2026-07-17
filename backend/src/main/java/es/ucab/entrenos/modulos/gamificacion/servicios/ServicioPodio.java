@@ -61,6 +61,28 @@ public class ServicioPodio {
         return podio;
     }
 
+    public boolean estaEnPodioSemanal(String idUsuario) {
+        Optional<PodioSemanal> podioOpt = repositorioPodio.obtenerActual();
+
+        if (podioOpt.isEmpty()) {
+            return false; // Si no hay podio calculado, nadie está en él
+        }
+
+        PodioSemanal podio = podioOpt.get();
+
+        // Verificamos presencia en las 3 categorías
+        boolean esProveedor = podio.getProveedorElite() != null &&
+                podio.getProveedorElite().stream().anyMatch(e -> e.getIdUsuario().equals(idUsuario));
+
+        boolean esMotor = podio.getMotorEconomia() != null &&
+                podio.getMotorEconomia().stream().anyMatch(e -> e.getIdUsuario().equals(idUsuario));
+
+        boolean esEmbajador = podio.getEmbajadorCalidad() != null &&
+                podio.getEmbajadorCalidad().stream().anyMatch(e -> e.getIdUsuario().equals(idUsuario));
+
+        return esProveedor || esMotor || esEmbajador;
+    }
+
     private List<EntradaPodio> topNProveedores(List<Transaccion> semanales, int n) {
         Map<String, Long> conteo = semanales.stream()
                 .collect(Collectors.groupingBy(Transaccion::getIdOfertante, Collectors.counting()));
