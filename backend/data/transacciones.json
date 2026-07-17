@@ -8,7 +8,7 @@
     "creditosRetenidos": 0,
     "confirmacionOfertante": true,
     "confirmacionDemandante": true,
-    "fechaCreacion": 1781789916610,
+    "fechaCreacion": 1784000000000,
     "version": 4
   },
   {
@@ -20,7 +20,7 @@
     "creditosRetenidos": 0,
     "confirmacionOfertante": true,
     "confirmacionDemandante": true,
-    "fechaCreacion": 1782349033930,
+    "fechaCreacion": 1784000000000,
     "version": 3
   },
   {
@@ -32,7 +32,7 @@
     "creditosRetenidos": 0,
     "confirmacionOfertante": true,
     "confirmacionDemandante": true,
-    "fechaCreacion": 1782553456190,
+    "fechaCreacion": 1784000000000,
     "version": 3
   },
   {
@@ -44,7 +44,7 @@
     "creditosRetenidos": 0,
     "confirmacionOfertante": true,
     "confirmacionDemandante": true,
-    "fechaCreacion": 1782924556454,
+    "fechaCreacion": 1784000000000,
     "version": 3
   },
   {
@@ -56,7 +56,7 @@
     "creditosRetenidos": 4,
     "confirmacionOfertante": true,
     "confirmacionDemandante": false,
-    "fechaCreacion": 1783437362341,
+    "fechaCreacion": 1784000000000,
     "version": 3,
     "idIncidencia": "INC-00000001"
   },
@@ -64,36 +64,36 @@
     "idTransaccion": "TX-00000006",
     "idPublicacion": "PUB-00000004",
     "idOfertante": "f871e1d2-671e-4ea2-a19d-c1393805569c",
-    "idDemandante": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
+    "idDemandante": "e561668f-1fa0-4622-a545-0e6a406b36be",
     "estado": "INICIADA",
     "creditosRetenidos": 6,
     "confirmacionOfertante": false,
     "confirmacionDemandante": false,
-    "fechaCreacion": 1783670319201,
+    "fechaCreacion": 1784000000000,
     "version": 1
   },
   {
     "idTransaccion": "TX-00000007",
     "idPublicacion": "PUB-00000009",
     "idOfertante": "e561668f-1fa0-4622-a545-0e6a406b36be",
-    "idDemandante": "23b7289e-d883-4e97-8b62-9fa0ec806e6d",
+    "idDemandante": "f871e1d2-671e-4ea2-a19d-c1393805569c",
     "estado": "PENDIENTE",
     "creditosRetenidos": 10,
     "confirmacionOfertante": false,
     "confirmacionDemandante": false,
-    "fechaCreacion": 1784073986193,
+    "fechaCreacion": 1784000000000,
     "version": 0
   },
   {
     "idTransaccion": "TX-00000008",
     "idPublicacion": "PUB-00000015",
-    "idOfertante": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
+    "idOfertante": "e561668f-1fa0-4622-a545-0e6a406b36be",
     "idDemandante": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
     "estado": "PENDIENTE",
     "creditosRetenidos": 4,
     "confirmacionOfertante": false,
     "confirmacionDemandante": false,
-    "fechaCreacion": 1784232679366,
+    "fechaCreacion": 1784000000000,
     "version": 0
   },
   {
@@ -105,19 +105,19 @@
     "creditosRetenidos": 5,
     "confirmacionOfertante": false,
     "confirmacionDemandante": false,
-    "fechaCreacion": 1784238093767,
+    "fechaCreacion": 1784000000000,
     "version": 0
   },
   {
     "idTransaccion": "TX-0000000A",
     "idPublicacion": "PUB-0000000F",
     "idOfertante": "610b0b73-746c-4d2a-88b7-c90778427553",
-    "idDemandante": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
+    "idDemandante": "e561668f-1fa0-4622-a545-0e6a406b36be",
     "estado": "PENDIENTE",
     "creditosRetenidos": 4,
     "confirmacionOfertante": false,
     "confirmacionDemandante": false,
-    "fechaCreacion": 1784280344120,
+    "fechaCreacion": 1784000000000,
     "version": 0
   }
 ]
