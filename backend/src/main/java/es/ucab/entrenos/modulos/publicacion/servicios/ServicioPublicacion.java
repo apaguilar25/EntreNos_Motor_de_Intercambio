@@ -2,10 +2,7 @@ package es.ucab.entrenos.modulos.publicacion.servicios;
 
 import es.ucab.entrenos.modulos.gamificacion.modelos.LogroDesbloqueado;
 import es.ucab.entrenos.modulos.gamificacion.servicios.ServicioGamificacion;
-import es.ucab.entrenos.modulos.identidad.modelos.Habilidad;
-import es.ucab.entrenos.modulos.identidad.modelos.HabilidadOfrecida;
-import es.ucab.entrenos.modulos.identidad.modelos.NecesidadRegistrada;
-import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
+import es.ucab.entrenos.modulos.identidad.modelos.*;
 import es.ucab.entrenos.modulos.identidad.servicios.ServicioUsuario;
 import es.ucab.entrenos.modulos.notificacion.modelos.TipoNotificacion;
 import es.ucab.entrenos.modulos.notificacion.servicios.ServicioNotificacion;
@@ -128,6 +125,7 @@ public class ServicioPublicacion {
 
     private void refrescarCache() {
         List<PublicacionResponseDTO> todas = repositorioPublicacion.obtenerTodas().stream()
+                .filter(p -> esUsuarioActivo(p.getIdUsuario()))
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
         cachePublicacion.refrescar(todas);
@@ -143,6 +141,7 @@ public class ServicioPublicacion {
             return cachePublicacion.getTodas();
         }
         return repositorioPublicacion.obtenerTodas().stream()
+                .filter(p -> esUsuarioActivo(p.getIdUsuario()))
                 .filter(p -> tipo == null || tipo.isEmpty() || p.getTipoPublicacion().equalsIgnoreCase(tipo))
                 .filter(p -> servicio == null || servicio.isEmpty() ||
                         p.getNombreServicio().toLowerCase().contains(servicio.toLowerCase()) ||
@@ -175,6 +174,7 @@ public class ServicioPublicacion {
 
         List<Publicacion> todasPubs = repositorioPublicacion.obtenerTodas();
         List<RecomendacionDTO> recomendadas = todasPubs.stream()
+                .filter(p -> esUsuarioActivo(p.getIdUsuario()))
                 .filter(p -> !p.getIdUsuario().equals(idUsuario))
                 .filter(p -> matchDireccional(p, habilidades, necesidades))
                 .map(p -> new RecomendacionDTO(toResponseDTO(p),
@@ -694,5 +694,12 @@ public class ServicioPublicacion {
             dto.setEsVecinoDestacado(u.isEsVecinoDestacado());
         });
         return dto;
+    }
+
+    // Metodo auxiliar para saber si el dueño de la publicación está ACTIVO
+    private boolean esUsuarioActivo(String idUsuario) {
+        return servicioUsuario.buscarPorId(idUsuario)
+                .map(u -> u.getEstado() == EstadoCuenta.ACTIVO)
+                .orElse(false);
     }
 }
