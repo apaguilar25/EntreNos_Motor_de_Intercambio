@@ -30,12 +30,15 @@ C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_In
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\dtos\LoginResponseDTO.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\dtos\NuevaNecesidadIndividualDTO.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\dtos\NuevaOfertaIndividualDTO.java
+C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\dtos\PerfilPublicoCompletoDTO.java
+C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\dtos\PerfilPublicoDTO.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\dtos\PerfilUsuarioResponseDTO.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\dtos\RegistroUsuarioRequestDTO.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\dtos\SaldoResponseDTO.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\excepciones\ConcurrenciaException.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\excepciones\CorreoDuplicadoException.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\excepciones\HabilidadDuplicadaException.java
+C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\excepciones\RecursoNoEncontradoException.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\excepciones\TelefonoDuplicadoException.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\modelos\CatalogoUsuario.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\identidad\modelos\CorreoPermitido.java
@@ -111,7 +114,10 @@ C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_In
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\subasta\controladores\ControladorSubasta.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\subasta\dtos\AdjudicacionResponseDTO.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\subasta\dtos\ContactoUsuarioDTO.java
+C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\subasta\dtos\PropuestaDetalleDTO.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\subasta\dtos\RegistroPropuestaDTO.java
+C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\subasta\dtos\SubastaDetalleDTO.java
+C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\subasta\dtos\SubastaResumenDTO.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\subasta\modelos\BienOfrecido.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\subasta\modelos\EstadoFisico.java
 C:\Users\Personal\Documents\.UCAB\PROYECTOS GITHUB\EntreNos\EntreNos_Motor_de_Intercambio\backend\src\main\java\es\ucab\entrenos\modulos\subasta\modelos\EstadoPropuesta.java

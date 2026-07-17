@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, Hammer } from 'lucide-react';
+import { Clock, Hammer, Trophy, Sparkles, Medal } from 'lucide-react';
 import { AppContext } from '../App';
 
 const Auctions = () => {
   const navigate = useNavigate();
-  const { user, controladorSubasta } = useContext(AppContext);
+  const { user, controladorSubasta, controladorGamificacion } = useContext(AppContext);
   const [auctions, setAuctions] = useState([]);
   const [usersMap, setUsersMap] = useState({});
   const [loading, setLoading] = useState(true);
+  const [podio, setPodio] = useState(null);
+  const [selectedTopInfo, setSelectedTopInfo] = useState(null);
 
   useEffect(() => {
     const fetchAuctions = async () => {
@@ -29,6 +31,11 @@ const Auctions = () => {
           });
           setUsersMap(uMap);
         }
+        
+        if (controladorGamificacion) {
+          const podioData = await controladorGamificacion.obtenerPodio();
+          setPodio(podioData);
+        }
       } catch (err) {
         console.error("Error al cargar subastas", err);
       } finally {
@@ -46,6 +53,32 @@ const Auctions = () => {
       if (total > maxBienes) maxBienes = total;
     });
     return maxBienes > 0 ? `${maxBienes} Bienes` : '-';
+  };
+
+  const getUserTopInfo = (userId) => {
+    if (!podio || Array.isArray(podio)) return null;
+    if (podio.proveedorElite?.some(u => u.idUsuario === userId)) {
+      return { 
+        name: 'Proveedor Elite', 
+        desc: 'Este ranking premia la proactividad y la capacidad de trabajo. Ser el #1 (o #2 o #3) en esta categoría le da al usuario un "Sello de Disponibilidad", lo que genera que más personas quieran contratarlo por su historial de cumplimiento.',
+        icon: <Trophy size={14} color="#F59E0B" />
+      };
+    }
+    if (podio.motorEconomia?.some(u => u.idUsuario === userId)) {
+      return {
+        name: 'Motor de la Economía',
+        desc: 'Es vital para el sistema, ya que premia a quienes hacen circular los créditos. Este top incentiva a los usuarios a "gastar" su saldo en lugar de acumularlo, manteniendo la economía circular activa.',
+        icon: <Sparkles size={14} color="#10B981" />
+      };
+    }
+    if (podio.embajadorCalidad?.some(u => u.idUsuario === userId)) {
+      return {
+        name: 'Embajador de Calidad',
+        desc: 'El "Embajador" asegura que el estándar de excelencia de la plataforma se mantenga alto, inspirando confianza en los nuevos usuarios.',
+        icon: <Medal size={14} color="#3B82F6" />
+      };
+    }
+    return null;
   };
 
   return (
@@ -91,16 +124,28 @@ const Auctions = () => {
                 </span>
                 <h3 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>{auction.nombreActivo}</h3>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem', fontSize: '0.875rem' }}>{auction.descripcion}</p>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
-                  Subastador:{' '}
-                  <span
-                    onClick={() => navigate(`/user/${auction.idPropietario}`)}
-                    style={{ color: 'var(--accent-primary)', cursor: 'pointer', textDecoration: 'underline', textDecorationColor: 'transparent', transition: 'text-decoration-color 0.15s' }}
-                    onMouseEnter={e => e.currentTarget.style.textDecorationColor = 'var(--accent-primary)'}
-                    onMouseLeave={e => e.currentTarget.style.textDecorationColor = 'transparent'}
-                  >
-                    {usersMap[auction.idPropietario] || auction.idPropietario}
-                  </span>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span>Subastador:</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span
+                      onClick={() => navigate(`/user/${auction.idPropietario}`)}
+                      style={{ color: 'var(--accent-primary)', cursor: 'pointer', textDecoration: 'underline', textDecorationColor: 'transparent', transition: 'text-decoration-color 0.15s' }}
+                      onMouseEnter={e => e.currentTarget.style.textDecorationColor = 'var(--accent-primary)'}
+                      onMouseLeave={e => e.currentTarget.style.textDecorationColor = 'transparent'}
+                    >
+                      {usersMap[auction.idPropietario] || auction.idPropietario}
+                    </span>
+                    {getUserTopInfo(auction.idPropietario) && (
+                      <div 
+                        onClick={() => setSelectedTopInfo(getUserTopInfo(auction.idPropietario))}
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', backgroundColor: 'var(--color-yellow-100)', color: 'var(--color-orange-600)', padding: '0.1rem 0.4rem', borderRadius: '1rem', fontSize: '0.65rem', fontWeight: 'bold', cursor: 'pointer' }}
+                        title="Ver detalle del Top"
+                      >
+                        {getUserTopInfo(auction.idPropietario).icon}
+                        Top {getUserTopInfo(auction.idPropietario).name.split(' ')[0]}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -145,6 +190,26 @@ const Auctions = () => {
           </div>
         ))}
       </div>
+      
+      {/* Modal Información Top */}
+      {selectedTopInfo && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }} onClick={() => setSelectedTopInfo(null)}>
+          <div className="card animate-in" style={{ maxWidth: '400px', margin: '2rem', backgroundColor: 'var(--bg-primary)', position: 'relative' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {selectedTopInfo.icon}
+              </div>
+              <h3 style={{ margin: 0, fontSize: '1.25rem' }}>{selectedTopInfo.name}</h3>
+            </div>
+            <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', fontSize: '0.875rem' }}>
+              {selectedTopInfo.desc}
+            </p>
+            <button className="btn-primary" style={{ width: '100%', marginTop: '1.5rem', padding: '0.75rem' }} onClick={() => setSelectedTopInfo(null)}>
+              Entendido
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -188,7 +188,7 @@
   },
   {
     "idPublicacion": "PUB-00000012",
-    "idUsuario": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
+    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
     "tipoPublicacion": "HABILIDAD",
     "nombreServicio": "Piano Clásico",
     "descripcion": "Clases de piano clásico para nivel principiante e intermedio",
@@ -199,7 +199,7 @@
   },
   {
     "idPublicacion": "PUB-00000013",
-    "idUsuario": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
+    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
     "tipoPublicacion": "HABILIDAD",
     "nombreServicio": "Inglés Conversacional",
     "descripcion": "Clases de inglés conversacional y preparación para exámenes",
@@ -210,7 +210,7 @@
   },
   {
     "idPublicacion": "PUB-00000014",
-    "idUsuario": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
+    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
     "tipoPublicacion": "HABILIDAD",
     "nombreServicio": "Programación Web",
     "descripcion": "Desarrollo de sitios web básicos con HTML, CSS y JavaScript",
@@ -221,7 +221,7 @@
   },
   {
     "idPublicacion": "PUB-00000015",
-    "idUsuario": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
+    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
     "tipoPublicacion": "HABILIDAD",
     "nombreServicio": "Limpieza del Hogar",
     "descripcion": "Servicio de limpieza general del hogar",
@@ -232,7 +232,7 @@
   },
   {
     "idPublicacion": "PUB-00000016",
-    "idUsuario": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
+    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
     "tipoPublicacion": "NECESIDAD",
     "nombreServicio": "Jardinería",
     "descripcion": "Necesito ayuda para rediseñar y mantener mi jardín pequeño",
@@ -243,7 +243,7 @@
   },
   {
     "idPublicacion": "PUB-00000017",
-    "idUsuario": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
+    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
     "tipoPublicacion": "NECESIDAD",
     "nombreServicio": "Mecánica de Bicicletas",
     "descripcion": "Mi bicicleta necesita ajuste de cambios y frenos",
@@ -254,7 +254,7 @@
   },
   {
     "idPublicacion": "PUB-00000018",
-    "idUsuario": "23b7289e-d883-4e97-8b62-9fa0ec806e6d",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
     "tipoPublicacion": "HABILIDAD",
     "nombreServicio": "Programación Web",
     "descripcion": "Desarrollo full-stack con React, Node.js y bases de datos",
@@ -265,7 +265,7 @@
   },
   {
     "idPublicacion": "PUB-00000019",
-    "idUsuario": "23b7289e-d883-4e97-8b62-9fa0ec806e6d",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
     "tipoPublicacion": "HABILIDAD",
     "nombreServicio": "Inglés Conversacional",
     "descripcion": "Conversaciones guiadas y corrección de pronunciación en inglés",
@@ -276,7 +276,7 @@
   },
   {
     "idPublicacion": "PUB-0000001A",
-    "idUsuario": "23b7289e-d883-4e97-8b62-9fa0ec806e6d",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
     "tipoPublicacion": "HABILIDAD",
     "nombreServicio": "Guitarra Acústica",
     "descripcion": "Clases de guitarra española y acústica nivel principiante",
@@ -287,7 +287,7 @@
   },
   {
     "idPublicacion": "PUB-0000001B",
-    "idUsuario": "23b7289e-d883-4e97-8b62-9fa0ec806e6d",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
     "tipoPublicacion": "NECESIDAD",
     "nombreServicio": "Cocina Italiana",
     "descripcion": "Quiero aprender a cocinar pasta y pizza desde cero",
@@ -298,7 +298,7 @@
   },
   {
     "idPublicacion": "PUB-0000001C",
-    "idUsuario": "23b7289e-d883-4e97-8b62-9fa0ec806e6d",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
     "tipoPublicacion": "NECESIDAD",
     "nombreServicio": "Yoga",
     "descripcion": "Busco clases de yoga para relajación después del trabajo",
@@ -309,7 +309,7 @@
   },
   {
     "idPublicacion": "PUB-0000001D",
-    "idUsuario": "23b7289e-d883-4e97-8b62-9fa0ec806e6d",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
     "tipoPublicacion": "NECESIDAD",
     "nombreServicio": "Piano Clásico",
     "descripcion": "Me gustaría tomar clases de piano para principiantes",
