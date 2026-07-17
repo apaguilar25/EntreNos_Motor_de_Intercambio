@@ -89,8 +89,6 @@ package "Diagrama de clase EntreNós"  {
 
     class CatalogoUsuario {
         - completado: boolean
-        - habilidadesOfrecidas: List<HabilidadOfrecida>
-        - necesidadesRegistradas: List<NecesidadRegistrada>
 
         + CatalogoUsuario(): CatalogoUsuario
         + marcarComoCompletado(): void
@@ -157,7 +155,6 @@ package "Diagrama de clase EntreNós"  {
         - confirmacionDemandante: boolean
         - fechaCreacion: long
         - idIncidencia: String
-        - resena : Resena
         - version: int
         + Transaccion(idPublicacion: String, idOfertante: String, idDemandante: String, creditosComprometidos: int)
         + confirmarEntregaOfertante(): void
@@ -240,7 +237,7 @@ package "Diagrama de clase EntreNós"  {
         - estado: EstadoSubasta
         - idPropuestaGanadora: String
         - propietarioConfirmoEntrega: boolean
-        - boolean ganadorConfirmoEntrega
+        - ganadorConfirmoEntrega : boolean
         - version: int
         + Subasta(idPropietario: String, nombreActivo: String, descripcion: String, estadoFisico: EstadoFisico, imagenesUrls: List<String>, fechaFinalizacionLicitacion: LocalDateTime): Subasta
         + registrarPropuesta(nuevaPropuesta: Propuesta): void
@@ -257,7 +254,6 @@ package "Diagrama de clase EntreNós"  {
         - idPropuesta: String
         - idSubasta: String
         - idPostor: String
-        - bienesOfrecidos: List<BienOfrecido>
         - descripcion: String
         - estadoPropuesta: EstadoPropuesta
         - estadoFisico: EstadoFisico
