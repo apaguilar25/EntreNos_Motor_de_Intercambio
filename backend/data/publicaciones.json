@@ -449,5 +449,16 @@
     "disponible": true,
     "idInstanciaCatalogo": "d7624609-8f0e-4c9d-92bd-57fd3d93337b",
     "version": 0
+  },
+  {
+    "idPublicacion": "PUB-580467FC",
+    "idUsuario": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Limpieza del Hogar",
+    "descripcion": "Limpio hogares",
+    "precioCreditos": 5,
+    "disponible": true,
+    "idInstanciaCatalogo": "ad7bcf76-e232-4f84-a91e-48efae8b18c3",
+    "version": 0
   }
 ]

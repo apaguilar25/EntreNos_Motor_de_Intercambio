@@ -64,6 +64,23 @@ const Profile = () => {
   const [calificarModalOpen, setCalificarModalOpen] = useState(false);
   const [calificacion, setCalificacion] = useState(0);
   const [calificacionTxId, setCalificacionTxId] = useState(null);
+  const [calificacionTx, setCalificacionTx] = useState(null);
+  const [transaccionesYaCalificadas, setTransaccionesYaCalificadas] = useState(() => {
+    try {
+      const saved = localStorage.getItem('txYaCalificadas');
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    } catch { return new Set(); }
+  });
+
+  const marcarYaCalificada = (txId) => {
+    if (!txId) return;
+    setTransaccionesYaCalificadas(prev => {
+      const next = new Set(prev);
+      next.add(txId);
+      localStorage.setItem('txYaCalificadas', JSON.stringify([...next]));
+      return next;
+    });
+  };
 
   // Modal Apelar Reporte (defensa)
   const [appealModalOpen, setAppealModalOpen] = useState(false);
@@ -93,75 +110,35 @@ const Profile = () => {
     setCurrentPage(1);
   }, [sectionModalOpen, sentFilter, txFilter]);
 
-  const [ratingModalOpen, setRatingModalOpen] = useState(false);
-  const [ratingTx, setRatingTx] = useState(null);
-  const [ratingValue, setRatingValue] = useState(0);
-
-  const checkPendingRatings = (txs) => {
-    const unrated = txs.find(t => 
-      t.estado === 'FINALIZADA' && 
-      t.idDemandante === user.id && 
-      !t.resena
-    );
-    if (unrated) {
-      setRatingTx(unrated);
-      setRatingModalOpen(true);
-    }
-  };
-
-  useEffect(() => {
-    if (transacciones && transacciones.length > 0 && !ratingModalOpen) {
-      checkPendingRatings(transacciones);
-    }
-  }, [transacciones]);
-
-  const handleUpdateTxState = async (idTx, nuevoEstado) => {
-    if (nuevoEstado === 'FINALIZADA') {
-      try {
-        const isDemandante = selectedTxDetalle.idDemandante === user.id;
-        const url = isDemandante 
-          ? `http://localhost:8080/api/transacciones/${idTx}/confirmar-demandante`
-          : `http://localhost:8080/api/transacciones/${idTx}/confirmar-ofertante`;
-        
-        const res = await fetch(url, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        
-        if (res.ok) {
-          const respData = await res.json();
-          // Actualizar la lista local
-          const txUpdated = respData.transaccion;
-          setTransacciones(prev => prev.map(t => t.idTransaccion === txUpdated.idTransaccion ? txUpdated : t));
-          setAlertMessage("¡Finalización confirmada!");
-          
-          if (txUpdated.estado === 'FINALIZADA') {
-             setRatingTx(txUpdated);
-             setRatingModalOpen(true);
-          }
-        } else {
-          setAlertMessage("Error al confirmar finalización");
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    }
-  };
-
-  const handleSubmitRating = async () => {
+  const handleSubmitRating = async (txId, valor) => {
     try {
-      const res = await fetch(`http://localhost:8080/api/transacciones/${ratingTx.idTransaccion}/calificar?idUsuario=${user.id}&calificacion=${ratingValue}`, {
+      const res = await fetch(`http://localhost:8080/api/transacciones/${txId}/calificar?idUsuario=${user.id}&calificacion=${valor}`, {
         method: 'POST'
       });
       if (res.ok) {
         setAlertMessage("¡Gracias por calificar!");
-        setRatingModalOpen(false);
-        setRatingTx(null);
-        setRatingValue(0);
-        loadTransactionsAndIncidencias(); // Recargar transacciones para reflejar que ya se calificó
+        loadTransactionsAndIncidencias();
       }
     } catch (e) {}
   };
+
+  useEffect(() => {
+    if (transacciones && transacciones.length > 0 && !calificarModalOpen) {
+      const unrated = transacciones.find(t =>
+        t.estado === 'FINALIZADA' &&
+        t.idDemandante === user.id &&
+        !t.resena &&
+        !transaccionesYaCalificadas.has(t.idTransaccion)
+      );
+      if (unrated) {
+        marcarYaCalificada(unrated.idTransaccion);
+        setCalificacionTxId(unrated.idTransaccion);
+        setCalificacionTx(unrated);
+        setCalificacion(0);
+        setCalificarModalOpen(true);
+      }
+    }
+  }, [transacciones]);
 
   const loadTransactionsAndIncidencias = async () => {
     if (!user?.id) return [];
@@ -474,6 +451,7 @@ const Profile = () => {
         await refreshSaldo();
         if (data?.transaccion?.estado === 'FINALIZADA') {
           setCalificacionTxId(data.transaccion.idTransaccion);
+          setCalificacionTx(data.transaccion);
           setCalificacion(0);
           setCalificarModalOpen(true);
         }
@@ -488,17 +466,21 @@ const Profile = () => {
 
   const handleCalificar = async () => {
     if (calificacion < 1 || calificacion > 5) return;
+    const txId = calificacionTxId;
+    const puntuacion = calificacion;
+    setCalificarModalOpen(false);
+    setCalificacion(0);
+    setCalificacionTxId(null);
+    setCalificacionTx(null);
+    marcarYaCalificada(txId);
     try {
-      const res = await fetch(`http://localhost:8080/api/transacciones/${calificacionTxId}/calificar`, {
+      const res = await fetch(`http://localhost:8080/api/transacciones/${txId}/calificar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idUsuario: user.id, calificacion })
+        body: JSON.stringify({ idUsuario: user.id, calificacion: puntuacion })
       });
       if (res.ok) {
         setAlertMessage("Calificación enviada con éxito. ¡Gracias por tu opinión!");
-        setCalificarModalOpen(false);
-        setCalificacion(0);
-        setCalificacionTxId(null);
         await loadTransactionsAndIncidencias();
         await refreshSaldo();
       } else {
@@ -1182,11 +1164,11 @@ const Profile = () => {
                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Precio (Créditos)</label>
                   <input 
                     type="number"
-                    min="1"
+                    min="0" step="1"
                     value={editData.precio}
                     onChange={(e) => {
                       const val = parseInt(e.target.value, 10);
-                      if (val > 0) setEditData({ ...editData, precio: val });
+                      if (val >= 0) setEditData({ ...editData, precio: val });
                       else if (e.target.value === '') setEditData({ ...editData, precio: '' });
                     }}
                     style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}
@@ -1202,39 +1184,6 @@ const Profile = () => {
           </div>
         </div>
       , document.body)}
-
-      {ratingModalOpen && ratingTx && createPortal(
-          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: '1rem' }}>
-            <div className="card animate-in" style={{ width: '100%', maxWidth: '400px', textAlign: 'center', background: 'var(--bg-primary)', padding: '2rem', borderRadius: '1rem' }}>
-              <h3 style={{ marginBottom: '1rem' }}>Califica la Transacción</h3>
-              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.875rem' }}>
-                La transacción ID: {ratingTx.idTransaccion.split('-')[0].toUpperCase()} ha finalizado. 
-                Por favor, califica tu experiencia con la contraparte para poder continuar.
-              </p>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '2rem' }}>
-                {[1,2,3,4,5].map(star => (
-                  <Star 
-                    key={star} 
-                    size={32} 
-                    fill={star <= ratingValue ? 'var(--color-orange-600)' : 'transparent'} 
-                    color={star <= ratingValue ? 'var(--color-orange-600)' : 'var(--text-tertiary)'} 
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => setRatingValue(star)}
-                  />
-                ))}
-              </div>
-              <button 
-                className="btn-primary" 
-                style={{ width: '100%' }}
-                onClick={handleSubmitRating}
-                disabled={ratingValue === 0}
-              >
-                Enviar Calificación
-              </button>
-            </div>
-          </div>,
-          document.body
-        )}
 
   {transaccionDetalleModalOpen && selectedTxDetalle && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
@@ -1269,6 +1218,7 @@ const Profile = () => {
                     style={{ width: '100%', padding: '0.75rem' }}
                     onClick={() => {
                       setCalificacionTxId(selectedTxDetalle.idTransaccion);
+                      setCalificacionTx(selectedTxDetalle);
                       setCalificacion(0);
                       setCalificarModalOpen(true);
                     }}
@@ -1372,8 +1322,14 @@ const Profile = () => {
       {calificarModalOpen && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div className="card" style={{ width: '90%', maxWidth: '400px', padding: '2rem', position: 'relative', textAlign: 'center' }}>
-            <button onClick={() => { setCalificarModalOpen(false); setCalificacion(0); }} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-tertiary)' }}>&times;</button>
+            <button onClick={() => { setCalificarModalOpen(false); setCalificacion(0); marcarYaCalificada(calificacionTxId); }} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-tertiary)' }}>&times;</button>
             <h3 style={{ marginBottom: '1rem' }}>Calificar Servicio</h3>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+              Transacción: <strong>{calificacionTx?.idTransaccion || calificacionTxId}</strong>
+            </p>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+              Proveedor: <strong>{usersMap[calificacionTx?.idOfertante] || 'Usuario'}</strong>
+            </p>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
               ¿Cómo calificas el servicio recibido?
             </p>
@@ -1391,7 +1347,7 @@ const Profile = () => {
             <div style={{ display: 'flex', gap: '1rem' }}>
               <button 
                 type="button" 
-                onClick={() => { setCalificarModalOpen(false); setCalificacion(0); }} 
+                onClick={() => { setCalificarModalOpen(false); setCalificacion(0); marcarYaCalificada(calificacionTxId); }} 
                 style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}
               >
                 Cancelar

@@ -148,5 +148,15 @@
     "fechaLimiteRespuesta": 1784722160702,
     "precioOfertado": 0,
     "version": 0
+  },
+  {
+    "idSolicitud": "SOL-FA5C8868",
+    "idPublicacion": "PUB-00000022",
+    "idSolicitante": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "estado": "ACEPTADA",
+    "fechaCreacion": 1784313944043,
+    "fechaLimiteRespuesta": 1784745944043,
+    "precioOfertado": 0,
+    "version": 1
   }
 ]

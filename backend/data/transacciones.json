@@ -9,6 +9,8 @@
     "confirmacionOfertante": true,
     "confirmacionDemandante": true,
     "fechaCreacion": 1784000000000,
+    "resenaDemandante": false,
+    "resenaOfertante": false,
     "version": 4
   },
   {
@@ -21,6 +23,8 @@
     "confirmacionOfertante": true,
     "confirmacionDemandante": true,
     "fechaCreacion": 1784000000000,
+    "resenaDemandante": false,
+    "resenaOfertante": false,
     "version": 3
   },
   {
@@ -33,6 +37,8 @@
     "confirmacionOfertante": true,
     "confirmacionDemandante": true,
     "fechaCreacion": 1784000000000,
+    "resenaDemandante": false,
+    "resenaOfertante": false,
     "version": 3
   },
   {
@@ -45,6 +51,8 @@
     "confirmacionOfertante": true,
     "confirmacionDemandante": true,
     "fechaCreacion": 1784000000000,
+    "resenaDemandante": false,
+    "resenaOfertante": false,
     "version": 3
   },
   {
@@ -58,6 +66,8 @@
     "confirmacionDemandante": false,
     "fechaCreacion": 1784000000000,
     "idIncidencia": "INC-00000001",
+    "resenaDemandante": false,
+    "resenaOfertante": false,
     "version": 3
   },
   {
@@ -71,6 +81,8 @@
     "confirmacionDemandante": false,
     "fechaCreacion": 1784000000000,
     "idIncidencia": "INC-AFFED629",
+    "resenaDemandante": false,
+    "resenaOfertante": false,
     "version": 2
   },
   {
@@ -83,6 +95,8 @@
     "confirmacionOfertante": true,
     "confirmacionDemandante": true,
     "fechaCreacion": 1784000000000,
+    "resenaDemandante": false,
+    "resenaOfertante": false,
     "version": 2
   },
   {
@@ -96,6 +110,8 @@
     "confirmacionDemandante": false,
     "fechaCreacion": 1784000000000,
     "idIncidencia": "INC-DBCF11A1",
+    "resenaDemandante": false,
+    "resenaOfertante": false,
     "version": 1
   },
   {
@@ -108,6 +124,8 @@
     "confirmacionOfertante": false,
     "confirmacionDemandante": false,
     "fechaCreacion": 1784000000000,
+    "resenaDemandante": false,
+    "resenaOfertante": false,
     "version": 0
   },
   {
@@ -120,6 +138,8 @@
     "confirmacionOfertante": false,
     "confirmacionDemandante": false,
     "fechaCreacion": 1784000000000,
+    "resenaDemandante": false,
+    "resenaOfertante": false,
     "version": 0
   },
   {
@@ -132,6 +152,8 @@
     "confirmacionOfertante": false,
     "confirmacionDemandante": false,
     "fechaCreacion": 1784277731082,
+    "resenaDemandante": false,
+    "resenaOfertante": false,
     "version": 0
   },
   {
@@ -144,6 +166,8 @@
     "confirmacionOfertante": true,
     "confirmacionDemandante": true,
     "fechaCreacion": 1784283442515,
+    "resenaDemandante": false,
+    "resenaOfertante": false,
     "version": 2
   },
   {
@@ -157,6 +181,22 @@
     "confirmacionDemandante": false,
     "fechaCreacion": 1784285976519,
     "idIncidencia": "INC-0AEBBEC9",
+    "resenaDemandante": false,
+    "resenaOfertante": false,
     "version": 2
+  },
+  {
+    "idTransaccion": "TX-C285809F",
+    "idPublicacion": "PUB-00000022",
+    "idOfertante": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "idDemandante": "d803abbd-3578-4119-84d6-a6edd5451dce",
+    "estado": "PENDIENTE",
+    "creditosRetenidos": 0,
+    "confirmacionOfertante": false,
+    "confirmacionDemandante": false,
+    "fechaCreacion": 1784313951330,
+    "resenaDemandante": false,
+    "resenaOfertante": false,
+    "version": 0
   }
 ]

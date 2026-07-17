@@ -408,4 +408,44 @@
   "fechaCreacion" : 1784290461293,
   "idReferencia" : "SUB-069DE02E",
   "idReferenciaAuxiliar" : "PROP-89E66F"
+}, {
+  "idNotificacion" : "a12483c3-75c1-4517-8657-c7ee1b710f80",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Has ofertado tus servicios para: Limpieza del Hogar por 7 créditos. Esperando respuesta.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784313944149,
+  "idReferencia" : "SOL-FA5C8868",
+  "idReferenciaAuxiliar" : "PUB-00000022"
+}, {
+  "idNotificacion" : "fc41c291-258a-4cfb-b5bc-b4af604f1ab2",
+  "idRemitente" : "d803abbd-3578-4119-84d6-a6edd5451dce",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Tu oferta para Limpieza del Hogar fue ACEPTADA. Se retuvieron 0 créditos al demandante.",
+  "tipo" : "ESTADO_SOLICITUD_CAMBIADO",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784313951343,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "13f3ed00-3465-4b67-bcba-fb2629d9ecdc",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "d803abbd-3578-4119-84d6-a6edd5451dce",
+  "mensaje" : "Datos de contacto del ofertante Carlos Prueba: Correo: carlos.prueba@alameda.com — Teléfono: 04121234567",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784313951352,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "654ed86a-d038-4a5f-963b-973cb8382a80",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Datos de contacto del demandante Super Administrador: Correo: admin@alameda.com — Teléfono: 0000000000",
+  "tipo" : "TRANSACCION_ACTUALIZADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784313951363,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
 } ]

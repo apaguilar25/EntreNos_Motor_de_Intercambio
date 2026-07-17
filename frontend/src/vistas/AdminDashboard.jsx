@@ -417,8 +417,7 @@ function AdminDashboard() {
                         <p style={{ color: 'var(--text-secondary)' }}>Ingresa la nueva cantidad exacta de créditos disponibles para este usuario.</p>
                         
                         <input 
-                            type="number" 
-                            step="0.1"
+                            type="number" min="0" step="1"
                             style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', marginBottom: '1.5rem', boxSizing: 'border-box' }}
                             value={modalCreditos.cantidad}
                             onChange={(e) => setModalCreditos({ ...modalCreditos, cantidad: e.target.value })}

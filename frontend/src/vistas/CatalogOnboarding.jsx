@@ -185,9 +185,12 @@ const CatalogOnboarding = () => {
                         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                           <label style={{ fontSize: '0.875rem', whiteSpace: 'nowrap', fontWeight: '500' }}>Precio (Créditos):</label>
                           <input
-                            type="number"
+                            type="number" min="0" step="1"
                             value={skills[cat.id].price}
-                            onChange={(e) => updateSkill(cat.id, 'price', e.target.value)}
+                            onChange={(e) => {
+                              const v = parseInt(e.target.value, 10);
+                              updateSkill(cat.id, 'price', v >= 0 ? v : '');
+                            }}
                             placeholder="Ej: 50"
                             style={{ width: '120px', padding: '0.4rem 0.6rem', borderRadius: '0.375rem', border: '1px solid var(--color-green-100)', outline: 'none', fontSize: '0.875rem', transition: 'border-color 0.2s, box-shadow 0.2s' }}
                             onFocus={(e) => { e.target.style.borderColor = 'var(--color-green-700)'; e.target.style.boxShadow = '0 0 0 2px rgba(4, 120, 87, 0.2)'; }}

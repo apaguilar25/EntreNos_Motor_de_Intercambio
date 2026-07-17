@@ -275,9 +275,12 @@ const MakeRequest = () => {
                         {selectedGoods[good.id] !== undefined && (
                           <input 
                             type="number" 
-                            min="1" 
+                            min="0" step="1"
                             value={selectedGoods[good.id]}
-                            onChange={(e) => setSelectedGoods({...selectedGoods, [good.id]: parseInt(e.target.value) || 0})}
+                            onChange={(e) => {
+                              const v = parseInt(e.target.value, 10);
+                              setSelectedGoods({...selectedGoods, [good.id]: v >= 0 ? v : 0});
+                            }}
                             style={{ width: '60px', padding: '0.25rem', borderRadius: '0.25rem', border: '1px solid var(--border-color)', outline: 'none' }}
                           />
                         )}
@@ -357,9 +360,12 @@ const MakeRequest = () => {
                       </span>
                     )}
                     <input 
-                      type="number" min="0"
+                      type="number" min="0" step="1"
                       value={offeredPrice ?? ''}
-                      onChange={e => setOfferedPrice(Number(e.target.value))}
+                      onChange={e => {
+                        const v = parseInt(e.target.value, 10);
+                        setOfferedPrice(v >= 0 ? v : 0);
+                      }}
                       placeholder="Ej: 5"
                       style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }}
                     />

@@ -74,9 +74,12 @@ const Publish = () => {
         <div>
           <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Créditos (cr)</label>
           <input 
-            type="number" 
+            type="number" min="0" step="1"
             value={credits}
-            onChange={(e) => setCredits(e.target.value)}
+            onChange={(e) => {
+              const v = parseInt(e.target.value, 10);
+              setCredits(v >= 0 ? v : '');
+            }}
             placeholder={type === 'oferta' ? 'Precio en créditos' : 'Presupuesto máximo'}
             style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none' }}
           />
