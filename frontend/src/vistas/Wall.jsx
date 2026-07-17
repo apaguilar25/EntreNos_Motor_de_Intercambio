@@ -3,7 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Filter, Star, ChevronDown, Trophy, Sparkles, Medal, AlertCircle } from 'lucide-react';
 import { AppContext } from '../App';
 import Pagination from '../componentes/ui/Pagination';
-
+const CATEGORIAS = [
+  { "id": "HAB-001", "categoria": "Plomería" },
+  { "id": "HAB-002", "categoria": "Electricidad" },
+  { "id": "HAB-003", "categoria": "Carpintería" },
+  { "id": "HAB-004", "categoria": "Limpieza del Hogar" },
+  { "id": "HAB-005", "categoria": "Soporte Técnico / Computación" },
+  { "id": "HAB-006", "categoria": "Yoga" },
+  { "id": "HAB-007", "categoria": "Cocina Italiana" },
+  { "id": "HAB-008", "categoria": "Programación Web" },
+  { "id": "HAB-009", "categoria": "Piano Clásico" },
+  { "id": "HAB-010", "categoria": "Inglés Conversacional" },
+  { "id": "HAB-011", "categoria": "Mecánica de Bicicletas" },
+  { "id": "HAB-012", "categoria": "Jardinería" },
+  { "id": "HAB-013", "categoria": "Electricidad Básica" },
+  { "id": "HAB-014", "categoria": "Guitarra Acústica" }
+];
 const Wall = () => {
   const navigate = useNavigate();
   const { user, balance, hasCatalog, controladorMuro, controladorGamificacion, controladorPerfil } = useContext(AppContext);
@@ -11,6 +26,7 @@ const Wall = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [tab, setTab] = useState('explorar'); // 'explorar' o 'parati'
   const [filterType, setFilterType] = useState('all'); // 'all', 'oferta', 'necesidad'
+  const [selectedCategory, setSelectedCategory] = useState('all'); // NUEVO ESTADO
   const [posts, setPosts] = useState([]);
   const [podio, setPodio] = useState(null);
   const [showPodio, setShowPodio] = useState({ proveedor: true, motor: false, embajador: false });
@@ -23,7 +39,7 @@ const Wall = () => {
   // Reset page when tab or filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [tab, filterType, searchTerm]);
+  }, [tab, filterType, searchTerm, selectedCategory]);
 
   const fetchPosts = React.useCallback(async () => {
     try {
@@ -168,10 +184,22 @@ const Wall = () => {
   );
 
   const filteredPosts = posts.filter(post => {
-    if (filterType === 'all') return true;
-    const isOferta = post.type === 'oferta' || post.type === 'habilidad';
-    if (filterType === 'oferta') return isOferta;
-    if (filterType === 'necesidad') return post.type === 'necesidad' || post.type === 'demanda';
+    // Filtro por tipo
+    if (filterType !== 'all') {
+      const isOferta = post.type === 'oferta' || post.type === 'habilidad';
+      if (filterType === 'oferta' && !isOferta) return false;
+      if (filterType === 'necesidad' && post.type !== 'necesidad' && post.type !== 'demanda') return false;
+    }
+
+    // Filtro por categoría
+    if (selectedCategory !== 'all') {
+      const titleLower = post.title.toLowerCase();
+      const categoryLower = selectedCategory.toLowerCase();
+      if (!titleLower.includes(categoryLower)) {
+        return false;
+      }
+    }
+
     return true;
   });
 
@@ -262,14 +290,16 @@ const Wall = () => {
               position: 'absolute', 
               top: '110%', 
               right: 0, 
-              width: '200px', 
+              width: '260px', 
               padding: '1rem', 
               zIndex: 10,
               display: 'flex',
               flexDirection: 'column',
-              gap: '0.5rem'
+              gap: '1rem'
             }}>
+              
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <span style={{ fontWeight: 'bold', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Tipo de publicación</span>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
                   <input type="radio" name="filterType" value="all" checked={filterType === 'all'} onChange={(e) => setFilterType(e.target.value)} /> Todas
                 </label>
@@ -280,6 +310,31 @@ const Wall = () => {
                   <input type="radio" name="filterType" value="necesidad" checked={filterType === 'necesidad'} onChange={(e) => setFilterType(e.target.value)} /> Necesidades
                 </label>
               </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', borderTop: '1px solid var(--border-color)', paddingTop: '0.75rem' }}>
+                <span style={{ fontWeight: 'bold', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Categoría</span>
+                <select 
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  style={{ 
+                    width: '100%', 
+                    padding: '0.5rem', 
+                    borderRadius: '0.5rem', 
+                    border: '1px solid var(--border-color)',
+                    backgroundColor: 'var(--bg-primary)',
+                    color: 'var(--text-primary)',
+                    outline: 'none'
+                  }}
+                >
+                  <option value="all">Todas las categorías</option>
+                  {CATEGORIAS.map(cat => (
+                    <option key={cat.id} value={cat.categoria}>
+                      {cat.categoria}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
             </div>
           )}
         </div>
@@ -379,7 +434,7 @@ const Wall = () => {
                     )}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-warning)', fontSize: '0.75rem' }}>
-                    <Star size={12} fill="currentColor" /> {(post.reputation || 0).toFixed(1)}
+                    <Star size={12} fill="currentColor" /> {post.reputation}
                   </div>
                 </div>
               </div>
@@ -401,7 +456,7 @@ const Wall = () => {
                       cursor: disabled ? 'not-allowed' : 'pointer'
                     }}
                     disabled={disabled}
-                    onClick={() => navigate(`/request/${post.id}?type=${post.type}&userId=${post.userId}&price=${post.price}&title=${encodeURIComponent(post.title)}&desc=${encodeURIComponent(post.description)}&owner=${encodeURIComponent(post.user)}&rep=${(post.reputation || 0).toFixed(1)}`)}
+                    onClick={() => navigate(`/request/${post.id}?type=${post.type}&userId=${post.userId}&price=${post.price}&title=${encodeURIComponent(post.title)}&desc=${encodeURIComponent(post.description)}&owner=${encodeURIComponent(post.user)}&rep=${post.reputation}`)}
                   >
                     {alreadyRequested ? 'Ya ofertaste' : (noCredits ? 'Sin créditos' : 'Contactar')}
                   </button>
