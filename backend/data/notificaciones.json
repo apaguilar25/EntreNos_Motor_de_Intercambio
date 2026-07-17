@@ -328,4 +328,84 @@
   "fechaCreacion" : 1784286056471,
   "idReferencia" : null,
   "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "56cd5549-c766-48b6-a34b-fb45eda17db0",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Piano Clásico\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784288181610,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "7554ffe1-de6e-477a-a875-847a6b061b62",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Piano Clásico\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784288181650,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "e9b55d1d-0968-407a-a38d-81320d2da7c0",
+  "idRemitente" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "idDestinatario" : "d803abbd-3578-4119-84d6-a6edd5451dce",
+  "mensaje" : "Carlos Prueba ha hecho una oferta en tu subasta: Carro Corolla",
+  "tipo" : "NUEVA_OFERTA_SUBASTA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784288487031,
+  "idReferencia" : "SUB-069DE02E",
+  "idReferenciaAuxiliar" : "PROP-F204BA"
+}, {
+  "idNotificacion" : "00039729-0cda-4099-8dc1-8113c5ab314b",
+  "idRemitente" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "idDestinatario" : "f871e1d2-671e-4ea2-a19d-c1393805569c",
+  "mensaje" : "Ana Ofertante quiere contratar servicio: Electricidad Básica por 6 créditos.",
+  "tipo" : "NUEVA_SOLICITUD_ENTRANTE",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784290160728,
+  "idReferencia" : "SOL-539F7F50",
+  "idReferenciaAuxiliar" : "PUB-00000004"
+}, {
+  "idNotificacion" : "d716156f-2c54-4f9b-875e-5a49e2e1a417",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "Has ofertado exitosamente por: Electricidad Básica por 6 créditos. Esperando respuesta del proveedor.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784290160754,
+  "idReferencia" : "SOL-539F7F50",
+  "idReferenciaAuxiliar" : "PUB-00000004"
+}, {
+  "idNotificacion" : "a16aeb03-9d2b-40e1-8303-6f04dbeca09e",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Limpieza del Hogar\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784290212250,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "6ff449e9-d542-4578-b602-7f4980f942f8",
+  "idRemitente" : "SISTEMA",
+  "idDestinatario" : "d803abbd-3578-4119-84d6-a6edd5451dce",
+  "mensaje" : "Se ha reportado una incidencia en la transacción \"Limpieza del Hogar\". El intercambio ha sido marcado bajo revisión. Los créditos permanecen bloqueados.",
+  "tipo" : "ALERTA_SISTEMA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784290212257,
+  "idReferencia" : null,
+  "idReferenciaAuxiliar" : null
+}, {
+  "idNotificacion" : "5f631399-5bca-4e8e-b4ca-f86a7ccb92d5",
+  "idRemitente" : "e561668f-1fa0-4622-a545-0e6a406b36be",
+  "idDestinatario" : "d803abbd-3578-4119-84d6-a6edd5451dce",
+  "mensaje" : "Ana Ofertante ha hecho una oferta en tu subasta: Carro Corolla",
+  "tipo" : "NUEVA_OFERTA_SUBASTA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784290461293,
+  "idReferencia" : "SUB-069DE02E",
+  "idReferenciaAuxiliar" : "PROP-89E66F"
 } ]

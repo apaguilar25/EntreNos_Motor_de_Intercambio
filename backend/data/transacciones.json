@@ -90,12 +90,13 @@
     "idPublicacion": "PUB-00000015",
     "idOfertante": "e561668f-1fa0-4622-a545-0e6a406b36be",
     "idDemandante": "d803abbd-3578-4119-84d6-a6edd5451dce",
-    "estado": "PENDIENTE",
+    "estado": "EN_DISPUTA",
     "creditosRetenidos": 4,
     "confirmacionOfertante": false,
     "confirmacionDemandante": false,
     "fechaCreacion": 1784000000000,
-    "version": 0
+    "idIncidencia": "INC-DBCF11A1",
+    "version": 1
   },
   {
     "idTransaccion": "TX-00000009",
@@ -156,6 +157,6 @@
     "confirmacionDemandante": false,
     "fechaCreacion": 1784285976519,
     "idIncidencia": "INC-0AEBBEC9",
-    "version": 1
+    "version": 2
   }
 ]

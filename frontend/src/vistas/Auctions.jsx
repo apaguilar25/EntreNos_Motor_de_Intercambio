@@ -14,13 +14,12 @@ const Auctions = () => {
   const [selectedTopInfo, setSelectedTopInfo] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    const fetchAuctions = async () => {
-      try {
-        const data = await controladorSubasta.obtenerSubastasActivas();
-        // Solo mostrar las que no son mías y que estén ACTIVA
-        const publicAuctions = data.filter(s => s.idPropietario !== user?.id && s.estado === 'ACTIVA');
-        setAuctions(publicAuctions);
+  const fetchAuctions = async () => {
+    try {
+      const data = await controladorSubasta.obtenerSubastasActivas();
+      // Solo mostrar las que no son mías y que estén ACTIVA
+      const publicAuctions = data.filter(s => s.idPropietario !== user?.id && s.estado === 'ACTIVA');
+      setAuctions(publicAuctions);
 
         // Construir mapa de nombres desde /api/publicaciones (ya incluye nombreUsuario)
         // Evita llamadas a /api/usuarios/{id} que generan 404 para usuarios eliminados
@@ -44,8 +43,7 @@ const Auctions = () => {
         setLoading(false);
       }
     };
-    fetchAuctions();
-  }, [user, controladorSubasta]);
+    useEffect(() => { fetchAuctions(); }, [user, controladorSubasta]);
 
   const getMejorOferta = (propuestas) => {
     if (!propuestas || propuestas.length === 0) return '-';
@@ -184,10 +182,21 @@ const Auctions = () => {
                   {auction.propuestas?.some(p => p.idPostor === user?.id) ? (
                     <button 
                       className="btn-primary" 
-                      style={{ backgroundColor: 'var(--text-tertiary)', color: '#fff', padding: '0.5rem 1rem', fontSize: '0.875rem', cursor: 'not-allowed' }}
-                      disabled
+                      style={{ backgroundColor: '#dc2626', color: '#fff', padding: '0.5rem 1rem', fontSize: '0.875rem' }}
+                      onClick={async () => {
+                        const ok = window.confirm("¿Estás seguro de cancelar tu participación en esta subasta?");
+                        if (!ok) return;
+                        const miPropuesta = auction.propuestas.find(p => p.idPostor === user?.id);
+                        if (!miPropuesta) return;
+                        try {
+                          await controladorSubasta.retirarPropuesta(auction.id, miPropuesta.idPropuesta);
+                          await fetchAuctions();
+                        } catch (e) {
+                          console.error("Error al retirar propuesta", e);
+                        }
+                      }}
                     >
-                      ¡Ya Pujaste!
+                      Cancelar Subasta
                     </button>
                   ) : (
                     <button 

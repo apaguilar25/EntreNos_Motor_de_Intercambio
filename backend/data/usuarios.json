@@ -83,10 +83,10 @@
     "telefono": "+58414000901",
     "descripcionPersonal": "Test cache",
     "contrasenaHash": "$2b$10$IAGzWmKl.7J6vmLCMW1w8OmKvhRXZ4Ib.630wlZKGe2MhInafqCaC",
-    "version": 15,
+    "version": 23,
     "monedero": {
       "creditosDisponibles": 60.0,
-      "creditosComprometidos": 11.0,
+      "creditosComprometidos": 17.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -121,10 +121,10 @@
         }
       ]
     },
-    "estado": "ACTIVO",
-    "intentosFallidos": 0,
-    "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
+    "estado": "BLOQUEADO_SEGURIDAD",
+    "intentosFallidos": 5,
+    "tiempoDesbloqueoMillis": 1784377223683,
+    "primerIntentoFallidoMillis": 1784290821526,
     "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
     "promedioCalificacion": 5.0,
@@ -229,7 +229,7 @@
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
     "contrasenaHash": "$2b$10$0Qgrc9WcR89q2cJRlf2.dOCkP1nQe.Dt0ERcABExSfUooMK.C6FHO",
-    "version": 3,
+    "version": 4,
     "monedero": {
       "creditosDisponibles": 50.0,
       "creditosComprometidos": 8.0,
