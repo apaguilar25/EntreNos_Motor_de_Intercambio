@@ -5,7 +5,7 @@ public class LogroDesbloqueadoResponseDTO {
     private String idLogro;
     private String nombre;
     private String descripcion;
-    private String categoria;
+
     private int bonoCreditos;
     private long fechaDesbloqueo;
 
