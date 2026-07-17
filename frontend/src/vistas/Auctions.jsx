@@ -5,7 +5,7 @@ import { AppContext } from '../App';
 
 const Auctions = () => {
   const navigate = useNavigate();
-  const { user, controladorSubasta, controladorPerfil } = useContext(AppContext);
+  const { user, controladorSubasta } = useContext(AppContext);
   const [auctions, setAuctions] = useState([]);
   const [usersMap, setUsersMap] = useState({});
   const [loading, setLoading] = useState(true);
@@ -18,15 +18,17 @@ const Auctions = () => {
         const publicAuctions = data.filter(s => s.idPropietario !== user?.id && s.estado === 'ACTIVA');
         setAuctions(publicAuctions);
 
-        const uniqueIds = [...new Set(publicAuctions.map(a => a.idPropietario))];
-        const uMap = {};
-        for (const id of uniqueIds) {
-          if (id) {
-            const p = await controladorPerfil.obtenerDatosPerfil(id);
-            uMap[id] = p.nombre || id;
-          }
+        // Construir mapa de nombres desde /api/publicaciones (ya incluye nombreUsuario)
+        // Evita llamadas a /api/usuarios/{id} que generan 404 para usuarios eliminados
+        const resPubs = await fetch('http://localhost:8080/api/publicaciones');
+        if (resPubs.ok) {
+          const pubsData = await resPubs.json();
+          const uMap = {};
+          pubsData.forEach(p => {
+            if (p.idUsuario && p.nombreUsuario) uMap[p.idUsuario] = p.nombreUsuario;
+          });
+          setUsersMap(uMap);
         }
-        setUsersMap(uMap);
       } catch (err) {
         console.error("Error al cargar subastas", err);
       } finally {
@@ -34,7 +36,7 @@ const Auctions = () => {
       }
     };
     fetchAuctions();
-  }, [user, controladorSubasta, controladorPerfil]);
+  }, [user, controladorSubasta]);
 
   const getMejorOferta = (propuestas) => {
     if (!propuestas || propuestas.length === 0) return '-';
@@ -50,7 +52,7 @@ const Auctions = () => {
     <div className="animate-in">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h2>Motor de Subastas de Activos</h2>
-        <button className="btn-primary" style={{ backgroundColor: 'var(--accent-warning)', color: '#fff' }} onClick={() => navigate('/create-auction')}>Crear Subasta</button>
+        <button className="btn-primary" style={{ backgroundColor: 'var(--accent-warning)', color: 'var(--text-on-warning)' }} onClick={() => navigate('/create-auction')}>Crear Subasta</button>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -89,7 +91,17 @@ const Auctions = () => {
                 </span>
                 <h3 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>{auction.nombreActivo}</h3>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem', fontSize: '0.875rem' }}>{auction.descripcion}</p>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>Subastador: {usersMap[auction.idPropietario] || auction.idPropietario}</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
+                  Subastador:{' '}
+                  <span
+                    onClick={() => navigate(`/user/${auction.idPropietario}`)}
+                    style={{ color: 'var(--accent-primary)', cursor: 'pointer', textDecoration: 'underline', textDecorationColor: 'transparent', transition: 'text-decoration-color 0.15s' }}
+                    onMouseEnter={e => e.currentTarget.style.textDecorationColor = 'var(--accent-primary)'}
+                    onMouseLeave={e => e.currentTarget.style.textDecorationColor = 'transparent'}
+                  >
+                    {usersMap[auction.idPropietario] || auction.idPropietario}
+                  </span>
+                </div>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

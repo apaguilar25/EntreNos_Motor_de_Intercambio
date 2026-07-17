@@ -161,12 +161,16 @@ public class ServicioTransaccion {
     }
 
     public Incidencia reportarIncidencia(String idTransaccion, String idUsuario, String descripcion, String urlEvidencia) {
+        return reportarIncidencia(idTransaccion, idUsuario, descripcion, urlEvidencia, null);
+    }
+
+    public Incidencia reportarIncidencia(String idTransaccion, String idUsuario, String descripcion, String urlEvidencia, java.util.List<String> fotosEvidencia) {
         Transaccion t = repositorioTransaccion.obtenerPorId(idTransaccion)
                 .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada: " + idTransaccion));
         if (descripcion == null || descripcion.trim().length() < 20) {
             throw new IllegalArgumentException("La descripción del incidente debe tener al menos 20 caracteres.");
         }
-        Incidencia incidencia = new Incidencia(idTransaccion, idUsuario, descripcion, urlEvidencia, null);
+        Incidencia incidencia = new Incidencia(idTransaccion, idUsuario, descripcion, urlEvidencia, fotosEvidencia);
         repositorioIncidencia.guardar(incidencia);
         t.asignarIncidencia(incidencia.getIdIncidencia());
         repositorioTransaccion.guardar(t);

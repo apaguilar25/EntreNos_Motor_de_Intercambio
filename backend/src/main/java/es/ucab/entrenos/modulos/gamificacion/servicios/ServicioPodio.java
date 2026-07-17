@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class ServicioPodio {
 
-    private static final int UMBRAL_MINIMO_TRANSACCIONES = 5;
+    private static final int UMBRAL_MINIMO_TRANSACCIONES = 1;
 
     private final IRepositorioPodio repositorioPodio;
     private final IRepositorioTransaccion repositorioTransaccion;
@@ -59,6 +59,28 @@ public class ServicioPodio {
         marcarVecinosDestacados(podio);
 
         return podio;
+    }
+
+    public boolean estaEnPodioSemanal(String idUsuario) {
+        Optional<PodioSemanal> podioOpt = repositorioPodio.obtenerActual();
+
+        if (podioOpt.isEmpty()) {
+            return false; // Si no hay podio calculado, nadie está en él
+        }
+
+        PodioSemanal podio = podioOpt.get();
+
+        // Verificamos presencia en las 3 categorías
+        boolean esProveedor = podio.getProveedorElite() != null &&
+                podio.getProveedorElite().stream().anyMatch(e -> e.getIdUsuario().equals(idUsuario));
+
+        boolean esMotor = podio.getMotorEconomia() != null &&
+                podio.getMotorEconomia().stream().anyMatch(e -> e.getIdUsuario().equals(idUsuario));
+
+        boolean esEmbajador = podio.getEmbajadorCalidad() != null &&
+                podio.getEmbajadorCalidad().stream().anyMatch(e -> e.getIdUsuario().equals(idUsuario));
+
+        return esProveedor || esMotor || esEmbajador;
     }
 
     private List<EntradaPodio> topNProveedores(List<Transaccion> semanales, int n) {

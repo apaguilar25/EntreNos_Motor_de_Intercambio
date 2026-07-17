@@ -7,6 +7,7 @@ import es.ucab.entrenos.modulos.notificacion.modelos.TipoNotificacion;
 import es.ucab.entrenos.modulos.notificacion.servicios.ServicioNotificacion;
 import es.ucab.entrenos.modulos.subasta.dtos.AdjudicacionResponseDTO;
 import es.ucab.entrenos.modulos.subasta.dtos.ContactoUsuarioDTO;
+import es.ucab.entrenos.modulos.subasta.dtos.SubastaResumenDTO;
 import es.ucab.entrenos.modulos.subasta.modelos.EstadoFisico;
 import es.ucab.entrenos.modulos.subasta.modelos.EstadoSubasta;
 import es.ucab.entrenos.modulos.subasta.modelos.Propuesta;
@@ -41,6 +42,9 @@ public class ServicioSubasta {
             throw new IllegalStateException("Tu cuenta no está activa. No puedes operar en subastas.");
         }
     }
+
+
+
 
     public Subasta crearSubasta(String idPropietario, String nombreActivo, String descripcion, EstadoFisico estadoFisico, List<String> imagenesUrls, LocalDateTime fechaCierre) {
         asegurarUsuarioHabilitado(idPropietario);
@@ -171,6 +175,21 @@ public class ServicioSubasta {
         }
     }
 
+    public List<SubastaResumenDTO> obtenerSubastasPorUsuario(String idUsuario) {
+        List<Subasta> subastasDelUsuario = listarSubastasPorPropietario(idUsuario);
+
+        return subastasDelUsuario.stream()
+                .map(subasta -> new SubastaResumenDTO(
+                        subasta.getId(),
+                        subasta.getNombreActivo(),
+                        subasta.getEstado().name(),
+                        // Reemplaza 'getFechaCreacion()' por el método real que use tu entidad Subasta
+                        subasta.getFechaInicio(),
+                        // Por lo que vi en tu cron job, este es el método que usas para el cierre
+                        subasta.getFechaFinalizacionLicitacion()
+                ))
+                .collect(Collectors.toList());
+    }
 
     // --- CRON JOBS ---
     @Scheduled(fixedRate = 60000)

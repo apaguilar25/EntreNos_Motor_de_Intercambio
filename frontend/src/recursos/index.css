@@ -23,6 +23,7 @@
   --accent-primary: #047857;
   --accent-secondary: #5D3A1A;
   --accent-warning: #D97706;
+  --text-on-warning: #ffffff;
 
   /* Text on specific backgrounds to guarantee contrast */
   --text-on-accent: #ffffff;
@@ -46,6 +47,7 @@
   --accent-primary: #DCFCE7; /* Bright green */
   --accent-secondary: #E09F3E; /* Bright orange */
   --accent-warning: #FEF3C7;
+  --text-on-warning: #D97706;
 
   /* In dark mode, text on the bright accent-primary must be dark */
   --text-on-accent: #047857;
