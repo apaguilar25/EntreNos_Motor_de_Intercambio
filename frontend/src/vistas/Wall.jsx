@@ -434,7 +434,7 @@ const Wall = () => {
                     )}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-warning)', fontSize: '0.75rem' }}>
-                    <Star size={12} fill="currentColor" /> {post.reputation}
+                    <Star size={12} fill="currentColor" /> {Number(post.reputation).toFixed(1)}
                   </div>
                 </div>
               </div>
@@ -456,7 +456,7 @@ const Wall = () => {
                       cursor: disabled ? 'not-allowed' : 'pointer'
                     }}
                     disabled={disabled}
-                    onClick={() => navigate(`/request/${post.id}?type=${post.type}&userId=${post.userId}&price=${post.price}&title=${encodeURIComponent(post.title)}&desc=${encodeURIComponent(post.description)}&owner=${encodeURIComponent(post.user)}&rep=${post.reputation}`)}
+                    onClick={() => navigate(`/request/${post.id}?type=${post.type}&userId=${post.userId}&price=${post.price}&title=${encodeURIComponent(post.title)}&desc=${encodeURIComponent(post.description)}&owner=${encodeURIComponent(post.user)}&rep=${Number(post.reputation).toFixed(1)}`)}
                   >
                     {alreadyRequested ? 'Ya ofertaste' : (noCredits ? 'Sin créditos' : 'Contactar')}
                   </button>

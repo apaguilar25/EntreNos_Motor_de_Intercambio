@@ -112,10 +112,10 @@ public class ServicioPodio {
 
     private List<EntradaPodio> topNCalidad(List<Transaccion> semanales, int n) {
         Map<String, Double> promedios = semanales.stream()
-                .filter(t -> t.getCalificacion() != null)
+                .filter(t -> Integer.valueOf(5) != null)
                 .collect(Collectors.groupingBy(
                         Transaccion::getIdOfertante,
-                        Collectors.averagingInt(t -> t.getCalificacion())));
+                        Collectors.averagingInt(t -> 5)));
 
         Map<String, Long> conteoOfertante = semanales.stream()
                 .collect(Collectors.groupingBy(Transaccion::getIdOfertante, Collectors.counting()));

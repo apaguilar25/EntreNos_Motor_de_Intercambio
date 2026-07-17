@@ -155,7 +155,7 @@ public class ServicioTransaccion {
             throw new IllegalStateException("Ya calificaste esta transacción.");
         }
         Resena resena = servicioReputacion.crearResena(idTransaccion, idUsuario, t.getIdOfertante(), calificacion);
-        t.setResena(resena);
+        
         repositorioTransaccion.guardar(t);
         return t;
     }

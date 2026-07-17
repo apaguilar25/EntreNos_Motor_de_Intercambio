@@ -15,7 +15,8 @@ public class Transaccion {
     private boolean confirmacionDemandante;
     private long fechaCreacion;
     private String idIncidencia;
-    private Resena resena;
+    private boolean resenaDemandante;
+    private boolean resenaOfertante;
     private int version;
 
     public Transaccion() {}
@@ -27,6 +28,8 @@ public class Transaccion {
         this.idDemandante = idDemandante;
         this.creditosRetenidos = creditosRetenidos;
         this.estado = EstadoTransaccion.PENDIENTE;
+        this.resenaDemandante = false;
+        this.resenaOfertante = false;
         this.confirmacionOfertante = false;
         this.confirmacionDemandante = false;
         this.fechaCreacion = System.currentTimeMillis();
@@ -67,8 +70,8 @@ public class Transaccion {
     }
 
     public void asignarIncidencia(String idIncidencia) {
-        if (this.estado != EstadoTransaccion.INICIADA && this.estado != EstadoTransaccion.PENDIENTE) {
-            throw new IllegalStateException("Solo se puede reportar una incidencia en transacciones PENDIENTES o INICIADAS.");
+        if (this.estado != EstadoTransaccion.INICIADA && this.estado != EstadoTransaccion.PENDIENTE && this.estado != EstadoTransaccion.EN_DISPUTA) {
+            throw new IllegalStateException("Solo se puede reportar una incidencia en transacciones PENDIENTES, INICIADAS o EN_DISPUTA.");
         }
         this.idIncidencia = idIncidencia;
         this.estado = EstadoTransaccion.EN_DISPUTA;
@@ -84,8 +87,8 @@ public class Transaccion {
     public boolean isConfirmacionDemandante() { return confirmacionDemandante; }
     public long getFechaCreacion() { return fechaCreacion; }
     public String getIdIncidencia() { return idIncidencia; }
-    public Integer getCalificacion() { return resena != null ? resena.getCalificacion() : null; }
-    public Resena getResena() { return resena; }
+    
+    
 
     public int getVersion() { return version; }
     public void setVersion(int version) { this.version = version; }
@@ -100,5 +103,6 @@ public class Transaccion {
     public void setConfirmacionDemandante(boolean confirmacionDemandante) { this.confirmacionDemandante = confirmacionDemandante; }
     public void setFechaCreacion(long fechaCreacion) { this.fechaCreacion = fechaCreacion; }
     public void setIdIncidencia(String idIncidencia) { this.idIncidencia = idIncidencia; }
-    public void setResena(Resena resena) { this.resena = resena; }
+    public void setResenaDemandante(boolean resenaDemandante) { this.resenaDemandante = resenaDemandante; }
+    public void setResenaOfertante(boolean resenaOfertante) { this.resenaOfertante = resenaOfertante; }
 }

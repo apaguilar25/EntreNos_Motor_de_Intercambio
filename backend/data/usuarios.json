@@ -161,7 +161,7 @@
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
     "contrasenaHash": "$2a$10$8Wf3ABToBcPb548r/M3BruD0/u5HZeiXVuV0QwfjbUmI5Qz1/Z7ze",
-    "version": 41,
+    "version": 42,
     "monedero": {
       "creditosDisponibles": 50.0,
       "creditosComprometidos": 8.0,

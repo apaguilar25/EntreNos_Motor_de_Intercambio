@@ -74,6 +74,18 @@ public class ControladorSubasta {
         }
     }
 
+    @DeleteMapping("/{idSubasta}/puja")
+    public ResponseEntity<?> retirarPuja(@AuthenticationPrincipal String idUsuario, @PathVariable String idSubasta) {
+        try {
+            servicioSubasta.retirarPuja(idSubasta, idUsuario);
+            return ResponseEntity.ok(Map.of("mensaje", "Tu puja ha sido retirada exitosamente."));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Error interno al retirar la puja."));
+        }
+    }
+
     @PostMapping("/{idSubasta}/cancelar")
     public ResponseEntity<?> cancelarSubasta(@AuthenticationPrincipal String idPropietario, @PathVariable String idSubasta) {
         try {

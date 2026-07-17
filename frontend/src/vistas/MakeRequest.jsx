@@ -243,7 +243,7 @@ const MakeRequest = () => {
             </div>
             <div>
               <div style={{ fontWeight: 'bold' }}>{user?.name || 'Usuario Actual'}</div>
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Reputación: 5.0 ⭐</div>
+              <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Reputación: {user?.reputacion?.toFixed(1) || '5.0'} ⭐</div>
             </div>
           </div>
 
