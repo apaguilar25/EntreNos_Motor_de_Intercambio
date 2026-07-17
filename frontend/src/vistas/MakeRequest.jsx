@@ -343,27 +343,26 @@ const MakeRequest = () => {
                     <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: '500' }}>
                       <Coins size={16} /> Tus créditos a cobrar
                     </label>
-                    {priceFromCatalog !== null ? (
-                      <>
-                        <input 
-                          type="number" min="0"
-                          value={offeredPrice}
-                          disabled
-                          style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }}
-                        />
-                        <p style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.25rem' }}>
-                          Precio desde tu catálogo
-                        </p>
-                      </>
-                    ) : (
-                      <input 
-                        type="number" min="0"
-                        value={offeredPrice || ''}
-                        onChange={e => setOfferedPrice(Number(e.target.value))}
-                        placeholder="Ej: 5"
-                        style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }}
-                      />
+                    {priceFromCatalog !== null && (
+                      <span style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+                        fontSize: '0.72rem', fontWeight: '600',
+                        color: 'var(--accent-primary)',
+                        backgroundColor: 'rgba(var(--accent-primary-rgb, 59,130,246), 0.08)',
+                        border: '1px solid var(--accent-primary)',
+                        borderRadius: '1rem', padding: '0.2rem 0.6rem',
+                        marginBottom: '0.4rem'
+                      }}>
+                        ✓ Precio sugerido de tu catálogo — puedes modificarlo
+                      </span>
                     )}
+                    <input 
+                      type="number" min="0"
+                      value={offeredPrice ?? ''}
+                      onChange={e => setOfferedPrice(Number(e.target.value))}
+                      placeholder="Ej: 5"
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }}
+                    />
                   </div>
                 )}
                 <div>

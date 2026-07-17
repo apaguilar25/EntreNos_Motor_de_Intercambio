@@ -289,11 +289,19 @@ const Wall = () => {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-color)', paddingTop: '1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontWeight: 'bold' }}>
+                <div
+                  onClick={() => post.userId === user?.id ? navigate('/profile') : navigate(`/user/${post.userId}`)}
+                  style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontWeight: 'bold', cursor: 'pointer' }}
+                >
                   {post.user.charAt(0)}
                 </div>
                 <div>
-                  <div style={{ fontWeight: '500', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div
+                    onClick={() => post.userId === user?.id ? navigate('/profile') : navigate(`/user/${post.userId}`)}
+                    style={{ fontWeight: '500', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--accent-primary)', textDecoration: 'underline', textDecorationColor: 'transparent', transition: 'text-decoration-color 0.2s' }}
+                    onMouseEnter={e => e.currentTarget.style.textDecorationColor = 'var(--accent-primary)'}
+                    onMouseLeave={e => e.currentTarget.style.textDecorationColor = 'transparent'}
+                  >
                     {post.user}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-warning)', fontSize: '0.75rem' }}>
