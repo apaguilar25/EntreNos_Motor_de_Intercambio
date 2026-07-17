@@ -5,12 +5,16 @@ pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 pom.xml.next
-*.class
 release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/.maven-wrapper.jar
+*.class
+
+# Ignora los JSON. Comentar (#) la siguiente linea en caso de querer subirlos y tener problemas
+*.json
+
 
 --- INTELLIJ IDEA ---
 Ignorar toda la carpeta de configuración local

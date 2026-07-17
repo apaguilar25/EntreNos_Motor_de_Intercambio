@@ -5,9 +5,7 @@ import es.ucab.entrenos.modulos.identidad.modelos.Usuario;
 import es.ucab.entrenos.modulos.identidad.repositorios.IRepositorioUsuario;
 import es.ucab.entrenos.modulos.notificacion.modelos.TipoNotificacion;
 import es.ucab.entrenos.modulos.notificacion.servicios.ServicioNotificacion;
-import es.ucab.entrenos.modulos.subasta.dtos.AdjudicacionResponseDTO;
-import es.ucab.entrenos.modulos.subasta.dtos.ContactoUsuarioDTO;
-import es.ucab.entrenos.modulos.subasta.dtos.SubastaResumenDTO;
+import es.ucab.entrenos.modulos.subasta.dtos.*;
 import es.ucab.entrenos.modulos.subasta.modelos.EstadoFisico;
 import es.ucab.entrenos.modulos.subasta.modelos.EstadoSubasta;
 import es.ucab.entrenos.modulos.subasta.modelos.Propuesta;
@@ -183,12 +181,45 @@ public class ServicioSubasta {
                         subasta.getId(),
                         subasta.getNombreActivo(),
                         subasta.getEstado().name(),
-                        // Reemplaza 'getFechaCreacion()' por el método real que use tu entidad Subasta
                         subasta.getFechaInicio(),
-                        // Por lo que vi en tu cron job, este es el método que usas para el cierre
-                        subasta.getFechaFinalizacionLicitacion()
+                        subasta.getFechaFinalizacionLicitacion(),
+                        subasta.getPropuestas().size()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    public SubastaDetalleDTO obtenerDetalleSubasta(String idSubasta) {
+        Subasta subasta = repositorioSubasta.buscarPorId(idSubasta)
+                .orElseThrow(() -> new IllegalArgumentException("Subasta no encontrada."));
+
+        List<PropuestaDetalleDTO> propuestasEnriquecidas = subasta.getPropuestas().stream()
+                .map(propuesta -> {
+                    // Buscamos el nombre del usuario
+                    String nombreUsuario = repositorioUsuario.buscarPorId(propuesta.getIdPostor())
+                            .map(u -> u.getNombre())
+                            .orElse("Usuario Eliminado");
+
+                    return new PropuestaDetalleDTO(
+                            propuesta.getIdPropuesta(),
+                            propuesta.getIdPostor(),
+                            nombreUsuario,
+                            // Extraemos los datos reales de la puja
+                            propuesta.getBienesOfrecidos(),
+                            propuesta.getDescripcion(),
+                            propuesta.getEstadoFisico(),
+                            propuesta.getImagenesUrls()
+                    );
+                })
+                .collect(Collectors.toList());
+
+        return new SubastaDetalleDTO(
+                subasta.getId(),
+                subasta.getNombreActivo(),
+                subasta.getDescripcion(),
+                subasta.getEstado().name(),
+                subasta.getFechaFinalizacionLicitacion(),
+                propuestasEnriquecidas
+        );
     }
 
     // --- CRON JOBS ---

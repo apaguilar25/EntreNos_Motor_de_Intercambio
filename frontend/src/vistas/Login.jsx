@@ -40,7 +40,7 @@ const Login = () => {
       }
       
       try {
-        const redirectPath = await controladorAutenticacion.iniciarSesion(correoElectronico, 'contrasena123'); // Password mock if no field exists in UI
+        const redirectPath = await controladorAutenticacion.iniciarSesion(correoElectronico, 'miclave2026'); // Si quieres entrar como admin cambia a admin2026
         navigate(redirectPath);
       } catch (err) {
         setError(err.message);
@@ -58,7 +58,7 @@ const Login = () => {
             correoElectronico,
             telefono,
             descripcionPersonal,
-            contrasena: 'contrasena123' // Mock if no password field in UI
+            contrasena: 'miclave2026' // Contraseña para nuevos usuarios
         });
         navigate(redirectPath);
       } catch (err) {

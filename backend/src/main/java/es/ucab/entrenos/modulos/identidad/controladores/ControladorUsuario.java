@@ -1,5 +1,6 @@
 package es.ucab.entrenos.modulos.identidad.controladores;
 
+import es.ucab.entrenos.modulos.gamificacion.dtos.LogroDesbloqueadoResponseDTO;
 import es.ucab.entrenos.modulos.gamificacion.servicios.ServicioGamificacion;
 import es.ucab.entrenos.modulos.gamificacion.servicios.ServicioPodio;
 import es.ucab.entrenos.modulos.identidad.dtos.*;

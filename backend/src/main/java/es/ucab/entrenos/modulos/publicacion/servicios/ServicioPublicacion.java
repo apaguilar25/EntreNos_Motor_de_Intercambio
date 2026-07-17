@@ -162,18 +162,6 @@ public class ServicioPublicacion {
                 .collect(Collectors.toList());
     }
 
-    public List<PublicacionResponseDTO> obtenerPublicacionesSinCache() {
-        long inicio = System.currentTimeMillis();
-        List<PublicacionResponseDTO> resultado = repositorioPublicacion.obtenerTodas().stream()
-                .filter(p -> !esUsuarioSancionado(p.getIdUsuario()))
-                .map(this::toResponseDTO)
-                .sorted(Comparator.comparingDouble(PublicacionResponseDTO::getReputacionUsuario).reversed())
-                .limit(10)
-                .collect(Collectors.toList());
-        log.info("Publicaciones leidas desde disco ({} ms)", System.currentTimeMillis() - inicio);
-        return resultado;
-    }
-
     public List<RecomendacionDTO> obtenerRecomendadas(String idUsuario) {
         Usuario usuario = servicioUsuario.buscarPorId(idUsuario)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + idUsuario));

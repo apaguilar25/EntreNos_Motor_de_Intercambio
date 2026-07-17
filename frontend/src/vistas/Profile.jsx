@@ -455,7 +455,7 @@ const Profile = () => {
           <p style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>{user?.email || 'correo@plazaalameda.com'}</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-warning)', fontWeight: 'bold' }}>
-              <Star size={16} fill="currentColor" /> {userProfile?.reputacionHistorica || 5.0}
+              <Star size={16} fill="currentColor" /> {(userProfile?.reputacionHistorica || 5).toFixed(1)}
             </span>
             <span style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem' }}>Reputación de Comunidad</span>
           </div>

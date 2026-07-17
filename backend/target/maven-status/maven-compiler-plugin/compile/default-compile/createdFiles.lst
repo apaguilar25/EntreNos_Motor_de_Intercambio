@@ -73,6 +73,7 @@ es\ucab\entrenos\modulos\identidad\repositorios\RepositorioHabilidad.class
 es\ucab\entrenos\modulos\identidad\servicios\ServicioAutenticacion$1.class
 es\ucab\entrenos\modulos\utility\UtilidadTexto.class
 es\ucab\entrenos\modulos\identidad\dtos\LoginRequestDTO.class
+es\ucab\entrenos\modulos\subasta\dtos\SubastaDetalleDTO.class
 es\ucab\entrenos\modulos\publicacion\repositorios\IRepositorioPublicacion.class
 es\ucab\entrenos\modulos\identidad\dtos\SaldoResponseDTO.class
 es\ucab\entrenos\modulos\notificacion\servicios\SseService.class
@@ -80,6 +81,7 @@ es\ucab\entrenos\modulos\gamificacion\repositorios\IRepositorioLogro.class
 es\ucab\entrenos\modulos\identidad\dtos\NuevaNecesidadIndividualDTO.class
 es\ucab\entrenos\modulos\publicacion\controladores\ControladorPublicacion.class
 es\ucab\entrenos\modulos\subasta\controladores\ControladorPropuesta.class
+es\ucab\entrenos\modulos\subasta\dtos\PropuestaDetalleDTO.class
 es\ucab\entrenos\modulos\publicacion\dtos\CancelarRequestDTO.class
 es\ucab\entrenos\modulos\identidad\servicios\ServicioCatalogo.class
 es\ucab\entrenos\modulos\publicacion\modelos\Cancelacion.class

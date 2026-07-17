@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import es.ucab.entrenos.modulos.subasta.dtos.SubastaDetalleDTO;
 
 @RestController
 @RequestMapping("/api/subastas")
@@ -43,6 +44,17 @@ public class ControladorSubasta {
     @GetMapping("/mis-subastas")
     public ResponseEntity<List<Subasta>> listarMisSubastas(@AuthenticationPrincipal String idPropietario) {
         return ResponseEntity.ok(servicioSubasta.listarSubastasPorPropietario(idPropietario));
+    }
+
+    @GetMapping("/{idSubasta}")
+    public ResponseEntity<?> obtenerDetalleSubasta(@PathVariable String idSubasta) {
+        try {
+            SubastaDetalleDTO detalle = servicioSubasta.obtenerDetalleSubasta(idSubasta);
+            return ResponseEntity.ok(detalle);
+        } catch (IllegalArgumentException e) {
+            // Si la subasta no existe, devolvemos un 404 Not Found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
     }
 
     @PostMapping("/{idSubasta}/ofertar")

@@ -34,12 +34,6 @@ public class ControladorPublicacion {
         return ResponseEntity.ok(
                 servicioPublicacion.obtenerPublicacionesFiltradas(tipo, servicio));
     }
-    @GetMapping("/sin-cache")
-    public ResponseEntity<List<PublicacionResponseDTO>> obtenerPublicacionesSinCache() {
-        return ResponseEntity.ok(
-                servicioPublicacion.obtenerPublicacionesSinCache());
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<PublicacionResponseDTO> obtenerPorId(@PathVariable String id) {
         return servicioPublicacion.obtenerPublicacionPorId(id)

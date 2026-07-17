@@ -1,14 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Star, Trophy, Medal, BookOpen, Hammer, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Star, Trophy, Medal, BookOpen, Hammer, AlertCircle, Sparkles } from 'lucide-react';
 import { AppContext } from '../App';
 
 const BASE_URL = 'http://localhost:8080/api';
-
-// Colores del podio
-const podioColors = ['#F59E0B', '#9CA3AF', '#B45309'];
-const podioBg = ['var(--color-yellow-100)', 'var(--bg-tertiary)', 'var(--color-orange-100)'];
-const podioLabel = ['🥇 1er lugar', '🥈 2do lugar', '🥉 3er lugar'];
 
 const PublicProfile = () => {
   const { id } = useParams();
@@ -18,10 +13,12 @@ const PublicProfile = () => {
   const [perfil, setPerfil] = useState(null);
   const [publicaciones, setPublicaciones] = useState([]);
   const [subastas, setSubastas] = useState([]);
-  const [podioPos, setPodioPos] = useState(null); // null o número 1-3
+  const [podioTops, setPodioTops] = useState([]); // array of tops the user is in
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('publicaciones');
+  const [imgError, setImgError] = useState(false);
+  const [pubFilter, setPubFilter] = useState('all');
 
   useEffect(() => {
     if (!id) return;
@@ -29,41 +26,68 @@ const PublicProfile = () => {
       setLoading(true);
       setError(null);
       try {
+        const token = sessionStorage.getItem('entreNosToken');
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
         // 1. Perfil público del usuario (endpoint preparado por el equipo backend)
-        const resPerfil = await fetch(`${BASE_URL}/usuarios/${id}/perfil-publico`);
+        const resPerfil = await fetch(`${BASE_URL}/usuarios/${id}/perfil-publico`, { headers });
+        let perfilData = null;
         if (resPerfil.ok) {
           const data = await resPerfil.json();
-          setPerfil(data);
+          perfilData = {
+            ...data.datosPersonales,
+            logros: data.logros || [],
+            subastasList: data.subastas || []
+          };
+          setPerfil(perfilData);
+          setSubastas(perfilData.subastasList);
         } else {
           // Fallback: intentar con el endpoint general si perfil-publico aún no existe
-          const resFallback = await fetch(`${BASE_URL}/usuarios/${id}`);
+          const resFallback = await fetch(`${BASE_URL}/usuarios/${id}`, { headers });
           if (resFallback.ok) {
-            setPerfil(await resFallback.json());
+            perfilData = await resFallback.json();
+            setPerfil(perfilData);
           } else {
             setError('No se pudo cargar el perfil de este usuario.');
           }
         }
 
         // 2. Publicaciones del usuario
-        const resPubs = await fetch(`${BASE_URL}/publicaciones/usuario/${id}`);
+        const resPubs = await fetch(`${BASE_URL}/publicaciones/usuario/${id}`, { headers });
         if (resPubs.ok) {
           setPublicaciones(await resPubs.json());
         }
 
-        // 3. Todas las subastas → filtrar por propietario
-        const resSub = await fetch(`${BASE_URL}/subastas`);
-        if (resSub.ok) {
-          const allSubs = await resSub.json();
-          setSubastas(allSubs.filter(s => s.idPropietario === id));
+        // 3. Subastas del usuario (si no vinieron en perfil-publico)
+        if (!perfilData?.subastasList) {
+          const resSub = await fetch(`${BASE_URL}/subastas`, { headers });
+          if (resSub.ok) {
+            const allSubs = await resSub.json();
+            setSubastas(allSubs.filter(s => s.idPropietario === id));
+          }
         }
 
         // 4. Podio — verificar si aparece
         if (controladorGamificacion) {
           try {
             const podioData = await controladorGamificacion.obtenerPodio();
-            const lista = podioData?.proveedorElite || (Array.isArray(podioData) ? podioData : []);
-            const pos = lista.findIndex(u => u.idUsuario === id);
-            if (pos >= 0) setPodioPos(pos); // 0-based index
+            const tops = [];
+            
+            if (podioData.proveedorElite) {
+              const pos = podioData.proveedorElite.findIndex(u => u.idUsuario === id);
+              if (pos >= 0) tops.push({ name: 'Proveedor Elite', pos, icon: Trophy, color: '#F59E0B' });
+            }
+            if (podioData.motorEconomia) {
+              const pos = podioData.motorEconomia.findIndex(u => u.idUsuario === id);
+              if (pos >= 0) tops.push({ name: 'Motor de la Economía', pos, icon: Sparkles, color: '#10B981' });
+            }
+            if (podioData.embajadorCalidad) {
+              const pos = podioData.embajadorCalidad.findIndex(u => u.idUsuario === id);
+              if (pos >= 0) tops.push({ name: 'Embajador de Calidad', pos, icon: Medal, color: '#3B82F6' });
+            }
+            
+            setPodioTops(tops);
           } catch (_) { /* podio no disponible */ }
         }
       } catch (e) {
@@ -99,8 +123,9 @@ const PublicProfile = () => {
   }
 
   const nombre = perfil?.nombre || perfil?.nombreUsuario || 'Usuario';
-  const reputacion = typeof perfil?.reputacion === 'number' ? perfil.reputacion.toFixed(1) : (perfil?.reputacionUsuario?.toFixed(1) ?? '—');
-  const logros = perfil?.logrosDesbloqueados || perfil?.logros || [];
+  const repValue = perfil?.promedioCalificacion ?? perfil?.reputacion ?? perfil?.reputacionUsuario;
+  const reputacion = typeof repValue === 'number' ? repValue.toFixed(1) : '—';
+  const logros = perfil?.logros || perfil?.logrosDesbloqueados || [];
   const inicial = nombre.charAt(0).toUpperCase();
 
   return (
@@ -126,8 +151,13 @@ const PublicProfile = () => {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', position: 'relative', zIndex: 1 }}>
           {/* Avatar */}
-          {perfil?.urlFotoPerfil ? (
-            <img src={perfil.urlFotoPerfil} alt={nombre} style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '3px solid rgba(255,255,255,0.5)' }} />
+          {perfil?.urlFotoPerfil && !imgError ? (
+            <img 
+              src={perfil.urlFotoPerfil} 
+              alt={nombre} 
+              onError={() => setImgError(true)}
+              style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '3px solid rgba(255,255,255,0.5)' }} 
+            />
           ) : (
             <div style={{
               width: '80px', height: '80px', borderRadius: '50%',
@@ -158,18 +188,26 @@ const PublicProfile = () => {
             </div>
           </div>
 
-          {/* Podio badge */}
-          {podioPos !== null && (
-            <div style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem',
-              backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: '0.75rem',
-              padding: '0.75rem 1rem', border: '1px solid rgba(255,255,255,0.3)'
-            }}>
-              <Trophy size={24} color={podioColors[podioPos]} />
-              <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#fff' }}>
-                {podioLabel[podioPos]}
-              </span>
-              <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.7)' }}>Podio semanal</span>
+          {/* Podio badges */}
+          {podioTops.length > 0 && (
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+              {podioTops.map((top, idx) => {
+                const Icon = top.icon;
+                const labels = ['🥇 1er lugar', '🥈 2do lugar', '🥉 3er lugar'];
+                return (
+                  <div key={idx} style={{
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem',
+                    backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: '0.75rem',
+                    padding: '0.75rem 1rem', border: '1px solid rgba(255,255,255,0.3)'
+                  }}>
+                    <Icon size={24} color={top.color} />
+                    <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#fff' }}>
+                      {labels[top.pos] || `Top ${top.pos + 1}`}
+                    </span>
+                    <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.7)' }}>{top.name}</span>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -228,12 +266,49 @@ const PublicProfile = () => {
       {/* Tab: Publicaciones */}
       {activeTab === 'publicaciones' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {publicaciones.length === 0 ? (
-            <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: '2rem 0' }}>
-              Este usuario no tiene publicaciones activas.
-            </p>
-          ) : (
-            publicaciones.map((pub, i) => {
+          
+          {/* Filtros de Publicaciones */}
+          {publicaciones.length > 0 && (
+            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+              {['all', 'HABILIDAD', 'NECESIDAD'].map(fType => (
+                <button
+                  key={fType}
+                  onClick={() => setPubFilter(fType)}
+                  style={{
+                    padding: '0.35rem 1rem',
+                    borderRadius: '2rem',
+                    border: '1px solid',
+                    fontSize: '0.85rem',
+                    fontWeight: pubFilter === fType ? 'bold' : 'normal',
+                    backgroundColor: pubFilter === fType ? 'var(--accent-primary)' : 'transparent',
+                    color: pubFilter === fType ? '#fff' : 'var(--text-secondary)',
+                    borderColor: pubFilter === fType ? 'var(--accent-primary)' : 'var(--border-color)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {fType === 'all' ? 'Todas' : fType === 'HABILIDAD' ? 'Ofertas' : 'Necesidades'}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {(() => {
+            const filtradas = publicaciones.filter(pub => pubFilter === 'all' || pub.tipoPublicacion === pubFilter);
+            if (publicaciones.length === 0) {
+              return (
+                <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: '2rem 0' }}>
+                  Este usuario no tiene publicaciones activas.
+                </p>
+              );
+            }
+            if (filtradas.length === 0) {
+              return (
+                <p style={{ textAlign: 'center', color: 'var(--text-tertiary)', padding: '2rem 0' }}>
+                  No hay publicaciones que coincidan con este filtro.
+                </p>
+              );
+            }
+            return filtradas.map((pub, i) => {
               const esOferta = pub.tipoPublicacion === 'HABILIDAD';
               return (
                 <div key={pub.idPublicacion || i} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
@@ -261,8 +336,8 @@ const PublicProfile = () => {
                   )}
                 </div>
               );
-            })
-          )}
+            });
+          })()}
         </div>
       )}
 

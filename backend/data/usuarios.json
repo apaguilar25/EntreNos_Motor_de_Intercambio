@@ -1,177 +1,279 @@
 [
   {
-    "id": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
-    "nombre": "Laura Medina",
-    "correoElectronico": "laura@alameda.com",
-    "telefono": "+58414000903",
-    "descripcionPersonal": "Pianista y programadora web, apasionada por la enseñanza",
-    "contrasenaHash": "$2b$10$glAWUagJGAl5OuANu2Q5lOilM3q.9gjD3JwrHmQ6wM.fJjgUCuzQi",
-    "version": 1,
+    "id": "c3894fd7-bf09-43e1-a939-8a05a92bcff2",
+    "nombre": "Miguel",
+    "correoElectronico": "miguel@alameda.com",
+    "telefono": "04122206867",
+    "descripcionPersonal": "Me llamo miguel",
+    "contrasenaHash": "$2a$10$7pP9IRyG3bzA8LJjg/7SmeUR6RvwT1DV.BXj5IqOCnFocLyxwXpv2",
+    "version": 3,
     "monedero": {
-      "creditosDisponibles": 30.0,
+      "creditosDisponibles": 50.0,
       "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
       "completado": true,
       "habilidadesOfrecidas": [
-        {"idInstancia": "80f1a69c-09ae-4185-ac58-a9b86c259d01", "habilidadBase": {"id": "HAB-009", "categoria": "Piano Clásico"}, "precioCreditos": 12, "descripcionServicio": "Clases de piano clásico para nivel principiante e intermedio"},
-        {"idInstancia": "03eaa3bf-cc89-4f82-b30c-6c1606ccf1a3", "habilidadBase": {"id": "HAB-010", "categoria": "Inglés Conversacional"}, "precioCreditos": 8, "descripcionServicio": "Clases de inglés conversacional y preparación para exámenes"},
-        {"idInstancia": "2a9689f1-8090-4bd2-b0e9-0d70456c5545", "habilidadBase": {"id": "HAB-008", "categoria": "Programación Web"}, "precioCreditos": 10, "descripcionServicio": "Desarrollo de sitios web básicos con HTML, CSS y JavaScript"},
-        {"idInstancia": "02d0227c-541e-4ec7-ba90-0893fa47f112", "habilidadBase": {"id": "HAB-004", "categoria": "Limpieza del Hogar"}, "precioCreditos": 4, "descripcionServicio": "Servicio de limpieza general del hogar"}
+        {
+          "idInstancia": "3994a4c6-9742-49ad-9c1b-100f9e8f8d59",
+          "habilidadBase": {
+            "id": "HAB-012",
+            "categoria": "Jardinería"
+          },
+          "precioCreditos": 3,
+          "descripcionServicio": "Soy buen jardinero"
+        }
       ],
       "necesidadesRegistradas": [
-        {"idInstancia": "26763004-8b20-4bcc-be76-0e0f48c1afe8", "necesidadBase": {"id": "HAB-012", "categoria": "Jardinería"}, "descripcionCondiciones": "Necesito ayuda para rediseñar y mantener mi jardín pequeño"},
-        {"idInstancia": "6989a046-4a01-42b7-9918-e524acc7737b", "necesidadBase": {"id": "HAB-011", "categoria": "Mecánica de Bicicletas"}, "descripcionCondiciones": "Mi bicicleta necesita ajuste de cambios y frenos"}
+        {
+          "idInstancia": "30f580db-659f-4890-8b25-ce54beb9808f",
+          "necesidadBase": {
+            "id": "HAB-013",
+            "categoria": "Electricidad Básica"
+          },
+          "descripcionCondiciones": "Quiero que me arreglen la luz"
+        }
       ]
     },
-    "estado": "ACTIVO", "intentosFallidos": 0, "tiempoDesbloqueoMillis": 0, "primerIntentoFallidoMillis": 0, "reportesFraudeValidados": 0, "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 5.0, "cantidadCalificaciones": 3, "rol": "MIEMBRO_COMUNIDAD", "esVecinoDestacado": true
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "MIEMBRO_COMUNIDAD",
+    "esVecinoDestacado": false
   },
   {
     "id": "e561668f-1fa0-4622-a545-0e6a406b36be",
-    "nombre": "Ana García",
+    "nombre": "Ana Ofertante",
     "correoElectronico": "ana.cache@alameda.com",
     "telefono": "+58414000901",
-    "descripcionPersonal": "Profesora de yoga y amante de la cocina italiana",
-    "contrasenaHash": "$2b$10$glAWUagJGAl5OuANu2Q5lO7WJoRcYdZtG0racmT9EKfLhL2N3/vxW",
+    "descripcionPersonal": "Test cache",
+    "contrasenaHash": "$2b$10$uWE5Kn7A2tgmvMQp7JOe5Oq4J3IFlKYNgvZQByCQ3IhafRcMYPQNa",
     "version": 1,
     "monedero": {
-      "creditosDisponibles": 60.0,
-      "creditosComprometidos": 15.0,
-      "creditosPorLogros": 10.0
+      "creditosDisponibles": 0.0,
+      "creditosComprometidos": 0.0,
+      "creditosPorLogros": 0.0
     },
     "catalogo": {
-      "completado": true,
-      "habilidadesOfrecidas": [
-        {"idInstancia": "f8270a87-4912-4fb6-b23d-0fbb3836d7f7", "habilidadBase": {"id": "HAB-006", "categoria": "Yoga"}, "precioCreditos": 7, "descripcionServicio": "Clases de yoga grupal o individual, desde principiante hasta intermedio"},
-        {"idInstancia": "46cbc8fb-8cfb-432b-8fba-c60850d4bdd3", "habilidadBase": {"id": "HAB-007", "categoria": "Cocina Italiana"}, "precioCreditos": 10, "descripcionServicio": "Preparación de platos italianos caseros (pastas, risottos, postres)"},
-        {"idInstancia": "58a7e9c0-4128-43a4-a37a-ce140deaae39", "habilidadBase": {"id": "HAB-014", "categoria": "Guitarra Acústica"}, "precioCreditos": 6, "descripcionServicio": "Clases de guitarra acústica nivel básico e intermedio"}
-      ],
-      "necesidadesRegistradas": [
-        {"idInstancia": "c469adf8-960b-47a5-82d5-7d09f6246e61", "necesidadBase": {"id": "HAB-005", "categoria": "Soporte Técnico / Computación"}, "descripcionCondiciones": "Mi computadora portátil tiene problemas de rendimiento, necesito diagnóstico"},
-        {"idInstancia": "5d4b03f7-1acb-49a2-b93a-0b3d8fb14765", "necesidadBase": {"id": "HAB-003", "categoria": "Carpintería"}, "descripcionCondiciones": "Arreglar una puerta que no cierra bien"}
-      ]
+      "completado": false,
+      "habilidadesOfrecidas": [],
+      "necesidadesRegistradas": []
     },
-    "estado": "ACTIVO", "intentosFallidos": 0, "tiempoDesbloqueoMillis": 0, "primerIntentoFallidoMillis": 0, "reportesFraudeValidados": 0, "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 4.9, "cantidadCalificaciones": 15, "rol": "MIEMBRO_COMUNIDAD", "esVecinoDestacado": true
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 5.0,
+    "cantidadCalificaciones": 3,
+    "rol": "MIEMBRO_COMUNIDAD",
+    "esVecinoDestacado": false
   },
   {
-    "id": "23b7289e-d883-4e97-8b62-9fa0ec806e6d",
-    "nombre": "Pedro Rojas",
-    "correoElectronico": "pedro@alameda.com",
-    "telefono": "+58414000904",
-    "descripcionPersonal": "Programador web full-stack, guitarrista aficionado y manitas del hogar",
-    "contrasenaHash": "$2b$10$glAWUagJGAl5OuANu2Q5lOX2Awhp42Ct79N6bQ3oAUt.aAE9jb7/S",
-    "version": 1,
+    "id": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "nombre": "Carlos Prueba",
+    "correoElectronico": "carlos.prueba@alameda.com",
+    "telefono": "04121234567",
+    "contrasenaHash": "$2b$10$uWE5Kn7A2tgmvMQp7JOe5Oq4J3IFlKYNgvZQByCQ3IhafRcMYPQNa",
+    "version": 26,
     "monedero": {
-      "creditosDisponibles": 25.0,
+      "creditosDisponibles": 50.0,
       "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
       "completado": true,
       "habilidadesOfrecidas": [
-        {"idInstancia": "c26f0689-a6cc-4d85-8e4d-88fb98a537fb", "habilidadBase": {"id": "HAB-008", "categoria": "Programación Web"}, "precioCreditos": 11, "descripcionServicio": "Desarrollo full-stack con React, Node.js y bases de datos"},
-        {"idInstancia": "35c5f51c-dfe5-4c1e-8f02-0c60fdf817e4", "habilidadBase": {"id": "HAB-010", "categoria": "Inglés Conversacional"}, "precioCreditos": 6, "descripcionServicio": "Conversaciones guiadas y corrección de pronunciación en inglés"},
-        {"idInstancia": "df812a33-902e-4ba7-8d90-aeaf8e58d257", "habilidadBase": {"id": "HAB-014", "categoria": "Guitarra Acústica"}, "precioCreditos": 5, "descripcionServicio": "Clases de guitarra española y acústica nivel principiante"},
-        {"idInstancia": "1a18893c-1ec8-40da-82d1-7b14b4565e88", "habilidadBase": {"id": "HAB-013", "categoria": "Electricidad Básica"}, "precioCreditos": 3, "descripcionServicio": "Reparaciones eléctricas menores en el hogar"},
-        {"idInstancia": "f7081ccb-79b4-499b-9d6a-19afbe565e13", "habilidadBase": {"id": "HAB-001", "categoria": "Plomería"}, "precioCreditos": 4, "descripcionServicio": "Reparaciones básicas de plomería doméstica"}
+        {
+          "idInstancia": "8d7f912a-ec1b-4cd7-9ae6-3934047e6f9b",
+          "habilidadBase": {
+            "id": "HAB-001",
+            "categoria": "Plomería"
+          },
+          "precioCreditos": 5,
+          "descripcionServicio": "Arreglo de tuberías y grifos"
+        },
+        {
+          "idInstancia": "9263f552-eb3c-40b4-9ad3-2034799e9e4c",
+          "habilidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "precioCreditos": 8,
+          "descripcionServicio": "Reparación de computadoras y soporte técnico"
+        },
+        {
+          "idInstancia": "543a77cf-c4be-44c5-801b-bf27ba46a826",
+          "habilidadBase": {
+            "id": "HAB-003",
+            "categoria": "Carpintería"
+          },
+          "precioCreditos": 4,
+          "descripcionServicio": "sadadadasd"
+        }
       ],
       "necesidadesRegistradas": [
-        {"idInstancia": "cb0f7962-ea9d-4cee-a0a7-e0c90dd17aaa", "necesidadBase": {"id": "HAB-007", "categoria": "Cocina Italiana"}, "descripcionCondiciones": "Quiero aprender a cocinar pasta y pizza desde cero"},
-        {"idInstancia": "a3139648-082d-4de0-b083-b962b51d1f5b", "necesidadBase": {"id": "HAB-006", "categoria": "Yoga"}, "descripcionCondiciones": "Busco clases de yoga para relajación después del trabajo"},
-        {"idInstancia": "c253992d-040a-46f8-a727-3cb7031f9d37", "necesidadBase": {"id": "HAB-009", "categoria": "Piano Clásico"}, "descripcionCondiciones": "Me gustaría tomar clases de piano para principiantes"}
+        {
+          "idInstancia": "d15d4ffe-e679-4f1c-9c1d-d4f2fee33e01",
+          "necesidadBase": {
+            "id": "HAB-004",
+            "categoria": "Limpieza del Hogar"
+          },
+          "descripcionCondiciones": "Necesito ayuda con limpieza general de mi apartamento una vez por semana"
+        },
+        {
+          "idInstancia": "fe44b59f-4d9f-414c-83ff-9b2f4c1a8d1e",
+          "necesidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "descripcionCondiciones": "ffssfsfds"
+        },
+        {
+          "idInstancia": "7ad32b3e-907c-4f4a-9260-fd9fe6b14bad",
+          "necesidadBase": {
+            "id": "HAB-001",
+            "categoria": "Plomería"
+          },
+          "descripcionCondiciones": "saasfasfasfasfasfasf"
+        },
+        {
+          "idInstancia": "af050134-9d95-477e-b078-056e3b7f37ce",
+          "necesidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "descripcionCondiciones": "Necesito este servicio porque mi computadora se dañó"
+        },
+        {
+          "idInstancia": "9e1dfee4-6034-4fbf-be41-30f06cb12666",
+          "necesidadBase": {
+            "id": "HAB-003",
+            "categoria": "Carpintería"
+          },
+          "descripcionCondiciones": "NEcesito que me arreglen la silla"
+        }
       ]
     },
-    "estado": "ACTIVO", "intentosFallidos": 0, "tiempoDesbloqueoMillis": 0, "primerIntentoFallidoMillis": 0, "reportesFraudeValidados": 0, "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 0.0, "cantidadCalificaciones": 0, "rol": "MIEMBRO_COMUNIDAD", "esVecinoDestacado": false
-  },
-  {
-    "id": "f871e1d2-671e-4ea2-a19d-c1393805569c",
-    "nombre": "Carlos Pérez",
-    "correoElectronico": "carlos.prueba@alameda.com",
-    "telefono": "04121234567",
-    "descripcionPersonal": "Vecino emprendedor, me gusta ayudar con reparaciones del hogar",
-    "contrasenaHash": "$2b$10$glAWUagJGAl5OuANu2Q5lO/PecxmctWWXDjGivzMG8kxToOQUwa3m",
-    "version": 1,
-    "monedero": {
-      "creditosDisponibles": 85.0,
-      "creditosComprometidos": 20.0,
-      "creditosPorLogros": 10.0
-    },
-    "catalogo": {
-      "completado": true,
-      "habilidadesOfrecidas": [
-        {"idInstancia": "8d7f912a-ec1b-4cd7-9ae6-3934047e6f9b", "habilidadBase": {"id": "HAB-001", "categoria": "Plomería"}, "precioCreditos": 5, "descripcionServicio": "Reparación de tuberías, grifos y sanitarios"},
-        {"idInstancia": "9263f552-eb3c-40b4-9ad3-2034799e9e4c", "habilidadBase": {"id": "HAB-005", "categoria": "Soporte Técnico / Computación"}, "precioCreditos": 8, "descripcionServicio": "Reparación y mantenimiento de computadoras, instalación de software"},
-        {"idInstancia": "543a77cf-c4be-44c5-801b-bf27ba46a826", "habilidadBase": {"id": "HAB-003", "categoria": "Carpintería"}, "precioCreditos": 4, "descripcionServicio": "Arreglo de muebles, sillas, mesas y estructuras de madera"},
-        {"idInstancia": "6a5d9f51-2ca8-4eb3-8bfd-fd85c3d56394", "habilidadBase": {"id": "HAB-013", "categoria": "Electricidad Básica"}, "precioCreditos": 6, "descripcionServicio": "Instalación de tomacorrientes, interruptores y luminarias"}
-      ],
-      "necesidadesRegistradas": [
-        {"idInstancia": "d15d4ffe-e679-4f1c-9c1d-d4f2fee33e01", "necesidadBase": {"id": "HAB-004", "categoria": "Limpieza del Hogar"}, "descripcionCondiciones": "Limpieza general de mi apartamento una vez por semana"},
-        {"idInstancia": "2c777219-d5d0-432c-83b5-1f349ae09135", "necesidadBase": {"id": "HAB-006", "categoria": "Yoga"}, "descripcionCondiciones": "Clases de yoga para principiantes, 2 veces por semana"},
-        {"idInstancia": "f86e447c-3833-442b-adcc-14df6735f5c7", "necesidadBase": {"id": "HAB-012", "categoria": "Jardinería"}, "descripcionCondiciones": "Mantenimiento de jardín cada 15 días"}
-      ]
-    },
-    "estado": "ACTIVO", "intentosFallidos": 0, "tiempoDesbloqueoMillis": 0, "primerIntentoFallidoMillis": 0, "reportesFraudeValidados": 0, "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 4.5, "cantidadCalificaciones": 8, "rol": "MIEMBRO_COMUNIDAD", "esVecinoDestacado": true
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 4.7,
+    "cantidadCalificaciones": 3,
+    "rol": "MIEMBRO_COMUNIDAD",
+    "esVecinoDestacado": false
   },
   {
     "id": "610b0b73-746c-4d2a-88b7-c90778427553",
-    "nombre": "Bob Martínez",
+    "nombre": "Bob Demandante",
     "correoElectronico": "bob.cache@alameda.com",
     "telefono": "+58414000902",
-    "descripcionPersonal": "Amante de la jardinería y las bicicletas, siempre dispuesto a echar una mano",
-    "contrasenaHash": "$2b$10$glAWUagJGAl5OuANu2Q5lOCEcOlYvXvW6NyEbfqWoJKOY4U4lB9gG",
-    "version": 1,
+    "descripcionPersonal": "Test cache",
+    "contrasenaHash": "$2b$10$uWE5Kn7A2tgmvMQp7JOe5Oq4J3IFlKYNgvZQByCQ3IhafRcMYPQNa",
+    "version": 5,
     "monedero": {
-      "creditosDisponibles": 40.0,
-      "creditosComprometidos": 10.0,
-      "creditosPorLogros": 10.0
+      "creditosDisponibles": 0.0,
+      "creditosComprometidos": 0.0,
+      "creditosPorLogros": 0.0
     },
     "catalogo": {
-      "completado": true,
-      "habilidadesOfrecidas": [
-        {"idInstancia": "15b3c998-c9a0-4cbf-9a6d-ba2a7b961ccd", "habilidadBase": {"id": "HAB-012", "categoria": "Jardinería"}, "precioCreditos": 5, "descripcionServicio": "Corte de césped, poda de arbustos y mantenimiento de jardines"},
-        {"idInstancia": "23dc15a9-bd83-49d7-a0b5-e8a6e35364a1", "habilidadBase": {"id": "HAB-013", "categoria": "Electricidad Básica"}, "precioCreditos": 7, "descripcionServicio": "Instalaciones eléctricas residenciales sencillas"},
-        {"idInstancia": "823ea771-5556-4b97-aa71-2ac3c688abe5", "habilidadBase": {"id": "HAB-011", "categoria": "Mecánica de Bicicletas"}, "precioCreditos": 4, "descripcionServicio": "Ajuste de frenos, cambios, reparación de pinchazos y mantenimiento general"}
-      ],
-      "necesidadesRegistradas": [
-        {"idInstancia": "f90f01bd-36ae-4515-b4a6-c9a37f717156", "necesidadBase": {"id": "HAB-001", "categoria": "Plomería"}, "descripcionCondiciones": "Lavamanos del baño principal gotea constantemente, necesita reparación"},
-        {"idInstancia": "7a3bbb20-1859-4d71-abc3-fa96f47be210", "necesidadBase": {"id": "HAB-010", "categoria": "Inglés Conversacional"}, "descripcionCondiciones": "Quiero practicar inglés conversacional nivel intermedio, 1 hora por semana"}
-      ]
+      "completado": false,
+      "habilidadesOfrecidas": [],
+      "necesidadesRegistradas": []
     },
-    "estado": "ACTIVO", "intentosFallidos": 0, "tiempoDesbloqueoMillis": 0, "primerIntentoFallidoMillis": 0, "reportesFraudeValidados": 0, "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 4.2, "cantidadCalificaciones": 6, "rol": "MIEMBRO_COMUNIDAD", "esVecinoDestacado": false
+    "estado": "BLOQUEADO_SEGURIDAD",
+    "intentosFallidos": 5,
+    "tiempoDesbloqueoMillis": 1784345303347,
+    "primerIntentoFallidoMillis": 1784258817093,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 4.5,
+    "cantidadCalificaciones": 2,
+    "rol": "MIEMBRO_COMUNIDAD",
+    "esVecinoDestacado": false
   },
   {
     "id": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
-    "nombre": "Admin Principal",
+    "nombre": "Super Administrador",
     "correoElectronico": "admin@alameda.com",
     "telefono": "0000000000",
-    "descripcionPersonal": "Administrador general de la comunidad EntreNos",
-    "contrasenaHash": "$2b$10$glAWUagJGAl5OuANu2Q5lOSWpQ5IX6KHphWR/k7Kuy1gMKx5vAYWu",
-    "version": 5,
+    "descripcionPersonal": "Administrador general de la comunidad",
+    "contrasenaHash": "$2b$10$Lpv2lrJoHNTbeXzM7Z8GvOCSc59D62HiVLaiel2yHVUa238AL6Hte",
+    "version": 40,
     "monedero": {
       "creditosDisponibles": 50.0,
       "creditosComprometidos": 8.0,
-      "creditosPorLogros": 10.0
+      "creditosPorLogros": 0.0
     },
     "catalogo": {
       "completado": true,
       "habilidadesOfrecidas": [
-        {"idInstancia": "d64ef049-787b-43e6-866e-e519f05adc72", "habilidadBase": {"id": "HAB-005", "categoria": "Soporte Técnico / Computación"}, "precioCreditos": 3, "descripcionServicio": "Soporte técnico básico para computadoras y redes"},
-        {"idInstancia": "010a502c-807d-4cad-a330-2c203f66f3c6", "habilidadBase": {"id": "HAB-002", "categoria": "Electricidad"}, "precioCreditos": 4, "descripcionServicio": "Reparaciones eléctricas del hogar"},
-        {"idInstancia": "233ccb2e-cc7a-4ea6-8582-89fba7ef8895", "habilidadBase": {"id": "HAB-003", "categoria": "Carpintería"}, "precioCreditos": 4, "descripcionServicio": "Arreglo de sillas, mesas y muebles de madera"}
+        {
+          "idInstancia": "d64ef049-787b-43e6-866e-e519f05adc72",
+          "habilidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "precioCreditos": 3,
+          "descripcionServicio": "dsfsf"
+        },
+        {
+          "idInstancia": "010a502c-807d-4cad-a330-2c203f66f3c6",
+          "habilidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "precioCreditos": 4,
+          "descripcionServicio": "dgsgsdgsdgsdgsgdsd"
+        },
+        {
+          "idInstancia": "233ccb2e-cc7a-4ea6-8582-89fba7ef8895",
+          "habilidadBase": {
+            "id": "HAB-003",
+            "categoria": "Carpintería"
+          },
+          "precioCreditos": 4,
+          "descripcionServicio": "Puedo arreglar sillas"
+        }
       ],
       "necesidadesRegistradas": [
-        {"idInstancia": "d73f756b-8a86-43f0-b552-70f60441e9e4", "necesidadBase": {"id": "HAB-002", "categoria": "Electricidad"}, "descripcionCondiciones": "Necesito cambiar varios tomacorrientes y un interruptor en mi casa"},
-        {"idInstancia": "99ff644d-452a-4c45-9d95-22621904330c", "necesidadBase": {"id": "HAB-004", "categoria": "Limpieza del Hogar"}, "descripcionCondiciones": "Limpieza general de mi apartamento de 2 habitaciones"},
-        {"idInstancia": "ef4ef20e-7f4a-491e-b75b-98cbc0c5997f", "necesidadBase": {"id": "HAB-006", "categoria": "Yoga"}, "descripcionCondiciones": "Clases de yoga relajante después del trabajo"}
+        {
+          "idInstancia": "d73f756b-8a86-43f0-b552-70f60441e9e4",
+          "necesidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "descripcionCondiciones": "sdfsf"
+        },
+        {
+          "idInstancia": "023d4941-b316-4768-a34c-5bb9d465a886",
+          "necesidadBase": {
+            "id": "HAB-004",
+            "categoria": "Limpieza del Hogar"
+          },
+          "descripcionCondiciones": "blh´´oj´poúi´pi"
+        }
       ]
     },
-    "estado": "ACTIVO", "intentosFallidos": 0, "tiempoDesbloqueoMillis": 0, "primerIntentoFallidoMillis": 0, "reportesFraudeValidados": 0, "urlFotoPerfil": "default.png",
-    "promedioCalificacion": 4.8, "cantidadCalificaciones": 12, "rol": "ADMINISTRADOR", "esVecinoDestacado": true
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 4.5,
+    "cantidadCalificaciones": 3,
+    "rol": "ADMINISTRADOR",
+    "esVecinoDestacado": false
   }
 ]
