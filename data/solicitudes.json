@@ -1,0 +1,102 @@
+[
+  {
+    "idSolicitud": "SOL-00000001",
+    "idPublicacion": "PUB-00000001",
+    "idSolicitante": "610b0b73-746c-4d2a-88b7-c90778427553",
+    "estado": "ACEPTADA",
+    "fechaCreacion": 1781703516610,
+    "fechaLimiteRespuesta": 1782135516610,
+    "precioOfertado": 0,
+    "version": 1
+  },
+  {
+    "idSolicitud": "SOL-00000002",
+    "idPublicacion": "PUB-00000002",
+    "idSolicitante": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "estado": "ACEPTADA",
+    "fechaCreacion": 1782262633930,
+    "fechaLimiteRespuesta": 1782694633930,
+    "precioOfertado": 0,
+    "version": 1
+  },
+  {
+    "idSolicitud": "SOL-00000003",
+    "idPublicacion": "PUB-00000008",
+    "idSolicitante": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "estado": "ACEPTADA",
+    "fechaCreacion": 1782467056190,
+    "fechaLimiteRespuesta": 1782899056190,
+    "precioOfertado": 0,
+    "version": 1
+  },
+  {
+    "idSolicitud": "SOL-00000004",
+    "idPublicacion": "PUB-0000000D",
+    "idSolicitante": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "estado": "ACEPTADA",
+    "fechaCreacion": 1782838156454,
+    "fechaLimiteRespuesta": 1783270156454,
+    "precioOfertado": 0,
+    "version": 1
+  },
+  {
+    "idSolicitud": "SOL-00000005",
+    "idPublicacion": "PUB-00000003",
+    "idSolicitante": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "estado": "ACEPTADA",
+    "fechaCreacion": 1783350962341,
+    "fechaLimiteRespuesta": 1783782962341,
+    "precioOfertado": 0,
+    "version": 1
+  },
+  {
+    "idSolicitud": "SOL-00000006",
+    "idPublicacion": "PUB-00000004",
+    "idSolicitante": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
+    "estado": "ACEPTADA",
+    "fechaCreacion": 1783583919201,
+    "fechaLimiteRespuesta": 1784015919201,
+    "precioOfertado": 0,
+    "version": 1
+  },
+  {
+    "idSolicitud": "SOL-00000007",
+    "idPublicacion": "PUB-00000009",
+    "idSolicitante": "23b7289e-d883-4e97-8b62-9fa0ec806e6d",
+    "estado": "PENDIENTE",
+    "fechaCreacion": 1783987586193,
+    "fechaLimiteRespuesta": 1784419586193,
+    "precioOfertado": 0,
+    "version": 0
+  },
+  {
+    "idSolicitud": "SOL-00000008",
+    "idPublicacion": "PUB-00000015",
+    "idSolicitante": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "estado": "PENDIENTE",
+    "fechaCreacion": 1784146279366,
+    "fechaLimiteRespuesta": 1784578279366,
+    "precioOfertado": 0,
+    "version": 0
+  },
+  {
+    "idSolicitud": "SOL-00000009",
+    "idPublicacion": "PUB-0000000D",
+    "idSolicitante": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "estado": "PENDIENTE",
+    "fechaCreacion": 1784151693767,
+    "fechaLimiteRespuesta": 1784583693767,
+    "precioOfertado": 0,
+    "version": 0
+  },
+  {
+    "idSolicitud": "SOL-0000000A",
+    "idPublicacion": "PUB-0000000F",
+    "idSolicitante": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
+    "estado": "PENDIENTE",
+    "fechaCreacion": 1784193944120,
+    "fechaLimiteRespuesta": 1784625944120,
+    "precioOfertado": 0,
+    "version": 0
+  }
+]

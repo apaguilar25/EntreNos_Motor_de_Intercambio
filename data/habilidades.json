@@ -1,0 +1,58 @@
+[
+  {
+    "id": "HAB-001",
+    "categoria": "Plomería"
+  },
+  {
+    "id": "HAB-002",
+    "categoria": "Electricidad"
+  },
+  {
+    "id": "HAB-003",
+    "categoria": "Carpintería"
+  },
+  {
+    "id": "HAB-004",
+    "categoria": "Limpieza del Hogar"
+  },
+  {
+    "id": "HAB-005",
+    "categoria": "Soporte Técnico / Computación"
+  },
+  {
+    "id": "HAB-006",
+    "categoria": "Yoga"
+  },
+  {
+    "id": "HAB-007",
+    "categoria": "Cocina Italiana"
+  },
+  {
+    "id": "HAB-008",
+    "categoria": "Programación Web"
+  },
+  {
+    "id": "HAB-009",
+    "categoria": "Piano Clásico"
+  },
+  {
+    "id": "HAB-010",
+    "categoria": "Inglés Conversacional"
+  },
+  {
+    "id": "HAB-011",
+    "categoria": "Mecánica de Bicicletas"
+  },
+  {
+    "id": "HAB-012",
+    "categoria": "Jardinería"
+  },
+  {
+    "id": "HAB-013",
+    "categoria": "Electricidad Básica"
+  },
+  {
+    "id": "HAB-014",
+    "categoria": "Guitarra Acústica"
+  }
+]

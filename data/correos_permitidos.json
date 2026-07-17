@@ -1,0 +1,29 @@
+[ {
+  "id" : "169bf84f-b9ab-4fe2-b420-c9edb812c076",
+  "correo" : "admin@alameda.com",
+  "fechaCreacion" : 1776683637000
+}, {
+  "id" : "0128a174-fca8-437e-b77c-cd39d512700a",
+  "correo" : "carlos.prueba@alameda.com",
+  "fechaCreacion" : 1778383428446
+}, {
+  "id" : "43ea00a4-1b12-4047-9f6f-2ebade22bfaa",
+  "correo" : "ana.cache@alameda.com",
+  "fechaCreacion" : 1777157353960
+}, {
+  "id" : "219aa031-c083-44cd-9c71-f9b4903c729e",
+  "correo" : "bob.cache@alameda.com",
+  "fechaCreacion" : 1777423274170
+}, {
+  "id" : "86e7da25-bb3d-4169-96d5-bf79c797c49a",
+  "correo" : "laura@alameda.com",
+  "fechaCreacion" : 1781329992607
+}, {
+  "id" : "3adf9924-afa4-407b-8332-3aca42588ffe",
+  "correo" : "pedro@alameda.com",
+  "fechaCreacion" : 1781046840994
+}, {
+  "id" : "e946bb8e-8f91-447a-b5a8-3742f89bb4a9",
+  "correo" : "miguel@alameda.com",
+  "fechaCreacion" : 1784260710906
+} ]

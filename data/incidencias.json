@@ -1,0 +1,13 @@
+[
+  {
+    "idIncidencia": "INC-00000001",
+    "idTransaccion": "TX-00000005",
+    "idUsuarioReportante": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "descripcion": "El trabajo de carpintería no quedó bien terminado, la puerta sigue sin cerrar correctamente y dejó astillas en el piso.",
+    "urlEvidencia": "N/A",
+    "fotosEvidencia": [],
+    "fotosEvidenciaDefensa": [],
+    "estado": "ABIERTA",
+    "fechaCreacion": 1783523762341
+  }
+]
