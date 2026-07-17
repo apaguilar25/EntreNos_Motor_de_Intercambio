@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Clock, Hammer, Trophy, Sparkles, Medal } from 'lucide-react';
 import { AppContext } from '../App';
+import Pagination from '../componentes/ui/Pagination';
 
 const Auctions = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const Auctions = () => {
   const [loading, setLoading] = useState(true);
   const [podio, setPodio] = useState(null);
   const [selectedTopInfo, setSelectedTopInfo] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchAuctions = async () => {
@@ -93,9 +95,17 @@ const Auctions = () => {
             <p style={{ textAlign: 'center', color: 'var(--text-tertiary)' }}>Cargando subastas...</p>
         ) : auctions.length === 0 ? (
             <p style={{ textAlign: 'center', color: 'var(--text-tertiary)' }}>No hay subastas disponibles en este momento.</p>
-        ) : auctions.map((auction, index) => (
-          <div key={auction.id} className="card interactive-card" style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', animationDelay: `${index * 0.1}s` }}>
-            <div style={{ 
+        ) : (
+          <>
+            <Pagination 
+              currentPage={currentPage} 
+              totalItems={auctions.length} 
+              pageSize={5} 
+              onPageChange={setCurrentPage} 
+            />
+            {auctions.slice((currentPage - 1) * 5, currentPage * 5).map((auction, index) => (
+              <div key={auction.id} className="card interactive-card" style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', animationDelay: `${index * 0.1}s` }}>
+                <div style={{ 
               width: '150px', 
               height: '150px', 
               backgroundColor: 'var(--bg-tertiary)', 
@@ -189,6 +199,8 @@ const Auctions = () => {
             </div>
           </div>
         ))}
+      </>
+        )}
       </div>
       
       {/* Modal Información Top */}

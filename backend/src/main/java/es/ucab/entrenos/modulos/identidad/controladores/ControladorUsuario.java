@@ -23,6 +23,7 @@ import es.ucab.entrenos.modulos.publicacion.modelos.Publicacion;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -241,29 +242,59 @@ public class ControladorUsuario {
         }
     }
 
+    // Obtener perfil publico
     @GetMapping("/{id}/perfil-publico")
     public ResponseEntity<PerfilPublicoCompletoDTO> obtenerPerfilPublico(@PathVariable String id) {
 
-        // 1. Obtenemos los datos base de identidad
+        // 1. Obtenemos el usuario completo y sus datos básicos
+        Usuario usuario = servicioUsuario.buscarPorId(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
         PerfilPublicoDTO perfilBasico = servicioUsuario.obtenerPerfilPublico(id);
 
-        // 2. Obtenemos información transversal
-        // NOTA: Ajusta los nombres de estos métodos ("obtenerSubastasPorUsuario", etc.)
-        // para que coincidan exactamente con cómo los llamaste dentro de tus servicios.
+        // 2. Extraemos la bandera de Administrador
+        boolean esAdmin = usuario.isAdministrador();
+
+        // 3. Mapeamos las Habilidades Ofrecidas
+        // (Asumiendo que HabilidadOfrecida tiene getIdInstancia(), getHabilidadBase().getCategoria(), etc.)
+        List<HabilidadOfrecidaResumenDTO> ofrecidas = usuario.getHabilidadesOfrecidas().stream()
+                .map(h -> new HabilidadOfrecidaResumenDTO(
+                        h.getIdInstancia(),
+                        h.getHabilidadBase().getCategoria(),
+                        h.getPrecioCreditos(),
+                        h.getDescripcionServicio()
+                ))
+                .collect(Collectors.toList());
+
+        // 4. Mapeamos las Necesidades
+        // (Asumiendo que NecesidadRegistrada tiene getIdInstancia(), getHabilidadBase().getCategoria(), etc.)
+        List<NecesidadResumenDTO> necesitadas = usuario.getNecesidadesRegistradas().stream()
+                .map(n -> new NecesidadResumenDTO(
+                        n.getIdInstancia(),
+                        n.getNecesidadBase().getCategoria(),
+                        n.getDescripcionCondiciones()
+                ))
+                .collect(Collectors.toList());
+
+        // 5. Obtenemos información transversal (Subastas y Gamificación)
+        // Recordatorio: obtenerSubastasPorUsuario ya tiene el .limit(5) aplicado en el ServicioSubasta
         List<SubastaResumenDTO> misSubastas = servicioSubasta.obtenerSubastasPorUsuario(id);
         List<LogroDesbloqueadoResponseDTO> misLogros = servicioGamificacion.obtenerLogrosPorUsuario(id);
         boolean podio = servicioPodio.estaEnPodioSemanal(id);
 
-        // 3. Ensamblamos la respuesta completa
+        // 6. Ensamblamos la respuesta completa
         PerfilPublicoCompletoDTO perfilCompleto = new PerfilPublicoCompletoDTO(
                 perfilBasico,
+                esAdmin,
                 misSubastas,
                 misLogros,
-                podio
+                podio,
+                ofrecidas,
+                necesitadas
         );
 
         return ResponseEntity.ok(perfilCompleto);
     }
+
     // Agregar Habilidad a Usuario
     @PostMapping("/{id}/habilidades")
     public ResponseEntity<?> agregarHabilidadIndividual(

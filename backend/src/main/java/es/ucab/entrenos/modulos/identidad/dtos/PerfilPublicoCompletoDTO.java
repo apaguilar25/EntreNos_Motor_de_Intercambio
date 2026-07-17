@@ -10,17 +10,27 @@ public class PerfilPublicoCompletoDTO {
     private List<SubastaResumenDTO> subastas;
     private List<LogroDesbloqueadoResponseDTO> logros;
     private boolean enPodioSemanal;
+    private boolean esAdministrador; // Bandera para el frontend
+
+    private List<HabilidadOfrecidaResumenDTO> habilidadesOfrecidas;
+    private List<NecesidadResumenDTO> habilidadesNecesitadas;
 
     public PerfilPublicoCompletoDTO(
             PerfilPublicoDTO datosPersonales,
+            boolean esAdministrador,
             List<SubastaResumenDTO> subastas,
             List<LogroDesbloqueadoResponseDTO> logros,
-            boolean enPodioSemanal) {
+            boolean enPodioSemanal,
+            List<HabilidadOfrecidaResumenDTO> habilidadesOfrecidas,
+            List<NecesidadResumenDTO> habilidadesNecesitadas) {
 
+        this.esAdministrador = esAdministrador;
         this.datosPersonales = datosPersonales;
         this.subastas = subastas;
         this.logros = logros;
         this.enPodioSemanal = enPodioSemanal;
+        this.habilidadesOfrecidas = habilidadesOfrecidas;
+        this.habilidadesNecesitadas = habilidadesNecesitadas;
     }
 
     // Getters
@@ -28,10 +38,18 @@ public class PerfilPublicoCompletoDTO {
     public List<SubastaResumenDTO> getSubastas() { return subastas; }
     public List<LogroDesbloqueadoResponseDTO> getLogros() { return logros; }
     public boolean isEnPodioSemanal() { return enPodioSemanal; }
+    public boolean isAdministrador() {return esAdministrador;}
+    public List<HabilidadOfrecidaResumenDTO> getHabilidadesOfrecidas() {return habilidadesOfrecidas;}
+    public List<NecesidadResumenDTO> getHabilidadesNecesitadas() {return habilidadesNecesitadas;}
 
     // Setters
     public void setDatosPersonales(PerfilPublicoDTO datosPersonales) { this.datosPersonales = datosPersonales; }
     public void setSubastas(List<SubastaResumenDTO> subastas) { this.subastas = subastas; }
     public void setLogros(List<LogroDesbloqueadoResponseDTO> logros) { this.logros = logros; }
     public void setEnPodioSemanal(boolean enPodioSemanal) { this.enPodioSemanal = enPodioSemanal; }
+
+
+
 }
+
+

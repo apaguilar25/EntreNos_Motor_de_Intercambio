@@ -405,5 +405,27 @@
     "disponible": true,
     "idInstanciaCatalogo": "30f580db-659f-4890-8b25-ce54beb9808f",
     "version": 0
+  },
+  {
+    "idPublicacion": "PUB-484B9EC1",
+    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "tipoPublicacion": "HABILIDAD",
+    "nombreServicio": "Plomería",
+    "descripcion": "Soy Mario",
+    "precioCreditos": 4,
+    "disponible": true,
+    "idInstanciaCatalogo": "a05710fd-ddab-4140-a339-14aee0693114",
+    "version": 0
+  },
+  {
+    "idPublicacion": "PUB-8C9FC2BD",
+    "idUsuario": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "tipoPublicacion": "NECESIDAD",
+    "nombreServicio": "Electricidad",
+    "descripcion": "Ayuda con la luz",
+    "precioCreditos": 0,
+    "disponible": true,
+    "idInstanciaCatalogo": "084966fa-d9fa-4438-8d2d-9421df133a53",
+    "version": 0
   }
 ]

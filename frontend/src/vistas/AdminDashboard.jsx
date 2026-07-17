@@ -1,11 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '../App';
 import { ToastContext } from '../contextos/ToastContext';
+import Pagination from '../componentes/ui/Pagination';
 import './AdminDashboard.css';
 
 function AdminDashboard() {
     const { controladorAdministrador, user } = useContext(AppContext);
     const [activeTab, setActiveTab] = useState('incidencias');
+    const [currentPage, setCurrentPage] = useState(1);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [activeTab]);
 
     const [incidencias, setIncidencias] = useState([]);
     const [usuarios, setUsuarios] = useState([]);

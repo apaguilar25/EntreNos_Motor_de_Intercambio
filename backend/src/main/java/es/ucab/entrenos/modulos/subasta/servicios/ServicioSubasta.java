@@ -177,6 +177,8 @@ public class ServicioSubasta {
         List<Subasta> subastasDelUsuario = listarSubastasPorPropietario(idUsuario);
 
         return subastasDelUsuario.stream()
+                .sorted((s1, s2) -> s2.getFechaInicio().compareTo(s1.getFechaInicio()))
+                .limit(5)
                 .map(subasta -> new SubastaResumenDTO(
                         subasta.getId(),
                         subasta.getNombreActivo(),

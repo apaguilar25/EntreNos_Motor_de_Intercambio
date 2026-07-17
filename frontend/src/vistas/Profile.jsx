@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
 import { ConfirmContext, useConfirm } from '../contextos/ConfirmContext';
 import { Star, ShieldCheck, Edit2, Trash2 } from 'lucide-react';
+import Pagination from '../componentes/ui/Pagination';
 
 const Profile = () => {
   const { user, controladorPerfil, controladorSubasta, controladorGamificacion } = useContext(AppContext);
@@ -42,6 +43,11 @@ const Profile = () => {
   const [sectionModalOpen, setSectionModalOpen] = useState(null);
   const [txFilter, setTxFilter] = useState('TODAS');
   const [sentFilter, setSentFilter] = useState('TODAS');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sectionModalOpen, sentFilter, txFilter]);
 
   const loadTransactionsAndIncidencias = async () => {
     if (!user?.id) return [];
@@ -536,7 +542,7 @@ const Profile = () => {
                       No has registrado habilidades.
                     </div>
                   ) : (
-                    userProfile.ofertas.map((hab, idx) => (
+                    <> <Pagination currentPage={currentPage} totalItems={userProfile.ofertas.length} pageSize={5} onPageChange={setCurrentPage} /> {userProfile.ofertas.slice((currentPage - 1) * 5, currentPage * 5).map((hab, idx) => (
                       <div 
                         key={idx}
                         className="interactive-card" 
@@ -550,7 +556,8 @@ const Profile = () => {
                         <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{hab.descripcionServicio}</div>
                         <div style={{ color: 'var(--accent-primary)', fontWeight: 'bold', fontSize: '0.875rem', marginTop: '0.25rem' }}>{hab.precioCreditos}</div>
                       </div>
-                    ))
+                    ))}
+                    </>
                   )}
                 </div>
               </div>
@@ -569,7 +576,7 @@ const Profile = () => {
                       No hay necesidades registradas.
                     </div>
                   ) : (
-                    userProfile.necesidades.map((nec, idx) => (
+                    <> <Pagination currentPage={currentPage} totalItems={userProfile.necesidades.length} pageSize={5} onPageChange={setCurrentPage} /> {userProfile.necesidades.slice((currentPage - 1) * 5, currentPage * 5).map((nec, idx) => (
                       <div 
                         key={idx}
                         className="interactive-card" 
@@ -582,7 +589,8 @@ const Profile = () => {
                         <div style={{ fontWeight: '600', paddingRight: '3rem' }}>{nec.necesidadBase?.categoria || 'Necesidad'}</div>
                         <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{nec.descripcionCondiciones}</div>
                       </div>
-                    ))
+                    ))}
+                    </>
                   )}
                 </div>
               </div>
@@ -601,7 +609,7 @@ const Profile = () => {
                       No tienes subastas activas.
                     </div>
                   ) : (
-                    myAuctions.map((auction, idx) => (
+                    <> <Pagination currentPage={currentPage} totalItems={myAuctions.length} pageSize={5} onPageChange={setCurrentPage} /> {myAuctions.slice((currentPage - 1) * 5, currentPage * 5).map((auction, idx) => (
                       <div key={idx} className="interactive-card" style={{ padding: '1rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', position: 'relative' }}>
                         <div style={{ position: 'absolute', top: '1rem', right: '1rem', display: 'flex', gap: '0.5rem' }}>
                           {auction.estado !== 'CERRADA' && (
@@ -656,7 +664,8 @@ const Profile = () => {
                           </div>
                         )}
                       </div>
-                    ))
+                    ))}
+                    </>
                   )}
                 </div>
               </div>
@@ -666,7 +675,7 @@ const Profile = () => {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <h2 style={{ fontSize: '1.25rem' }}>Mis Ofertas Enviadas</h2>
-                  <select value={sentFilter} onChange={(e) => setSentFilter(e.target.value)} style={{ padding: '0.25rem', borderRadius: '0.25rem', border: '1px solid var(--border-color)', outline: 'none', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+                  <select value={sentFilter} onChange={(e) => { setSentFilter(e.target.value); setCurrentPage(1); }} style={{ padding: '0.25rem', borderRadius: '0.25rem', border: '1px solid var(--border-color)', outline: 'none', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
                     <option value="TODAS">Todas</option>
                     <option value="PENDIENTE">Pendiente</option>
                     <option value="ACEPTADA">Aceptada</option>
@@ -679,7 +688,7 @@ const Profile = () => {
                       No tienes ofertas activas.
                     </div>
                   ) : (
-                    sentRequests.filter(req => sentFilter === 'TODAS' || req.estado === sentFilter).map((req, index) => (
+                    <> <Pagination currentPage={currentPage} totalItems={sentRequests.filter(req => sentFilter === 'TODAS' || req.estado === sentFilter).length} pageSize={5} onPageChange={setCurrentPage} /> {sentRequests.filter(req => sentFilter === 'TODAS' || req.estado === sentFilter).slice((currentPage - 1) * 5, currentPage * 5).map((req, index) => (
                       <div key={index} style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
                           <h4 style={{ marginBottom: '0.25rem', fontSize: '1rem' }}>{pubsMap[req.idPublicacion]?.nombreServicio || req.idPublicacion}</h4>
@@ -706,7 +715,8 @@ const Profile = () => {
                           )}
                         </div>
                       </div>
-                    ))
+                    ))}
+                    </>
                   )}
                 </div>
               </div>
@@ -716,7 +726,7 @@ const Profile = () => {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <h2 style={{ fontSize: '1.25rem' }}>Mis Transacciones Activas</h2>
-                  <select value={txFilter} onChange={(e) => setTxFilter(e.target.value)} style={{ padding: '0.25rem', borderRadius: '0.25rem', border: '1px solid var(--border-color)', outline: 'none', marginLeft: '1rem', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+                  <select value={txFilter} onChange={(e) => { setTxFilter(e.target.value); setCurrentPage(1); }} style={{ padding: '0.25rem', borderRadius: '0.25rem', border: '1px solid var(--border-color)', outline: 'none', marginLeft: '1rem', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
                     <option value="TODAS">Todas</option>
                     <option value="INICIADA">Iniciada</option>
                     <option value="PENDIENTE">Pendiente</option>
@@ -730,7 +740,7 @@ const Profile = () => {
                       No tienes transacciones activas.
                     </div>
                   ) : (
-                    transacciones.filter(tx => txFilter === 'TODAS' || tx.estado === txFilter).map((tx, index) => (
+                    <> <Pagination currentPage={currentPage} totalItems={transacciones.filter(tx => txFilter === 'TODAS' || tx.estado === txFilter).length} pageSize={5} onPageChange={setCurrentPage} /> {transacciones.filter(tx => txFilter === 'TODAS' || tx.estado === txFilter).slice((currentPage - 1) * 5, currentPage * 5).map((tx, index) => (
                       <div key={index} style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                           <div>
@@ -840,7 +850,8 @@ const Profile = () => {
                           })()}
                         </div>
                       </div>
-                    ))
+                    ))}
+                    </>
                   )}
                 </div>
               </div>

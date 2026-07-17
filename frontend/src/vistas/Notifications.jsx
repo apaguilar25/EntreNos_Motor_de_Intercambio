@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Filter, Bell, Trash2, Check, X } from 'lucide-react';
+import Pagination from '../componentes/ui/Pagination';
 import { AppContext } from '../App';
 import { ToastContext } from '../contextos/ToastContext';
 import { ConfirmContext, useConfirm } from '../contextos/ConfirmContext';
@@ -9,6 +10,11 @@ const Notifications = () => {
   const { addToast } = useContext(ToastContext);
   const { confirm } = useConfirm();
   const [filter, setFilter] = useState('Todas');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter]);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -103,7 +109,9 @@ const Notifications = () => {
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {filteredNotifications.map((notif) => (
+          <>
+            <Pagination currentPage={currentPage} totalItems={filteredNotifications.length} pageSize={5} onPageChange={setCurrentPage} />
+            {filteredNotifications.slice((currentPage - 1) * 5, currentPage * 5).map((notif) => (
             <div key={notif.idNotificacion} className="card" style={{ padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ flex: 1 }}>
                 <p style={{ margin: '0 0 0.5rem 0', fontWeight: '500' }}>{notif.mensaje}</p>
@@ -147,6 +155,7 @@ const Notifications = () => {
               </div>
             </div>
           ))}
+          </>
         </div>
       )}
     </div>

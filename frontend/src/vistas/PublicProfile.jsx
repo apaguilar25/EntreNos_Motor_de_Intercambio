@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Star, Trophy, Medal, BookOpen, Hammer, AlertCircle, Sparkles } from 'lucide-react';
+import Pagination from '../componentes/ui/Pagination';
 import { AppContext } from '../App';
 
 const BASE_URL = 'http://localhost:8080/api';
@@ -19,6 +20,11 @@ const PublicProfile = () => {
   const [activeTab, setActiveTab] = useState('publicaciones');
   const [imgError, setImgError] = useState(false);
   const [pubFilter, setPubFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, pubFilter]);
 
   useEffect(() => {
     if (!id) return;
@@ -308,7 +314,10 @@ const PublicProfile = () => {
                 </p>
               );
             }
-            return filtradas.map((pub, i) => {
+            return (
+                <>
+                  <Pagination currentPage={currentPage} totalItems={filtradas.length} pageSize={5} onPageChange={setCurrentPage} />
+                  {filtradas.slice((currentPage - 1) * 5, currentPage * 5).map((pub, i) => {
               const esOferta = pub.tipoPublicacion === 'HABILIDAD';
               return (
                 <div key={pub.idPublicacion || i} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
@@ -336,7 +345,9 @@ const PublicProfile = () => {
                   )}
                 </div>
               );
-            });
+            })}
+            </>
+          );
           })()}
         </div>
       )}
@@ -349,7 +360,9 @@ const PublicProfile = () => {
               Este usuario no tiene subastas activas.
             </p>
           ) : (
-            subastas.map((s, i) => (
+            <>
+              <Pagination currentPage={currentPage} totalItems={subastas.length} pageSize={5} onPageChange={setCurrentPage} />
+              {subastas.slice((currentPage - 1) * 5, currentPage * 5).map((s, i) => (
               <div key={s.id || i} className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
@@ -372,7 +385,8 @@ const PublicProfile = () => {
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>{s.propuestas?.length || 0} pujas</div>
                 </div>
               </div>
-            ))
+            ))}
+            </>
           )}
         </div>
       )}

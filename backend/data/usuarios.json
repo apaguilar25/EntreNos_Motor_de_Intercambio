@@ -54,16 +54,35 @@
     "telefono": "+58414000901",
     "descripcionPersonal": "Test cache",
     "contrasenaHash": "$2b$10$uWE5Kn7A2tgmvMQp7JOe5Oq4J3IFlKYNgvZQByCQ3IhafRcMYPQNa",
-    "version": 1,
+    "version": 5,
     "monedero": {
-      "creditosDisponibles": 0.0,
+      "creditosDisponibles": 50.0,
       "creditosComprometidos": 0.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
-      "completado": false,
-      "habilidadesOfrecidas": [],
-      "necesidadesRegistradas": []
+      "completado": true,
+      "habilidadesOfrecidas": [
+        {
+          "idInstancia": "a05710fd-ddab-4140-a339-14aee0693114",
+          "habilidadBase": {
+            "id": "HAB-001",
+            "categoria": "Plomería"
+          },
+          "precioCreditos": 4,
+          "descripcionServicio": "Soy Mario"
+        }
+      ],
+      "necesidadesRegistradas": [
+        {
+          "idInstancia": "084966fa-d9fa-4438-8d2d-9421df133a53",
+          "necesidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "descripcionCondiciones": "Ayuda con la luz"
+        }
+      ]
     },
     "estado": "ACTIVO",
     "intentosFallidos": 0,
