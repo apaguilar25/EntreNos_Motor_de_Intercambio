@@ -169,11 +169,11 @@ package "Diagrama de clase EntreNós"  {
         - idUsuarioReportante: String
         - descripcion: String
         - urlEvidencia: String
-        - fotosEvidencia : List<String>
+        - fotosEvidencia: List<String>
         - idUsuarioDefensor: String
         - descripcionDefensa: String
         - urlEvidenciaDefensa: String
-        - fotosEvidenciaDefensa : List<String>
+        - fotosEvidenciaDefensa: List<String>
         - estado: String
         - fechaCreacion: long
         + Incidencia(idTransaccion: String, idUsuarioReportante: String, descripcion: String, urlEvidencia: String): Incidencia
@@ -186,7 +186,7 @@ package "Diagrama de clase EntreNós"  {
         - estado: EstadoSolicitud
         - fechaCreacion: long
         - fechaLimiteRespuesta: long
-        - precioOfertado : int
+        - precioOfertado: int
         - version: int
         + Solicitud(idPublicacion: String, idSolicitante: String): Solicitud
         + aceptar(): void
@@ -237,7 +237,7 @@ package "Diagrama de clase EntreNós"  {
         - estado: EstadoSubasta
         - idPropuestaGanadora: String
         - propietarioConfirmoEntrega: boolean
-        - ganadorConfirmoEntrega : boolean
+        - ganadorConfirmoEntrega: boolean
         - version: int
         + Subasta(idPropietario: String, nombreActivo: String, descripcion: String, estadoFisico: EstadoFisico, imagenesUrls: List<String>, fechaFinalizacionLicitacion: LocalDateTime): Subasta
         + registrarPropuesta(nuevaPropuesta: Propuesta): void
