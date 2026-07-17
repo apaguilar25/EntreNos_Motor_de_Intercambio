@@ -48,6 +48,35 @@
     "esVecinoDestacado": false
   },
   {
+    "id": "b26ab36e-b33a-4404-8c6b-8ebeed3c6504",
+    "nombre": "Juan",
+    "correoElectronico": "juan@alameda.com",
+    "telefono": "1242424",
+    "descripcionPersonal": "Me llamo Juan",
+    "contrasenaHash": "$2a$10$roZsKxRqDtJTwv.XDQxmuOK1Ue3Uy7SLOg6/OkPCcBVBG3q4Xf922",
+    "version": 0,
+    "monedero": {
+      "creditosDisponibles": 0.0,
+      "creditosComprometidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": false,
+      "habilidadesOfrecidas": [],
+      "necesidadesRegistradas": []
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "MIEMBRO_COMUNIDAD",
+    "esVecinoDestacado": false
+  },
+  {
     "id": "e561668f-1fa0-4622-a545-0e6a406b36be",
     "nombre": "Ana Ofertante",
     "correoElectronico": "ana.cache@alameda.com",
@@ -101,10 +130,10 @@
     "correoElectronico": "carlos.prueba@alameda.com",
     "telefono": "04121234567",
     "contrasenaHash": "$2b$10$uWE5Kn7A2tgmvMQp7JOe5Oq4J3IFlKYNgvZQByCQ3IhafRcMYPQNa",
-    "version": 26,
+    "version": 27,
     "monedero": {
       "creditosDisponibles": 50.0,
-      "creditosComprometidos": 0.0,
+      "creditosComprometidos": 4.0,
       "creditosPorLogros": 0.0
     },
     "catalogo": {
@@ -228,7 +257,7 @@
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
     "contrasenaHash": "$2b$10$Lpv2lrJoHNTbeXzM7Z8GvOCSc59D62HiVLaiel2yHVUa238AL6Hte",
-    "version": 40,
+    "version": 45,
     "monedero": {
       "creditosDisponibles": 50.0,
       "creditosComprometidos": 8.0,
@@ -284,10 +313,10 @@
         }
       ]
     },
-    "estado": "ACTIVO",
-    "intentosFallidos": 0,
-    "tiempoDesbloqueoMillis": 0,
-    "primerIntentoFallidoMillis": 0,
+    "estado": "BLOQUEADO_SEGURIDAD",
+    "intentosFallidos": 5,
+    "tiempoDesbloqueoMillis": 1784356544545,
+    "primerIntentoFallidoMillis": 1784270128225,
     "reportesFraudeValidados": 0,
     "urlFotoPerfil": "default.png",
     "promedioCalificacion": 4.5,

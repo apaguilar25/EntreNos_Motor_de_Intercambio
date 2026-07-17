@@ -72,13 +72,14 @@ const CatalogOnboarding = () => {
     let valid = true;
     Object.values(skills).forEach(s => {
       if (!s.price || !s.description) valid = false;
+      if (s.price && (!Number.isInteger(Number(s.price)) || Number(s.price) <= 0)) valid = false;
     });
     Object.values(needs).forEach(n => {
       if (!n.description) valid = false;
     });
 
     if (!valid) {
-      addToast('Por favor, completa la información (Precio/Descripción) de todas las opciones marcadas.', 'error');
+      addToast('Por favor, completa la información correctamente. El precio debe ser un número entero positivo.', 'error');
       return;
     }
 

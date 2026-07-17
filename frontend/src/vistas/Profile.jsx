@@ -1,9 +1,9 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../App';
 import { ConfirmContext, useConfirm } from '../contextos/ConfirmContext';
-import { Star, ShieldCheck, Edit2, Trash2 } from 'lucide-react';
+import { Star, ShieldCheck, Edit2, Trash2, Camera } from 'lucide-react';
 import Pagination from '../componentes/ui/Pagination';
 
 const Profile = () => {
@@ -20,6 +20,9 @@ const Profile = () => {
   const [usersMap, setUsersMap] = useState({});
   const [pubsMap, setPubsMap] = useState({});
   const [alertMessage, setAlertMessage] = useState('');
+  const [imgError, setImgError] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const fileInputRef = useRef(null);
 
   // Modal Reporte
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -272,6 +275,37 @@ const Profile = () => {
     setAppealData({ ...appealData, fotosEvidenciaBase64: updated });
   };
 
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploadingPhoto(true);
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const base64 = ev.target.result;
+      try {
+        const res = await fetch(`http://localhost:8080/api/usuarios/${user.id}/foto`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ urlFoto: base64 })
+        });
+        if (res.ok) {
+          setAlertMessage('Foto de perfil actualizada.');
+          const data = await controladorPerfil.obtenerDatosPerfil(user.id);
+          setUserProfile(data);
+          setImgError(false);
+        } else {
+          const errText = await res.text();
+          setAlertMessage(errText || 'Error al actualizar la foto');
+        }
+      } catch (err) {
+        setAlertMessage('Error de conexión');
+      } finally {
+        setUploadingPhoto(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleCancelarReporte = async (e) => {
     e.preventDefault();
     if (cancelReportData.motivo.length < 10) {
@@ -356,6 +390,10 @@ const Profile = () => {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
+    if (editType === 'oferta' && (!Number.isInteger(editData.precio) || editData.precio <= 0)) {
+      setAlertMessage('El precio debe ser un número entero positivo.');
+      return;
+    }
     try {
       let res;
       if (editType === 'oferta') {
@@ -438,19 +476,62 @@ const Profile = () => {
 
       {/* Tarjeta de Identidad */}
       <div className="card" style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginBottom: '2rem' }}>
-        <div style={{ 
-          width: '100px', 
-          height: '100px', 
-          borderRadius: '50%', 
-          backgroundColor: 'var(--accent-primary)',
-          color: '#fff',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '2.5rem',
-          fontWeight: 'bold'
-        }}>
-          {user?.name?.charAt(0).toUpperCase() || 'U'}
+        <div style={{ position: 'relative', width: '100px', height: '100px' }}>
+          {userProfile?.urlFotoPerfil && userProfile.urlFotoPerfil !== 'default.png' && !imgError ? (
+            <img
+              src={userProfile.urlFotoPerfil}
+              alt={user?.name || 'Usuario'}
+              onError={() => setImgError(true)}
+              style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--accent-primary)' }}
+            />
+          ) : (
+            <div style={{
+              width: '100px',
+              height: '100px',
+              borderRadius: '50%',
+              backgroundColor: 'var(--accent-primary)',
+              color: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '2.5rem',
+              fontWeight: 'bold'
+            }}>
+              {user?.name?.charAt(0).toUpperCase() || 'U'}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploadingPhoto}
+            title="Cambiar foto de perfil"
+            style={{
+              position: 'absolute',
+              bottom: '2px',
+              right: '2px',
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              border: '2px solid var(--bg-primary)',
+              backgroundColor: 'var(--accent-primary)',
+              color: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              fontSize: '0.875rem',
+              opacity: uploadingPhoto ? 0.6 : 1
+            }}
+          >
+            <Camera size={16} />
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
+            style={{ display: 'none' }}
+          />
         </div>
         
         <div style={{ flex: 1 }}>
