@@ -1,0 +1,458 @@
+@startuml
+
+skinparam orthogonalLayoutStrategy none
+skinparam DefaultFontName Arial
+skinparam DefaultFontSize 12
+skinparam class {
+'   BackgroundColor White
+    ArrowColor Black
+    BorderColor Black
+}
+
+skinparam title {
+    FontSize 18
+'   FontColor #2C3E50
+}
+
+skinparam frame {
+    BorderColor #black
+    FontColor #black
+'   BackgroundColor #FAFAFA
+}
+
+skinparam note {
+    BackgroundColor #E3F2FD
+    BorderColor #2196F3
+    FontColor #0D47A1
+    FontSize 26
+    ' La línea sigue siendo transparente, pero el borde da el diseño
+    LineColor Transparent
+}
+
+
+title __Diagrama de clase Sprint 2 - EntreNós__
+
+package "Diagrama de clase EntreNós"  {
+
+'''''''''''SECCION IDENTIDAD'''''''''''
+
+    class Usuario {
+        - id: String
+        - nombre: String
+        - correoElectronico: String
+        - telefono: String
+        - descripcionPersonal: String
+        - contrasenaHash: String
+        - version: int
+        - estado: EstadoCuenta
+        - intentosFallidos: int
+        - tiempoDesbloqueoMillis: long
+        - primerIntentoFallidoMillis long
+        - reportesFraudeValidados: int
+        - urlFotoPerfil: String
+        - promedioCalificacion: float
+        - cantidadCalificaciones: int
+        - rol: RolUsuario
+        - esVecinoDestacado: boolean
+        + Usuario(id: String, nombre: String, correoElectronico: String, telefono: String, descripcionPersonal: String, contrasenaHash String): Usuario
+        + isCatalogoCompletado(): boolean
+        + asegurarUsuarioActivo(): void
+        + finalizarConfiguracionCatalogo(float: capitalSemilla): void
+        + agregarHabilidadOfrecida(nuevaHabilidad: HabilidadOfrecida): void
+        + actualizarHabilidadOfrecida(idInstancia: String, nuevoPrecio: int, nuevaDescripcion: String): void
+        + eliminarHabilidadOfrecida(idInstancia: String): void
+        + agregarNecesidad(nuevaNecesidad: NecesidadRegistrada): void
+        + actualizarNecesidadRegistrada(idInstancia: String, nuevaDescripcion: String): void
+        + eliminarNecesidadRegistrada(idInstancia: String): void
+        + registrarIntentoFallido(): void
+        + registrarInicioSesionExitoso(): void
+        + aplicarSancionPorInactividadSubasta(): void
+        + perdonarFaltas() : void
+        + registrarReporteFraudeValidado(): void
+        + incrementarVersion(): void
+        + agregarCalificacion(calificacion: int): void
+        + isAdministrador(): boolean
+    }
+
+    class Monedero {
+        - creditosDisponibles: float
+        - creditosComprometidos: float
+        - creditosPorLogros: float
+        + Monedero(creditosDisponibles: float): Monedero
+        + acreditar(montoCreditos: float): void
+        + acreditarLogro(montoCreditos: float): void
+        + descontar(montoCreditos: float): void
+        + comprometer(montoCreditos: float): void
+        + liberarCompromiso(): void
+        + devolverCompromiso(): void
+    }
+
+    class CatalogoUsuario {
+        - completado: boolean
+
+        + CatalogoUsuario(): CatalogoUsuario
+        + marcarComoCompletado(): void
+        + agregarHabilidadOfrecida(nuevaHabilidad: HabilidadOfrecida): void
+        + actualizarHabilidadOfrecida(idInstancia: String, nuevoPrecio: int, nuevaDescripcion: String): void
+        + agregarNecesidad(nuevaNecesidad: NecesidadRegistrada): void
+        + actualizarNecesidadRegistrada(idInstancia: String, nuevaDescripcion: String): void
+        + eliminarHabilidadOfrecida(idInstancia: String): void
+        + eliminarNecesidadRegistrada(idInstancia: String): void
+        + isCompletado(): boolean
+    }
+
+    class Habilidad {
+        - id: String
+        - categoria: String
+        + Habilidad(id: String, categoria: String): Habilidad
+    }
+
+    class HabilidadOfrecida {
+        - idInstancia: String
+        - habilidadBase: Habilidad
+        - precioCreditos: int
+        - descripcionServicio: String
+        + HabilidadOfrecida(habilidadBase: Habilidad, precioCreditos: int, descripcionServicio: String): HabilidadOfrecida
+    }
+
+    class NecesidadRegistrada {
+        - idInstancia: String
+        - necesidadBase: Habilidad
+        - descripcionCondiciones: String
+        + NecesidadRegistrada(necesidadBase: Habilidad, descripcionCondiciones: String): NecesidadRegistrada
+    }
+
+    class CorreoPermitido {
+        - id: String
+        - correo: String
+        - fechaCreacion: long
+        + CorreoPermitido(correo: String): CorreoPermitido
+    }
+
+'''''''''''SECCION PUBLICACION'''''''''''
+
+    class Publicacion {
+        - idPublicacion: String
+        - idUsuario: String
+        - tipoPublicacion: String
+        - nombreServicio: String
+        - descripcion: String
+        - precioCreditos: int
+        - disponible: boolean
+        - idInstanciaCatalogo: String
+        - version: int
+        + Publicacion(idUsuario: String, tipoPublicacion: String, nombreServicio: String, descripcion: String, precioCreditos: int): Publicacion
+    }
+
+    class Transaccion {
+        - idTransaccion: String
+        - idPublicacion: String
+        - idOfertante: String
+        - idDemandante: String
+        - estado: EstadoTransaccion
+        - creditosRetenidos: int
+        - confirmacionOfertante: boolean
+        - confirmacionDemandante: boolean
+        - fechaCreacion: long
+        - idIncidencia: String
+        - version: int
+        + Transaccion(idPublicacion: String, idOfertante: String, idDemandante: String, creditosComprometidos: int)
+        + confirmarEntregaOfertante(): void
+        + confirmarRecepcionDemandante(): void
+        + verificarCompletitud(): void
+        + asignarIncidencia(idIncidencia: String): void
+    }
+
+    class Incidencia {
+        - idIncidencia: String
+        - idTransaccion: String
+        - idUsuarioReportante: String
+        - descripcion: String
+        - urlEvidencia: String
+        - fotosEvidencia : List<String>
+        - idUsuarioDefensor: String
+        - descripcionDefensa: String
+        - urlEvidenciaDefensa: String
+        - fotosEvidenciaDefensa : List<String>
+        - estado: String
+        - fechaCreacion: long
+        + Incidencia(idTransaccion: String, idUsuarioReportante: String, descripcion: String, urlEvidencia: String): Incidencia
+    }
+
+    class Solicitud {
+        - idSolicitud: String
+        - idPublicacion: String
+        - idSolicitante: String
+        - estado: EstadoSolicitud
+        - fechaCreacion: long
+        - fechaLimiteRespuesta: long
+        - precioOfertado : int
+        - version: int
+        + Solicitud(idPublicacion: String, idSolicitante: String): Solicitud
+        + aceptar(): void
+        + rechazar(): void
+        + cancelar(): void
+        + expirar(): void
+        + haExpirado(): boolean
+    }
+
+    class Cancelacion {
+        - idCancelacion: String
+        - idTransaccion: String
+        - idSolicitante: String
+        - idReceptor: String
+        - motivo: MotivoCancelacion
+        - estado: EstadoCancelacion
+        - fechaCreacion: long
+        - version: int
+        + Cancelacion(idTransaccion: String, idSolicitante: String, idOfertante: String, idDemandante: String, motivo: MotivoCancelacion): Cancelacion
+        + aceptar(): void
+        + rechazar(): void
+    }
+
+'''''''''''SECCION RESENA'''''''''''
+
+    class Resena {
+        - idResena: String
+        - idTransaccion: String
+        - idEmisor: String
+        - idReceptor: String
+        - calificacion: int
+        - fechaCreacion: long
+        - version: int
+        + Resena(idResena: String, idTransaccion: String, idEmisor: String, idReceptor: String, calificacion: int): Resena
+    }
+
+'''''''''''SECCION SUBASTA'''''''''''
+
+    class Subasta {
+        - id: String
+        - idPropietario: String
+        - nombreActivo: String
+        - descripcion: String
+        - estadoFisico: EstadoFisico
+        - imagenesUrls: List<String>
+        - fechaInicio: LocalDateTime
+        - fechaFinalizacionLicitacion: LocalDateTime
+        - estado: EstadoSubasta
+        - idPropuestaGanadora: String
+        - propietarioConfirmoEntrega: boolean
+        - ganadorConfirmoEntrega : boolean
+        - version: int
+        + Subasta(idPropietario: String, nombreActivo: String, descripcion: String, estadoFisico: EstadoFisico, imagenesUrls: List<String>, fechaFinalizacionLicitacion: LocalDateTime): Subasta
+        + registrarPropuesta(nuevaPropuesta: Propuesta): void
+        + adjudicarGanador(idPropuesta: String): void
+        + cancelarSubasta(): void
+        + cerrarFaseLicitacion(): void
+        + cancelarSubastaDesierta(): void
+        + incrementarVersion(): void
+        + editarPropuesta(idPropuesta: String, idPostor: String, nuevosBienes: List<BienOfrecido>, nuevasImagenes: List<String>): void
+        + retirarPropuesta(idPropuesta: String, idPostor: String): void
+    }
+
+    class Propuesta {
+        - idPropuesta: String
+        - idSubasta: String
+        - idPostor: String
+        - descripcion: String
+        - estadoPropuesta: EstadoPropuesta
+        - estadoFisico: EstadoFisico
+        - imagenesUrls: List<String>
+        - fechaPropuesta: LocalDateTime
+        + Propuesta(idPostor: String, idSubasta: String, bienesOfrecidos: List<BienOfrecido>, descripcion: String, estadoFisico: EstadoFisico, imagenesUrls: List<String>): Propuesta
+
+    }
+
+    class BienOfrecido {
+        - nombre: String
+        - cantidad: int
+        + BienOfrecido(nombre: String, cantidad: int): BienOfrecido
+    }
+
+'''''''''''SECCION GAMIFICACION'''''''''''
+
+    class LogroDesbloqueado {
+        - id: String
+        - idUsuario: String
+        - idLogro: String
+        - fechaDesbloqueo: long
+        + LogroDesbloqueado(idUsuario: String, idLogro: String): LogroDesbloqueado
+    }
+
+    class Logro {
+        - idLogro: String
+        - nombre: String
+        - descripcion: String
+        - tipoCriterio: TipoCriterioLogro
+        - bonoCreditos: int
+        - activo: boolean
+        + Logro(idLogro: String, nombre: String, descripcion: String, tipoCriterio: TipoCriterioLogro, bonoCreditos: int): Logro
+    }
+
+    class PodioSemanal {
+        - idPodio: String
+        - fechaInicioSemana:long
+        - fechaFinSemana: long
+        - fechaCalculo: long
+        + PodioSemanal(fechaInicioSemana: long, fechaFinSemana: long): PodioSemanal
+    }
+
+     class EntradaPodio {
+        - idUsuario: String
+        - nombreUsuario: String
+        - valor: double
+        + EntradaPodio(idUsuario: String, nombreUsuario: String, valor: double): EntradaPodio
+    }
+
+'''''''''''SECCION NOTIFICACION'''''''''''
+
+    class Notificacion {
+        - idNotificacion: String
+        - idRemitente: String
+        - idDestinatario: String
+        - mensaje: String
+        - tipo: TipoNotificacion
+        - estadoLectura: boolean
+        - fechaCreacion: long
+        - idReferencia: String
+        - idReferenciaAuxiliar: String
+        + Notificacion(idRemitente: String, idDestinatario: String, mensaje: String, tipo: TipoNotificacion, idReferencia: String, idReferenciaAuxiliar: String): Notificacion
+    }
+
+
+    package Enumerados {
+
+        enum EstadoCuenta {
+            ACTIVO
+            BLOQUEADO_SEGURIDAD
+            SUSPENDIDO_FRAUDE
+            SUSPENDIDO_SUBASTA
+            SANCIONADO
+        }
+
+        enum RolUsuario {
+            ADMINISTRADOR
+            MIEMBRO_COMUNIDAD
+        }
+
+        enum MotivoCancelacion {
+            EQUIVOCACION
+            YA_NO_NECESITO
+            SIN_ACUERDO
+            - descripcion: String
+            + MotivoCancelacion(descripcion: String): MotivoCancelacion
+        }
+
+        enum EstadoCancelacion {
+            PENDIENTE
+            ACEPTADA
+            RECHAZADA
+        }
+
+        enum EstadoTransaccion {
+            PENDIENTE
+            INICIADA
+            FINALIZADA
+            RECHAZADA
+            EN_DISPUTA
+        }
+
+        enum EstadoSolicitud {
+            PENDIENTE
+            ACEPTADA
+            RECHAZADA
+            EXPIRADA
+        }
+
+        enum EstadoFisico {
+            NUEVO
+            USADO
+            REPARADO
+        }
+
+        enum EstadoPropuesta {
+            EN_EVALUACION
+            ACEPTADA
+            RECHAZADA
+        }
+
+        enum EstadoSubasta {
+            ACTIVA
+            ESPERANDO_DECISION
+            ADJUDICADA_INTERCAMBIO_PENDIENTE
+            FINALIZADA_CON_EXITO
+            CANCELADA
+            CERRADA_POR_INACTIVIDAD
+        }
+
+        enum TipoCriterioLogro {
+                PRIMERA_TRANSACCION
+                MAESTRO_CONFIANZA
+                POLIMATA
+            }
+
+        enum TipoNotificacion {
+                ALERTA_SISTEMA
+                NUEVA_SOLICITUD_ENTRANTE
+                ESTADO_SOLICITUD_CAMBIADO
+                TRANSACCION_ACTUALIZADA
+                MOVIMIENTO_MONEDERO
+                ACTUALIZACION_SUBASTA
+                LOGRO_DESBLOQUEADO
+                NUEVA_OFERTA_SUBASTA
+                SUBASTA_GANADA
+                SUBASTA_POR_REVISAR
+                SANCION_APLICADA
+                SUBASTA_CANCELADA
+           }
+   }
+
+   note as N1
+
+     <b>   Nota de diseño:</b>
+        Todas las clases incluyen sus constructores,
+        getters y setters estándar, omitidos en el
+        diagrama por simplicidad visual.
+
+   end note
+
+}
+
+' --- IDENTIDAD Y CATÁLOGO ---
+Usuario "1" *--- "1" Monedero
+Usuario "1" *--- "1   " CatalogoUsuario
+CatalogoUsuario "1   " *-- "0..*         " HabilidadOfrecida
+CatalogoUsuario "1  " *---  "0..* " NecesidadRegistrada
+HabilidadOfrecida "0..*   " *-- "1  " Habilidad
+NecesidadRegistrada "0..*  " *-- "1     " Habilidad
+
+' --- RELACIONES DE PUBLICACIÓN ---
+HabilidadOfrecida "1" --right "1" Publicacion : "genera >"
+NecesidadRegistrada "1" --right "1" Publicacion : "genera >"
+
+' --- FLUJO DE SERVICIOS  ---
+Solicitud "0..* " --- "1  " Publicacion : "envía <"
+Publicacion "1 " -- "1      " Transaccion : "referencia <"
+Usuario "2   " -- "0..*" Transaccion : "participa en >"
+Transaccion "1  " *-- "1  " Resena
+
+' --- FLUJO DE SUBASTAS - VARIANTE 3 ---
+Usuario "1   " -- "0..*" Subasta : "publica >"
+Subasta "1" *-- "0..*           " Propuesta
+Propuesta "0..*" -- "1" Usuario : "efectuada por >"
+Propuesta "1  " *-- "1..*" BienOfrecido
+
+' --- GOBERNANZA Y MODERACIÓN ---
+Incidencia "0..1" -- "1        " Transaccion: "puede originar <"
+Cancelacion "0..1" -- "1" Transaccion : "anula >"
+
+' --- GAMIFICACIÓN, REPUTACIÓN Y FIDELIZACIÓN ---
+Usuario "1" -- "0..*" LogroDesbloqueado : "pertenece a <"
+LogroDesbloqueado "0..*" -- "1" Logro : "se basa en >"
+EntradaPodio "1" -- "1" Usuario : "hace referencia a >"
+EntradaPodio "0..9" --* "1" PodioSemanal
+
+
+}
+
+@enduml

@@ -156,10 +156,10 @@ public class ServicioSolicitud {
                     TipoNotificacion.ALERTA_SISTEMA, solicitud.getIdSolicitud(), pub.getIdPublicacion());
         } else {
             servicioNotificacion.enviarNotificacion(idSolicitante, pub.getIdUsuario(),
-                    nombreSolicitante + " quiere " + tipoNotif + ": " + pub.getNombreServicio(),
+                    nombreSolicitante + " quiere " + tipoNotif + ": " + pub.getNombreServicio() + " por " + precioFinal + " créditos.",
                     TipoNotificacion.NUEVA_SOLICITUD_ENTRANTE, solicitud.getIdSolicitud(), pub.getIdPublicacion());
             servicioNotificacion.enviarNotificacion("SISTEMA", idSolicitante,
-                    "Has ofertado exitosamente por: " + pub.getNombreServicio() + ". Esperando respuesta del proveedor.",
+                    "Has ofertado exitosamente por: " + pub.getNombreServicio() + " por " + precioFinal + " créditos. Esperando respuesta del proveedor.",
                     TipoNotificacion.ALERTA_SISTEMA, solicitud.getIdSolicitud(), pub.getIdPublicacion());
         }
 

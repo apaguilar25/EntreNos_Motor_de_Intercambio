@@ -163,8 +163,8 @@ const MakeRequest = () => {
       }
 
       if (type === 'necesidad') {
-        if (offeredPrice === null || !Number.isInteger(offeredPrice) || offeredPrice <= 0) {
-          addToast('El precio debe ser un número entero positivo.', 'error');
+        if (offeredPrice === null || offeredPrice <= 0 || !Number.isInteger(Number(offeredPrice))) {
+          addToast('Debes indicar el precio que deseas cobrar por tu servicio.', 'error');
           return;
         }
       } else {

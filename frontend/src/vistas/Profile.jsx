@@ -1,17 +1,45 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AppContext } from '../App';
 import { ConfirmContext, useConfirm } from '../contextos/ConfirmContext';
-import { Star, ShieldCheck, Edit2, Trash2, Camera } from 'lucide-react';
+import { Star, ShieldCheck, Edit2, Trash2 } from 'lucide-react';
 import Pagination from '../componentes/ui/Pagination';
 
 const Profile = () => {
-  const { user, controladorPerfil, controladorSubasta, controladorGamificacion } = useContext(AppContext);
+  const { user, setUser, controladorPerfil, controladorSubasta, controladorGamificacion } = useContext(AppContext);
   const { confirm } = useConfirm();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [userProfile, setUserProfile] = useState(null);
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64String = reader.result;
+        try {
+          const res = await fetch(`http://localhost:8080/api/usuarios/${user.id}/foto`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ urlFoto: base64String })
+          });
+          if (res.ok) {
+            setUser({ ...user, urlFotoPerfil: base64String });
+            setAlertMessage('Foto de perfil actualizada con éxito.');
+          } else {
+            setAlertMessage('Error al actualizar la foto de perfil.');
+          }
+        } catch (err) {
+          setAlertMessage('Error al conectar con el servidor.');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const [sentRequests, setSentRequests] = useState([]);
   const [myAuctions, setMyAuctions] = useState([]);
   const [transacciones, setTransacciones] = useState([]);
@@ -20,12 +48,13 @@ const Profile = () => {
   const [usersMap, setUsersMap] = useState({});
   const [pubsMap, setPubsMap] = useState({});
   const [alertMessage, setAlertMessage] = useState('');
-  const [imgError, setImgError] = useState(false);
-  const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const fileInputRef = useRef(null);
 
   // Modal Reporte
   const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [transaccionDetalleModalOpen, setTransaccionDetalleModalOpen] = useState(false);
+  const [selectedTxDetalle, setSelectedTxDetalle] = useState(null);
+  const [cancelTransaccionModalOpen, setCancelTransaccionModalOpen] = useState(false);
+  const [cancelMotivoSeleccionado, setCancelMotivoSeleccionado] = useState('');
   const [reportData, setReportData] = useState({ idPublicacion: '', idUsuarioInvolucrado: '', descripcionProblema: '', fotosEvidenciaBase64: [], esDemandante: false });
 
   // Mapa de incidencias por transacción
@@ -275,37 +304,6 @@ const Profile = () => {
     setAppealData({ ...appealData, fotosEvidenciaBase64: updated });
   };
 
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setUploadingPhoto(true);
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const base64 = ev.target.result;
-      try {
-        const res = await fetch(`http://localhost:8080/api/usuarios/${user.id}/foto`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ urlFoto: base64 })
-        });
-        if (res.ok) {
-          setAlertMessage('Foto de perfil actualizada.');
-          const data = await controladorPerfil.obtenerDatosPerfil(user.id);
-          setUserProfile(data);
-          setImgError(false);
-        } else {
-          const errText = await res.text();
-          setAlertMessage(errText || 'Error al actualizar la foto');
-        }
-      } catch (err) {
-        setAlertMessage('Error de conexión');
-      } finally {
-        setUploadingPhoto(false);
-      }
-    };
-    reader.readAsDataURL(file);
-  };
-
   const handleCancelarReporte = async (e) => {
     e.preventDefault();
     if (cancelReportData.motivo.length < 10) {
@@ -390,10 +388,6 @@ const Profile = () => {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-    if (editType === 'oferta' && (!Number.isInteger(editData.precio) || editData.precio <= 0)) {
-      setAlertMessage('El precio debe ser un número entero positivo.');
-      return;
-    }
     try {
       let res;
       if (editType === 'oferta') {
@@ -476,63 +470,29 @@ const Profile = () => {
 
       {/* Tarjeta de Identidad */}
       <div className="card" style={{ display: 'flex', gap: '2rem', alignItems: 'center', marginBottom: '2rem' }}>
-        <div style={{ position: 'relative', width: '100px', height: '100px' }}>
-          {userProfile?.urlFotoPerfil && userProfile.urlFotoPerfil !== 'default.png' && !imgError ? (
-            <img
-              src={userProfile.urlFotoPerfil}
-              alt={user?.name || 'Usuario'}
-              onError={() => setImgError(true)}
-              style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--accent-primary)' }}
-            />
-          ) : (
-            <div style={{
-              width: '100px',
-              height: '100px',
-              borderRadius: '50%',
-              backgroundColor: 'var(--accent-primary)',
-              color: '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '2.5rem',
-              fontWeight: 'bold'
-            }}>
-              {user?.name?.charAt(0).toUpperCase() || 'U'}
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploadingPhoto}
-            title="Cambiar foto de perfil"
-            style={{
-              position: 'absolute',
-              bottom: '2px',
-              right: '2px',
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              border: '2px solid var(--bg-primary)',
-              backgroundColor: 'var(--accent-primary)',
-              color: '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              opacity: uploadingPhoto ? 0.6 : 1
-            }}
-          >
-            <Camera size={16} />
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoChange}
-            style={{ display: 'none' }}
-          />
-        </div>
+        <div style={{ 
+            width: '100px', 
+            height: '100px', 
+            borderRadius: '50%', 
+            backgroundColor: 'var(--accent-primary)',
+            color: '#fff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '2.5rem',
+            fontWeight: 'bold',
+            overflow: 'hidden',
+            position: 'relative'
+          }}>
+
+            {user?.urlFotoPerfil && user.urlFotoPerfil !== 'default.png' ? (
+              <img src={user.urlFotoPerfil} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              user?.name?.charAt(0).toUpperCase() || 'U'
+            )}
+            <input type="file" accept="image/*" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} onChange={handleAvatarChange} title="Cambiar foto de perfil" />
+
+          </div>
         
         <div style={{ flex: 1 }}>
           <h3 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -587,7 +547,7 @@ const Profile = () => {
         
         {/* Resumen Solicitudes */}
         <div className="card interactive-card" onClick={() => setSectionModalOpen('enviadas')} style={{ cursor: 'pointer' }}>
-          <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Mis Ofertas Enviadas</h3>
+          <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Mis Solicitudes Enviadas</h3>
           <p style={{ color: 'var(--text-secondary)' }}>{sentRequests.length} pendientes</p>
           <span style={{ color: 'var(--accent-primary)', fontSize: '0.875rem', fontWeight: 'bold' }}>Ver Detalles &rarr;</span>
         </div>
@@ -755,7 +715,7 @@ const Profile = () => {
             {sectionModalOpen === 'enviadas' && (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                  <h2 style={{ fontSize: '1.25rem' }}>Mis Ofertas Enviadas</h2>
+                  <h2 style={{ fontSize: '1.25rem' }}>Mis Solicitudes Enviadas</h2>
                   <select value={sentFilter} onChange={(e) => { setSentFilter(e.target.value); setCurrentPage(1); }} style={{ padding: '0.25rem', borderRadius: '0.25rem', border: '1px solid var(--border-color)', outline: 'none', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
                     <option value="TODAS">Todas</option>
                     <option value="PENDIENTE">Pendiente</option>
@@ -822,16 +782,23 @@ const Profile = () => {
                     </div>
                   ) : (
                     <> <Pagination currentPage={currentPage} totalItems={transacciones.filter(tx => txFilter === 'TODAS' || tx.estado === txFilter).length} pageSize={5} onPageChange={setCurrentPage} /> {transacciones.filter(tx => txFilter === 'TODAS' || tx.estado === txFilter).slice((currentPage - 1) * 5, currentPage * 5).map((tx, index) => (
-                      <div key={index} style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem' }}>
+                      <div key={index} 
+                        onClick={() => { setSelectedTxDetalle(tx); setTransaccionDetalleModalOpen(true); }}
+                        style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem', cursor: 'pointer', transition: 'box-shadow 0.2s' }}
+                      >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                           <div>
-                            <h4 style={{ marginBottom: '0.25rem', fontSize: '1rem' }}>Tx: {tx.idTransaccion.split('-')[0].toUpperCase()}</h4>
-                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-                              Publicación: {pubsMap[tx.idPublicacion]?.nombreServicio || tx.idPublicacion} • Costo: {tx.creditosRetenidos > 0 ? tx.creditosRetenidos : (pubsMap[tx.idPublicacion]?.precioCreditos ?? '—')} créditos<br/>
-                              Tú eres el {tx.idDemandante === user.id ? 'Solicitante' : 'Proveedor'} (Contraparte: {usersMap[tx.idDemandante === user.id ? tx.idOfertante : tx.idDemandante] || 'Usuario'})
-                            </p>
-                          </div>
-                          <div style={{ textAlign: 'right' }}>
+                              <h4 style={{ marginBottom: '0.25rem', fontSize: '1.1rem' }}>
+                                Tx: {pubsMap[tx.idPublicacion]?.nombreServicio || tx.idPublicacion}
+                                <span style={{ fontWeight: 'normal', fontSize: '0.9rem', color: 'var(--text-secondary)', marginLeft: '0.5rem' }}>
+                                  (Tú eres el {tx.idDemandante === user.id ? 'Solicitante' : 'Proveedor'})
+                                </span>
+                              </h4>
+                              <p style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem', marginBottom: '0' }}>
+                                ID: {tx.idTransaccion.split('-')[0].toUpperCase()} | Contraparte: {usersMap[tx.idDemandante === user.id ? tx.idOfertante : tx.idDemandante] || 'Usuario'} | Costo: {tx.creditosRetenidos > 0 ? tx.creditosRetenidos : (pubsMap[tx.idPublicacion]?.precioCreditos ?? '-')} créditos
+                              </p>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
                             <span style={{ 
                               padding: '0.25rem 0.5rem', 
                               borderRadius: '1rem', 
@@ -843,92 +810,6 @@ const Profile = () => {
                               {tx.estado}
                             </span>
                           </div>
-                        </div>
-                        <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                          {tx.estado === 'INICIADA' && (
-                            <button 
-                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--accent-primary)', color: 'var(--accent-primary)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                              onClick={() => handleUpdateTxState(tx.idTransaccion, 'PENDIENTE')}
-                            >
-                              Confirmar Recepción
-                            </button>
-                          )}
-                          {tx.estado === 'PENDIENTE' && tx.idDemandante !== user.id && (
-                            <button 
-                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--accent-primary)', border: 'none', color: '#fff', borderRadius: '0.25rem', cursor: 'pointer' }}
-                              onClick={() => handleUpdateTxState(tx.idTransaccion, 'FINALIZADA')}
-                            >
-                              Validar Finalización
-                            </button>
-                          )}
-                          {(tx.estado === 'INICIADA' || tx.estado === 'PENDIENTE') && (
-                            <div>
-                              {tx.idOfertante === user.id && (
-                                <button 
-                                  style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                                  onClick={() => {
-                                    const contraparteId = tx.idDemandante;
-                                    setReportData({ 
-                                      ...reportData, 
-                                      idPublicacion: tx.idTransaccion,
-                                      tituloPublicacion: pubsMap[tx.idPublicacion]?.nombreServicio || tx.idPublicacion,
-                                      idUsuarioInvolucrado: contraparteId,
-                                      nombreContraparte: usersMap[contraparteId] || contraparteId,
-                                      esDemandante: false
-                                    });
-                                    setReportModalOpen(true);
-                                  }}
-                                >
-                                  Reportar Incidencia
-                                </button>
-                              )}
-                              {tx.idDemandante === user.id && (
-                                <button 
-                                  style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                                  onClick={() => {
-                                    const contraparteId = tx.idOfertante;
-                                    setReportData({ 
-                                      ...reportData, 
-                                      idPublicacion: tx.idTransaccion,
-                                      tituloPublicacion: pubsMap[tx.idPublicacion] || tx.idPublicacion, 
-                                      idUsuarioInvolucrado: contraparteId,
-                                      nombreContraparte: usersMap[contraparteId] || contraparteId,
-                                      esDemandante: true
-                                    });
-                                    setReportModalOpen(true);
-                                  }}
-                                >
-                                  Reportar Incidencia
-                                </button>
-                              )}
-                            </div>
-                          )}
-                          {tx.estado === 'EN_DISPUTA' && (() => {
-                            const inc = incidenciasMap[tx.idTransaccion];
-                            const soyReportante = inc && inc.idUsuarioReportante === user.id;
-                            const yaDefendi = inc && inc.idUsuarioDefensor === user.id;
-                            if (soyReportante) {
-                              return (
-                                <button key="cancelar" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                                  onClick={() => { setCancelReportData({ idTransaccion: tx.idTransaccion, motivo: '' }); setCancelReportModalOpen(true); }}>
-                                  Cancelar Reporte
-                                </button>
-                              );
-                            } else if (yaDefendi) {
-                              return (
-                                <span key="defendido" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-700)', borderRadius: '0.25rem', fontWeight: 'bold' }}>
-                                  Defensa Enviada
-                                </span>
-                              );
-                            } else {
-                              return (
-                                <button key="defenderse" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-green-700)', color: 'var(--color-green-700)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                                  onClick={() => { setAppealData({ idTransaccion: tx.idTransaccion, descripcion: '', fotosEvidenciaBase64: [] }); setAppealModalOpen(true); }}>
-                                  Defenderse
-                                </button>
-                              );
-                            }
-                          })()}
                         </div>
                       </div>
                     ))}
@@ -974,7 +855,7 @@ const Profile = () => {
                       </div>
                     ))}
                   </div>
-      , document.body)}
+                )}
               </div>
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <button type="button" onClick={() => setReportModalOpen(false)} style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}>Cancelar</button>
@@ -983,7 +864,7 @@ const Profile = () => {
             </form>
           </div>
         </div>
-      )}
+      , document.body)}
 
       {cancelReportModalOpen && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
@@ -1044,7 +925,7 @@ const Profile = () => {
                       </div>
                     ))}
                   </div>
-      , document.body)}
+                )}
               </div>
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <button type="button" onClick={() => setAppealModalOpen(false)} style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}>Cancelar</button>
@@ -1053,7 +934,7 @@ const Profile = () => {
             </form>
           </div>
         </div>
-      )}
+      , document.body)}
 
       {editModalOpen && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
@@ -1080,12 +961,16 @@ const Profile = () => {
                     type="number"
                     min="1"
                     value={editData.precio}
-                    onChange={(e) => setEditData({ ...editData, precio: Number(e.target.value) })}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      if (val > 0) setEditData({ ...editData, precio: val });
+                      else if (e.target.value === '') setEditData({ ...editData, precio: '' });
+                    }}
                     style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}
                     required
                   />
                 </div>
-      , document.body)}
+              )}
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <button type="button" onClick={() => setEditModalOpen(false)} style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}>Cancelar</button>
                 <button type="submit" className="btn-primary" style={{ flex: 1, padding: '0.75rem' }}>Guardar Cambios</button>
@@ -1093,7 +978,157 @@ const Profile = () => {
             </form>
           </div>
         </div>
-      )}
+      , document.body)}
+
+      {transaccionDetalleModalOpen && selectedTxDetalle && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="card" style={{ width: '90%', maxWidth: '600px', padding: '2rem', position: 'relative' }}>
+            <button onClick={() => { setTransaccionDetalleModalOpen(false); setSelectedTxDetalle(null); }} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-tertiary)' }}>&times;</button>
+            <h3 style={{ marginBottom: '1rem' }}>Detalles de la Transacción</h3>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <p><strong>Publicación:</strong> {selectedTxDetalle.publicacion?.titulo || selectedTxDetalle.idPublicacion}</p>
+              <p><strong>Costo:</strong> {selectedTxDetalle.oferta?.precio || selectedTxDetalle.creditosRetenidos || 0} créditos</p>
+              <p><strong>Estado:</strong> {selectedTxDetalle.estado || 'Activa'}</p>
+            </div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+              <div className="card" style={{ padding: '1rem', backgroundColor: 'var(--bg-secondary)' }}>
+                <h4 style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Solicitante</h4>
+                <p><strong>Nombre:</strong> {usersMap[selectedTxDetalle.idDemandante] || 'Usuario'}</p>
+              </div>
+              <div className="card" style={{ padding: '1rem', backgroundColor: 'var(--bg-secondary)' }}>
+                <h4 style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Proveedor</h4>
+                <p><strong>Nombre:</strong> {usersMap[selectedTxDetalle.idOfertante] || 'Usuario'}</p>
+              </div>
+            </div>
+
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '2rem' }}>
+              El intercambio está en proceso. Una vez concluido el servicio, ambas partes deben confirmar su finalización para que se liberen los créditos correspondientes. Si ocurre algún problema, puedes reportar una incidencia o solicitar la cancelación.
+            </p>
+
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <button 
+                className="btn-primary" 
+                style={{ flex: '1 1 auto', padding: '0.75rem' }}
+                onClick={() => {
+                  handleUpdateTxState(selectedTxDetalle.idTransaccion, 'FINALIZADA')
+                  setTransaccionDetalleModalOpen(false);
+                }}
+              >
+                Confirmar Finalización
+              </button>
+              <button 
+                className="btn-primary" 
+                style={{ flex: '1 1 auto', padding: '0.75rem', backgroundColor: '#ea580c', color: '#fff', border: 'none' }}
+                onClick={() => {
+                  const esDemandante = selectedTxDetalle.idDemandante === user.id;
+                  const contraparteId = esDemandante ? selectedTxDetalle.idOfertante : selectedTxDetalle.idDemandante;
+                  setReportData({
+                    ...reportData,
+                    idPublicacion: selectedTxDetalle.idTransaccion,
+                    tituloPublicacion: pubsMap[selectedTxDetalle.idPublicacion]?.nombreServicio || selectedTxDetalle.idPublicacion,
+                    idUsuarioInvolucrado: contraparteId,
+                    nombreContraparte: usersMap[contraparteId] || contraparteId,
+                    descripcionProblema: '',
+                    fotosEvidenciaBase64: [],
+                    esDemandante: esDemandante
+                  });
+                  setTransaccionDetalleModalOpen(false);
+                  setReportModalOpen(true);
+                }}
+              >
+                Reportar Incidencia
+              </button>
+              <button 
+                className="btn-primary" 
+                style={{ flex: '1 1 auto', padding: '0.75rem', backgroundColor: '#dc2626', color: '#fff', border: 'none' }}
+                onClick={() => {
+                  setCancelTransaccionModalOpen(true);
+                  setTransaccionDetalleModalOpen(false);
+                }}
+              >
+                Cancelar Transacción
+              </button>
+            </div>
+          </div>
+        </div>
+      , document.body)}
+
+      {cancelTransaccionModalOpen && selectedTxDetalle && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="card" style={{ width: '90%', maxWidth: '500px', padding: '2rem', position: 'relative' }}>
+            <button onClick={() => setCancelTransaccionModalOpen(false)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-tertiary)' }}>&times;</button>
+            <h3 style={{ marginBottom: '1rem' }}>Solicitar Cancelación</h3>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+              Por favor, selecciona el motivo por el cual deseas cancelar esta transacción. Se enviará una notificación a la contraparte para que acepte o rechace (y reporte una incidencia).
+            </p>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
+                <input 
+                  type="radio" 
+                  name="motivoCancelacion" 
+                  value="EQUIVOCACION" 
+                  checked={cancelMotivoSeleccionado === 'EQUIVOCACION'}
+                  onChange={(e) => setCancelMotivoSeleccionado(e.target.value)}
+                  style={{ width: '1.2rem', height: '1.2rem' }}
+                />
+                Me equivoqué al enviar la solicitud / oferta.
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
+                <input 
+                  type="radio" 
+                  name="motivoCancelacion" 
+                  value="YA_NO_NECESITO" 
+                  checked={cancelMotivoSeleccionado === 'YA_NO_NECESITO'}
+                  onChange={(e) => setCancelMotivoSeleccionado(e.target.value)}
+                  style={{ width: '1.2rem', height: '1.2rem' }}
+                />
+                Ya no necesito este servicio / Ya resolví mi necesidad.
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
+                <input 
+                  type="radio" 
+                  name="motivoCancelacion" 
+                  value="SIN_ACUERDO" 
+                  checked={cancelMotivoSeleccionado === 'SIN_ACUERDO'}
+                  onChange={(e) => setCancelMotivoSeleccionado(e.target.value)}
+                  style={{ width: '1.2rem', height: '1.2rem' }}
+                />
+                No pudimos llegar a un acuerdo en el horario o los detalles.
+              </label>
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button 
+                type="button" 
+                onClick={() => setCancelTransaccionModalOpen(false)} 
+                style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}
+              >
+                Volver
+              </button>
+              <button 
+                type="button" 
+                className="btn-primary" 
+                style={{ flex: 1, padding: '0.75rem' }}
+                disabled={!cancelMotivoSeleccionado}
+                onClick={async () => {
+                  try {
+                    setAlertMessage('Solicitud de cancelación enviada a la contraparte.');
+                    setCancelTransaccionModalOpen(false);
+                    setSelectedTxDetalle(null);
+                    setCancelMotivoSeleccionado('');
+                  } catch (error) {
+                    setAlertMessage('Error al procesar la solicitud');
+                  }
+                }}
+              >
+                Enviar Solicitud
+              </button>
+            </div>
+          </div>
+        </div>
+      , document.body)}
 
       {/* Centralized Alert Modal */}
       {alertMessage && (

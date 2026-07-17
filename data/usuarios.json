@@ -1,0 +1,298 @@
+[
+  {
+    "id": "c3894fd7-bf09-43e1-a939-8a05a92bcff2",
+    "nombre": "Miguel",
+    "correoElectronico": "miguel@alameda.com",
+    "telefono": "04122206867",
+    "descripcionPersonal": "Me llamo miguel",
+    "contrasenaHash": "$2a$10$7pP9IRyG3bzA8LJjg/7SmeUR6RvwT1DV.BXj5IqOCnFocLyxwXpv2",
+    "version": 3,
+    "monedero": {
+      "creditosDisponibles": 50.0,
+      "creditosComprometidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": true,
+      "habilidadesOfrecidas": [
+        {
+          "idInstancia": "3994a4c6-9742-49ad-9c1b-100f9e8f8d59",
+          "habilidadBase": {
+            "id": "HAB-012",
+            "categoria": "Jardinería"
+          },
+          "precioCreditos": 3,
+          "descripcionServicio": "Soy buen jardinero"
+        }
+      ],
+      "necesidadesRegistradas": [
+        {
+          "idInstancia": "30f580db-659f-4890-8b25-ce54beb9808f",
+          "necesidadBase": {
+            "id": "HAB-013",
+            "categoria": "Electricidad Básica"
+          },
+          "descripcionCondiciones": "Quiero que me arreglen la luz"
+        }
+      ]
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 0.0,
+    "cantidadCalificaciones": 0,
+    "rol": "MIEMBRO_COMUNIDAD",
+    "esVecinoDestacado": false
+  },
+  {
+    "id": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "nombre": "Ana Ofertante",
+    "correoElectronico": "ana.cache@alameda.com",
+    "telefono": "+58414000901",
+    "descripcionPersonal": "Test cache",
+    "contrasenaHash": "$2b$10$uWE5Kn7A2tgmvMQp7JOe5Oq4J3IFlKYNgvZQByCQ3IhafRcMYPQNa",
+    "version": 5,
+    "monedero": {
+      "creditosDisponibles": 50.0,
+      "creditosComprometidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": true,
+      "habilidadesOfrecidas": [
+        {
+          "idInstancia": "a05710fd-ddab-4140-a339-14aee0693114",
+          "habilidadBase": {
+            "id": "HAB-001",
+            "categoria": "Plomería"
+          },
+          "precioCreditos": 4,
+          "descripcionServicio": "Soy Mario"
+        }
+      ],
+      "necesidadesRegistradas": [
+        {
+          "idInstancia": "084966fa-d9fa-4438-8d2d-9421df133a53",
+          "necesidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "descripcionCondiciones": "Ayuda con la luz"
+        }
+      ]
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 5.0,
+    "cantidadCalificaciones": 3,
+    "rol": "MIEMBRO_COMUNIDAD",
+    "esVecinoDestacado": false
+  },
+  {
+    "id": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "nombre": "Carlos Prueba",
+    "correoElectronico": "carlos.prueba@alameda.com",
+    "telefono": "04121234567",
+    "contrasenaHash": "$2b$10$uWE5Kn7A2tgmvMQp7JOe5Oq4J3IFlKYNgvZQByCQ3IhafRcMYPQNa",
+    "version": 26,
+    "monedero": {
+      "creditosDisponibles": 50.0,
+      "creditosComprometidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": true,
+      "habilidadesOfrecidas": [
+        {
+          "idInstancia": "8d7f912a-ec1b-4cd7-9ae6-3934047e6f9b",
+          "habilidadBase": {
+            "id": "HAB-001",
+            "categoria": "Plomería"
+          },
+          "precioCreditos": 5,
+          "descripcionServicio": "Arreglo de tuberías y grifos"
+        },
+        {
+          "idInstancia": "9263f552-eb3c-40b4-9ad3-2034799e9e4c",
+          "habilidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "precioCreditos": 8,
+          "descripcionServicio": "Reparación de computadoras y soporte técnico"
+        },
+        {
+          "idInstancia": "543a77cf-c4be-44c5-801b-bf27ba46a826",
+          "habilidadBase": {
+            "id": "HAB-003",
+            "categoria": "Carpintería"
+          },
+          "precioCreditos": 4,
+          "descripcionServicio": "sadadadasd"
+        }
+      ],
+      "necesidadesRegistradas": [
+        {
+          "idInstancia": "d15d4ffe-e679-4f1c-9c1d-d4f2fee33e01",
+          "necesidadBase": {
+            "id": "HAB-004",
+            "categoria": "Limpieza del Hogar"
+          },
+          "descripcionCondiciones": "Necesito ayuda con limpieza general de mi apartamento una vez por semana"
+        },
+        {
+          "idInstancia": "fe44b59f-4d9f-414c-83ff-9b2f4c1a8d1e",
+          "necesidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "descripcionCondiciones": "ffssfsfds"
+        },
+        {
+          "idInstancia": "7ad32b3e-907c-4f4a-9260-fd9fe6b14bad",
+          "necesidadBase": {
+            "id": "HAB-001",
+            "categoria": "Plomería"
+          },
+          "descripcionCondiciones": "saasfasfasfasfasfasf"
+        },
+        {
+          "idInstancia": "af050134-9d95-477e-b078-056e3b7f37ce",
+          "necesidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "descripcionCondiciones": "Necesito este servicio porque mi computadora se dañó"
+        },
+        {
+          "idInstancia": "9e1dfee4-6034-4fbf-be41-30f06cb12666",
+          "necesidadBase": {
+            "id": "HAB-003",
+            "categoria": "Carpintería"
+          },
+          "descripcionCondiciones": "NEcesito que me arreglen la silla"
+        }
+      ]
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 4.7,
+    "cantidadCalificaciones": 3,
+    "rol": "MIEMBRO_COMUNIDAD",
+    "esVecinoDestacado": false
+  },
+  {
+    "id": "610b0b73-746c-4d2a-88b7-c90778427553",
+    "nombre": "Bob Demandante",
+    "correoElectronico": "bob.cache@alameda.com",
+    "telefono": "+58414000902",
+    "descripcionPersonal": "Test cache",
+    "contrasenaHash": "$2b$10$uWE5Kn7A2tgmvMQp7JOe5Oq4J3IFlKYNgvZQByCQ3IhafRcMYPQNa",
+    "version": 5,
+    "monedero": {
+      "creditosDisponibles": 0.0,
+      "creditosComprometidos": 0.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": false,
+      "habilidadesOfrecidas": [],
+      "necesidadesRegistradas": []
+    },
+    "estado": "BLOQUEADO_SEGURIDAD",
+    "intentosFallidos": 5,
+    "tiempoDesbloqueoMillis": 1784345303347,
+    "primerIntentoFallidoMillis": 1784258817093,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 4.5,
+    "cantidadCalificaciones": 2,
+    "rol": "MIEMBRO_COMUNIDAD",
+    "esVecinoDestacado": false
+  },
+  {
+    "id": "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+    "nombre": "Super Administrador",
+    "correoElectronico": "admin@alameda.com",
+    "telefono": "0000000000",
+    "descripcionPersonal": "Administrador general de la comunidad",
+    "contrasenaHash": "$2b$10$Lpv2lrJoHNTbeXzM7Z8GvOCSc59D62HiVLaiel2yHVUa238AL6Hte",
+    "version": 40,
+    "monedero": {
+      "creditosDisponibles": 50.0,
+      "creditosComprometidos": 8.0,
+      "creditosPorLogros": 0.0
+    },
+    "catalogo": {
+      "completado": true,
+      "habilidadesOfrecidas": [
+        {
+          "idInstancia": "d64ef049-787b-43e6-866e-e519f05adc72",
+          "habilidadBase": {
+            "id": "HAB-005",
+            "categoria": "Soporte Técnico / Computación"
+          },
+          "precioCreditos": 3,
+          "descripcionServicio": "dsfsf"
+        },
+        {
+          "idInstancia": "010a502c-807d-4cad-a330-2c203f66f3c6",
+          "habilidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "precioCreditos": 4,
+          "descripcionServicio": "dgsgsdgsdgsdgsgdsd"
+        },
+        {
+          "idInstancia": "233ccb2e-cc7a-4ea6-8582-89fba7ef8895",
+          "habilidadBase": {
+            "id": "HAB-003",
+            "categoria": "Carpintería"
+          },
+          "precioCreditos": 4,
+          "descripcionServicio": "Puedo arreglar sillas"
+        }
+      ],
+      "necesidadesRegistradas": [
+        {
+          "idInstancia": "d73f756b-8a86-43f0-b552-70f60441e9e4",
+          "necesidadBase": {
+            "id": "HAB-002",
+            "categoria": "Electricidad"
+          },
+          "descripcionCondiciones": "sdfsf"
+        },
+        {
+          "idInstancia": "023d4941-b316-4768-a34c-5bb9d465a886",
+          "necesidadBase": {
+            "id": "HAB-004",
+            "categoria": "Limpieza del Hogar"
+          },
+          "descripcionCondiciones": "blh´´oj´poúi´pi"
+        }
+      ]
+    },
+    "estado": "ACTIVO",
+    "intentosFallidos": 0,
+    "tiempoDesbloqueoMillis": 0,
+    "primerIntentoFallidoMillis": 0,
+    "reportesFraudeValidados": 0,
+    "urlFotoPerfil": "default.png",
+    "promedioCalificacion": 4.5,
+    "cantidadCalificaciones": 3,
+    "rol": "ADMINISTRADOR",
+    "esVecinoDestacado": false
+  }
+]
