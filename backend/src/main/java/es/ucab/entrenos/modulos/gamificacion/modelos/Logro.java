@@ -9,7 +9,7 @@ public class Logro {
     private int bonoCreditos;
     private boolean activo;
 
-    public Logro() {}
+
 
     public Logro(String idLogro, String nombre, String descripcion, TipoCriterioLogro tipoCriterio,
                  int bonoCreditos) {
