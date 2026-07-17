@@ -56,10 +56,15 @@ const Notifications = () => {
     }
   };
 
-  const handleRechazarCancelacion = (notif) => {
-    // We navigate to profile or open report modal directly
-    addToast('Cancelación rechazada. Puedes reportar incidencia desde tu perfil.', 'info');
-    setNotifications(prev => prev.filter(n => n.id !== notif.id));
+  const handleRechazarCancelacion = async (notif) => {
+    try {
+      if (notif.idNotificacion) {
+        await controladorNotificacion.eliminarNotificacion(notif.idNotificacion);
+      }
+      navigate('/perfil', { state: { autoReportTxId: notif.idReferencia } });
+    } catch (error) {
+      addToast('Error al rechazar cancelación', 'error');
+    }
   };
 
   const handleResponderSolicitud = async (notificacion, aceptar) => {

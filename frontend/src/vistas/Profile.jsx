@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AppContext } from '../App';
 import { ConfirmContext, useConfirm } from '../contextos/ConfirmContext';
 import { Star, ShieldCheck, Edit2, Trash2 } from 'lucide-react';
@@ -10,6 +10,7 @@ const Profile = () => {
   const { user, controladorPerfil, controladorSubasta, controladorGamificacion } = useContext(AppContext);
   const { confirm } = useConfirm();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [userProfile, setUserProfile] = useState(null);
   const [sentRequests, setSentRequests] = useState([]);
@@ -745,16 +746,23 @@ const Profile = () => {
                     </div>
                   ) : (
                     <> <Pagination currentPage={currentPage} totalItems={transacciones.filter(tx => txFilter === 'TODAS' || tx.estado === txFilter).length} pageSize={5} onPageChange={setCurrentPage} /> {transacciones.filter(tx => txFilter === 'TODAS' || tx.estado === txFilter).slice((currentPage - 1) * 5, currentPage * 5).map((tx, index) => (
-                      <div key={index} style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem' }}>
+                      <div key={index} 
+                        onClick={() => { setSelectedTxDetalle(tx); setTransaccionDetalleModalOpen(true); }}
+                        style={{ border: '1px solid var(--border-color)', borderRadius: '0.5rem', padding: '1rem', cursor: 'pointer', transition: 'box-shadow 0.2s' }}
+                      >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                           <div>
-                            <h4 style={{ marginBottom: '0.25rem', fontSize: '1rem' }}>Tx: {tx.idTransaccion.split('-')[0].toUpperCase()}</h4>
-                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-                              Publicación: {pubsMap[tx.idPublicacion]?.nombreServicio || tx.idPublicacion} • Costo: {tx.creditosRetenidos > 0 ? tx.creditosRetenidos : (pubsMap[tx.idPublicacion]?.precioCreditos ?? '—')} créditos<br/>
-                              Tú eres el {tx.idDemandante === user.id ? 'Solicitante' : 'Proveedor'} (Contraparte: {usersMap[tx.idDemandante === user.id ? tx.idOfertante : tx.idDemandante] || 'Usuario'})
-                            </p>
-                          </div>
-                          <div style={{ textAlign: 'right' }}>
+                              <h4 style={{ marginBottom: '0.25rem', fontSize: '1.1rem' }}>
+                                Tx: {pubsMap[tx.idPublicacion]?.nombreServicio || tx.idPublicacion}
+                                <span style={{ fontWeight: 'normal', fontSize: '0.9rem', color: 'var(--text-secondary)', marginLeft: '0.5rem' }}>
+                                  (Tú eres el {tx.idDemandante === user.id ? 'Solicitante' : 'Proveedor'})
+                                </span>
+                              </h4>
+                              <p style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem', marginBottom: '0' }}>
+                                ID: {tx.idTransaccion.split('-')[0].toUpperCase()} | Contraparte: {usersMap[tx.idDemandante === user.id ? tx.idOfertante : tx.idDemandante] || 'Usuario'} | Costo: {tx.creditosRetenidos > 0 ? tx.creditosRetenidos : (pubsMap[tx.idPublicacion]?.precioCreditos ?? '-')} créditos
+                              </p>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
                             <span style={{ 
                               padding: '0.25rem 0.5rem', 
                               borderRadius: '1rem', 
@@ -766,92 +774,6 @@ const Profile = () => {
                               {tx.estado}
                             </span>
                           </div>
-                        </div>
-                        <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                          {tx.estado === 'INICIADA' && (
-                            <button 
-                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--accent-primary)', color: 'var(--accent-primary)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                              onClick={() => handleUpdateTxState(tx.idTransaccion, 'PENDIENTE')}
-                            >
-                              Confirmar Recepción
-                            </button>
-                          )}
-                          {tx.estado === 'PENDIENTE' && tx.idDemandante !== user.id && (
-                            <button 
-                              style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--accent-primary)', border: 'none', color: '#fff', borderRadius: '0.25rem', cursor: 'pointer' }}
-                              onClick={() => handleUpdateTxState(tx.idTransaccion, 'FINALIZADA')}
-                            >
-                              Validar Finalización
-                            </button>
-                          )}
-                          {(tx.estado === 'INICIADA' || tx.estado === 'PENDIENTE') && (
-                            <div>
-                              {tx.idOfertante === user.id && (
-                                <button 
-                                  style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                                  onClick={() => {
-                                    const contraparteId = tx.idDemandante;
-                                    setReportData({ 
-                                      ...reportData, 
-                                      idPublicacion: tx.idTransaccion,
-                                      tituloPublicacion: pubsMap[tx.idPublicacion]?.nombreServicio || tx.idPublicacion,
-                                      idUsuarioInvolucrado: contraparteId,
-                                      nombreContraparte: usersMap[contraparteId] || contraparteId,
-                                      esDemandante: false
-                                    });
-                                    setReportModalOpen(true);
-                                  }}
-                                >
-                                  Reportar Incidencia
-                                </button>
-                              )}
-                              {tx.idDemandante === user.id && (
-                                <button 
-                                  style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                                  onClick={() => {
-                                    const contraparteId = tx.idOfertante;
-                                    setReportData({ 
-                                      ...reportData, 
-                                      idPublicacion: tx.idTransaccion,
-                                      tituloPublicacion: pubsMap[tx.idPublicacion] || tx.idPublicacion, 
-                                      idUsuarioInvolucrado: contraparteId,
-                                      nombreContraparte: usersMap[contraparteId] || contraparteId,
-                                      esDemandante: true
-                                    });
-                                    setReportModalOpen(true);
-                                  }}
-                                >
-                                  Reportar Incidencia
-                                </button>
-                              )}
-                            </div>
-                          )}
-                          {tx.estado === 'EN_DISPUTA' && (() => {
-                            const inc = incidenciasMap[tx.idTransaccion];
-                            const soyReportante = inc && inc.idUsuarioReportante === user.id;
-                            const yaDefendi = inc && inc.idUsuarioDefensor === user.id;
-                            if (soyReportante) {
-                              return (
-                                <button key="cancelar" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-orange-600)', color: 'var(--color-orange-600)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                                  onClick={() => { setCancelReportData({ idTransaccion: tx.idTransaccion, motivo: '' }); setCancelReportModalOpen(true); }}>
-                                  Cancelar Reporte
-                                </button>
-                              );
-                            } else if (yaDefendi) {
-                              return (
-                                <span key="defendido" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-700)', borderRadius: '0.25rem', fontWeight: 'bold' }}>
-                                  Defensa Enviada
-                                </span>
-                              );
-                            } else {
-                              return (
-                                <button key="defenderse" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: 'transparent', border: '1px solid var(--color-green-700)', color: 'var(--color-green-700)', borderRadius: '0.25rem', cursor: 'pointer' }}
-                                  onClick={() => { setAppealData({ idTransaccion: tx.idTransaccion, descripcion: '', fotosEvidenciaBase64: [] }); setAppealModalOpen(true); }}>
-                                  Defenderse
-                                </button>
-                              );
-                            }
-                          })()}
                         </div>
                       </div>
                     ))}
@@ -897,7 +819,7 @@ const Profile = () => {
                       </div>
                     ))}
                   </div>
-      , document.body)}
+                )}
               </div>
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <button type="button" onClick={() => setReportModalOpen(false)} style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}>Cancelar</button>
@@ -906,7 +828,7 @@ const Profile = () => {
             </form>
           </div>
         </div>
-      )}
+      , document.body)}
 
       {cancelReportModalOpen && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
@@ -967,7 +889,7 @@ const Profile = () => {
                       </div>
                     ))}
                   </div>
-      , document.body)}
+                )}
               </div>
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <button type="button" onClick={() => setAppealModalOpen(false)} style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}>Cancelar</button>
@@ -976,7 +898,7 @@ const Profile = () => {
             </form>
           </div>
         </div>
-      )}
+      , document.body)}
 
       {editModalOpen && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
@@ -1008,7 +930,7 @@ const Profile = () => {
                     required
                   />
                 </div>
-      , document.body)}
+              )}
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <button type="button" onClick={() => setEditModalOpen(false)} style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}>Cancelar</button>
                 <button type="submit" className="btn-primary" style={{ flex: 1, padding: '0.75rem' }}>Guardar Cambios</button>
@@ -1016,7 +938,157 @@ const Profile = () => {
             </form>
           </div>
         </div>
-      )}
+      , document.body)}
+
+      {transaccionDetalleModalOpen && selectedTxDetalle && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="card" style={{ width: '90%', maxWidth: '600px', padding: '2rem', position: 'relative' }}>
+            <button onClick={() => { setTransaccionDetalleModalOpen(false); setSelectedTxDetalle(null); }} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-tertiary)' }}>&times;</button>
+            <h3 style={{ marginBottom: '1rem' }}>Detalles de la Transacción</h3>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <p><strong>Publicación:</strong> {selectedTxDetalle.publicacion?.titulo || selectedTxDetalle.idPublicacion}</p>
+              <p><strong>Costo:</strong> {selectedTxDetalle.oferta?.precio || selectedTxDetalle.creditosRetenidos || 0} créditos</p>
+              <p><strong>Estado:</strong> {selectedTxDetalle.estado || 'Activa'}</p>
+            </div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+              <div className="card" style={{ padding: '1rem', backgroundColor: 'var(--bg-secondary)' }}>
+                <h4 style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Solicitante</h4>
+                <p><strong>Nombre:</strong> {usersMap[selectedTxDetalle.idDemandante] || 'Usuario'}</p>
+              </div>
+              <div className="card" style={{ padding: '1rem', backgroundColor: 'var(--bg-secondary)' }}>
+                <h4 style={{ marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Proveedor</h4>
+                <p><strong>Nombre:</strong> {usersMap[selectedTxDetalle.idOfertante] || 'Usuario'}</p>
+              </div>
+            </div>
+
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '2rem' }}>
+              El intercambio está en proceso. Una vez concluido el servicio, ambas partes deben confirmar su finalización para que se liberen los créditos correspondientes. Si ocurre algún problema, puedes reportar una incidencia o solicitar la cancelación.
+            </p>
+
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <button 
+                className="btn-primary" 
+                style={{ flex: '1 1 auto', padding: '0.75rem' }}
+                onClick={() => {
+                  handleUpdateTxState(selectedTxDetalle.idTransaccion, 'FINALIZADA')
+                  setTransaccionDetalleModalOpen(false);
+                }}
+              >
+                Confirmar Finalización
+              </button>
+              <button 
+                className="btn-primary" 
+                style={{ flex: '1 1 auto', padding: '0.75rem', backgroundColor: '#ea580c', color: '#fff', border: 'none' }}
+                onClick={() => {
+                  const esDemandante = selectedTxDetalle.idDemandante === user.id;
+                  const contraparteId = esDemandante ? selectedTxDetalle.idOfertante : selectedTxDetalle.idDemandante;
+                  setReportData({
+                    ...reportData,
+                    idPublicacion: selectedTxDetalle.idTransaccion,
+                    tituloPublicacion: pubsMap[selectedTxDetalle.idPublicacion]?.nombreServicio || selectedTxDetalle.idPublicacion,
+                    idUsuarioInvolucrado: contraparteId,
+                    nombreContraparte: usersMap[contraparteId] || contraparteId,
+                    descripcionProblema: '',
+                    fotosEvidenciaBase64: [],
+                    esDemandante: esDemandante
+                  });
+                  setTransaccionDetalleModalOpen(false);
+                  setReportModalOpen(true);
+                }}
+              >
+                Reportar Incidencia
+              </button>
+              <button 
+                className="btn-primary" 
+                style={{ flex: '1 1 auto', padding: '0.75rem', backgroundColor: '#dc2626', color: '#fff', border: 'none' }}
+                onClick={() => {
+                  setCancelTransaccionModalOpen(true);
+                  setTransaccionDetalleModalOpen(false);
+                }}
+              >
+                Cancelar Transacción
+              </button>
+            </div>
+          </div>
+        </div>
+      , document.body)}
+
+      {cancelTransaccionModalOpen && selectedTxDetalle && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="card" style={{ width: '90%', maxWidth: '500px', padding: '2rem', position: 'relative' }}>
+            <button onClick={() => setCancelTransaccionModalOpen(false)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-tertiary)' }}>&times;</button>
+            <h3 style={{ marginBottom: '1rem' }}>Solicitar Cancelación</h3>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+              Por favor, selecciona el motivo por el cual deseas cancelar esta transacción. Se enviará una notificación a la contraparte para que acepte o rechace (y reporte una incidencia).
+            </p>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
+                <input 
+                  type="radio" 
+                  name="motivoCancelacion" 
+                  value="EQUIVOCACION" 
+                  checked={cancelMotivoSeleccionado === 'EQUIVOCACION'}
+                  onChange={(e) => setCancelMotivoSeleccionado(e.target.value)}
+                  style={{ width: '1.2rem', height: '1.2rem' }}
+                />
+                Me equivoqué al enviar la solicitud / oferta.
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
+                <input 
+                  type="radio" 
+                  name="motivoCancelacion" 
+                  value="YA_NO_NECESITO" 
+                  checked={cancelMotivoSeleccionado === 'YA_NO_NECESITO'}
+                  onChange={(e) => setCancelMotivoSeleccionado(e.target.value)}
+                  style={{ width: '1.2rem', height: '1.2rem' }}
+                />
+                Ya no necesito este servicio / Ya resolví mi necesidad.
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
+                <input 
+                  type="radio" 
+                  name="motivoCancelacion" 
+                  value="SIN_ACUERDO" 
+                  checked={cancelMotivoSeleccionado === 'SIN_ACUERDO'}
+                  onChange={(e) => setCancelMotivoSeleccionado(e.target.value)}
+                  style={{ width: '1.2rem', height: '1.2rem' }}
+                />
+                No pudimos llegar a un acuerdo en el horario o los detalles.
+              </label>
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button 
+                type="button" 
+                onClick={() => setCancelTransaccionModalOpen(false)} 
+                style={{ flex: 1, padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '0.5rem', background: 'transparent', cursor: 'pointer' }}
+              >
+                Volver
+              </button>
+              <button 
+                type="button" 
+                className="btn-primary" 
+                style={{ flex: 1, padding: '0.75rem' }}
+                disabled={!cancelMotivoSeleccionado}
+                onClick={async () => {
+                  try {
+                    setAlertMessage('Solicitud de cancelación enviada a la contraparte.');
+                    setCancelTransaccionModalOpen(false);
+                    setSelectedTxDetalle(null);
+                    setCancelMotivoSeleccionado('');
+                  } catch (error) {
+                    setAlertMessage('Error al procesar la solicitud');
+                  }
+                }}
+              >
+                Enviar Solicitud
+              </button>
+            </div>
+          </div>
+        </div>
+      , document.body)}
 
       {/* Centralized Alert Modal */}
       {alertMessage && (
