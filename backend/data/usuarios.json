@@ -6,7 +6,7 @@
     "telefono": "+58414000903",
     "descripcionPersonal": "Pianista y programadora web, apasionada por la enseñanza",
     "contrasenaHash": "$2b$10$glAWUagJGAl5OuANu2Q5lOilM3q.9gjD3JwrHmQ6wM.fJjgUCuzQi",
-    "version": 1,
+    "version": 2,
     "monedero": {
       "creditosDisponibles": 30.0,
       "creditosComprometidos": 0.0,

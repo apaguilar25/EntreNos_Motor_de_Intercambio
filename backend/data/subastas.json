@@ -190,10 +190,30 @@
     ],
     "fechaInicio": "2026-07-16T18:40:14.3996225",
     "fechaFinalizacionLicitacion": "2026-07-21T18:40:14.3971015",
-    "estado": "ACTIVA",
-    "propuestas": [],
+    "estado": "ADJUDICADA_INTERCAMBIO_PENDIENTE",
+    "idPropuestaGanadora": "PROP-0BB5E6",
+    "propuestas": [
+      {
+        "idPropuesta": "PROP-0BB5E6",
+        "idSubasta": "SUB-98C52AC4",
+        "idPostor": "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
+        "bienesOfrecidos": [
+          {
+            "nombre": "Arroz",
+            "cantidad": 1
+          }
+        ],
+        "descripcion": "Dos kilos de arroz por tu camioneta",
+        "estadoPropuesta": "EN_EVALUACION",
+        "estadoFisico": "USADO",
+        "imagenesUrls": [
+          "http://dummy.img/evidence.jpg"
+        ],
+        "fechaPropuesta": "2026-07-16T20:17:44.5062068"
+      }
+    ],
     "propietarioConfirmoEntrega": false,
     "ganadorConfirmoEntrega": false,
-    "version": 0
+    "version": 2
   }
 ]

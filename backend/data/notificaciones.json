@@ -48,4 +48,14 @@
   "fechaCreacion" : 1784241588502,
   "idReferencia" : "SUB-00000002",
   "idReferenciaAuxiliar" : "PROP-0B62FD"
+}, {
+  "idNotificacion" : "c8733b4d-6c75-4b4c-b6bd-84d6da4fc284",
+  "idRemitente" : "a3be087d-4137-4f8d-a3b3-4904feb9df1b",
+  "idDestinatario" : "60de6e4f-c40a-4d41-8b2c-a73f3dfb4589",
+  "mensaje" : "¡Felicidades! Tu propuesta ha sido elegida como ganadora.",
+  "tipo" : "SUBASTA_GANADA",
+  "estadoLectura" : false,
+  "fechaCreacion" : 1784247519714,
+  "idReferencia" : "SUB-98C52AC4",
+  "idReferenciaAuxiliar" : null
 } ]
