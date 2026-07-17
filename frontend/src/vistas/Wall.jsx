@@ -434,7 +434,7 @@ const Wall = () => {
                     )}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: 'var(--accent-warning)', fontSize: '0.75rem' }}>
-                    <Star size={12} fill="currentColor" /> {post.reputation}
+                    <Star size={12} fill="currentColor" /> {(post.reputation || 0).toFixed(1)}
                   </div>
                 </div>
               </div>

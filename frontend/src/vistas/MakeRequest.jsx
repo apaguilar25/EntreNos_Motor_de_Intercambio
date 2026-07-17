@@ -180,15 +180,47 @@ const MakeRequest = () => {
           const profile = await controladorPerfil.obtenerDatosPerfil(user.id);
           const currentCategory = data.title;
           
-          // Verificar si la categoría ya está en intereses, ofertas o necesidades
+          // Verificar si la categoría ya está en ofertas o necesidades del catálogo
           const inOfertas = profile?.ofertas?.some(o => o.habilidadBase?.categoria === currentCategory || currentCategory.includes(o.habilidadBase?.categoria));
           const inNecesidades = profile?.necesidades?.some(n => n.necesidadBase?.categoria === currentCategory || currentCategory.includes(n.necesidadBase?.categoria));
-          const inIntereses = profile?.intereses?.includes(currentCategory);
 
-          if (!inOfertas && !inNecesidades && !inIntereses) {
-            const addInterest = await confirm("Añadir Interés", "¿Deseas añadir esta categoría a tus intereses para recibir mejores sugerencias?");
-            if (addInterest) {
-              addToast("Categoría añadida a tus intereses.", 'info');
+          if (!inOfertas && !inNecesidades) {
+            const addToCatalog = await confirm("Añadir al Catálogo", `¿Deseas añadir "${currentCategory}" a tu catálogo de ${type === 'necesidad' ? 'ofertas' : 'necesidades'}?`);
+            if (addToCatalog) {
+              try {
+                const skillsRes = await fetch('http://localhost:8080/api/habilidades');
+                if (skillsRes.ok) {
+                  const allSkills = await skillsRes.json();
+                  const match = allSkills.find(s => s.categoria?.toLowerCase() === currentCategory.toLowerCase());
+                  if (match) {
+                    if (type === 'necesidad') {
+                      await fetch(`http://localhost:8080/api/usuarios/${user.id}/habilidades`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          idHabilidadCategoria: match.id,
+                          precioCreditos: offeredPrice || 0,
+                          descripcionServicio: `Ofrezco ${currentCategory.toLowerCase()}`
+                        })
+                      });
+                    } else {
+                      await fetch(`http://localhost:8080/api/usuarios/${user.id}/necesidades`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          idHabilidadCategoria: match.id,
+                          descripcionCondiciones: `Necesito ${currentCategory.toLowerCase()}`
+                        })
+                      });
+                    }
+                    addToast(`"${currentCategory}" añadida a tu catálogo.`, 'success');
+                  } else {
+                    addToast(`No se encontró la categoría "${currentCategory}" en el catálogo maestro.`, 'info');
+                  }
+                }
+              } catch (e) {
+                console.error('Error añadiendo al catálogo:', e);
+              }
             }
           }
         } catch (error) {
@@ -243,7 +275,7 @@ const MakeRequest = () => {
             </div>
             <div>
               <div style={{ fontWeight: 'bold' }}>{user?.name || 'Usuario Actual'}</div>
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Reputación: 5.0 ⭐</div>
+              {user?.reputacionHistorica && <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Reputación: {(Number(user.reputacionHistorica) || 5).toFixed(1)} ⭐</div>}
             </div>
           </div>
 
@@ -414,7 +446,7 @@ const MakeRequest = () => {
             </div>
             <div>
               <div style={{ fontWeight: 'bold' }}>{data.owner}</div>
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Reputación: {data.reputation} ⭐</div>
+              <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Reputación: {(Number(data.reputation) || 0).toFixed(1)} ⭐</div>
             </div>
           </div>
 
