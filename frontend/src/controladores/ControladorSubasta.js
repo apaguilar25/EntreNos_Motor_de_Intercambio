@@ -47,4 +47,22 @@ export class ControladorSubasta {
       throw error;
     }
   }
+
+  async retirarPropuesta(idSubasta, idPropuesta) {
+    try {
+      return await this.servicioSubasta.retirarPropuesta(idSubasta, idPropuesta);
+    } catch (error) {
+      console.error('Error en ControladorSubasta retirando propuesta:', error);
+      throw error;
+    }
+  }
+
+  async obtenerHistorialPropuestas() {
+    try {
+      return await this.servicioSubasta.obtenerHistorialPropuestas();
+    } catch (error) {
+      console.error('Error en ControladorSubasta obteniendo historial:', error);
+      return [];
+    }
+  }
 }

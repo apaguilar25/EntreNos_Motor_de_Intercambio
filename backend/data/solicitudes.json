@@ -108,5 +108,35 @@
     "fechaLimiteRespuesta": 1784709724560,
     "precioOfertado": 0,
     "version": 1
+  },
+  {
+    "idSolicitud": "SOL-6AE431D7",
+    "idPublicacion": "PUB-484B9EC1",
+    "idSolicitante": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "estado": "ACEPTADA",
+    "fechaCreacion": 1784283434515,
+    "fechaLimiteRespuesta": 1784715434515,
+    "precioOfertado": 0,
+    "version": 1
+  },
+  {
+    "idSolicitud": "SOL-6116E3D2",
+    "idPublicacion": "PUB-0000000E",
+    "idSolicitante": "f871e1d2-671e-4ea2-a19d-c1393805569c",
+    "estado": "PENDIENTE",
+    "fechaCreacion": 1784285118332,
+    "fechaLimiteRespuesta": 1784717118332,
+    "precioOfertado": 0,
+    "version": 0
+  },
+  {
+    "idSolicitud": "SOL-B990771D",
+    "idPublicacion": "PUB-836FD1AD",
+    "idSolicitante": "e561668f-1fa0-4622-a545-0e6a406b36be",
+    "estado": "ACEPTADA",
+    "fechaCreacion": 1784285972511,
+    "fechaLimiteRespuesta": 1784717972511,
+    "precioOfertado": 0,
+    "version": 1
   }
 ]

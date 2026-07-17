@@ -6,6 +6,7 @@ public class RegistroUsuarioRequestDTO {
     private String telefono;
     private String descripcionPersonal;
     private String contrasena; // La contraseña plana que escribió el usuario en el front
+    private String foto; // URL base64 de la foto de perfil (opcional)
 
     // Constructores, Getters y Setters
     public RegistroUsuarioRequestDTO() {}
@@ -24,4 +25,7 @@ public class RegistroUsuarioRequestDTO {
 
     public String getContrasena() { return contrasena; }
     public void setContrasena(String contrasena) { this.contrasena = contrasena; }
+
+    public String getFoto() { return foto; }
+    public void setFoto(String foto) { this.foto = foto; }
 }

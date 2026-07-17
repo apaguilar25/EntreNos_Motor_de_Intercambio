@@ -1,25 +1,22 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { AppContext } from '../App';
 import { ToastContext } from '../contextos/ToastContext';
-import { Wallet as WalletIcon, ArrowUpRight, ArrowDownRight, Clock, X, Star, AlertTriangle, Image as ImageIcon, CheckCircle } from 'lucide-react';
+import { Wallet as WalletIcon, Clock, Star, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
 const Wallet = () => {
   const { user, setBalance, controladorPerfil } = useContext(AppContext);
   const { addToast } = useContext(ToastContext);
-  const [selectedTx, setSelectedTx] = useState(null);
-  
-  // States for Modals
-  const [showRatingModal, setShowRatingModal] = useState(false);
-  const [showFraudModal, setShowFraudModal] = useState(false);
-  const [rating, setRating] = useState(0);
 
   const [transactions, setTransactions] = useState([]);
   const [availableBalance, setAvailableBalance] = useState(0);
   const [retainedBalance, setRetainedBalance] = useState(0);
+  const [pubsMap, setPubsMap] = useState({});
+  const [usersMap, setUsersMap] = useState({});
+  const [resenasMap, setResenasMap] = useState({});
 
-  React.useEffect(() => {
-    const fetchBalance = async () => {
+  useEffect(() => {
+    const fetchData = async () => {
       if (!user?.id) return;
       try {
         const monedero = await controladorPerfil.obtenerSaldo(user.id);
@@ -31,11 +28,58 @@ const Wallet = () => {
       } catch (err) {
         console.error("Error cargando monedero:", err);
       }
+      try {
+        const resTx = await fetch('http://localhost:8080/api/transacciones');
+        if (resTx.ok) {
+          const allTx = await resTx.json();
+          const userTx = allTx.filter(t =>
+            (t.idDemandante === user.id || t.idOfertante === user.id) &&
+            t.estado === 'FINALIZADA'
+          );
+          setTransactions(userTx);
+        }
+      } catch (err) {
+        console.error("Error cargando transacciones:", err);
+      }
+      try {
+        const resPubs = await fetch('http://localhost:8080/api/publicaciones');
+        if (resPubs.ok) {
+          const pubsData = await resPubs.json();
+          const pMap = {};
+          pubsData.forEach(p => pMap[p.idPublicacion] = p);
+          setPubsMap(pMap);
+          const uMap = {};
+          Object.values(pMap).forEach(p => {
+            if (p.idUsuario && p.nombreUsuario) uMap[p.idUsuario] = p.nombreUsuario;
+          });
+          setUsersMap(uMap);
+        }
+      } catch (err) {
+        console.error("Error cargando publicaciones:", err);
+      }
+      try {
+        const resResenas = await fetch('http://localhost:8080/api/resenas');
+        if (resResenas.ok) {
+          const resenasData = await resResenas.json();
+          const rMap = {};
+          resenasData.forEach(r => {
+            if (!rMap[r.idTransaccion]) rMap[r.idTransaccion] = [];
+            rMap[r.idTransaccion].push(r);
+          });
+          setResenasMap(rMap);
+        }
+      } catch (err) {
+        console.error("Error cargando reseñas:", err);
+      }
     };
-    fetchBalance();
+    fetchData();
   }, [user, controladorPerfil, setBalance]);
 
-
+  const formatDate = (millis) => {
+    if (!millis) return '-';
+    const d = new Date(millis);
+    return d.toLocaleDateString('es-ES', { year: 'numeric', month: 'short', day: 'numeric' });
+  };
 
   return (
     <div className="animate-in" style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -44,7 +88,6 @@ const Wallet = () => {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
-        {/* Saldo Disponible */}
         <div className="card" style={{ backgroundColor: 'var(--accent-primary)', color: 'var(--text-on-accent)', border: 'none' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', opacity: 0.9 }}>
             <WalletIcon size={20} />
@@ -55,7 +98,6 @@ const Wallet = () => {
           </div>
         </div>
 
-        {/* Saldo Retenido */}
         <div className="card" style={{ backgroundColor: 'var(--bg-warning-soft)', color: 'var(--text-on-warning-soft)', border: 'none' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', opacity: 0.9 }}>
             <Clock size={20} />
@@ -68,175 +110,55 @@ const Wallet = () => {
       </div>
 
       <h3 style={{ marginBottom: '1rem', fontSize: '1.25rem' }}>Historial de Transacciones</h3>
-      <div className="card" style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--text-tertiary)' }}>
-        <p style={{ fontStyle: 'italic', marginBottom: '0.5rem' }}>Aún no hay transacciones en tu historial.</p>
-      </div>
-
-      {/* Receipt Modal */}
-      {selectedTx && createPortal(
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 100,
-          padding: '1rem'
-        }}>
-          <div className="card animate-in" style={{ width: '100%', maxWidth: '400px', position: 'relative' }}>
-            <button 
-              onClick={() => setSelectedTx(null)}
-              style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', color: 'var(--text-tertiary)' }}
-            >
-              <X size={20} />
-            </button>
-            <h3 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Recibo de Transacción</h3>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed var(--border-color)', paddingBottom: '0.5rem' }}>
-                <span style={{ color: 'var(--text-secondary)' }}>ID Transacción</span>
-                <span style={{ fontWeight: '500' }}>#{selectedTx.id.toString().padStart(6, '0')}</span>
+      {transactions.length === 0 ? (
+        <div className="card" style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--text-tertiary)' }}>
+          <p style={{ fontStyle: 'italic', marginBottom: '0.5rem' }}>Aún no hay transacciones finalizadas en tu historial.</p>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          {transactions.map((tx, i) => {
+            const esOfertante = tx.idOfertante === user.id;
+            const contraparte = usersMap[esOfertante ? tx.idDemandante : tx.idOfertante] || 'Usuario';
+            const nombreServicio = pubsMap[tx.idPublicacion]?.nombreServicio || pubsMap[tx.idPublicacion]?.titulo || tx.idPublicacion;
+            const resenas = resenasMap[tx.idTransaccion] || [];
+            return (
+              <div key={i} className="card" style={{ padding: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: resenas.length > 0 ? '0.75rem' : 0 }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                      {esOfertante ? <ArrowUpRight size={16} color="var(--accent-primary)" /> : <ArrowDownRight size={16} color="var(--color-red-600)" />}
+                      <strong style={{ fontSize: '0.95rem' }}>{nombreServicio}</strong>
+                    </div>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', margin: 0 }}>
+                      {tx.idTransaccion.split('-')[0].toUpperCase()} &middot; {contraparte} &middot; {formatDate(tx.fechaCreacion)}
+                    </p>
+                  </div>
+                  <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                    <span style={{ fontWeight: 'bold', color: esOfertante ? 'var(--accent-primary)' : 'var(--text-primary)' }}>
+                      {esOfertante ? '+' : '-'}{(pubsMap[tx.idPublicacion]?.precioCreditos || tx.creditosRetenidos || 0)} cr
+                    </span>
+                    <br />
+                    <span style={{ fontSize: '0.75rem', padding: '0.15rem 0.4rem', borderRadius: '0.25rem', backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-700)' }}>
+                      {tx.estado}
+                    </span>
+                  </div>
+                </div>
+                {resenas.length > 0 && (
+                  <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '0.75rem' }}>
+                    {resenas.filter(r => r.idAutor !== user.id).map((r, ri) => (
+                      <div key={ri} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                        <Star size={14} style={{ flexShrink: 0, marginTop: '0.15rem' }} fill={r.calificacion >= 3 ? 'var(--color-yellow-500)' : 'var(--text-tertiary)'} color={r.calificacion >= 3 ? 'var(--color-yellow-500)' : 'var(--text-tertiary)'} />
+                        <div>
+                          <span style={{ fontWeight: '600' }}>{r.calificacion}/5</span> &mdash; {r.comentario}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed var(--border-color)', paddingBottom: '0.5rem' }}>
-                <span style={{ color: 'var(--text-secondary)' }}>Concepto</span>
-                <span style={{ fontWeight: '500', textAlign: 'right', maxWidth: '60%' }}>{selectedTx.concept}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed var(--border-color)', paddingBottom: '0.5rem' }}>
-                <span style={{ color: 'var(--text-secondary)' }}>Fecha</span>
-                <span style={{ fontWeight: '500' }}>{selectedTx.date}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px dashed var(--border-color)', paddingBottom: '0.5rem' }}>
-                <span style={{ color: 'var(--text-secondary)' }}>Monto</span>
-                <span style={{ fontWeight: 'bold', color: selectedTx.type === 'ingreso' ? 'var(--accent-primary)' : 'var(--text-primary)' }}>
-                  {selectedTx.type === 'ingreso' ? '+' : '-'}{selectedTx.amount} cr
-                </span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '0.5rem' }}>
-                <span style={{ color: 'var(--text-secondary)' }}>Estado</span>
-                <span style={{ 
-                  fontWeight: 'bold', 
-                  color: selectedTx.status === 'Retenido' ? 'var(--text-on-warning-soft)' : '#047857',
-                  backgroundColor: selectedTx.status === 'Retenido' ? 'var(--bg-warning-soft)' : 'var(--color-green-100)',
-                  padding: '0.25rem 0.5rem',
-                  borderRadius: '0.25rem',
-                  fontSize: '0.875rem'
-                }}>
-                  {selectedTx.status}
-                </span>
-              </div>
-            </div>
-            
-            
-            {selectedTx.status === 'Retenido' && (
-              <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
-                <button 
-                  className="btn-primary" 
-                  style={{ flex: 1, padding: '0.5rem', backgroundColor: '#047857' }}
-                  onClick={() => {
-                    setShowRatingModal(true);
-                  }}
-                >
-                  <CheckCircle size={16} style={{ display: 'inline', marginRight: '0.25rem' }} /> Finalizar
-                </button>
-                <button 
-                  style={{ flex: 1, padding: '0.5rem', backgroundColor: 'transparent', border: '1px solid var(--color-red-600)', color: 'var(--color-red-600)', borderRadius: '0.5rem', cursor: 'pointer', fontWeight: 'bold' }}
-                  onClick={() => {
-                    setShowFraudModal(true);
-                  }}
-                >
-                  <AlertTriangle size={16} style={{ display: 'inline', marginRight: '0.25rem' }} /> Reportar
-                </button>
-              </div>
-            )}
-            
-            <button className="btn-primary" style={{ width: '100%', marginTop: '1rem' }} onClick={() => setSelectedTx(null)}>
-              Cerrar
-            </button>
-          </div>
-        </div>,
-        document.body
-      )}
-
-      {/* Rating Modal */}
-      {showRatingModal && createPortal(
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 110, padding: '1rem' }}>
-          <div className="card animate-in" style={{ width: '100%', maxWidth: '350px', textAlign: 'center' }}>
-            <h3 style={{ marginBottom: '1rem' }}>Califica el Servicio</h3>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.875rem' }}>¿Cómo fue tu experiencia con esta transacción?</p>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '2rem' }}>
-              {[1,2,3,4,5].map(star => (
-                <Star 
-                  key={star} 
-                  size={32} 
-                  fill={star <= rating ? 'var(--color-orange-600)' : 'transparent'} 
-                  color={star <= rating ? 'var(--color-orange-600)' : 'var(--text-tertiary)'} 
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => setRating(star)}
-                />
-              ))}
-            </div>
-            <button 
-              className="btn-primary" 
-              style={{ width: '100%' }}
-              onClick={() => {
-                setTransactions(transactions.map(t => t.id === selectedTx.id ? { ...t, status: 'Completado' } : t));
-                setShowRatingModal(false);
-                setSelectedTx(null);
-                setRating(0);
-                // Aquí simularíamos abrir el pop-up de medalla desbloqueada si aplicara
-                addToast("¡Gracias por calificar! Se ha liberado el pago.", "success");
-              }}
-              disabled={rating === 0}
-            >
-              Enviar Calificación
-            </button>
-          </div>
-        </div>,
-        document.body
-      )}
-
-      {/* Fraud Modal */}
-      {showFraudModal && createPortal(
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 110, padding: '1rem' }}>
-          <div className="card animate-in" style={{ width: '100%', maxWidth: '400px', position: 'relative' }}>
-            <button onClick={() => setShowFraudModal(false)} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', color: 'var(--text-tertiary)' }}>
-              <X size={20} />
-            </button>
-            <h3 style={{ marginBottom: '1rem', color: 'var(--color-red-600)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <AlertTriangle size={20} /> Reportar Incidencia
-            </h3>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem', fontSize: '0.875rem' }}>Describe el problema y proporciona evidencia. La transacción quedará retenida bajo revisión.</p>
-            
-            <textarea 
-              placeholder="Detalles del problema..."
-              rows={3}
-              style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', marginBottom: '1rem', resize: 'vertical' }}
-            />
-            
-            <div style={{ border: '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '1.5rem', textAlign: 'center', color: 'var(--text-tertiary)', cursor: 'pointer', marginBottom: '1.5rem' }}>
-              <ImageIcon size={24} style={{ margin: '0 auto 0.5rem' }} />
-              <p style={{ fontSize: '0.875rem' }}>Subir foto de evidencia</p>
-            </div>
-
-            <button 
-              className="btn-primary" 
-              style={{ width: '100%', backgroundColor: 'var(--color-red-600)' }}
-              onClick={() => {
-                setTransactions(transactions.map(t => t.id === selectedTx.id ? { ...t, status: 'Bajo Revisión' } : t));
-                setShowFraudModal(false);
-                setSelectedTx(null);
-                addToast("Incidencia reportada. El equipo de soporte lo revisará pronto.", "success");
-              }}
-            >
-              Enviar Reporte
-            </button>
-          </div>
-        </div>,
-        document.body
+            );
+          })}
+        </div>
       )}
     </div>
   );

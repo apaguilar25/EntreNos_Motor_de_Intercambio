@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { AppContext } from '../App';
 import { ToastContext } from '../contextos/ToastContext';
 import { ConfirmContext, useConfirm } from '../contextos/ConfirmContext';
-import { ArrowLeft, User as UserIcon, Package, MessageSquare, Coins } from 'lucide-react';
+import { ArrowLeft, User as UserIcon, Package, MessageSquare, Coins, Star } from 'lucide-react';
 
 const MakeRequest = () => {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ const MakeRequest = () => {
     { id: 4, name: 'Aceite' }
   ];
   const [selectedGoods, setSelectedGoods] = useState({});
-  const [offerImage, setOfferImage] = useState(null);
+  const [offerImages, setOfferImages] = useState([]);
 
 
   // Mock data based on type
@@ -118,8 +118,8 @@ const MakeRequest = () => {
         addToast('Debes indicar una cantidad válida para los bienes seleccionados.', 'error');
         return;
       }
-      if (!offerImage) {
-        addToast('Es obligatorio adjuntar una imagen como evidencia visual física de los productos.', 'error');
+      if (offerImages.length === 0) {
+        addToast('Es obligatorio adjuntar al menos una imagen como evidencia visual física de los productos.', 'error');
         return;
       }
       if (!message) {
@@ -142,7 +142,7 @@ const MakeRequest = () => {
           bienesOfrecidos: lineasPayload,
           descripcion: message,
           estadoFisico: estadoFisico,
-          imagenesUrls: [offerImage]
+          imagenesUrls: offerImages
         };
 
         const response = await controladorSubasta.hacerOferta(id, payload);
@@ -287,27 +287,45 @@ const MakeRequest = () => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Imagen de la Oferta (Obligatorio)</label>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Fotos de los Bienes (puedes subir varias)</label>
                   <label 
-                    style={{ border: offerImage ? '2px solid var(--accent-primary)' : '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '1rem', textAlign: 'center', color: offerImage ? 'var(--accent-primary)' : 'var(--text-tertiary)', cursor: 'pointer', backgroundColor: offerImage ? 'var(--bg-secondary)' : 'transparent', display: 'block' }}
+                    style={{ border: offerImages.length > 0 ? '2px solid var(--accent-primary)' : '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '1rem', textAlign: 'center', color: offerImages.length > 0 ? 'var(--accent-primary)' : 'var(--text-tertiary)', cursor: 'pointer', backgroundColor: offerImages.length > 0 ? 'var(--bg-secondary)' : 'transparent', display: 'block' }}
                   >
                     <input 
                       type="file" 
                       accept="image/*" 
+                      multiple
                       onChange={(e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onloadend = () => setOfferImage(reader.result);
-                          reader.readAsDataURL(file);
-                        } else {
-                          setOfferImage(null);
+                        const files = Array.from(e.target.files);
+                        if (files.length > 0) {
+                          const promises = files.map(file => new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.readAsDataURL(file);
+                          }));
+                          Promise.all(promises).then(results => {
+                            setOfferImages(prev => [...prev, ...results]);
+                          });
                         }
                       }}
                       style={{ display: 'none' }}
                     />
-                    <p>{offerImage ? 'Imagen adjuntada (Cambiar)' : 'Click para subir imagen'}</p>
+                    <p>{offerImages.length > 0 ? `${offerImages.length} imagen(es) adjuntada(s) (Agregar más)` : 'Click para subir imágenes'}</p>
                   </label>
+                  {offerImages.length > 0 && (
+                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
+                      {offerImages.map((img, i) => (
+                        <div key={i} style={{ position: 'relative', width: '60px', height: '60px' }}>
+                          <img src={img} alt={`Foto ${i+1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '0.25rem' }} />
+                          <button
+                            type="button"
+                            onClick={() => setOfferImages(prev => prev.filter((_, j) => j !== i))}
+                            style={{ position: 'absolute', top: '-4px', right: '-4px', width: '18px', height: '18px', borderRadius: '50%', background: 'var(--color-red-600)', color: '#fff', border: 'none', fontSize: '0.6rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+                          >&times;</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div>

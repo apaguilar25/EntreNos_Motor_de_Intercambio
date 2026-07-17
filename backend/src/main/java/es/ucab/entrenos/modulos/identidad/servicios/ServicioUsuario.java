@@ -65,7 +65,7 @@ public class ServicioUsuario {
 
     //  Registro inicial del usuario (Aún sin catálogo)
     public Usuario registrarUsuario(String nombre, String correoElectronico, String telefono,
-                                    String descripcionPersonal, String contrasenaPlana) {
+                                    String descripcionPersonal, String contrasenaPlana, String urlFoto) {
 
         // 1. VALIDACIÓN: Restricción de Dominio estricta
         if (correoElectronico == null || correoElectronico.trim().isEmpty()) {
@@ -113,7 +113,12 @@ public class ServicioUsuario {
                 contrasenaHash
         );
 
-        // 8. Guardar en el JSON a través del repositorio
+        // 8. Asignar foto de perfil si se proporcionó
+        if (urlFoto != null && !urlFoto.trim().isEmpty()) {
+            nuevoUsuario.setUrlFotoPerfil(urlFoto);
+        }
+
+        // 9. Guardar en el JSON a través del repositorio
         guardar(nuevoUsuario);
 
         return nuevoUsuario;
