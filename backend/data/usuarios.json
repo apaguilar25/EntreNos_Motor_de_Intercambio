@@ -228,7 +228,7 @@
     "telefono": "0000000000",
     "descripcionPersonal": "Administrador general de la comunidad",
     "contrasenaHash": "$2b$10$0Qgrc9WcR89q2cJRlf2.dOCkP1nQe.Dt0ERcABExSfUooMK.C6FHO",
-    "version": 1,
+    "version": 2,
     "monedero": {
       "creditosDisponibles": 50.0,
       "creditosComprometidos": 8.0,
