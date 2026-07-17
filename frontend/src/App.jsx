@@ -37,6 +37,7 @@ import PostDetails from './vistas/PostDetails';
 import MakeRequest from './vistas/MakeRequest';
 import CatalogOnboarding from './vistas/CatalogOnboarding';
 import AdminDashboard from './vistas/AdminDashboard';
+import PublicProfile from './vistas/PublicProfile';
 
 // Contexto Global que actuará como Inyector de Dependencias
 export const AppContext = createContext();
@@ -120,6 +121,7 @@ function App() {
             <Route path="notifications" element={<Notifications />} />
             <Route path="post/:id" element={<PostDetails />} />
             <Route path="request/:id" element={<MakeRequest />} />
+            <Route path="user/:id" element={<PublicProfile />} />
             <Route path="admin" element={user && user.rol === 'ADMINISTRADOR' ? <AdminDashboard /> : <Navigate to="/" />} />
           </Route>
         </Routes>

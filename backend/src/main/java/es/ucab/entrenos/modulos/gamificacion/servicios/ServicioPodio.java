@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class ServicioPodio {
 
-    private static final int UMBRAL_MINIMO_TRANSACCIONES = 5;
+    private static final int UMBRAL_MINIMO_TRANSACCIONES = 1;
 
     private final IRepositorioPodio repositorioPodio;
     private final IRepositorioTransaccion repositorioTransaccion;

@@ -126,8 +126,15 @@ public class ServicioPublicacion {
     }
 
 
+    private boolean esUsuarioSancionado(String idUsuario) {
+        return servicioUsuario.buscarPorId(idUsuario)
+                .map(u -> u.getEstado() == es.ucab.entrenos.modulos.identidad.modelos.EstadoCuenta.SANCIONADO)
+                .orElse(false);
+    }
+
     private void refrescarCache() {
         List<PublicacionResponseDTO> todas = repositorioPublicacion.obtenerTodas().stream()
+                .filter(p -> !esUsuarioSancionado(p.getIdUsuario()))
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
         cachePublicacion.refrescar(todas);
@@ -135,7 +142,9 @@ public class ServicioPublicacion {
     }
 
     public List<Publicacion> obtenerTodasLasPublicaciones() {
-        return repositorioPublicacion.obtenerTodas();
+        return repositorioPublicacion.obtenerTodas().stream()
+                .filter(p -> !esUsuarioSancionado(p.getIdUsuario()))
+                .collect(Collectors.toList());
     }
 
     public List<PublicacionResponseDTO> obtenerPublicacionesFiltradas(String tipo, String servicio) {
@@ -143,6 +152,7 @@ public class ServicioPublicacion {
             return cachePublicacion.getTodas();
         }
         return repositorioPublicacion.obtenerTodas().stream()
+                .filter(p -> !esUsuarioSancionado(p.getIdUsuario()))
                 .filter(p -> tipo == null || tipo.isEmpty() || p.getTipoPublicacion().equalsIgnoreCase(tipo))
                 .filter(p -> servicio == null || servicio.isEmpty() ||
                         p.getNombreServicio().toLowerCase().contains(servicio.toLowerCase()) ||
@@ -155,6 +165,7 @@ public class ServicioPublicacion {
     public List<PublicacionResponseDTO> obtenerPublicacionesSinCache() {
         long inicio = System.currentTimeMillis();
         List<PublicacionResponseDTO> resultado = repositorioPublicacion.obtenerTodas().stream()
+                .filter(p -> !esUsuarioSancionado(p.getIdUsuario()))
                 .map(this::toResponseDTO)
                 .sorted(Comparator.comparingDouble(PublicacionResponseDTO::getReputacionUsuario).reversed())
                 .limit(10)
@@ -175,6 +186,7 @@ public class ServicioPublicacion {
 
         List<Publicacion> todasPubs = repositorioPublicacion.obtenerTodas();
         List<RecomendacionDTO> recomendadas = todasPubs.stream()
+                .filter(p -> !esUsuarioSancionado(p.getIdUsuario()))
                 .filter(p -> !p.getIdUsuario().equals(idUsuario))
                 .filter(p -> matchDireccional(p, habilidades, necesidades))
                 .map(p -> new RecomendacionDTO(toResponseDTO(p),

@@ -14,6 +14,7 @@ const Publish = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [credits, setCredits] = useState('');
+  const [image, setImage] = useState(null);
 
   return (
     <div className="animate-in" style={{ maxWidth: '600px', margin: '0 auto' }}>
@@ -83,10 +84,25 @@ const Publish = () => {
 
         <div>
           <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Imagen (Opcional)</label>
-          <div style={{ border: '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '2rem', textAlign: 'center', color: 'var(--text-tertiary)', cursor: 'pointer' }}>
+          <label style={{ border: image ? '2px solid var(--accent-primary)' : '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '2rem', textAlign: 'center', color: image ? 'var(--accent-primary)' : 'var(--text-tertiary)', cursor: 'pointer', backgroundColor: image ? 'var(--bg-secondary)' : 'transparent', display: 'block' }}>
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => setImage(reader.result);
+                  reader.readAsDataURL(file);
+                } else {
+                  setImage(null);
+                }
+              }}
+              style={{ display: 'none' }}
+            />
             <ImageIcon size={32} style={{ margin: '0 auto 0.5rem' }} />
-            <p>Haz clic para subir una imagen</p>
-          </div>
+            <p>{image ? 'Imagen adjuntada (Click para cambiar)' : 'Haz clic para subir una imagen'}</p>
+          </label>
         </div>
 
         <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>

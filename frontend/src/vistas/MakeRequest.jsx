@@ -29,7 +29,7 @@ const MakeRequest = () => {
     { id: 4, name: 'Aceite' }
   ];
   const [selectedGoods, setSelectedGoods] = useState({});
-  const [offerImage, setOfferImage] = useState(false);
+  const [offerImage, setOfferImage] = useState(null);
 
 
   // Mock data based on type
@@ -142,7 +142,7 @@ const MakeRequest = () => {
           bienesOfrecidos: lineasPayload,
           descripcion: message,
           estadoFisico: estadoFisico,
-          imagenesUrls: ['http://dummy.img/evidence.jpg']
+          imagenesUrls: [offerImage]
         };
 
         const response = await controladorSubasta.hacerOferta(id, payload);
@@ -176,9 +176,23 @@ const MakeRequest = () => {
       }
 
       if (showInterestPrompt) {
-        const addInterest = await confirm("Añadir Interés", "¿Deseas añadir esta categoría a tus intereses para recibir mejores sugerencias?");
-        if (addInterest) {
-          addToast("Categoría añadida a tus intereses.", 'info');
+        try {
+          const profile = await controladorPerfil.obtenerDatosPerfil(user.id);
+          const currentCategory = data.title;
+          
+          // Verificar si la categoría ya está en intereses, ofertas o necesidades
+          const inOfertas = profile?.ofertas?.some(o => o.habilidadBase?.categoria === currentCategory || currentCategory.includes(o.habilidadBase?.categoria));
+          const inNecesidades = profile?.necesidades?.some(n => n.necesidadBase?.categoria === currentCategory || currentCategory.includes(n.necesidadBase?.categoria));
+          const inIntereses = profile?.intereses?.includes(currentCategory);
+
+          if (!inOfertas && !inNecesidades && !inIntereses) {
+            const addInterest = await confirm("Añadir Interés", "¿Deseas añadir esta categoría a tus intereses para recibir mejores sugerencias?");
+            if (addInterest) {
+              addToast("Categoría añadida a tus intereses.", 'info');
+            }
+          }
+        } catch (error) {
+          console.error("Error validando el catálogo del usuario:", error);
         }
       }
 
@@ -224,7 +238,7 @@ const MakeRequest = () => {
           <h3 style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>Tu Propuesta</h3>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--accent-primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--accent-primary)', color: 'var(--text-on-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <UserIcon size={20} />
             </div>
             <div>
@@ -274,12 +288,26 @@ const MakeRequest = () => {
 
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Imagen de la Oferta (Obligatorio)</label>
-                  <div 
-                    onClick={() => setOfferImage(!offerImage)}
-                    style={{ border: offerImage ? '2px solid var(--accent-primary)' : '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '1rem', textAlign: 'center', color: offerImage ? 'var(--accent-primary)' : 'var(--text-tertiary)', cursor: 'pointer', backgroundColor: offerImage ? 'var(--bg-secondary)' : 'transparent' }}
+                  <label 
+                    style={{ border: offerImage ? '2px solid var(--accent-primary)' : '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '1rem', textAlign: 'center', color: offerImage ? 'var(--accent-primary)' : 'var(--text-tertiary)', cursor: 'pointer', backgroundColor: offerImage ? 'var(--bg-secondary)' : 'transparent', display: 'block' }}
                   >
-                    <p>{offerImage ? 'Imagen adjuntada' : 'Click para simular carga de imagen'}</p>
-                  </div>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => setOfferImage(reader.result);
+                          reader.readAsDataURL(file);
+                        } else {
+                          setOfferImage(null);
+                        }
+                      }}
+                      style={{ display: 'none' }}
+                    />
+                    <p>{offerImage ? 'Imagen adjuntada (Cambiar)' : 'Click para subir imagen'}</p>
+                  </label>
                 </div>
 
                 <div>
@@ -315,27 +343,26 @@ const MakeRequest = () => {
                     <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: '500' }}>
                       <Coins size={16} /> Tus créditos a cobrar
                     </label>
-                    {priceFromCatalog !== null ? (
-                      <>
-                        <input 
-                          type="number" min="0"
-                          value={offeredPrice}
-                          disabled
-                          style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }}
-                        />
-                        <p style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '0.25rem' }}>
-                          Precio desde tu catálogo
-                        </p>
-                      </>
-                    ) : (
-                      <input 
-                        type="number" min="0"
-                        value={offeredPrice || ''}
-                        onChange={e => setOfferedPrice(Number(e.target.value))}
-                        placeholder="Ej: 5"
-                        style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }}
-                      />
+                    {priceFromCatalog !== null && (
+                      <span style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+                        fontSize: '0.72rem', fontWeight: '600',
+                        color: 'var(--accent-primary)',
+                        backgroundColor: 'rgba(var(--accent-primary-rgb, 59,130,246), 0.08)',
+                        border: '1px solid var(--accent-primary)',
+                        borderRadius: '1rem', padding: '0.2rem 0.6rem',
+                        marginBottom: '0.4rem'
+                      }}>
+                        ✓ Precio sugerido de tu catálogo — puedes modificarlo
+                      </span>
                     )}
+                    <input 
+                      type="number" min="0"
+                      value={offeredPrice ?? ''}
+                      onChange={e => setOfferedPrice(Number(e.target.value))}
+                      placeholder="Ej: 5"
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }}
+                    />
                   </div>
                 )}
                 <div>
@@ -392,10 +419,12 @@ const MakeRequest = () => {
             </p>
           </div>
 
-          <div style={{ marginTop: 'auto', borderTop: '1px solid var(--border-color)', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ color: 'var(--text-secondary)', fontWeight: '500' }}>{type === 'subasta' ? 'Busca a cambio:' : 'Costo:'}</span>
-            <span style={{ fontWeight: 'bold', color: 'var(--accent-primary)', fontSize: '1.125rem' }}>{data.price}</span>
-          </div>
+          {(type === 'subasta' || cost > 0) && (
+            <div style={{ marginTop: 'auto', borderTop: '1px solid var(--border-color)', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ color: 'var(--text-secondary)', fontWeight: '500' }}>{type === 'subasta' ? 'Busca a cambio:' : 'Costo:'}</span>
+              <span style={{ fontWeight: 'bold', color: 'var(--accent-primary)', fontSize: '1.125rem' }}>{type === 'subasta' ? data.price : `${cost} cr`}</span>
+            </div>
+          )}
         </div>
 
       </div>

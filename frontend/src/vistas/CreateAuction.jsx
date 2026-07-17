@@ -12,7 +12,7 @@ const CreateAuction = () => {
   const [description, setDescription] = useState('');
   const [duration, setDuration] = useState('1');
   const [status, setStatus] = useState('NUEVO');
-  const [hasPhoto, setHasPhoto] = useState(false);
+  const [hasPhoto, setHasPhoto] = useState(null);
 
   return (
     <div className="animate-in" style={{ maxWidth: '600px', margin: '0 auto' }}>
@@ -81,13 +81,27 @@ const CreateAuction = () => {
         </div>
         <div>
           <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Fotos del Activo</label>
-          <div 
-            onClick={() => setHasPhoto(true)}
-            style={{ border: hasPhoto ? '2px solid var(--accent-primary)' : '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '2rem', textAlign: 'center', color: hasPhoto ? 'var(--accent-primary)' : 'var(--text-tertiary)', cursor: 'pointer', backgroundColor: hasPhoto ? 'var(--bg-secondary)' : 'transparent' }}
+          <label 
+            style={{ border: hasPhoto ? '2px solid var(--accent-primary)' : '2px dashed var(--border-color)', borderRadius: '0.5rem', padding: '2rem', textAlign: 'center', color: hasPhoto ? 'var(--accent-primary)' : 'var(--text-tertiary)', cursor: 'pointer', backgroundColor: hasPhoto ? 'var(--bg-secondary)' : 'transparent', display: 'block' }}
           >
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => setHasPhoto(reader.result);
+                  reader.readAsDataURL(file);
+                } else {
+                  setHasPhoto(null);
+                }
+              }}
+              style={{ display: 'none' }}
+            />
             <ImageIcon size={32} style={{ margin: '0 auto 0.5rem' }} />
-            <p>{hasPhoto ? 'Foto subida correctamente' : 'Sube al menos una foto clara del producto (Click para simular)'}</p>
-          </div>
+            <p>{hasPhoto ? 'Foto subida correctamente (Click para cambiar)' : 'Sube al menos una foto clara del producto (Click para subir)'}</p>
+          </label>
         </div>
 
         <div style={{ fontSize: '0.75rem', color: 'var(--color-red-600)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -103,7 +117,7 @@ const CreateAuction = () => {
           </button>
           <button 
             className="btn-primary" 
-            style={{ flex: 1, padding: '0.75rem', borderRadius: '0.5rem', backgroundColor: 'var(--accent-warning)', color: '#fff' }}
+            style={{ flex: 1, padding: '0.75rem', borderRadius: '0.5rem', backgroundColor: 'var(--accent-warning)', color: 'var(--text-on-warning)' }}
             onClick={async () => {
               if(!title || !description) {
                 addToast("Por favor llena el título y la descripción.", "error");
@@ -118,7 +132,7 @@ const CreateAuction = () => {
                 descripcion: description,
                 nombreActivo: title,
                 estadoFisico: status,
-                imagenesUrls: ["/ruta/foto1.jpg"],
+                imagenesUrls: [hasPhoto],
                 diasDuracion: parseInt(duration)
               };
 
